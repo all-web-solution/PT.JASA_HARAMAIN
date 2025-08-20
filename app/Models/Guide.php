@@ -6,5 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Guide extends Model
 {
-    //
+    protected $fillable = [
+        'type',
+        'price_per_day'
+    ];
 }

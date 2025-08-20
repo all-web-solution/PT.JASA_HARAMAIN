@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('description');
             $table->enum('price_type', ['flat', 'per_jammah', 'perhari', 'perkamar']);
             $table->timestamps();
+            
         });
     }
 
