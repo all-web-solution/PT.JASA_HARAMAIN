@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('caterings', function (Blueprint $table) {
             $table->id();
             $table->enum('type', ['nasi box', 'snack ziarah']);
+            $table->string('qty_pack');
+                        $table->string('days');
+            $table->string('total_price');
             $table->timestamps();
         });
     }

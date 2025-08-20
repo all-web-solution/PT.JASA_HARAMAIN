@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->enum('type', ['premium', 'reguler', 'perempuan']);
             $table->string('price_per_day');
+            $table->string('days');
+            $table->string('total_price');
             $table->timestamps();
         });
     }

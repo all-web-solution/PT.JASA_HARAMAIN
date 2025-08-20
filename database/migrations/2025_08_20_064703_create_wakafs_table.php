@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->enum('type', ['air minum', 'al quran', 'nasi box']);
             $table->text('price');
+            $table->string('qty');
+            $table->string('total_price');
             $table->timestamps();
         });
     }

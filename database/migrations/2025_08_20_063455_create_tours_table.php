@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->enum('name', ['city tour', 'Al ula', 'Jabal', 'Perang Badar']);
             $table->string('price');
+            $table->string('qty_pack');
+            $table->string('total_price');
             $table->timestamps();
         });
     }

@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Wakaf extends Model
 {
-    protected $fillable = ['type', 'price'];
+    protected $fillable = ['type', 'price', 'qty', 'total_price'];
 }

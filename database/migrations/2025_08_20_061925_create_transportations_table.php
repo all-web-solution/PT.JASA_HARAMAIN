@@ -17,10 +17,12 @@ return new class extends Migration
             $table->string('route');
             $table->date('return_date');
             $table->integer('price_per_pack');
+             $table->string('qty_pack');
+            $table->integer('total_price');
             $table->timestamps();
         });
     }
-    
+
 
     /**
      * Reverse the migrations.

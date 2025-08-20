@@ -10,6 +10,11 @@ class Hotel extends Model
         'name',
         'city',
         'stars',
-        'price_per_night'
+        'price_per_night',
+        'checkin',
+        'checkout',
+        'room_type',
+        'qty_rooms',
+        'price'
     ];
 }

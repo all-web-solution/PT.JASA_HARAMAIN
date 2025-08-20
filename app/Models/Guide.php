@@ -8,6 +8,8 @@ class Guide extends Model
 {
     protected $fillable = [
         'type',
-        'price_per_day'
+        'price_per_day',
+        'days',
+        'total_price'
     ];
 }

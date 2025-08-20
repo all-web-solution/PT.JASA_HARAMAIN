@@ -8,6 +8,8 @@ class Document extends Model
 {
     protected $fillable = [
         'type',
-        'price'
+        'price',
+         'qty_pack',
+        'total_price'
     ];
 }

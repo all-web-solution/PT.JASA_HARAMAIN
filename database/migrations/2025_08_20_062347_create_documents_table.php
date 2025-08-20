@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->enum('type', ['visa umroh', 'visa haji', 'vaksin polio', 'vaksin meningtis']);
             $table->string('price');
+             $table->string('qty_pack');
+            $table->string('total_price');
             $table->timestamps();
         });
     }

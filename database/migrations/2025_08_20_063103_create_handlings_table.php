@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->enum('location', ['Bandara Indonesia', 'Bandara Jeddah', 'Bandara Madinah', 'Hotel', 'Mekkah - Madinah']);
             $table->string('price');
+            $table->string('total_price');
             $table->timestamps();
         });
     }
