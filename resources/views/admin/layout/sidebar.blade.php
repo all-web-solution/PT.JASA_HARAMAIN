@@ -2,7 +2,7 @@
     <div class="sidebar-header text-center">
         <div class="user-avatar rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2">JH</div>
         <h5 class="mb-1 fw-bold" style="font-size: 1rem;">PT JASA HARAMAIN</h5>
-        <small class="opacity-75">Management System</small>
+        <small class="opacity-75">{{auth()->user()->role}}</small>
     </div>
 
     <ul class="nav flex-column mt-2">
@@ -28,10 +28,15 @@
                 <i class="bi bi-credit-card-2-back"></i> PAYMENT
             </a>
         </li>
-        
+
         <li class="nav-item">
             <a class="nav-link" href="#">
                 <i class="bi bi-database"></i> DATABASE
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="bi bi-people-fill"></i> USERS
             </a>
         </li>
     </ul>

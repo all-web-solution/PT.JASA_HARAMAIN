@@ -20,6 +20,12 @@ Route::group(['middleware' => 'auth'], function(){
     Route::delete('/pelanggan/{pelanggan}', [PelangganController::class, 'destroy'])->name('admin.pelanggan.destroy');
     Route::get('/', function () {return view('admin.dashboard');})->name('admin.index');
     Route::post('/services', [ServicesController::class, 'store'])->name('services.store');
+    Route::get('/users', function(){
+        return view('admin.users.index');
+    })->name('user.index');
+    Route::get('/users/create', function(){
+        return view('admin.users.create');
+    })->name('user.create');
 });
 
 

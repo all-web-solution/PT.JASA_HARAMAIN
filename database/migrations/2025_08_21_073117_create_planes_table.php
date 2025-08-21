@@ -11,19 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hotels', function (Blueprint $table) {
+        Schema::create('planes', function (Blueprint $table) {
             $table->id();
-           
+            $table->string('kota_asal');
+            $table->date('tanggal_berangkat');
+            $table->string('maskapai');
+            $table->string('transit')->nullable();
+            $table->string('pax');
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('hotels');
+        Schema::dropIfExists('planes');
     }
 };

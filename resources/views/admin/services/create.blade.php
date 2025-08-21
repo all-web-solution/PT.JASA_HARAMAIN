@@ -361,7 +361,7 @@
 
                     <div class="form-group">
                         <label class="form-label">Jumlah Jamaah</label>
-                        <input type="number" class="form-control" name="total_pax" min="1" required>
+                        <input type="number" class="form-control" name="total_jamaah" min="1" required>
                     </div>
                 </div>
 
@@ -488,14 +488,26 @@
                         <div class="detail-section">
                             <div class="form-group">
                                 <label class="form-label">Tiket Pesawat</label>
-                                <input type="text" class="form-control" name="transportasi[tiket_pesawat]" placeholder="Jumlah pax, rute, tanggal, maskapai">
-                                <div class="form-text">Contoh: 20 pax, Jakarta-Jeddah PP transit Malaysia, 1 Jan 2024, Garuda Indonesia</div>
+                                <select name="plane" id="" class="form-control">
+                                    <option value="" disabled selected>Pilih Tiket Pesawat</option>
+                                    <option value="jakarta-jeddah">Jakarta - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
+                                    <option value="surabaya-jeddah">Surabaya - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
+                                    <option value="medan-jeddah">Medan - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
+                                    <option value="bali-jeddah">Bali - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
+                                    <option value="makassar-jeddah">Makassar - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
+                                </select>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Bus</label>
-                                <input type="text" class="form-control" name="transportasi[bus]" placeholder="Jumlah, kapasitas, kebutuhan">
-                                <div class="form-text">Contoh: 1 bus, kapasitas 45 seat, AC + WiFi</div>
+                                <select name="bus" id="" class="form-control">
+                                    <option value="" disabled selected>Pilih Bus</option>
+                                    <option value="jakarta-jeddah">Jakarta - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
+                                    <option value="surabaya-jeddah">Surabaya - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
+                                    <option value="medan-jeddah">Medan - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
+                                    <option value="bali-jeddah">Bali - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
+                                    <option value="makassar-jeddah">Makassar - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -509,14 +521,24 @@
                         <div class="detail-section">
                             <div class="form-group">
                                 <label class="form-label">Makkah</label>
-                                <input type="text" class="form-control" name="hotel[makkah]" placeholder="Checkin, checkout, tipe kamar, bintang">
-                                <div class="form-text">Contoh: Checkin 2 Jan, Checkout 7 Jan, 4 quad + 1 queen, bintang 4</div>
+                                <select name="makkah_hotel" id="" class="form-control">
+                                    <option value="" disabled selected>Pilih Hotel</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                </select>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Madinah</label>
-                                <input type="text" class="form-control" name="hotel[madinah]" placeholder="Checkin, checkout, tipe kamar, bintang">
-                                <div class="form-text">Contoh: Checkin 8 Jan, Checkout 13 Jan, 4 quad + 1 queen, bintang 4</div>
+                               <label class="form-label">Madinah</label>
+                               <select name="" id="madinah_hotel" class="form-control">
+                                    <option value="" disabled selected>Pilih Hotel</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -530,14 +552,24 @@
                         <div class="detail-section">
                             <div class="form-group">
                                 <label class="form-label">Visa</label>
-                                <input type="text" class="form-control" name="dokumen[visa]" placeholder="Jumlah pax, jenis visa">
-                                <div class="form-text">Contoh: 20 pax, visa umroh</div>
+                                <select name="visa" id="" class="form-control">
+                                    <option value="" disabled selected>Pilih visa</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                </select>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Vaksin</label>
-                                <input type="text" class="form-control" name="dokumen[vaksin]" placeholder="Jenis vaksin, jumlah pax">
-                                <div class="form-text">Contoh: Meningitis & Polio, 20 pax</div>
+                               <select name="vaksin" id="" class="form-control">
+                                    <option value="" disabled selected>Pilih Vaksin</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                </select>
                             </div>
 
                             <div class="form-group">
@@ -557,12 +589,24 @@
                         <div class="detail-section">
                             <div class="form-group">
                                 <label class="form-label">Bandara Indonesia</label>
-                                <input type="text" class="form-control" name="handling[bandara_indonesia]" placeholder="Detail handling bandara Indonesia">
+                                <select name="bandara_indonesia" id="" class="form-control">
+                                    <option value="" disabled selected>Pilih Vaksin</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                </select>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Bandara Jeddah</label>
-                                <input type="text" class="form-control" name="handling[bandara_jeddah]" placeholder="Detail handling bandara Jeddah">
+                                <select name="bandara_jeddah" id="" class="form-control">
+                                    <option value="" disabled selected>Pilih Vaksin</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                    <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type : 4 quad + 1 queen, Bintang : 5</option>
+                                </select>
                             </div>
 
                             <div class="form-group">

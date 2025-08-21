@@ -11,19 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hotels', function (Blueprint $table) {
+        Schema::create('makkah_hotels', function (Blueprint $table) {
             $table->id();
-           
+            $table->date('check_in');
+            $table->date('check_out');
+            $table->string('hotel_name');
+            $table->string('room_type');
+            $table->string('bintang')->nullable(); // Optional field for hotel star rating
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('hotels');
+        Schema::dropIfExists('makkah_hotels');
     }
 };

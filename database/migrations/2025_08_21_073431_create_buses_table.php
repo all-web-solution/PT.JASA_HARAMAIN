@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hotels', function (Blueprint $table) {
+        Schema::create('buses', function (Blueprint $table) {
             $table->id();
-           
+            $table->string('nama');
+            $table->foreignId('bus_facility_id')->constrained('bus_facilities')->onDelete('cascade');
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('hotels');
+        Schema::dropIfExists('buses');
     }
 };
