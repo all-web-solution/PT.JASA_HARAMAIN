@@ -10,6 +10,12 @@ class Guide extends Model
         'type',
         'price_per_day',
         'days',
-        'total_price'
+        'total_price',
+        'pelanggan_id',
     ];
+
+    public function pelanggan()
+    {
+        return $this->belongsTo(Pelanggan::class, 'pelanggan_id');
+    }
 }

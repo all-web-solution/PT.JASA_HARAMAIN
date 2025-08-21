@@ -13,15 +13,10 @@ return new class extends Migration
     {
         Schema::create('hotels', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('city');
-            $table->string('stars');
-            $table->string('price_per_night');
-             $table->date('checkin');
-            $table->date('checkout');
-            $table->enum('room_type', ['queen', 'quad']);
-            $table->integer('qty_rooms');
-            $table->integer('price');
+           $table->unsignedInteger('pelanggan_id');
+$table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
+            $table->string('makkah');
+            $table->string('madinah'); // e.g., 'pesawat', 'bus', 'mobil');
             $table->timestamps();
         });
     }

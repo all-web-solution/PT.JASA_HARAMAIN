@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Wakaf extends Model
+class Content extends Model
 {
-    protected $fillable = ['pelanggan_id','type', 'price', 'qty', 'total_price'];
+    protected $fillable = ['pelanggan_id', 'makkah', 'madinah', 'al_ula', 'lengkap'];
 
     public function pelanggan()
     {

@@ -115,7 +115,7 @@
     <i class="bi bi-plus"></i> Tambah Baru
 </a>
                             <div class="btn-group">
-                                <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" 
+                                <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown"
                                         style="background-color: var(--haramain-light); color: var(--haramain-primary);">
                                     <i class="bi bi-download"></i> Ekspor
                                 </button>
@@ -126,7 +126,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Filter Section -->
                     <div class="row mt-3">
                         <div class="col-md-6">
@@ -135,7 +135,7 @@
                                     <span class="input-group-text" style="background-color: var(--haramain-light); border-color: rgba(0, 0, 0, 0.08);">
                                         <i class="bi bi-search" style="color: var(--haramain-primary);"></i>
                                     </span>
-                                    <input type="text" name="search" class="form-control" placeholder="Cari travel/pelanggan..." 
+                                    <input type="text" name="search" class="form-control" placeholder="Cari travel/pelanggan..."
                                            style="border-color: rgba(0, 0, 0, 0.08);" value="{{ request('search') }}">
                                     <button class="btn" type="submit" style="background-color: var(--haramain-secondary); color: white;">
                                         Cari
@@ -164,7 +164,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Table Section -->
                 <div class="card-body pt-2">
                     @if($pelanggans->isEmpty())
@@ -199,7 +199,7 @@
                                                 @if($pelanggan->foto)
                                                     <img src="{{ asset('storage/'.$pelanggan->foto) }}" class="rounded-circle me-2" width="32" height="32" alt="{{ $pelanggan->nama_travel }}">
                                                 @else
-                                                    <div class="me-2" style="width: 32px; height: 32px; background-color: #e3f2fd; border-radius: 50%; 
+                                                    <div class="me-2" style="width: 32px; height: 32px; background-color: #e3f2fd; border-radius: 50%;
                                                          display: flex; align-items: center; justify-content: center;">
                                                         <i class="bi bi-building" style="color: var(--haramain-secondary); font-size: 0.875rem;"></i>
                                                     </div>
@@ -229,7 +229,7 @@
                                         </td>
                                         <td>
                                             <div class="d-flex">
-                                                <a href="" class="btn btn-sm me-1" 
+                                                <a href="" class="btn btn-sm me-1"
                                                    style="background-color: var(--haramain-light); color: var(--haramain-primary); padding: 0.25rem 0.5rem;"
                                                    data-bs-toggle="tooltip" title="Edit">
                                                     <i class="bi bi-pencil" style="font-size: 0.8125rem;"></i>
@@ -237,7 +237,7 @@
                                                 <form action="" method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm" 
+                                                    <button type="submit" class="btn btn-sm"
                                                             style="background-color: var(--haramain-light); color: #f44336; padding: 0.25rem 0.5rem;"
                                                             data-bs-toggle="tooltip" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus travel ini?')">
                                                         <i class="bi bi-trash" style="font-size: 0.8125rem;"></i>
@@ -250,7 +250,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <!-- Pagination -->
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <div class="text-muted small">

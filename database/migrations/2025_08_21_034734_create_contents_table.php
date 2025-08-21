@@ -11,23 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transportations', function (Blueprint $table) {
+        Schema::create('contents', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('pelanggan_id');
+             $table->unsignedInteger('pelanggan_id');
 $table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
-            $table->string('pesawat');
-            $table->string('mobil'); // e.g., 'pesawat', 'bus', 'mobil');
-
+              $table->string('makkah');
+            $table->string('madinah');
+            $table->string('al ula');
+            $table->string('lengkap'); // e.g., 'pesawat', 'bus', 'mobil');
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('transportations');
+        Schema::dropIfExists('contents');
     }
 };

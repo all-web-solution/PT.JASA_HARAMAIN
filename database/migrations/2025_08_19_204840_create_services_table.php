@@ -13,14 +13,12 @@ return new class extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('subcategory_id')->unsigned();
-            $table->foreign('subcategory_id')->references('id')->on('subcategories')->onDelete('cascade');
-            $table->string('name'); // contoh: Visa Umroh, Tiket Pesawat, Mutowwif Premium
-            $table->text('description')->nullable();
-            $table->decimal('price', 15, 2)->nullable(); // harga
-            $table->string('currency', 10)->default('SAR')->nullable(); // default Riyal
-            $table->integer('duration')->nullable(); // durasi layanan (misal hari)
-            $table->boolean('is_active')->default(true);
+           $table->unsignedInteger('pelanggan_id');
+            $table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
+            $table->string('jamaah');
+            $table->integer('service')->unsigned();
+            $table->date('tanggal_keberangkatan');
+            $table->date('tanggal_kepulangan');
             $table->timestamps();
         });
     }

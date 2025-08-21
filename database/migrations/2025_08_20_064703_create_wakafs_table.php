@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('wakafs', function (Blueprint $table) {
             $table->id();
+             $table->unsignedInteger('pelanggan_id');
+$table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
             $table->enum('type', ['air minum', 'al quran', 'nasi box']);
             $table->text('price');
             $table->string('qty');

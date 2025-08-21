@@ -8,5 +8,7 @@ class Catering extends Model
 {
     protected $fillable = ['type', 'qty_pack',
         'days',
-        'total_price'];
+        'total_price'
+        
+    ];
 }

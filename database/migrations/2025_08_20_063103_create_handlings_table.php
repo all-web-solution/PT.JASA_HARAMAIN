@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('handlings', function (Blueprint $table) {
             $table->id();
-            $table->enum('location', ['Bandara Indonesia', 'Bandara Jeddah', 'Bandara Madinah', 'Hotel', 'Mekkah - Madinah']);
-            $table->string('price');
-            $table->string('total_price');
+            $table->unsignedInteger('pelanggan_id');
+$table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
+            $table->string('bandara_indonesia');
+            $table->string('bandara_mekkah'); // e.g., 'pesawat', 'bus', 'mobil');
+            $table->string('hotel'); // e.g., 'pesawat', 'bus', 'mobil');
             $table->timestamps();
         });
     }

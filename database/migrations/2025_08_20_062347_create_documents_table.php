@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['visa umroh', 'visa haji', 'vaksin polio', 'vaksin meningtis']);
-            $table->string('price');
-             $table->string('qty_pack');
-            $table->string('total_price');
+            $table->unsignedInteger('pelanggan_id');
+$table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
+            $table->string('visa');
+            $table->string('vaksin'); // e.g., 'pesawat', 'bus', 'mobil');
+            $table->string('tasreh_roudoh'); // e.g., 'pesawat', 'bus', 'mobil');
             $table->timestamps();
         });
     }

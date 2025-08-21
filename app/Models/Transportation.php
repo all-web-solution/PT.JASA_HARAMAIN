@@ -6,5 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transportation extends Model
 {
-    protected $fillable = ['type', 'route', 'return_date', 'price_per_pack',  'qty_pack', 'total_price'];
+    protected $fillable = [
+        'pelanggan_id',
+        'pesawat',
+        'mobil', // e.g., 'pesawat', 'bus', 'mobil'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(Pelanggan::class);
+    }
+
 }
