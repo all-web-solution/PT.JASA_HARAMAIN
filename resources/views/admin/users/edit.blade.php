@@ -294,8 +294,9 @@
         </div>
 
         <div class="card-body">
-            <form action="{{ route('user.store') }}" method="POST">
+            <form action="{{ route('user.update', $user->id) }}" method="POST">
                 @csrf
+                @method('PUT')
 
                 <!-- Data Travel Section -->
                 <div class="form-section">
@@ -307,13 +308,13 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Nama</label>
-                                <input type="text" class="form-control" name="name" required id="email">
+                                <input type="text" class="form-control" name="name" required id="email" value="{{ $user->name ?? '' }}">
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Nama Panjang</label>
-                                <input type="text" class="form-control" name="full_name"
+                                <input type="text" class="form-control" name="full_name" value="{{ $user->full_name ?? '' }}"
                                        required  id="penanggung">
                             </div>
                         </div>
@@ -323,13 +324,13 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" required id="email">
+                                <input type="email" class="form-control" name="email" required id="email" value="{{ $user->email ?? '' }}">
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Password</label>
-                                <input type="text" class="form-control" name="password" required id="phone">
+                                <input type="text" class="form-control" name="password" id="phone" >
                             </div>
                         </div>
                     </div>
@@ -338,20 +339,20 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Phone</label>
-                                <input type="text" class="form-control" name="phone" required>
+                                <input type="text" class="form-control" name="phone" required value="{{ $user->phone ?? '' }}">
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Address</label>
-                                <input type="text" class="form-control" name="address" required>
+                                <input type="text" class="form-control" name="address" required value="{{ $user->address ?? '' }}">
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Role</label>
-                        <select name="role" id="role" class="form-control">
+                        <select name="role" id="role" class="form-control" >
                             <option value="" class="form-control">Pilih Role</option>
                             <option value="document" class="form-control">Document</option>
                             <option value="transportasi" class="form-control">transportasi</option>

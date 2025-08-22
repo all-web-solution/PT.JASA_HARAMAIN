@@ -415,7 +415,6 @@
                         <th>Name</th>
                         <th>Full name</th>
                         <th>Email</th>
-                        <th>Passwors</th>
                         <th>Phone</th>
                         <th>Address</th>
                         <th>Role</th>
@@ -423,7 +422,37 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($users as $user)
+                    <tr>
+                        <td class="customer-info">
+                            <div class="customer-avatar">{{ substr($user->name, 0, 2) }}</div>
+                            <div class="customer-details">
+                                <span class="customer-name">{{ $user->name }}</span>
+                                <span class="customer-type">{{ $user->role }}</span>
+                            </div>
+                        </td>
+                        <td>{{ $user->full_name }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td>{{ $user->phone }}</td>
+                        <td>{{ $user->address }}</td>
+                        <td>{{ $user->role }}</td>
+                        <td>
+                            <a href="/user/{{ $user->id }}/edit">
+                                <button class="btn-action btn-edit" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            </a>
+                            <form action="{{ route('user.destroy', $user->id) }}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn-action btn-delete" title="Hapus">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
 
+                        </td>
+                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
