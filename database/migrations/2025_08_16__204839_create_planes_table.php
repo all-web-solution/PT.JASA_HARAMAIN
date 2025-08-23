@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('planes', function (Blueprint $table) {
             $table->id();
-            $table->string('kota_asal');
+            $table->string('bandara_asal');
+            $table->string('bandara_tujuan');
             $table->date('tanggal_berangkat');
-            $table->string('maskapai');
+            $table->string('maskapai')->nullable();
             $table->string('transit')->nullable();
             $table->string('pax');
+            $table->string('description');
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

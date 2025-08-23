@@ -52,5 +52,36 @@ class HotelController extends Controller
         return view('hotel.edit', compact('hotel'));
     }
 
+    public function update(Request $request, $id)
+    {
+        // Validate the request data
+        $request->validate([
+            'checkin' => 'required|date',
+            'checkout' => 'required|date|after:checkin',
+            'room' => 'required|string|max:255',
+            'star' => 'required|string|max:255',
+        ]);
+
+        // Find the hotel booking and update it
+        $hotel = \App\Models\Hotel::findOrFail($id);
+        $hotel->update([
+            'checkin' => $request->checkin,
+            'checkout' => $request->checkout,
+            'room_type' => $request->room,
+            'star' => $request->star,
+        ]);
+
+        // Redirect to the hotel index page with a success message
+        return redirect()->route('hotel.index')->with('success', 'Hotel booking updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $hotel = \App\Models\Hotel::findOrFail($id);
+        $hotel->delete();
+
+        return redirect()->route('hotel.index')->with('success', 'Hotel booking deleted successfully.');
+    }
+
     
 }

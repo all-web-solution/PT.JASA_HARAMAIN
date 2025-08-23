@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('transportations', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('pelanggan_id');
-$table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
-            $table->string('pesawat');
-            $table->string('mobil'); // e.g., 'pesawat', 'bus', 'mobil');
+            $table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
+            $table->foreignId('plane_id')->constrained('planes')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('bus_id')->constrained('buses')->cascadeOnDelete()->cascadeOnUpdate();
 
             $table->timestamps();
         });
     }
+
 
 
     /**

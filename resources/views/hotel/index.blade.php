@@ -432,12 +432,18 @@
                             <button class="btn-action btn-view" title="Lihat Detail">
                                 <i class="bi bi-eye"></i>
                             </button>
-                            <button class="btn-action btn-edit" title="Edit">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                            <button class="btn-action btn-delete" title="Hapus">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            <a href="{{ route('hotel.edit', $hotel->id) }}">
+                                <button class="btn-action btn-edit" title="Edit">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </a>
+                            <form action="{{ route('hotel.destroy', $hotel->id) }}" method="post">
+                                @csrf
+                                @method('delete')
+                                <button class="btn-action btn-delete" title="Hapus">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     @endforeach
@@ -475,7 +481,7 @@
 
         deleteButtons.forEach(button => {
             button.addEventListener('click', function() {
-                if (confirm('Apakah Anda yakin ingin menghapus permintaan service ini?')) {
+                if (confirm('Apakah Anda yakin ingin menghapus permintaan hotel ini?')) {
                     // Here you would typically send a delete request to your backend
                     const row = this.closest('tr');
                     row.style.opacity = '0';

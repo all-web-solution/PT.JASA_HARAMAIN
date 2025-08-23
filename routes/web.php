@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ServicesController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\UserController;
+use App\Models\Hotel;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -32,6 +33,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/hotel', [HotelController::class, 'index'])->name('hotel.index');
     Route::get('/hotel/create', [HotelController::class, 'create'])->name('hotel.create');
     Route::post('/hotel', [HotelController::class, 'store'])->name('hotel.store');
+    Route::get('hotel/{id}', [HotelController::class, 'edit'])->name('hotel.edit');
+    Route::put('hotel/{id}/update', [HotelController::class, 'update'])->name('hotel.update');
+    Route::delete('hotel/{id}/delete', [HotelController::class, 'destroy'])->name('hotel.destroy');
 });
 
 Route::group(['middleware' => 'guest'], function(){
