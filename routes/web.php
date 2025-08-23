@@ -31,7 +31,7 @@ Route::middleware(['auth', 'role:hotel'])->group(function () {
         return "Assalamualaikum Hotel";
     })->name('admin.services');
 });
-Route::middleware(['auth', 'role:hotel'])->group(function () {
+Route::middleware(['auth', 'role:handling'])->group(function () {
     Route::get('/',function(){
         return "Assalamualaikum Hotel";
     })->name('admin.services');
