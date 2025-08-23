@@ -10,7 +10,7 @@ use App\Models\Hotel;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.index');
     Route::get('/admin/services', [ServicesController::class, 'index'])->name('admin.services');
     Route::get('/services/create', [ServicesController::class, 'create'])->name('services.create');
@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('user.destroy');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'hotel'])->group(function () {
     Route::get('/hotel', [HotelController::class, 'index'])->name('hotel.index');
     Route::get('/hotel/create', [HotelController::class, 'create'])->name('hotel.create');
     Route::post('/hotel', [HotelController::class, 'store'])->name('hotel.store');
