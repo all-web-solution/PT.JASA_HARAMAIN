@@ -16,15 +16,13 @@ class DatabaseSeeder extends Seeder
     {
         $roles = [
             'admin',
-            'document',
-            'transportasi',
-            'pendamping',
-            'handling',
             'hotel',
-            'tour',
-            'catering',
-            'content',
-            'wakaf',
+            'handling',
+            'transportasi & tiket',
+            'visa dan acara',
+            'reyal',
+            'palugada',
+            'konten dan dokumentasi',
         ];
 
         foreach ($roles as $role) {

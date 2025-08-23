@@ -8,11 +8,9 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
-
-Route::group(['middleware' => 'auth'], function(){
+Route::middleware(['auth','role:admin'])->group(function () {
     Route::get('/admin/services', [ServicesController::class, 'index'])->name('admin.services');
     Route::get('/services/create', [ServicesController::class, 'create'])->name('services.create');
-    //pelanggan routes
     Route::get('/admin/pelanggan', [PelangganController::class, 'index'])->name('admin.pelanggan');
     Route::get('/pelanggan/create', [PelangganController::class, 'create'])->name('admin.pelanggan.create');
     Route::post('/pelanggan', [PelangganController::class, 'store'])->name('admin.pelanggan.store');
@@ -27,7 +25,41 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/{id}', [UserController::class, 'update'])->name('user.update');
     Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('user.destroy');
-
+});
+Route::middleware(['auth', 'role:hotel'])->group(function () {
+    Route::get('/',function(){
+        return "Assalamualaikum Hotel";
+    })->name('admin.services');
+});
+Route::middleware(['auth', 'role:hotel'])->group(function () {
+    Route::get('/',function(){
+        return "Assalamualaikum Hotel";
+    })->name('admin.services');
+});
+Route::middleware(['auth', 'role:transportasi & tiket'])->group(function () {
+    Route::get('/',function(){
+        return "Assalamualaikum Hotel";
+    })->name('admin.services');
+});
+Route::middleware(['auth', 'role:visa & acara'])->group(function () {
+    Route::get('/',function(){
+        return "Assalamualaikum Hotel";
+    })->name('admin.services');
+});
+Route::middleware(['auth', 'role:reyal'])->group(function () {
+    Route::get('/',function(){
+        return "Assalamualaikum Hotel";
+    })->name('admin.services');
+});
+Route::middleware(['auth', 'role:palugada'])->group(function () {
+    Route::get('/',function(){
+        return "Assalamualaikum Hotel";
+    })->name('admin.services');
+});
+Route::middleware(['auth', 'role:konten & dokumentasi'])->group(function () {
+    Route::get('/',function(){
+        return "Assalamualaikum Hotel";
+    })->name('admin.services');
 });
 
 

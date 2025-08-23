@@ -353,17 +353,14 @@
                         <label class="form-label">Role</label>
                         <select name="role" id="role" class="form-control">
                             <option value="" class="form-control">Pilih Role</option>
-                            <option value="document" class="form-control">Document</option>
-                            <option value="transportasi" class="form-control">transportasi</option>
-                            <option value="pendamping" class="form-control">pendamping</option>
-                            <option value="handling" class="form-control">handling</option>
-                            <option value="hotel" class="form-control">hotel</option>
-                            <option value="tour" class="form-control">tour</option>
-                            <option value="catering" class="form-control">Catering</option>
-                            <option value="content" class="form-control">content</option>
-                            <option value="wakaf" class="form-control">wakaf</option>
-                            <option value="traveler" class="form-control">traveler</option>
-
+                            <option value="admin" class="form-control">Admin</option>
+                            <option value="hotel" class="form-control">Hotel</option>
+                            <option value="handling" class="form-control">Handling</option>
+                            <option value="transportasi dan tiket" class="form-control">Transportasi dan Hotel</option>
+                            <option value="visa dan acara" class="form-control">Visa dan acara</option>
+                            <option value="reyal" class="form-control">Reyal</option>
+                            <option value="palugada" class="form-control">Palugada</option>
+                            <option value="konten dan dokumentasi" class="form-control">Konten dan dokumentasi</option>
                         </select>
                     </div>
                 </div>

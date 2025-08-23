@@ -24,15 +24,13 @@ return new class extends Migration
             $table->enum('role',
             [
                 'admin',
-                'document',
-                'transportasi',
-                'pendamping',
-                'handling',
                 'hotel',
-                'tour',
-                'catering',
-                'content',
-                'wakaf',
+                'handling',
+                'transportasi & tiket',
+                'visa dan acara',
+                'reyal',
+                'palugada',
+                'konten dan dokumentasi',
                 ])->default('admin');
             $table->boolean('is_active')->default(true);
             $table->timestamp('last_login_at')->nullable();
