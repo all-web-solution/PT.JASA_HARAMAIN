@@ -4,10 +4,10 @@
         <h5 class="mb-1 fw-bold" style="font-size: 1rem;">PT JASA HARAMAIN</h5>
         <small class="opacity-75">{{auth()->user()->role}}</small>
     </div>
-
+    @if (auth()->user()->role === 'admin')
     <ul class="nav flex-column mt-2">
         <li class="nav-item">
-            <a class="nav-link active" href="#">
+            <a class="nav-link active" href="/">
                 <i class="bi bi-speedometer2"></i> DASHBOARD
             </a>
         </li>
@@ -40,4 +40,13 @@
             </a>
         </li>
     </ul>
+    @elseif (auth()->user()->role === 'hotel')
+    <ul class="nav flex-column mt-2">
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('hotel.index') }}">
+                <i class="bi bi-speedometer2"></i> HOTEL
+            </a>
+        </li>
+    </ul>
+    @endif
 </div>

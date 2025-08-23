@@ -4,29 +4,50 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 class AuthController extends Controller
 {
-    public function sign_in(Request $request)
+   public function sign_in(Request $request)
 {
-    $credentials = $request->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required'],
+    $auth = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
     ]);
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate(); // penting biar session hijacking aman
-        return redirect()->route('admin.index');
+    if (Auth::attempt($auth)) {
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.index');
+        } elseif ($user->role === 'hotel') {
+            return redirect()->route('hotel.index');
+        } elseif ($user->role === 'handling') {
+            return redirect()->route('handling.index');
+        } elseif ($user->role === 'visa dan acara') {
+            return redirect()->route('visa.index');
+        } elseif ($user->role === 'reyal') {
+            return redirect()->route('reyal.index');
+        } elseif ($user->role === 'palugada') {
+            return redirect()->route('palugada.index');
+        } elseif ($user->role === 'konten dan dokumentasi') {
+            return redirect()->route('content.index');
+        }
+
+        return redirect()->route('login')->withErrors(['email' => 'Role tidak dikenali.']);
     }
 
     return back()->withErrors([
         'email' => 'Email atau password salah.',
-    ])->onlyInput('email');
+    ]);
 }
 
-public function sign_out()
-{
-    Auth::logout();
-    return redirect('/admin/services')->with('success', 'Anda telah berhasil keluar');
 
-}
+
+    public function sign_out()
+    {
+        Auth::logout();
+        return redirect('/admin/services')->with('success', 'Anda telah berhasil keluar');
+    }
 }

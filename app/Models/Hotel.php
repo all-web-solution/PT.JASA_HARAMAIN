@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Hotel extends Model
 {
     protected $fillable = [
-        'pelanggan_id',
-        'mekkah',
-        'medinah',
+        'checkin',
+        'checkout',
+        'room_type',
+        'star',
+        'travel_id',
     ];
 
     public function travel()
