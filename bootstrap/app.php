@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         'role'  => \App\Http\Middleware\RoleMiddleware::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'hotel' => \App\Http\Middleware\HotelMiddleware::class,
+        'handling' => \App\Http\Middleware\HandlingMiddleware::class,
     ]);
 })
     ->withExceptions(function (Exceptions $exceptions): void {

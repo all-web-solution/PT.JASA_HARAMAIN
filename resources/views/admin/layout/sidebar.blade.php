@@ -48,5 +48,13 @@
             </a>
         </li>
     </ul>
+    @elseif (auth()->user()->role === 'handling')
+    <ul class="nav flex-column mt-2">
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('catering.index') }}">
+                <i class="bi bi-speedometer2"></i> CATERING
+            </a>
+        </li>
+    </ul>
     @endif
 </div>

@@ -37,6 +37,18 @@ Route::middleware(['auth', 'hotel'])->group(function () {
     Route::put('hotel/{id}/update', [HotelController::class, 'update'])->name('hotel.update');
     Route::delete('hotel/{id}/delete', [HotelController::class, 'destroy'])->name('hotel.destroy');
 });
+    Route::middleware(['auth', 'handling'])->group(function () {
+        Route::group(['prefix' => 'catering',], function() {
+            Route::get('/', [App\Http\Controllers\Handling\CateringController::class, 'index'])->name('catering.index');
+            Route::get('/create', [App\Http\Controllers\Handling\CateringController::class, 'create'])->name('catering.create');
+            Route::post('/', [App\Http\Controllers\Handling\CateringController::class, 'store'])->name('catering.store');
+            Route::get('/{id}', [App\Http\Controllers\Handling\CateringController::class, 'show'])->name('catering.show');
+            Route::get('/{id}/edit', [App\Http\Controllers\Handling\CateringController::class, 'edit'])->name('catering.edit');
+            Route::put('update/{id}', [App\Http\Controllers\Handling\CateringController::class, 'update'])->name('catering.update');
+            Route::delete('/delete/{id}', [App\Http\Controllers\Handling\CateringController::class, 'destroy'])->name('catering.delete');
+        });
+    });
+
 
 Route::group(['middleware' => 'guest'], function(){
     Route::get('admin/login', function(){return view('admin.auth.login');})->name('login');

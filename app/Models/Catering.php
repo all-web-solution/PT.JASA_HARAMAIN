@@ -10,5 +10,6 @@ class Catering extends Model
         'days',
         'total_price'
         
+
     ];
 }
