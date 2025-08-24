@@ -135,7 +135,9 @@
         margin-bottom: 1.5rem;
     }
 
-    .service-item {
+ .service-item,
+    .transport-item,
+    .service-car {
         border: 2px solid var(--border-color);
         border-radius: 8px;
         padding: 1.25rem;
@@ -145,16 +147,27 @@
         background-color: white;
     }
 
-    .service-item:hover {
+    .service-item:hover,
+    .transport-item:hover,
+    .service-car:hover {
         border-color: var(--haramain-secondary);
         transform: translateY(-5px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
 
-    .service-item.selected {
+    .service-item.selected,
+    .transport-item.selected,
+    .service-car.selected {
         border-color: var(--haramain-secondary);
         background-color: var(--haramain-light);
     }
+
+    .service-icon {
+        font-size: 2rem;
+        color: var(--haramain-secondary);
+        margin-bottom: 0.75rem;
+    }
+
 
     .service-icon {
         font-size: 2rem;
@@ -280,6 +293,10 @@
             justify-content: center;
         }
     }
+
+    #pesawat, #bis {
+        display: none;
+    }
 </style>
 
 <div class="service-create-container">
@@ -372,7 +389,7 @@
                     </h6>
 
                     <div class="service-grid">
-                        <div class="service-item selected" data-service="transportasi">
+                        <div class="service-item" data-service="transportasi">
                             <div class="service-icon">
                                 <i class="bi bi-airplane"></i>
                             </div>
@@ -381,7 +398,7 @@
                             <input type="checkbox" name="services[]" value="transportasi" checked hidden>
                         </div>
 
-                        <div class="service-item selected" data-service="hotel">
+                        <div class="service-item" data-service="hotel">
                             <div class="service-icon">
                                 <i class="bi bi-building"></i>
                             </div>
@@ -390,7 +407,7 @@
                             <input type="checkbox" name="services[]" value="hotel" checked hidden>
                         </div>
 
-                        <div class="service-item selected" data-service="dokumen">
+                        <div class="service-item" data-service="dokumen">
                             <div class="service-icon">
                                 <i class="bi bi-file-text"></i>
                             </div>
@@ -399,7 +416,7 @@
                             <input type="checkbox" name="services[]" value="dokumen" checked hidden>
                         </div>
 
-                        <div class="service-item selected" data-service="handling">
+                        <div class="service-item" data-service="handling">
                             <div class="service-icon">
                                 <i class="bi bi-briefcase"></i>
                             </div>
@@ -408,7 +425,7 @@
                             <input type="checkbox" name="services[]" value="handling" checked hidden>
                         </div>
 
-                        <div class="service-item selected" data-service="pendamping">
+                        <div class="service-item" data-service="pendamping">
                             <div class="service-icon">
                                 <i class="bi bi-people"></i>
                             </div>
@@ -417,7 +434,7 @@
                             <input type="checkbox" name="services[]" value="pendamping" checked hidden>
                         </div>
 
-                        <div class="service-item selected" data-service="konten">
+                        <div class="service-item" data-service="konten">
                             <div class="service-icon">
                                 <i class="bi bi-camera"></i>
                             </div>
@@ -426,7 +443,7 @@
                             <input type="checkbox" name="services[]" value="konten" checked hidden>
                         </div>
 
-                        <div class="service-item selected" data-service="reyal">
+                        <div class="service-item" data-service="reyal">
                             <div class="service-icon">
                                 <i class="bi bi-currency-exchange"></i>
                             </div>
@@ -435,7 +452,7 @@
                             <input type="checkbox" name="services[]" value="reyal" checked hidden>
                         </div>
 
-                        <div class="service-item selected" data-service="tour">
+                        <div class="service-item" data-service="tour">
                             <div class="service-icon">
                                 <i class="bi bi-geo-alt"></i>
                             </div>
@@ -444,7 +461,7 @@
                             <input type="checkbox" name="services[]" value="tour" checked hidden>
                         </div>
 
-                        <div class="service-item selected" data-service="meals">
+                        <div class="service-item" data-service="meals">
                             <div class="service-icon">
                                 <i class="bi bi-egg-fried"></i>
                             </div>
@@ -453,7 +470,7 @@
                             <input type="checkbox" name="services[]" value="meals" checked hidden>
                         </div>
 
-                        <div class="service-item selected" data-service="katering">
+                        <div class="service-item" data-service="katering">
                             <div class="service-icon">
                                 <i class="bi bi-basket"></i>
                             </div>
@@ -462,7 +479,7 @@
                             <input type="checkbox" name="services[]" value="katering" checked hidden>
                         </div>
 
-                        <div class="service-item selected" data-service="waqaf">
+                        <div class="service-item" data-service="waqaf">
                             <div class="service-icon">
                                 <i class="bi bi-gift"></i>
                             </div>
@@ -485,29 +502,94 @@
                             <i class="bi bi-airplane"></i> Transportasi
                         </h6>
 
-                        <div class="detail-section">
-                            <div class="form-group">
+                         <div class="detail-section">
+                            <div class="service-grid">
+                                <div class="transport-item" data-transportasi="airplane">
+                                    <div class="service-icon">
+                                        <i class="bi bi-airplane"></i>
+                                    </div>
+                                    <div class="service-name">Pesawat</div>
+                                    <div class="service-desc">Tiket Pesawat</div>
+                                    <input type="checkbox" name="transportation[]" value="airplane" checked hidden>
+                                </div>
+
+                                <div class="transport-item" data-transportasi="bus">
+                                    <div class="service-icon">
+                                        <i class="bi bi-bus-front"></i>
+                                    </div>
+                                    <div class="service-name">Bus</div>
+                                    <div class="service-desc">Bus Transportasi</div>
+                                    <input type="checkbox" name="transportation[]" value="bus" checked hidden>
+                                </div>
+                            </div>
+                            <div class="form-group" data-transportasi="airplane" id="pesawat">
                                 <label class="form-label">Tiket Pesawat</label>
-                                <select name="plane" id="" class="form-control">
-                                    <option value="" disabled selected>Pilih Tiket Pesawat</option>
-                                    <option value="jakarta-jeddah">Jakarta - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
-                                    <option value="surabaya-jeddah">Surabaya - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
-                                    <option value="medan-jeddah">Medan - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
-                                    <option value="bali-jeddah">Bali - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
-                                    <option value="makassar-jeddah">Makassar - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
-                                </select>
+                                <div id="plane-wrapper">
+                                    <div class="d-flex gap-2 mb-2">
+                                        <select name="plane[]" class="form-control">
+                                            <option value="" disabled selected>Pilih Tiket Pesawat</option>
+                                            <option value="jakarta-jeddah">Jakarta - Jeddah (transit Malaysia),
+                                                tanggalnya, maskapai</option>
+                                            <option value="surabaya-jeddah">Surabaya - Jeddah (transit Malaysia),
+                                                tanggalnya, maskapai</option>
+                                            <option value="medan-jeddah">Medan - Jeddah (transit Malaysia), tanggalnya,
+                                                maskapai</option>
+                                            <option value="bali-jeddah">Bali - Jeddah (transit Malaysia), tanggalnya,
+                                                maskapai</option>
+                                            <option value="makassar-jeddah">Makassar - Jeddah (transit Malaysia),
+                                                tanggalnya, maskapai</option>
+                                        </select>
+                                        <button type="button" class="btn btn-primary add-plane">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group" data-transportasi="bus" id="bis">
                                 <label class="form-label">Bus</label>
-                                <select name="bus" id="" class="form-control">
-                                    <option value="" disabled selected>Pilih Bus</option>
-                                    <option value="jakarta-jeddah">Jakarta - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
-                                    <option value="surabaya-jeddah">Surabaya - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
-                                    <option value="medan-jeddah">Medan - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
-                                    <option value="bali-jeddah">Bali - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
-                                    <option value="makassar-jeddah">Makassar - Jeddah (transit Malaysia), tanggal nya, maskapai</option>
-                                </select>
+                                <div class="cars">
+                                    <label class="service-car">
+                                        <div class="service-icon">
+                                            <i class="bi bi-egg-fried"></i>
+                                        </div>
+                                        <div class="service-name">Meals</div>
+                                        <div class="service-desc">Makanan</div>
+                                        <input type="radio" name="services" value="meals" class="d-none">
+                                    </label>
+
+                                    <label class="service-car">
+                                        <div class="service-icon">
+                                            <i class="bi bi-bus-front"></i>
+                                        </div>
+                                        <div class="service-name">Transport</div>
+                                        <div class="service-desc">Transportasi</div>
+                                        <input type="radio" name="services" value="transport" class="d-none">
+                                    </label>
+
+                                    <label class="service-car">
+                                        <div class="service-icon">
+                                            <i class="bi bi-building"></i>
+                                        </div>
+                                        <div class="service-name">Hotel</div>
+                                        <div class="service-desc">Penginapan</div>
+                                        <input type="radio" name="services" value="hotel" class="d-none">
+                                    </label>
+
+                                    <label class="service-car">
+                                        <div class="service-icon">
+                                            <i class="bi bi-map"></i>
+                                        </div>
+                                        <div class="service-name">Tour</div>
+                                        <div class="service-desc">Wisata</div>
+                                        <input type="radio" name="services" value="tour" class="d-none">
+                                    </label>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -648,11 +730,38 @@
                 const serviceType = item.getAttribute('data-service');
                 const detailForm = document.getElementById(`${serviceType}-details`);
                 if (detailForm) {
-                    detailForm.style.display = checkbox.checked ? 'block' : 'none';
+                    detailForm.style.display = checkbox.checked ? 'none' : 'block';
                 }
             });
         });
 
+        // Toggle seleksi transport item
+        const transportItems = document.querySelectorAll('.transport-item');
+        transportItems.forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('selected');
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+                // Toggle tampilan detail form
+                const transportType = item.getAttribute('data-transportasi');
+                if (transportType === 'airplane') {
+                    document.getElementById('pesawat').style.display = checkbox.checked ? 'none' : 'block';
+                } else if (transportType === 'bus') {
+                    document.getElementById('bis').style.display = checkbox.checked ? 'none' : 'block';
+                }
+            });
+        });
+
+        const serviceCars = document.querySelectorAll('.service-car');
+        serviceCars.forEach(car => {
+            car.addEventListener('click', () => {
+                serviceCars.forEach(c => c.classList.remove('selected'));
+                car.classList.add('selected');
+                const radio = car.querySelector('input[type="radio"]');
+                radio.checked = true;
+            });
+        });
+        
         // Validasi form sebelum submit
         const form = document.querySelector('form');
         form.addEventListener('submit', function(e) {
@@ -685,5 +794,36 @@
 
 
     });
+
+
+     document.addEventListener("click", function (e) {
+    // Tambah form pesawat
+    if (e.target.closest(".add-plane")) {
+        const wrapper = document.getElementById("plane-wrapper");
+        const newForm = document.createElement("div");
+        newForm.classList.add("d-flex", "gap-2", "mb-2");
+        newForm.innerHTML = `
+            <select name="plane[]" class="form-control">
+                <option value="" disabled selected>Pilih Tiket Pesawat</option>
+                <option value="jakarta-jeddah">Jakarta - Jeddah (transit Malaysia), tanggalnya, maskapai</option>
+                <option value="surabaya-jeddah">Surabaya - Jeddah (transit Malaysia), tanggalnya, maskapai</option>
+                <option value="medan-jeddah">Medan - Jeddah (transit Malaysia), tanggalnya, maskapai</option>
+                <option value="bali-jeddah">Bali - Jeddah (transit Malaysia), tanggalnya, maskapai</option>
+                <option value="makassar-jeddah">Makassar - Jeddah (transit Malaysia), tanggalnya, maskapai</option>
+            </select>
+            <button type="button" class="btn btn-danger remove-plane">Hapus</button>
+        `;
+        wrapper.appendChild(newForm);
+    }
+
+    // Hapus form pesawat
+    if (e.target.closest(".remove-plane")) {
+        const formItem = e.target.closest(".d-flex");
+        if (formItem) {
+            formItem.remove();
+        }
+    }
+});
+
 </script>
 @endsection

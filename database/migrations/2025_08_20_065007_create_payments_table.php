@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete()->cascadeOnUpdate();
             $table->enum('method', ['cash', 'cicil']);
-            $table->string('amount_paid');
             $table->date('payment_date');
+            $table->enum('status_payment', ['unpaid', 'paid'])->default('unpaid');
             $table->timestamps();
         });
     }

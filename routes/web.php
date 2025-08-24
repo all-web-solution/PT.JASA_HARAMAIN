@@ -9,6 +9,8 @@ use App\Http\Controllers\UserController;
 use App\Models\Hotel;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PaymentController;
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.index');
@@ -27,6 +29,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/{id}', [UserController::class, 'update'])->name('user.update');
     Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('user.destroy');
+    Route::get('/order', [OrderController::class, 'index'])->name('admin.order');
+    Route::get('/order/create', [OrderController::class, 'create'])->name('admin.order.create');
+    Route::post('/order', [OrderController::class, 'store'])->name('order.store');
+    Route::get('/order/{id}', [OrderController::class, 'edit'])->name('admin.order.show');
+    Route::put('/order/{id}', [OrderController::class, 'update'])->name('admin.order.update');
+    Route::delete('/order/{id}', [OrderController::class, 'destroy'])->name('admin.order.destroy');
+    Route::get('/payment', [PaymentController::class, 'index'])->name('admin.payment');
+    Route::get('/payment/create', [PaymentController::class, 'create'])->name('admin.payment.create');
 });
 
 Route::middleware(['auth', 'hotel'])->group(function () {

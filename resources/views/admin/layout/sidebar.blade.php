@@ -24,14 +24,13 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-credit-card-2-back"></i> PAYMENT
+            <a class="nav-link" href="{{ route('admin.order') }}">
+                <i class="bi bi-credit-card-2-back"></i> ORDER
             </a>
         </li>
-
         <li class="nav-item">
             <a class="nav-link" href="#">
-                <i class="bi bi-database"></i> DATABASE
+                <i class="bi bi-credit-card-2-back"></i> PAYMENT
             </a>
         </li>
         <li class="nav-item">

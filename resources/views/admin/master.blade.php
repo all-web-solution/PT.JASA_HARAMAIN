@@ -18,7 +18,7 @@
             --text-secondary: #64748b;
             --text-muted: #94a3b8;
         }
-        
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 0.875rem;
@@ -26,7 +26,7 @@
             background-color: var(--haramain-light);
             line-height: 1.5;
         }
-        
+
         /* Sidebar Styling */
         .sidebar {
             width: 260px;
@@ -36,13 +36,13 @@
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
-        
+
         .sidebar-header {
             padding: 1.25rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             background-color: rgba(0, 0, 0, 0.1);
         }
-        
+
         .user-avatar {
             width: 70px;
             height: 70px;
@@ -51,7 +51,7 @@
             font-size: 1.75rem;
             font-weight: bold;
         }
-        
+
         .sidebar .nav-link {
             color: rgba(255, 255, 255, 0.85);
             padding: 0.65rem 1.25rem;
@@ -61,14 +61,14 @@
             font-size: 0.8125rem;
             font-weight: 500;
         }
-        
-        .sidebar .nav-link:hover, 
+
+        .sidebar .nav-link:hover,
         .sidebar .nav-link.active {
             color: white;
             background-color: rgba(255, 255, 255, 0.12);
             transform: translateX(3px);
         }
-        
+
         .sidebar .nav-link i {
             margin-right: 10px;
             font-size: 1rem;
@@ -76,30 +76,30 @@
             text-align: center;
             opacity: 0.9;
         }
-        
+
         .sidebar .submenu {
             background-color: rgba(0, 0, 0, 0.08);
             border-left: 3px solid var(--haramain-accent);
         }
-        
+
         .sidebar .submenu .nav-link {
             padding: 0.5rem 1.25rem 0.5rem 2.5rem;
             font-size: 0.7875rem;
         }
-        
+
         /* Main Content Styling */
         .main-content {
             background-color: var(--haramain-light);
             flex: 1;
         }
-        
+
         .topbar {
             background-color: white;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
             z-index: 10;
             padding: 0.75rem 1.5rem;
         }
-        
+
         /* Card Styling */
         .card-stat {
             border: none;
@@ -110,17 +110,17 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
             border: 1px solid rgba(0, 0, 0, 0.04);
         }
-        
+
         .card-stat:hover {
             transform: translateY(-3px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
-        
+
         .card-stat .card-body {
             position: relative;
             padding: 1.25rem;
         }
-        
+
         .card-stat .card-body::before {
             content: '';
             position: absolute;
@@ -130,13 +130,13 @@
             height: 100%;
             background: linear-gradient(to bottom, var(--haramain-secondary), var(--haramain-accent));
         }
-        
+
         .card-stat .card-title {
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 0.25rem;
         }
-        
+
         .card-stat .card-subtitle {
             font-size: 0.75rem;
             color: var(--text-muted);
@@ -144,7 +144,7 @@
             text-transform: uppercase;
             font-weight: 500;
         }
-        
+
         /* Notification Badge */
         .notification-badge {
             position: absolute;
@@ -158,7 +158,7 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         /* Buttons */
         .btn-haramain {
             background: linear-gradient(to right, var(--haramain-secondary), var(--haramain-accent));
@@ -170,25 +170,25 @@
             font-size: 0.8125rem;
             box-shadow: 0 1px 2px rgba(25, 118, 210, 0.15);
         }
-        
+
         .btn-haramain:hover {
             background: linear-gradient(to right, var(--haramain-primary), var(--haramain-secondary));
             color: white;
             box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
         }
-        
+
         /* Table Styling */
         .table-haramain {
             border-radius: 8px;
             overflow: hidden;
             font-size: 0.8125rem;
         }
-        
+
         .table-haramain thead {
             background: linear-gradient(to right, var(--haramain-secondary), var(--haramain-accent));
             color: white;
         }
-        
+
         .table-haramain th {
             border: none;
             padding: 0.75rem;
@@ -197,14 +197,14 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
+
         .table-haramain td {
             padding: 0.65rem 0.75rem;
             vertical-align: middle;
             color: var(--text-primary);
             border-top: 1px solid rgba(0, 0, 0, 0.03);
         }
-        
+
         /* Status Badges */
         .badge {
             font-size: 0.6875rem;
@@ -212,22 +212,22 @@
             padding: 0.35em 0.65em;
             border-radius: 4px;
         }
-        
+
         .badge-processing {
             background-color: #fff8e1;
             color: #ff8f00;
         }
-        
+
         .badge-completed {
             background-color: #e8f5e9;
             color: #2e7d32;
         }
-        
+
         .badge-pending {
             background-color: #e3f2fd;
             color: #1976d2;
         }
-        
+
         /* Chart Container */
         .chart-container {
             background-color: white;
@@ -236,25 +236,25 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
             border: 1px solid rgba(0, 0, 0, 0.04);
         }
-        
+
         /* Text styles */
         h1, h2, h3, h4, h5, h6 {
             font-weight: 600;
         }
-        
+
         .h4 {
             font-size: 1.125rem;
         }
-        
+
         .fw-medium {
             font-weight: 500;
         }
-        
+
         small, .small {
             font-size: 0.8125rem;
             color: var(--text-muted);
         }
-        
+
         /* Form elements */
         .form-control, .form-select {
             font-size: 0.8125rem;
@@ -262,7 +262,7 @@
             border-radius: 4px;
             border: 1px solid rgba(0, 0, 0, 0.08);
         }
-        
+
         /* Dropdown menu */
         .dropdown-menu {
             font-size: 0.8125rem;
@@ -270,29 +270,32 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             border-radius: 6px;
         }
-        
+
         .dropdown-item {
             padding: 0.375rem 1rem;
         }
-        
+
         /* Utility classes */
         .opacity-75 {
             opacity: 0.75;
         }
-        
+
         .text-muted {
             color: var(--text-muted) !important;
         }
-        
+
         .border-light {
             border-color: rgba(0, 0, 0, 0.03) !important;
         }
-        
+
         /* Responsive adjustments */
         @media (max-width: 992px) {
             .sidebar {
                 width: 220px;
             }
+        }
+        #transportasi-details, #hotel-details, #dokumen-details, #handling-details{
+            display: none;
         }
     </style>
 </head>
@@ -302,7 +305,7 @@
         @include('admin.layout.sidebar')
         <!-- Main Content -->
         <div class="main-content">
-            
+
             @include('admin.layout.header')
             @yield('content')
         </div>
@@ -315,7 +318,7 @@
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
-        
+
         // Animasi sidebar menu
         document.querySelectorAll('.sidebar .nav-link').forEach(link => {
             link.addEventListener('mouseenter', function() {
