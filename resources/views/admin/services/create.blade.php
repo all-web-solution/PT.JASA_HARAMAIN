@@ -138,7 +138,9 @@
         .service-item,
         .transport-item,
         .service-car,
-        .document-item {
+        .document-item,
+        .content-item
+        {
             border: 2px solid var(--border-color);
             border-radius: 8px;
             padding: 1.25rem;
@@ -151,7 +153,9 @@
         .service-item:hover,
         .transport-item:hover,
         .service-car:hover,
-        .document-item:hover {
+        .document-item:hover,
+        .content-item:hover
+         {
             border-color: var(--haramain-secondary);
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -160,7 +164,9 @@
         .service-item.selected,
         .transport-item.selected,
         .service-car.selected,
-        .document-item.selected {
+        .document-item.selected,
+        .content-item.selected
+        {
             border-color: var(--haramain-secondary);
             background-color: var(--haramain-light);
         }
@@ -300,7 +306,14 @@
         #vaksin,
         #sikopatur,
         #bandara,
-        #hotel {
+        #hotel,
+        #pendamping-details,
+        #konten-details,
+        #reyal-details,
+        #tour-details,
+        #meals-details,
+        #dorongan-details,
+        #waqaf-details{
             display: none;
             margin-top: 20px;
         }
@@ -314,6 +327,26 @@
 
         .hidden {
             display: none;
+        }
+
+        .document-item {
+            border: 1px solid #ccc;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 10px;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        .document-item.active {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+
+        .service-desc {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
         }
     </style>
 
@@ -486,13 +519,13 @@
                                 <input type="checkbox" name="services[]" value="meals" checked hidden>
                             </div>
 
-                            <div class="service-item" data-service="katering">
+                            <div class="service-item" data-service="dorongan">
                                 <div class="service-icon">
                                     <i class="bi bi-basket"></i>
                                 </div>
-                                <div class="service-name">Katering</div>
-                                <div class="service-desc">Katering Box</div>
-                                <input type="checkbox" name="services[]" value="katering" checked hidden>
+                                <div class="service-name">Dorongan</div>
+                                <div class="service-desc">Bagi penyandang disabilitas</div>
+                                <input type="checkbox" name="services[]" value="dorongan" checked hidden>
                             </div>
 
                             <div class="service-item" data-service="waqaf">
@@ -823,88 +856,382 @@
 
 
                         <!-- Handling -->
-<div class="detail-form" id="handling-details">
-    <h6 class="detail-title">
-        <i class="bi bi-briefcase"></i> Handling
-    </h6>
-    <div class="detail-section">
-        <div class="service-grid">
-            <!-- Handling Hotel -->
-            <div class="document-item" data-handling="hotel">
-                <div class="service-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                        fill="currentColor" class="bi bi-building" viewBox="0 0 16 16">
-                        <path d="M6.5 0v1h-2v14h7V1h-2V0h-3zM5 2v12h6V2H5z" />
-                        <path d="M7 5h2v2H7V5zm0 3h2v2H7V8zm0 3h2v2H7v-2z" />
-                    </svg>
-                </div>
-                <div class="service-name">Hotel</div>
-                <input type="checkbox" name="handlings[]" value="hotel" hidden>
-            </div>
+                        <div class="detail-form" id="handling-details">
+                            <h6 class="detail-title">
+                                <i class="bi bi-briefcase"></i> Handling
+                            </h6>
+                            <div class="detail-section">
+                                <div class="service-grid">
+                                    <!-- Handling Hotel -->
+                                    <div class="document-item" data-handling="hotel">
+                                        <div class="service-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-building" viewBox="0 0 16 16">
+                                                <path d="M6.5 0v1h-2v14h7V1h-2V0h-3zM5 2v12h6V2H5z" />
+                                                <path d="M7 5h2v2H7V5zm0 3h2v2H7V8zm0 3h2v2H7v-2z" />
+                                            </svg>
+                                        </div>
+                                        <div class="service-name">Hotel</div>
+                                        <input type="checkbox" name="handlings[]" value="hotel" hidden>
+                                    </div>
 
-            <!-- Handling Bandara -->
-            <div class="document-item" data-handling="bandara">
-                <div class="service-icon">
-                    <i class="bi bi-airplane"></i>
-                </div>
-                <div class="service-name">Bandara</div>
-                <input type="checkbox" name="handlings[]" value="bandara" hidden>
-            </div>
-        </div>
-    </div>
+                                    <!-- Handling Bandara -->
+                                    <div class="document-item" data-handling="bandara">
+                                        <div class="service-icon">
+                                            <i class="bi bi-airplane"></i>
+                                        </div>
+                                        <div class="service-name">Bandara</div>
+                                        <input type="checkbox" name="handlings[]" value="bandara" hidden>
+                                    </div>
+                                </div>
+                            </div>
 
-    <!-- Form Hotel -->
-    <div class="form-group" data-handling="hotel" id="hotel" style="display: none;">
-        <label class="form-label">Hotel</label>
-        <div class="form-col">
-            <div class="form-group">
-                <label class="form-label">Nama Hotel</label>
-                <input type="text" class="form-control" name="nama_hotel">
-            </div>
-        </div>
-        <div class="form-col">
-            <div class="form-group">
-                <label class="form-label">Tanggal</label>
-                <input type="date" class="form-control" name="tanggal_hotel">
-            </div>
-        </div>
-        <div class="form-col">
-            <div class="form-group">
-                <label class="form-label">Harga</label>
-                <input type="text" class="form-control" name="harga_hotel">
-            </div>
-        </div>
-        <div class="form-col">
-            <div class="form-group">
-                <label class="form-label">Pax</label>
-                <input type="text" class="form-control" name="pax_hotel">
-            </div>
-        </div>
-    </div>
+                            <!-- Form Hotel -->
+                            <div class="form-group" data-handling="hotel" id="hotel" style="display: none;">
+                                <label class="form-label">Hotel</label>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Hotel</label>
+                                        <input type="text" class="form-control" name="nama_hotel">
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">Tanggal</label>
+                                        <input type="date" class="form-control" name="tanggal_hotel">
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">Harga</label>
+                                        <input type="text" class="form-control" name="harga_hotel">
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">Pax</label>
+                                        <input type="text" class="form-control" name="pax_hotel">
+                                    </div>
+                                </div>
+                            </div>
 
-    <!-- Form Bandara -->
-    <div class="form-group" data-handling="bandara" id="bandara" style="display: none;">
-        <label class="form-label">Bandara</label>
-        <div class="form-col">
-            <div class="form-group">
-                <label class="form-label">Nama Bandara</label>
-                <input type="text" class="form-control" name="nama_bandara">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Jumlah Jamaah</label>
-                <input type="text" class="form-control" name="jumlah_jamaah">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Harga</label>
-                <input type="text" class="form-control" name="harga_bandara">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Kedatangan Jamaah</label>
-                <input type="date" class="form-control" name="kedatangan_jamaah">
-            </div>
-        </div>
-    </div>
-</div>
+                            <!-- Form Bandara -->
+                            <div class="form-group" data-handling="bandara" id="bandara" style="display: none;">
+                                <label class="form-label">Bandara</label>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Bandara</label>
+                                        <input type="text" class="form-control" name="nama_bandara">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Jumlah Jamaah</label>
+                                        <input type="text" class="form-control" name="jumlah_jamaah">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Harga</label>
+                                        <input type="text" class="form-control" name="harga_bandara">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Kedatangan Jamaah</label>
+                                        <input type="date" class="form-control" name="kedatangan_jamaah">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Pendamping -->
+                        <div class="detail-form" id="pendamping-details">
+                            <h6 class="detail-title">
+                                <i class="bi bi-briefcase"></i> Pendamping
+                            </h6>
+                            <div class="detail-section">
+                                <div class="service-grid">
+                                    <div class="content-item" data-pendamping="premium">
+                                        <div class="service-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
+                                                <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
+                                                <path
+                                                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
+                                            </svg>
+                                        </div>
+                                        <div class="service-name">Muthwif kelas premium</div>
+                                        <div class="service-desc">Rp. 120.000.000</div>
+                                        <input type="checkbox" name="pendamping[]" value="premium" hidden>
+                                    </div>
+
+                                    <div class="content-item" data-pendamping="standard">
+                                        <div class="service-icon">
+                                            <i class="bi bi-bus-front"></i>
+                                        </div>
+                                        <div class="service-name">Muthwif kelas standard</div>
+                                        <div class="service-desc">Rp. 80.000.000</div>
+                                        <input type="checkbox" name="pendamping[]" value="standard" hidden>
+                                    </div>
+
+                                    <div class="content-item" data-pendamping="muthawifah">
+                                        <div class="service-icon">
+                                            <i class="bi bi-person-standing"></i>
+                                        </div>
+                                        <div class="service-name">Muthwifah</div>
+                                        <div class="service-desc">Rp. 70.000.000</div>
+                                        <input type="checkbox" name="pendamping[]" value="muthawifah" hidden>
+                                    </div>
+
+                                    <div class="content-item" data-pendamping="leader">
+                                        <div class="service-icon">
+                                            <i class="bi bi-people"></i>
+                                        </div>
+                                        <div class="service-name">Team Leader</div>
+                                        <div class="service-desc">Rp. 100.000.000</div>
+                                        <input type="checkbox" name="pendamping[]" value="leader" hidden>
+                                    </div>
+                                </div>
+
+                                <!-- Form Jumlah -->
+                                <div class="form-group" style="margin-top:15px;">
+                                    <label class="form-label">Jumlah</label>
+                                    <input type="number" class="form-control" name="jumlah_pendamping" min="1">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- content -->
+                        <div class="detail-form" id="konten-details">
+                            <h6 class="detail-title">
+                                <i class="bi bi-briefcase"></i> Content
+                            </h6>
+                            <div class="detail-section">
+                                <div class="service-grid">
+                                    <div class="content-item" data-content="premium">
+                                        <div class="service-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
+                                                <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
+                                                <path
+                                                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
+                                            </svg>
+                                        </div>
+                                        <div class="service-name">Umrah</div>
+                                        <div class="service-desc">Rp. 120.000.000</div>
+                                        <input type="checkbox" name="content[]" value="premium" hidden>
+                                    </div>
+
+                                    <div class="content-item" data-content="standard">
+                                        <div class="service-icon">
+                                            <i class="bi bi-bus-front"></i>
+                                        </div>
+                                        <div class="service-name">Mekkah</div>
+                                        <div class="service-desc">Rp. 80.000.000</div>
+                                        <input type="checkbox" name="content[]" value="standard" hidden>
+                                    </div>
+
+                                    <div class="content-item" data-content="muthawifah">
+                                        <div class="service-icon">
+                                            <i class="bi bi-person-standing"></i>
+                                        </div>
+                                        <div class="service-name">Madinah</div>
+                                        <div class="service-desc">Rp. 70.000.000</div>
+                                        <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                    </div>
+
+                                    <div class="content-item" data-content="leader">
+                                        <div class="service-icon">
+                                            <i class="bi bi-people"></i>
+                                        </div>
+                                        <div class="service-name">Full content</div>
+                                        <div class="service-desc">Rp. 100.000.000</div>
+                                        <input type="checkbox" name="content[]" value="leader" hidden>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-form" id="reyal-details">
+                            <h6 class="detail-title">
+                                <i class="bi bi-briefcase"></i> Penukaran mata uang
+                            </h6>
+                            <div class="detail-section">
+                                <div class="form-group">
+                                        <label class="form-label">Jumlah Rupiah yang akan di tukarkan</label>
+                                        <input type="text" class="form-control" name="nama_bandara">
+                                </div>
+                                <div class="form-group">
+                                        <label class="form-label">Kurs (1 reyal = ... Rupiah)</label>
+                                        <input type="text" class="form-control" name="jumlah_jamaah">
+                                </div>
+                            </div>
+                        </div>
+                         <div class="detail-form" id="tour-details">
+                             <h6 class="detail-title">
+                                <i class="bi bi-briefcase"></i> Tour
+                            </h6>
+                            <div class="detail-section">
+                                <div class="cars">
+                                        <label class="service-car">
+                                            <div class="service-icon">
+                                                <i class="bi bi-egg-fried"></i>
+                                            </div>
+                                            <div class="service-name">City tour</div>
+                                            <div class="service-desc">Makkah</div>
+                                            <input type="radio" name="services" value="meals" class="d-none">
+                                        </label>
+
+                                        <label class="service-car">
+                                            <div class="service-icon">
+                                                <i class="bi bi-bus-front"></i>
+                                            </div>
+                                            <div class="service-name">City tour</div>
+                                            <div class="service-desc">Madinah</div>
+                                            <input type="radio" name="services" value="transport" class="d-none">
+                                        </label>
+
+                                        <label class="service-car">
+                                            <div class="service-icon">
+                                                <i class="bi bi-building"></i>
+                                            </div>
+                                            <div class="service-name">City tour</div>
+                                            <div class="service-desc">Al Ula</div>
+                                            <input type="radio" name="services" value="hotel" class="d-none">
+                                        </label>
+
+                                        <label class="service-car">
+                                            <div class="service-icon">
+                                                <i class="bi bi-map"></i>
+                                            </div>
+                                            <div class="service-name">City Tour</div>
+                                            <div class="service-desc">Thoif</div>
+                                            <input type="radio" name="services" value="tour" class="d-none">
+                                        </label>
+                                    </div>
+                            </div>
+                         </div>
+                         <div class="detail-form" id="meals-details">
+                            <h6 class="detail-title">
+                                <i class="bi bi-briefcase"></i> Makanan
+                            </h6>
+                            <div class="service-grid">
+                                    <div class="content-item" data-content="premium">
+                                        <div class="service-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
+                                                <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
+                                                <path
+                                                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
+                                            </svg>
+                                        </div>
+                                        <div class="service-name">Nasi Box</div>
+                                        <div class="service-desc">Rp. 120.000.000</div>
+                                        <input type="checkbox" name="content[]" value="premium" hidden>
+                                    </div>
+
+                                    <div class="content-item" data-content="standard">
+                                        <div class="service-icon">
+                                            <i class="bi bi-bus-front"></i>
+                                        </div>
+                                        <div class="service-name">Buffle Hotel</div>
+                                        <div class="service-desc">Rp. 80.000.000</div>
+                                        <input type="checkbox" name="content[]" value="standard" hidden>
+                                    </div>
+
+                                    <div class="content-item" data-content="muthawifah">
+                                        <div class="service-icon">
+                                            <i class="bi bi-person-standing"></i>
+                                        </div>
+                                        <div class="service-name">Snack</div>
+                                        <div class="service-desc">Rp. 70.000.000</div>
+                                        <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                    </div>
+
+
+                                </div>
+                         </div>
+                         <div class="detail-form" id="dorongan-details">
+                            <h6 class="detail-title">
+                                <i class="bi bi-briefcase"></i> Dorongan
+                            </h6>
+                            <div class="service-grid">
+                                    <div class="content-item" data-content="premium">
+                                        <div class="service-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
+                                                <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
+                                                <path
+                                                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
+                                            </svg>
+                                        </div>
+                                        <div class="service-name">Umrah </div>
+                                        <div class="service-desc">Rp. 120.000.000</div>
+                                        <input type="checkbox" name="content[]" value="premium" hidden>
+                                    </div>
+
+                                    <div class="content-item" data-content="standard">
+                                        <div class="service-icon">
+                                            <i class="bi bi-bus-front"></i>
+                                        </div>
+                                        <div class="service-name">Makkah</div>
+                                        <div class="service-desc">Rp. 80.000.000</div>
+                                        <input type="checkbox" name="content[]" value="standard" hidden>
+                                    </div>
+
+                                    <div class="content-item" data-content="muthawifah">
+                                        <div class="service-icon">
+                                            <i class="bi bi-person-standing"></i>
+                                        </div>
+                                        <div class="service-name">Tawaf</div>
+                                        <div class="service-desc">Rp. 70.000.000</div>
+                                        <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                    </div>
+                                    <div class="content-item" data-content="muthawifah">
+                                        <div class="service-icon">
+                                            <i class="bi bi-person-standing"></i>
+                                        </div>
+                                        <div class="service-name">Dorongan sel</div>
+                                        <div class="service-desc">Rp. 70.000.000</div>
+                                        <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                    </div>
+
+
+                                </div>
+                         </div>
+                         <div class="detail-form" id="waqaf-details">
+                            <h6 class="detail-title">
+                                <i class="bi bi-briefcase"></i> Wakaf
+                            </h6>
+                            <div class="service-grid">
+                                    <div class="content-item" data-content="premium">
+                                        <div class="service-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
+                                                <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
+                                                <path
+                                                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
+                                            </svg>
+                                        </div>
+                                        <div class="service-name">Berbagi Air</div>
+                                        <input type="checkbox" name="content[]" value="premium" hidden>
+                                    </div>
+
+                                    <div class="content-item" data-content="standard">
+                                        <div class="service-icon">
+                                            <i class="bi bi-bus-front"></i>
+                                        </div>
+                                        <div class="service-name">Berbagi nasi kotak</div>
+                                        <div class="service-desc">Rp. 80.000.000</div>
+                                        <input type="checkbox" name="content[]" value="standard" hidden>
+                                    </div>
+
+                                    <div class="content-item" data-content="muthawifah">
+                                        <div class="service-icon">
+                                            <i class="bi bi-person-standing"></i>
+                                        </div>
+                                        <div class="service-name">Mushaf al quran</div>
+                                        <div class="service-desc">Rp. 70.000.000</div>
+                                        <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                    </div>
+
+                                </div>
+
+
+                                </div>
+                         </div>
 
 
                         <!-- Tambahkan detail untuk divisi lainnya di sini -->
@@ -941,6 +1268,9 @@
                     if (detailForm) {
                         detailForm.style.display = checkbox.checked ? 'none' : 'block';
                     }
+
+                    console.log(serviceType);
+
                 });
             });
 
@@ -972,6 +1302,15 @@
                     radio.checked = true;
                 });
             });
+            const contentItem = document.querySelectorAll(".content-item");
+            contentItem.forEach(content =>{
+                content.addEventListener("click", () => {
+                    contentItem.forEach(con => con.classList.remove('selected'));
+                    content.classList.add('selected')
+                    const checkboxContent = content.querySelector('input[type="checkbox"]');
+                    checkboxContent.checked = true;
+                })
+            })
 
             // Validasi form sebelum submit
             const form = document.querySelector('form');
@@ -1065,6 +1404,13 @@
             if (target) {
                 target.style.display = checkbox.checked ? "block" : "none";
             }
+        });
+        document.querySelectorAll('#pendamping-details .document-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+                item.classList.toggle('active', checkbox.checked);
+            });
         });
     </script>
 @endsection
