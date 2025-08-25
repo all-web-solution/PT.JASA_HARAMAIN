@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Handling;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Tour;
 
 class TourController extends Controller
 {
@@ -12,7 +13,8 @@ class TourController extends Controller
      */
     public function index()
     {
-        return view('handling.tour.index');
+        $tours = Tour::all();
+        return view('handling.tour.index', compact('tours'));
     }
 
     /**
@@ -28,7 +30,9 @@ class TourController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Tour::create(['name' => $request->name]);
+        return redirect()->route('handling.tour.index');
+
     }
 
     /**
@@ -44,7 +48,8 @@ class TourController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $tour = Tour::findOrFail($id);
+        return view('handling.tour.edit', compact('tour'));
     }
 
     /**
@@ -52,7 +57,9 @@ class TourController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $tour = Tour::findOrFail($id);
+        $tour->update(['name' => $request->name]);
+         return redirect()->route('handling.tour.index');
     }
 
     /**
@@ -60,6 +67,8 @@ class TourController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $tour = Tour::findOrFail($id);
+        $tour->delete();
+         return redirect()->route('handling.tour.index');
     }
 }

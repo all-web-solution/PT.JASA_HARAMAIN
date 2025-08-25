@@ -295,7 +295,7 @@
         </div>
 
         <div class="card-body">
-            <form action="{{ route('handling.pendamping.store') }}" method="POST">
+            <form action="{{ route('handling.tour.store') }}" method="POST">
                 @csrf
 
                 <!-- Data Travel Section -->
@@ -307,15 +307,8 @@
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="form-label">Type pendamping</label>
+                                <label class="form-label">Nama</label>
                                 <input type="text" class="form-control" name="name" required id="email">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Harga</label>
-                                <input type="text" class="form-control" name="description"
-                                       required  id="penanggung">
                             </div>
                         </div>
 
