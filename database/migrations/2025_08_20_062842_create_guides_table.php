@@ -13,12 +13,9 @@ return new class extends Migration
     {
         Schema::create('guides', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('pelanggan_id');
-$table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
-            $table->enum('type', ['premium', 'reguler', 'perempuan']);
-            $table->string('price_per_day');
-            $table->string('days');
-            $table->string('total_price');
+            $table->enum('pendamping_type', ['premium', 'standard', 'muthawifah', 'leader']);
+            $table->decimal('harga', 15, 2)->nullable(); // Rp 120jt, 80jt, dst
+            $table->integer('jumlah')->default(1);
             $table->timestamps();
         });
     }

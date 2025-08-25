@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Handling;
 
 use App\Http\Controllers\Controller;
+use App\Models\Handling;
 use Illuminate\Http\Request;
 
 class HandlingController extends Controller
@@ -12,7 +13,7 @@ class HandlingController extends Controller
      */
     public function index()
     {
-        //
+        return view('handling.handling.index');
     }
 
     /**
@@ -20,7 +21,7 @@ class HandlingController extends Controller
      */
     public function create()
     {
-        //
+        return view('handling.handling.create');
     }
 
     /**
@@ -44,7 +45,7 @@ class HandlingController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $handling = Handling::findOrFail($id);
     }
 
     /**

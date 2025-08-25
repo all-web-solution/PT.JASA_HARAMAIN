@@ -13,11 +13,22 @@ return new class extends Migration
     {
         Schema::create('handlings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('pelanggan_id');
-$table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
-            $table->string('bandara_indonesia');
-            $table->string('bandara_mekkah'); // e.g., 'pesawat', 'bus', 'mobil');
-            $table->string('hotel'); // e.g., 'pesawat', 'bus', 'mobil');
+                        $table->unsignedInteger('pelanggan_id');
+            $table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
+            $table->enum('handling_type', ['hotel', 'bandara']);
+
+            // Hotel
+            $table->string('nama_hotel')->nullable();
+            $table->date('tanggal_hotel')->nullable();
+            $table->decimal('harga_hotel', 15, 2)->nullable();
+            $table->integer('pax_hotel')->nullable();
+
+            // Bandara
+            $table->string('nama_bandara')->nullable();
+            $table->integer('jumlah_jamaah')->nullable();
+            $table->decimal('harga_bandara', 15, 2)->nullable();
+            $table->date('kedatangan_jamaah')->nullable();
+
             $table->timestamps();
         });
     }

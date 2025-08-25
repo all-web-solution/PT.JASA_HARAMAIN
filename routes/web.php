@@ -57,6 +57,27 @@ Route::middleware(['auth', 'hotel'])->group(function () {
             Route::put('update/{id}', [App\Http\Controllers\Handling\CateringController::class, 'update'])->name('catering.update');
             Route::delete('/delete/{id}', [App\Http\Controllers\Handling\CateringController::class, 'destroy'])->name('catering.delete');
         });
+        Route::group(['prefix' => 'handling'], function(){
+            Route::get('/',  [App\Http\Controllers\Handling\HandlingController::class, 'index'])->name('handling.handling.index');
+        });
+        Route::group(['prefix' => 'pendamping'], function(){
+            Route::get('/',  [App\Http\Controllers\Handling\PendampingController::class, 'index'])->name('handling.pendamping.index');
+            Route::get('/create',  [App\Http\Controllers\Handling\PendampingController::class, 'create'])->name('handling.pendamping.create');
+            Route::post('/create',  [App\Http\Controllers\Handling\PendampingController::class, 'store'])->name('handling.pendamping.store');
+            Route::get('/edit/{id}',  [App\Http\Controllers\Handling\PendampingController::class, 'edit'])->name('handling.pendamping.edit');
+            Route::put('/update/{id}', [App\Http\Controllers\Handling\PendampingController::class,'update'])->name('handling.pendamping.update');
+            Route::delete('/delete/{id}', [App\Http\Controllers\Handling\PendampingController::class,'destroy'])->name('handling.pendamping.destroy');
+        });
+        Route::group(['prefix' => 'tour'], function(){
+            Route::get('/',  [App\Http\Controllers\Handling\TourController::class, 'index'])->name('handling.tour.index');
+            Route::get('/create',  [App\Http\Controllers\Handling\TourController::class, 'create'])->name('handling.tour.create');
+            Route::post('/create',  [App\Http\Controllers\Handling\TourController::class, 'store'])->name('handling.tour.store');
+            Route::get('/edit/{id}',  [App\Http\Controllers\Handling\TourController::class, 'edit'])->name('handling.tour.edit');
+            Route::put('/update/{id}', [App\Http\Controllers\Handling\TourController::class,'update'])->name('handling.tour.update');
+            Route::delete('/delete/{id}', [App\Http\Controllers\Handling\TourController::class,'destroy'])->name('handling.tour.destroy');
+        });
+
+
     });
 
 

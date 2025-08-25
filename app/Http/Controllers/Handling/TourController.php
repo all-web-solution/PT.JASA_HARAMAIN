@@ -12,7 +12,7 @@ class TourController extends Controller
      */
     public function index()
     {
-        //
+        return view('handling.tour.index');
     }
 
     /**
@@ -20,7 +20,7 @@ class TourController extends Controller
      */
     public function create()
     {
-        //
+        return view('handling.tour.create');
     }
 
     /**

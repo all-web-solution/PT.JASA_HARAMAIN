@@ -54,6 +54,21 @@
                 <i class="bi bi-speedometer2"></i> CATERING
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('handling.handling.index') }}">
+                <i class="bi bi-speedometer2"></i> HANDLING
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('handling.pendamping.index') }}">
+                <i class="bi bi-speedometer2"></i> Pendamping
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('handling.tour.index') }}">
+                <i class="bi bi-speedometer2"></i> Tour
+            </a>
+        </li>
     </ul>
     @endif
 </div>
