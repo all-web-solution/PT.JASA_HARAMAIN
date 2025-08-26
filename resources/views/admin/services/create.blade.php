@@ -689,7 +689,7 @@
                             </h6>
                             <div class="detail-section">
                                 <div class="service-grid">
-                                    <div class="document-item" data-document="visa">
+                                    <div class="document-item" data-document="visa" id="document-item">
                                         <div class="service-icon">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 fill="currentColor" class="bi bi-passport-fill" viewBox="0 0 16 16">
@@ -702,7 +702,7 @@
 
                                         <input type="checkbox" name="documents[]" value="visa" checked hidden>
                                     </div>
-                                    <div class="document-item" data-document="vaksin">
+                                    <div class="document-item" data-document="vaksin" id="document-item">
                                         <div class="service-icon">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
@@ -716,7 +716,7 @@
                                         <input type="checkbox" name="documents[]" value="vaksin" checked hidden>
                                     </div>
 
-                                    <div class="document-item" data-document="sikopatur">
+                                    <div class="document-item" data-document="sikopatur" id="document-item">
                                         <div class="service-icon">
                                             <i class="bi bi-bus-front"></i>
                                         </div>
@@ -727,7 +727,7 @@
 
                             </div>
 
-                            <div class="form-group hidden" data-document="visa" id="visa">
+                            <div class="form-group hidden" data-document="visa" id="visa-details">
                                 <label class="form-label">Visa</label>
                                 <div class="visas">
                                     <label class="service-car">
@@ -767,7 +767,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="form-group hidden" data-document="vaksin" id="vaksin">
+                            <div class="form-group hidden" data-document="vaksin" id="vaksin-details">
                                 <label class="form-label">Vaksin</label>
                                 <div class="visas">
                                     <label class="service-car">
@@ -781,7 +781,7 @@
                                         </div>
                                         <div class="service-name">Meals</div>
                                         <div class="service-desc">Makanan</div>
-                                        <input type="radio" name="services" value="meals" class="d-none">
+                                        <input type="radio" name="services" value="vaksin" class="d-none">
                                     </label>
 
                                     <label class="service-car">
@@ -812,7 +812,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="form-group hidden" data-document="sikopatur" id="sikopatur">
+                            <div class="form-group hidden" data-document="sikopatur" id="sikopatur-details">
                                 <label class="form-label">Sikopatur</label>
                                 <div class="visas">
                                     <label class="service-car">
@@ -1254,6 +1254,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
             // Toggle seleksi service item
             const serviceItems = document.querySelectorAll('.service-item');
             serviceItems.forEach(item => {
@@ -1273,6 +1274,21 @@
 
                 });
             });
+
+            const documentItems = document.querySelectorAll("#document-item")
+            documentItems.forEach(doc => {
+                doc.addEventListener("click", function(){
+                    doc.classList.toggle("selected")
+                    const checkboxDocument = doc.querySelector("input[type='checkbox']")
+                    checkboxDocument.checked = !checkboxDocument.checked
+
+                    const documentType = doc.getAttribute("data-document");
+                    const detailFormDocument = document.getElementById(`${documentType}-details`)
+                    if(detailFormDocument){
+                        detailFormDocument.style.display = checkboxDocument.checked ? 'none' : 'block'
+                    }
+                })
+            })
 
             // Toggle seleksi transport item
             const transportItems = document.querySelectorAll('.transport-item');

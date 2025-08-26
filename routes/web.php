@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Content\SiskopaturController;
+use App\Http\Controllers\Content\VisaController;
+use App\Http\Controllers\Content\VaccineController;
+use App\Http\Controllers\TransportationController;
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.index');
@@ -76,9 +80,53 @@ Route::middleware(['auth', 'hotel'])->group(function () {
             Route::put('/update/{id}', [App\Http\Controllers\Handling\TourController::class,'update'])->name('handling.tour.update');
             Route::delete('/delete/{id}', [App\Http\Controllers\Handling\TourController::class,'destroy'])->name('handling.tour.destroy');
         });
-
-
     });
+
+   Route::middleware(['auth', 'transportation'])->group(function(){
+        Route::group(['prefix' => 'planes'], function(){
+           Route::get('/', [TransportationController::class, 'index'])->name('transportation.plane.index');
+           Route::get('/create', [TransportationController::class, 'create'])->name('transportation.plane.create');
+           Route::post('/create', [TransportationController::class, 'store'])->name('transportation.plane.store');
+           Route::get('/edit/{id}', [TransportationController::class, 'edit'])->name('transportation.plane.edit');
+           Route::put('/update/{id}', [TransportationController::class, 'update'])->name('transportation.plane.update');
+           Route::delete('/delete/{id}', [TransportationController::class, 'delete'])->name('transportation.plane.delete');
+        });
+        Route::group(['prefix' => 'cars'], function(){
+           Route::get('/', [TransportationController::class, 'indexCar'])->name('transportation.car.index');
+           Route::get('/create', [TransportationController::class, 'createCar'])->name('transportation.car.create');
+           Route::post('/create', [TransportationController::class, 'storeCar'])->name('transportation.car.store');
+           Route::get('/edit/{id}', [TransportationController::class, 'editCar'])->name('transportation.car.edit');
+           Route::put('/update/{id}', [TransportationController::class, 'updateCar'])->name('transportation.car.update');
+           Route::delete('/delete/{id}', [TransportationController::class, 'deleteCar'])->name('transportation.car.delete');
+        });
+   });
+
+   Route::middleware(['auth', 'content'])->group(function(){
+        Route::group(['prefix' => 'visa'], function(){
+            Route::get('/', [VisaController::class, 'index'])->name('content.visa.index');
+            Route::get('/create', [VisaController::class, 'create'])->name('content.visa.create');
+            Route::post('/create', [VisaController::class, 'store'])->name('content.visa.store');
+            Route::get('/edit/{id}', [VisaController::class, 'edit'])->name('content.visa.edit');
+            Route::put('/update/{id}', [VisaController::class, 'update'])->name('content.visa.update');
+            Route::delete('/delete/{id}', [VisaController::class, 'destroy'])->name('content.visa.destroy');
+        });
+        Route::group(['prefix' => 'vaccine'], function(){
+            Route::get('/', [VaccineController::class, 'index'])->name('content.vaccine.index');
+            Route::get('/create', [VaccineController::class, 'create'])->name('content.vaccine.create');
+            Route::post('/create', [VaccineController::class, 'store'])->name('content.vaccine.store');
+            Route::get('/edit/{id}', [VaccineController::class, 'edit'])->name('content.vaccine.edit');
+            Route::put('/update/{id}', [VaccineController::class, 'update'])->name('content.vaccine.update');
+            Route::delete('/delete/{id}', [VaccineController::class, 'destroy'])->name('content.vaccine.destroy');
+        });
+        Route::group(['prefix' => 'siskopatur'], function(){
+            Route::get('/', [SiskopaturController::class, 'index'])->name('content.siskopatur.index');
+            Route::get('/create', [SiskopaturController::class, 'create'])->name('content.siskopatur.create');
+            Route::post('/create', [SiskopaturController::class, 'store'])->name('content.siskopatur.store');
+            Route::get('/edit/{id}', [SiskopaturController::class, 'edit'])->name('content.siskopatur.edit');
+            Route::put('/update/{id}', [SiskopaturController::class, 'update'])->name('content.siskopatur.update');
+            Route::delete('/delete/{id}', [SiskopaturController::class, 'destroy'])->name('content.siskopatur.destroy');
+        });
+   });
 
 
 Route::group(['middleware' => 'guest'], function(){

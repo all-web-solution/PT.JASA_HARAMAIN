@@ -28,6 +28,8 @@ class RoleMiddleware
                     return redirect()->route('palugada.index');
                 case 'konten dan dokumentasi':
                     return redirect()->route('content.index');
+                case 'transportasi & tiket' :
+                    return redirect()->route('');
                 default:
                     return redirect()->route('login');
             }

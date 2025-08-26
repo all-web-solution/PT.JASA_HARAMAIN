@@ -70,5 +70,38 @@
             </a>
         </li>
     </ul>
+    @elseif (auth()->user()->role === 'transportasi & tiket')
+    <ul>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('transportation.plane.index') }}">
+                <i class="bi bi-speedometer2"></i> Pesawat
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('transportation.car.index') }}">
+                <i class="bi bi-speedometer2"></i> Kendaraan
+            </a>
+        </li>
+
+    </ul>
+    @elseif (auth()->user()->role === 'konten dan dokumentasi')
+    <ul>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('transportation.plane.index') }}">
+                <i class="bi bi-speedometer2"></i> Visa
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('content.vaccine.index') }}">
+                <i class="bi bi-speedometer2"></i> Vaksin
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('content.siskopatur.index') }}">
+                <i class="bi bi-speedometer2"></i> Siskopatuh
+            </a>
+        </li>
+    </ul>
     @endif
+
 </div>

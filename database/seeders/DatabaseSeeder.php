@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
                 'email' => 'tiket@gmail.com',
                 'phone' => '0857697639543',
                 'address' => 'Kp Tamansari',
-                'role' => 'handling',
+                'role' => 'Transportasi & tiket',
             ],
             [
                 'name' => 'Visa dan acara visa dan acara',
