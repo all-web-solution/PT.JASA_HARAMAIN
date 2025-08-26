@@ -41,6 +41,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/order/{id}', [OrderController::class, 'destroy'])->name('admin.order.destroy');
     Route::get('/payment', [PaymentController::class, 'index'])->name('admin.payment');
     Route::get('/payment/create', [PaymentController::class, 'create'])->name('admin.payment.create');
+    Route::post('/payment/store', [PaymentController::class, 'store'])->name('admin.payment.stor');
 });
 
 Route::middleware(['auth', 'hotel'])->group(function () {

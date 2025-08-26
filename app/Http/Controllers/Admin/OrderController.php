@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Pelanggan;
+use App\Models\Service;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -16,13 +17,14 @@ class OrderController extends Controller
 
     public function create(){
 
-        $travalers = Pelanggan::all();
+        $travalers = Service::all();
         return view('admin.order.create', compact('travalers'));
     }
 
     public function store(Request $request){
+
         Order::create([
-            'pelanggan_id' => $request->pelanggan_id,
+            'service_id' => Service::find($request->pelanggan_id)->id,
             'total_amount' => $request->total_harga,
         ]);
 
@@ -38,7 +40,7 @@ class OrderController extends Controller
     public function update(Request $request, $id){
         $order = Order::find($id);
         $order->update([
-            'pelanggan_id' => $request->pelanggan_id,
+            'service_id' => Service::find($request->pelanggan_id)->id,
             'total_amount' => $request->total_harga,
         ]);
 

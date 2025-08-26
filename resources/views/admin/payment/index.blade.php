@@ -413,15 +413,25 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Nama pemesan</th>
-                        <th>Total harga keeseluruhan</th>
-                        <th>Metode pembayaran</th>
-                        <th>Status pembayaran</th>
+                        <th>Invoice</th>
+                        <th>Nama Travel</th>
+                        <th>Total hutang</th>
+                        <th>Total yang di bayarkan</th>
+                        <th>sisa Hutang</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-
+                    @foreach ($payments as $item)
+                    <tr>
+                        <th>{{$item->invoice}}</th>
+                        <th>{{$item->order->service->pelanggan->nama_travel}}</th>
+                        <th>{{$item->order->total_amount}}</th>
+                        <th>{{$item->paid_amount}}</th>
+                        <th>{{$item->remaining_amount}}</th>
+                        <th>Aksi</th>
+                    </tr>
+                    @endforeach
 
                 </tbody>
             </table>

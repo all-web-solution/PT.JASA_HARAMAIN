@@ -139,8 +139,7 @@
         .transport-item,
         .service-car,
         .document-item,
-        .content-item
-        {
+        .content-item {
             border: 2px solid var(--border-color);
             border-radius: 8px;
             padding: 1.25rem;
@@ -154,8 +153,7 @@
         .transport-item:hover,
         .service-car:hover,
         .document-item:hover,
-        .content-item:hover
-         {
+        .content-item:hover {
             border-color: var(--haramain-secondary);
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -165,8 +163,7 @@
         .transport-item.selected,
         .service-car.selected,
         .document-item.selected,
-        .content-item.selected
-        {
+        .content-item.selected {
             border-color: var(--haramain-secondary);
             background-color: var(--haramain-light);
         }
@@ -313,7 +310,8 @@
         #tour-details,
         #meals-details,
         #dorongan-details,
-        #waqaf-details{
+        #waqaf-details,
+        #badal-details {
             display: none;
             margin-top: 20px;
         }
@@ -536,6 +534,14 @@
                                 <div class="service-desc">Sedekah & Waqaf</div>
                                 <input type="checkbox" name="services[]" value="waqaf" checked hidden>
                             </div>
+                            <div class="service-item" data-service="badal">
+                                <div class="service-icon">
+                                    <i class="bi bi-gift"></i>
+                                </div>
+                                <div class="service-name">Badal umrah</div>
+                                <div class="service-desc">Sedekah & Waqaf</div>
+                                <input type="checkbox" name="services[]" value="waqaf" checked hidden>
+                            </div>
                         </div>
                     </div>
 
@@ -557,7 +563,6 @@
                                             <i class="bi bi-airplane"></i>
                                         </div>
                                         <div class="service-name">Pesawat</div>
-                                        <div class="service-desc">Tiket Pesawat</div>
                                         <input type="checkbox" name="transportation[]" value="airplane" checked hidden>
                                     </div>
 
@@ -565,78 +570,117 @@
                                         <div class="service-icon">
                                             <i class="bi bi-bus-front"></i>
                                         </div>
-                                        <div class="service-name">Bus</div>
-                                        <div class="service-desc">Bus Transportasi</div>
+                                        <div class="service-name">Transportasi darat</div>
                                         <input type="checkbox" name="transportation[]" value="bus" checked hidden>
                                     </div>
                                 </div>
                                 <div class="form-group" data-transportasi="airplane" id="pesawat">
-                                    <label class="form-label">Tiket Pesawat</label>
-                                    <div id="plane-wrapper">
-                                        <div class="d-flex gap-2 mb-2">
-                                            <select name="plane[]" class="form-control">
-                                                <option value="" disabled selected>Pilih Tiket Pesawat</option>
-                                                <option value="jakarta-jeddah">Jakarta - Jeddah (transit Malaysia),
-                                                    tanggalnya, maskapai</option>
-                                                <option value="surabaya-jeddah">Surabaya - Jeddah (transit Malaysia),
-                                                    tanggalnya, maskapai</option>
-                                                <option value="medan-jeddah">Medan - Jeddah (transit Malaysia), tanggalnya,
-                                                    maskapai</option>
-                                                <option value="bali-jeddah">Bali - Jeddah (transit Malaysia), tanggalnya,
-                                                    maskapai</option>
-                                                <option value="makassar-jeddah">Makassar - Jeddah (transit Malaysia),
-                                                    tanggalnya, maskapai</option>
-                                            </select>
-                                            <button type="button" class="btn btn-primary add-plane">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-plus-circle-fill"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
-                                                </svg>
-                                            </button>
+                                    <div class="flex justify-between mb-2">
+                                        <label class="form-label">Tiket Pesawat</label>
+                                        <button type="button" class="btn btn-sm btn-primary" id="addTicket">Tambah
+                                            Tiket</button>
+                                    </div>
+
+                                    <div id="ticketWrapper">
+                                        <!-- Form Tiket Template -->
+                                        <div class="ticket-form bg-white p-3 border mb-3">
+                                            <div class="row align-items-center">
+                                                <!-- Tanggal -->
+                                                <div class="col-5">
+                                                    <label class="form-label fw-semibold">Tanggal Keberangkatan</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text bg-white"><i
+                                                                class="bi bi-airplane"></i></span>
+                                                        <input type="date" class="form-control" name="tanggal[]">
+                                                    </div>
+                                                </div>
+
+                                                <!-- Rute -->
+                                                <div class="col-5">
+                                                    <label class="form-label fw-semibold">Rute</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text bg-white"><i
+                                                                class="bi bi-airplane-fill"></i></span>
+                                                        <input type="text" class="form-control" name="rute[]"
+                                                            placeholder="Contoh: CGK - JED">
+                                                    </div>
+                                                </div>
+
+                                                <!-- Maskapai -->
+                                                <div class="col-5 mt-3">
+                                                    <label class="form-label fw-semibold">Maskapai</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text bg-white"><i
+                                                                class="bi bi-airplane"></i></span>
+                                                        <input type="text" class="form-control" name="maskapai[]"
+                                                            placeholder="Nama maskapai">
+                                                    </div>
+                                                </div>
+
+                                                <!-- Harga -->
+                                                <div class="col-5 mt-3">
+                                                    <label class="form-label fw-semibold">Harga</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text bg-white"><i
+                                                                class="bi bi-cash"></i></span>
+                                                        <input type="number" class="form-control" name="harga[]"
+                                                            placeholder="Harga tiket">
+                                                    </div>
+                                                </div>
+
+                                                <!-- Keterangan -->
+                                                <div class="col-5 mt-3">
+                                                    <label class="form-label fw-semibold">Keterangan</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text bg-white"><i
+                                                                class="bi bi-info-circle"></i></span>
+                                                        <input type="text" class="form-control" name="keterangan[]"
+                                                            placeholder="Keterangan">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Tombol hapus -->
+                                            <div class="mt-3 text-end">
+                                                <button type="button" class="btn btn-danger btn-sm removeTicket">Hapus
+                                                    Tiket</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group" data-transportasi="bus" id="bis">
-                                    <label class="form-label">Bus</label>
+                                    <label class="form-label">Transportasi darat</label>
                                     <div class="cars">
                                         <label class="service-car">
-                                            <div class="service-icon">
-                                                <i class="bi bi-egg-fried"></i>
-                                            </div>
-                                            <div class="service-name">Meals</div>
-                                            <div class="service-desc">Makanan</div>
+                                            <div class="service-name">Mercy</div>
+                                            <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                            <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                            <div class="service-desc">Rp.3.000.000/hari</div>
+                                            <input type="radio" name="services" value="meals" class="d-none">
+                                        </label>
+                                        <label class="service-car">
+                                            <div class="service-name">Mercy</div>
+                                            <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                            <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                            <div class="service-desc">Rp.3.000.000/hari</div>
+                                            <input type="radio" name="services" value="meals" class="d-none">
+                                        </label>
+                                        <label class="service-car">
+                                            <div class="service-name">Mercy</div>
+                                            <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                            <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                            <div class="service-desc">Rp.3.000.000/hari</div>
+                                            <input type="radio" name="services" value="meals" class="d-none">
+                                        </label>
+                                        <label class="service-car">
+                                            <div class="service-name">Mercy</div>
+                                            <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                            <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                            <div class="service-desc">Rp.3.000.000/hari</div>
                                             <input type="radio" name="services" value="meals" class="d-none">
                                         </label>
 
-                                        <label class="service-car">
-                                            <div class="service-icon">
-                                                <i class="bi bi-bus-front"></i>
-                                            </div>
-                                            <div class="service-name">Transport</div>
-                                            <div class="service-desc">Transportasi</div>
-                                            <input type="radio" name="services" value="transport" class="d-none">
-                                        </label>
-
-                                        <label class="service-car">
-                                            <div class="service-icon">
-                                                <i class="bi bi-building"></i>
-                                            </div>
-                                            <div class="service-name">Hotel</div>
-                                            <div class="service-desc">Penginapan</div>
-                                            <input type="radio" name="services" value="hotel" class="d-none">
-                                        </label>
-
-                                        <label class="service-car">
-                                            <div class="service-icon">
-                                                <i class="bi bi-map"></i>
-                                            </div>
-                                            <div class="service-name">Tour</div>
-                                            <div class="service-desc">Wisata</div>
-                                            <input type="radio" name="services" value="tour" class="d-none">
-                                        </label>
                                     </div>
 
                                 </div>
@@ -648,36 +692,92 @@
                             <h6 class="detail-title">
                                 <i class="bi bi-building"></i> Hotel
                             </h6>
+                            <button type="button" class="btn btn-sm btn-primary mb-2" id="addHotel">Tambah
+                                Hotel</button>
 
-                            <div class="detail-section">
-                                <div class="form-group">
-                                    <label class="form-label">Makkah</label>
-                                    <select name="makkah_hotel" id="" class="form-control">
-                                        <option value="" disabled selected>Pilih Hotel</option>
-                                        <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type :
-                                            4 quad + 1 queen, Bintang : 5</option>
-                                        <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type :
-                                            4 quad + 1 queen, Bintang : 5</option>
-                                        <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type :
-                                            4 quad + 1 queen, Bintang : 5</option>
-                                        <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type :
-                                            4 quad + 1 queen, Bintang : 5</option>
-                                    </select>
-                                </div>
+                            <div id="hotelWrapper">
+                                <!-- Form Hotel Template -->
+                                <div class="hotel-form bg-white p-3 border mb-3">
+                                    <div class="row align-items-center">
+                                        <!-- Checkin -->
+                                        <div class="col-5">
+                                            <label class="form-label fw-semibold">Tanggal Checkin</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white"><i
+                                                        class="bi bi-calendar-check"></i></span>
+                                                <input type="date" class="form-control" name="checkin[]">
+                                            </div>
+                                        </div>
 
-                                <div class="form-group">
-                                    <label class="form-label">Madinah</label>
-                                    <select name="" id="madinah_hotel" class="form-control">
-                                        <option value="" disabled selected>Pilih Hotel</option>
-                                        <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type :
-                                            4 quad + 1 queen, Bintang : 5</option>
-                                        <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type :
-                                            4 quad + 1 queen, Bintang : 5</option>
-                                        <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type :
-                                            4 quad + 1 queen, Bintang : 5</option>
-                                        <option value="jakarta-jeddah">Checkin : 10 januari, Checkout : 17 januari, type :
-                                            4 quad + 1 queen, Bintang : 5</option>
-                                    </select>
+                                        <!-- Checkout -->
+                                        <div class="col-5">
+                                            <label class="form-label fw-semibold">Tanggal Checkout</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white"><i
+                                                        class="bi bi-calendar-x"></i></span>
+                                                <input type="date" class="form-control" name="checkout[]">
+                                            </div>
+                                        </div>
+
+                                        <!-- Nama Hotel -->
+                                        <div class="col-5 mt-3">
+                                            <label class="form-label fw-semibold">Nama Hotel</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white"><i
+                                                        class="bi bi-building"></i></span>
+                                                <input type="text" class="form-control" name="nama_hotel[]"
+                                                    placeholder="Nama hotel">
+                                            </div>
+                                        </div>
+
+                                        <!-- Type Kamar -->
+                                        <div class="col-5 mt-3">
+                                            <label class="form-label fw-semibold">Tipe Kamar</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white"><i
+                                                        class="bi bi-door-closed"></i></span>
+                                                <input type="text" class="form-control" name="tipe_kamar[]"
+                                                    placeholder="Tipe kamar">
+                                            </div>
+                                        </div>
+
+                                        <!-- Jumlah Kamar -->
+                                        <div class="col-5 mt-3">
+                                            <label class="form-label fw-semibold">Jumlah Kamar</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white"><i class="bi bi-grid"></i></span>
+                                                <input type="number" class="form-control" name="jumlah_kamar[]"
+                                                    placeholder="Jumlah kamar">
+                                            </div>
+                                        </div>
+
+                                        <!-- Harga Per Kamar -->
+                                        <div class="col-5 mt-3">
+                                            <label class="form-label fw-semibold">Harga per Kamar</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white"><i class="bi bi-cash"></i></span>
+                                                <input type="number" class="form-control" name="harga_per_kamar[]"
+                                                    placeholder="Harga per kamar">
+                                            </div>
+                                        </div>
+
+                                        <!-- Catatan -->
+                                        <div class="col-5 mt-3">
+                                            <label class="form-label fw-semibold">Catatan</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white"><i
+                                                        class="bi bi-info-circle"></i></span>
+                                                <input type="text" class="form-control" name="catatan[]"
+                                                    placeholder="Catatan tambahan">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tombol hapus -->
+                                    <div class="mt-3 text-end">
+                                        <button type="button" class="btn btn-danger btn-sm removeHotel">Hapus
+                                            Hotel</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -699,7 +799,6 @@
                                             </svg>
                                         </div>
                                         <div class="service-name">Visa</div>
-
                                         <input type="checkbox" name="documents[]" value="visa" checked hidden>
                                     </div>
                                     <div class="document-item" data-document="vaksin" id="document-item">
@@ -729,127 +828,95 @@
 
                             <div class="form-group hidden" data-document="visa" id="visa-details">
                                 <label class="form-label">Visa</label>
-                                <div class="visas">
-                                    <label class="service-car">
-                                        <div class="service-icon">
-                                            <i class="bi bi-egg-fried"></i>
-                                        </div>
-                                        <div class="service-name">Meals</div>
-                                        <div class="service-desc">Makanan</div>
-                                        <input type="radio" name="services" value="meals" class="d-none">
-                                    </label>
+                                <div class="col-5 mt-3">
+                                    <label class="form-label fw-semibold">Jumlah</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
+                                        <input type="text" class="form-control" name="nama_hotel[]"
+                                            placeholder="Nama hotel">
+                                    </div>
+                                </div>
 
-                                    <label class="service-car">
-                                        <div class="service-icon">
-                                            <i class="bi bi-bus-front"></i>
-                                        </div>
-                                        <div class="service-name">Transport</div>
-                                        <div class="service-desc">Transportasi</div>
-                                        <input type="radio" name="services" value="transport" class="d-none">
-                                    </label>
+                                <!-- Type Kamar -->
+                                <div class="col-5 mt-3">
+                                    <label class="form-label fw-semibold">Harga per item</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="bi bi-door-closed"></i></span>
+                                        <input type="text" class="form-control" name="tipe_kamar[]"
+                                            placeholder="Tipe kamar">
+                                    </div>
+                                </div>
 
-                                    <label class="service-car">
-                                        <div class="service-icon">
-                                            <i class="bi bi-building"></i>
-                                        </div>
-                                        <div class="service-name">Hotel</div>
-                                        <div class="service-desc">Penginapan</div>
-                                        <input type="radio" name="services" value="hotel" class="d-none">
-                                    </label>
-
-                                    <label class="service-car">
-                                        <div class="service-icon">
-                                            <i class="bi bi-map"></i>
-                                        </div>
-                                        <div class="service-name">Tour</div>
-                                        <div class="service-desc">Wisata</div>
-                                        <input type="radio" name="services" value="tour" class="d-none">
-                                    </label>
+                                <!-- Jumlah Kamar -->
+                                <div class="col-5 mt-3">
+                                    <label class="form-label fw-semibold">Keterangan</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="bi bi-grid"></i></span>
+                                        <input type="number" class="form-control" name="jumlah_kamar[]"
+                                            placeholder="Jumlah kamar">
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group hidden" data-document="vaksin" id="vaksin-details">
                                 <label class="form-label">Vaksin</label>
-                                <div class="visas">
-                                    <label class="service-car">
-                                        <div class="service-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                fill="currentColor" class="bi bi-passport-fill" viewBox="0 0 16 16">
-                                                <path d="M8 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4" />
-                                                <path
-                                                    d="M2 3.252a1.5 1.5 0 0 1 1.232-1.476l8-1.454A1.5 1.5 0 0 1 13 1.797v.47A2 2 0 0 1 14 4v10a2 2 0 0 1-2 2H4a2 2 0 0 1-1.51-.688 1.5 1.5 0 0 1-.49-1.11V3.253ZM5 8a3 3 0 1 0 6 0 3 3 0 0 0-6 0m0 4.5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 0-1h-5a.5.5 0 0 0-.5.5" />
-                                            </svg>
-                                        </div>
-                                        <div class="service-name">Meals</div>
-                                        <div class="service-desc">Makanan</div>
-                                        <input type="radio" name="services" value="vaksin" class="d-none">
-                                    </label>
+                                <div class="col-5 mt-3">
+                                    <label class="form-label fw-semibold">Jumlah</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
+                                        <input type="text" class="form-control" name="nama_hotel[]"
+                                            placeholder="Nama hotel">
+                                    </div>
+                                </div>
 
-                                    <label class="service-car">
-                                        <div class="service-icon">
-                                            <i class="bi bi-bus-front"></i>
-                                        </div>
-                                        <div class="service-name">Transport</div>
-                                        <div class="service-desc">Transportasi</div>
-                                        <input type="radio" name="services" value="transport" class="d-none">
-                                    </label>
+                                <!-- Type Kamar -->
+                                <div class="col-5 mt-3">
+                                    <label class="form-label fw-semibold">Harga per item</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="bi bi-door-closed"></i></span>
+                                        <input type="text" class="form-control" name="tipe_kamar[]"
+                                            placeholder="Tipe kamar">
+                                    </div>
+                                </div>
 
-                                    <label class="service-car">
-                                        <div class="service-icon">
-                                            <i class="bi bi-building"></i>
-                                        </div>
-                                        <div class="service-name">Hotel</div>
-                                        <div class="service-desc">Penginapan</div>
-                                        <input type="radio" name="services" value="hotel" class="d-none">
-                                    </label>
-
-                                    <label class="service-car">
-                                        <div class="service-icon">
-                                            <i class="bi bi-map"></i>
-                                        </div>
-                                        <div class="service-name">Tour</div>
-                                        <div class="service-desc">Wisata</div>
-                                        <input type="radio" name="services" value="tour" class="d-none">
-                                    </label>
+                                <!-- Jumlah Kamar -->
+                                <div class="col-5 mt-3">
+                                    <label class="form-label fw-semibold">Keterangan</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="bi bi-grid"></i></span>
+                                        <input type="number" class="form-control" name="jumlah_kamar[]"
+                                            placeholder="Jumlah kamar">
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group hidden" data-document="sikopatur" id="sikopatur-details">
                                 <label class="form-label">Sikopatur</label>
-                                <div class="visas">
-                                    <label class="service-car">
-                                        <div class="service-icon">
-                                            <i class="bi bi-egg-fried"></i>
-                                        </div>
-                                        <div class="service-name">Meals</div>
-                                        <div class="service-desc">Makanan</div>
-                                        <input type="radio" name="services" value="meals" class="d-none">
-                                    </label>
+                                <div class="col-5 mt-3">
+                                    <label class="form-label fw-semibold">Jumlah</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
+                                        <input type="text" class="form-control" name="nama_hotel[]"
+                                            placeholder="Nama hotel">
+                                    </div>
+                                </div>
 
-                                    <label class="service-car">
-                                        <div class="service-icon">
-                                            <i class="bi bi-bus-front"></i>
-                                        </div>
-                                        <div class="service-name">Transport</div>
-                                        <div class="service-desc">Transportasi</div>
-                                        <input type="radio" name="services" value="transport" class="d-none">
-                                    </label>
+                                <!-- Type Kamar -->
+                                <div class="col-5 mt-3">
+                                    <label class="form-label fw-semibold">Harga per item</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="bi bi-door-closed"></i></span>
+                                        <input type="text" class="form-control" name="tipe_kamar[]"
+                                            placeholder="Tipe kamar">
+                                    </div>
+                                </div>
 
-                                    <label class="service-car">
-                                        <div class="service-icon">
-                                            <i class="bi bi-building"></i>
-                                        </div>
-                                        <div class="service-name">Hotel</div>
-                                        <div class="service-desc">Penginapan</div>
-                                        <input type="radio" name="services" value="hotel" class="d-none">
-                                    </label>
-
-                                    <label class="service-car">
-                                        <div class="service-icon">
-                                            <i class="bi bi-map"></i>
-                                        </div>
-                                        <div class="service-name">Tour</div>
-                                        <div class="service-desc">Wisata</div>
-                                        <input type="radio" name="services" value="tour" class="d-none">
-                                    </label>
+                                <!-- Jumlah Kamar -->
+                                <div class="col-5 mt-3">
+                                    <label class="form-label fw-semibold">Keterangan</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="bi bi-grid"></i></span>
+                                        <input type="number" class="form-control" name="jumlah_kamar[]"
+                                            placeholder="Jumlah kamar">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1050,206 +1117,233 @@
                             </h6>
                             <div class="detail-section">
                                 <div class="form-group">
-                                        <label class="form-label">Jumlah Rupiah yang akan di tukarkan</label>
-                                        <input type="text" class="form-control" name="nama_bandara">
+                                    <label class="form-label">Jumlah Rupiah yang akan di tukarkan</label>
+                                    <input type="text" class="form-control" name="nama_bandara">
                                 </div>
                                 <div class="form-group">
-                                        <label class="form-label">Kurs (1 reyal = ... Rupiah)</label>
-                                        <input type="text" class="form-control" name="jumlah_jamaah">
+                                    <label class="form-label">Kurs (1 reyal = ... Rupiah)</label>
+                                    <input type="text" class="form-control" name="jumlah_jamaah">
                                 </div>
                             </div>
                         </div>
-                         <div class="detail-form" id="tour-details">
-                             <h6 class="detail-title">
+                        <div class="detail-form" id="tour-details">
+                            <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Tour
                             </h6>
                             <div class="detail-section">
                                 <div class="cars">
-                                        <label class="service-car">
-                                            <div class="service-icon">
-                                                <i class="bi bi-egg-fried"></i>
-                                            </div>
-                                            <div class="service-name">City tour</div>
-                                            <div class="service-desc">Makkah</div>
-                                            <input type="radio" name="services" value="meals" class="d-none">
-                                        </label>
+                                    <label class="service-car">
+                                        <div class="service-icon">
+                                            <i class="bi bi-egg-fried"></i>
+                                        </div>
+                                        <div class="service-name">City tour</div>
+                                        <div class="service-desc">Makkah</div>
+                                        <input type="radio" name="services" value="meals" class="d-none">
+                                    </label>
 
-                                        <label class="service-car">
-                                            <div class="service-icon">
-                                                <i class="bi bi-bus-front"></i>
-                                            </div>
-                                            <div class="service-name">City tour</div>
-                                            <div class="service-desc">Madinah</div>
-                                            <input type="radio" name="services" value="transport" class="d-none">
-                                        </label>
+                                    <label class="service-car">
+                                        <div class="service-icon">
+                                            <i class="bi bi-bus-front"></i>
+                                        </div>
+                                        <div class="service-name">City tour</div>
+                                        <div class="service-desc">Madinah</div>
+                                        <input type="radio" name="services" value="transport" class="d-none">
+                                    </label>
 
-                                        <label class="service-car">
-                                            <div class="service-icon">
-                                                <i class="bi bi-building"></i>
-                                            </div>
-                                            <div class="service-name">City tour</div>
-                                            <div class="service-desc">Al Ula</div>
-                                            <input type="radio" name="services" value="hotel" class="d-none">
-                                        </label>
+                                    <label class="service-car">
+                                        <div class="service-icon">
+                                            <i class="bi bi-building"></i>
+                                        </div>
+                                        <div class="service-name">City tour</div>
+                                        <div class="service-desc">Al Ula</div>
+                                        <input type="radio" name="services" value="hotel" class="d-none">
+                                    </label>
 
-                                        <label class="service-car">
-                                            <div class="service-icon">
-                                                <i class="bi bi-map"></i>
-                                            </div>
-                                            <div class="service-name">City Tour</div>
-                                            <div class="service-desc">Thoif</div>
-                                            <input type="radio" name="services" value="tour" class="d-none">
-                                        </label>
-                                    </div>
+                                    <label class="service-car">
+                                        <div class="service-icon">
+                                            <i class="bi bi-map"></i>
+                                        </div>
+                                        <div class="service-name">City Tour</div>
+                                        <div class="service-desc">Thoif</div>
+                                        <input type="radio" name="services" value="tour" class="d-none">
+                                    </label>
+                                </div>
                             </div>
-                         </div>
-                         <div class="detail-form" id="meals-details">
+                        </div>
+                        <div class="detail-form" id="meals-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Makanan
                             </h6>
                             <div class="service-grid">
-                                    <div class="content-item" data-content="premium">
-                                        <div class="service-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
-                                                <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
-                                                <path
-                                                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
-                                            </svg>
-                                        </div>
-                                        <div class="service-name">Nasi Box</div>
-                                        <div class="service-desc">Rp. 120.000.000</div>
-                                        <input type="checkbox" name="content[]" value="premium" hidden>
+                                <div class="content-item" data-content="premium">
+                                    <div class="service-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
+                                            <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
+                                            <path
+                                                d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
+                                        </svg>
                                     </div>
-
-                                    <div class="content-item" data-content="standard">
-                                        <div class="service-icon">
-                                            <i class="bi bi-bus-front"></i>
-                                        </div>
-                                        <div class="service-name">Buffle Hotel</div>
-                                        <div class="service-desc">Rp. 80.000.000</div>
-                                        <input type="checkbox" name="content[]" value="standard" hidden>
-                                    </div>
-
-                                    <div class="content-item" data-content="muthawifah">
-                                        <div class="service-icon">
-                                            <i class="bi bi-person-standing"></i>
-                                        </div>
-                                        <div class="service-name">Snack</div>
-                                        <div class="service-desc">Rp. 70.000.000</div>
-                                        <input type="checkbox" name="content[]" value="muthawifah" hidden>
-                                    </div>
-
-
+                                    <div class="service-name">Nasi Box</div>
+                                    <div class="service-desc">Rp. 120.000.000</div>
+                                    <input type="checkbox" name="content[]" value="premium" hidden>
                                 </div>
-                         </div>
-                         <div class="detail-form" id="dorongan-details">
+
+                                <div class="content-item" data-content="standard">
+                                    <div class="service-icon">
+                                        <i class="bi bi-bus-front"></i>
+                                    </div>
+                                    <div class="service-name">Buffle Hotel</div>
+                                    <div class="service-desc">Rp. 80.000.000</div>
+                                    <input type="checkbox" name="content[]" value="standard" hidden>
+                                </div>
+
+                                <div class="content-item" data-content="muthawifah">
+                                    <div class="service-icon">
+                                        <i class="bi bi-person-standing"></i>
+                                    </div>
+                                    <div class="service-name">Snack</div>
+                                    <div class="service-desc">Rp. 70.000.000</div>
+                                    <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="detail-form" id="dorongan-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Dorongan
                             </h6>
                             <div class="service-grid">
-                                    <div class="content-item" data-content="premium">
-                                        <div class="service-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
-                                                <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
-                                                <path
-                                                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
-                                            </svg>
-                                        </div>
-                                        <div class="service-name">Umrah </div>
-                                        <div class="service-desc">Rp. 120.000.000</div>
-                                        <input type="checkbox" name="content[]" value="premium" hidden>
+                                <div class="content-item" data-content="premium">
+                                    <div class="service-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
+                                            <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
+                                            <path
+                                                d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
+                                        </svg>
                                     </div>
-
-                                    <div class="content-item" data-content="standard">
-                                        <div class="service-icon">
-                                            <i class="bi bi-bus-front"></i>
-                                        </div>
-                                        <div class="service-name">Makkah</div>
-                                        <div class="service-desc">Rp. 80.000.000</div>
-                                        <input type="checkbox" name="content[]" value="standard" hidden>
-                                    </div>
-
-                                    <div class="content-item" data-content="muthawifah">
-                                        <div class="service-icon">
-                                            <i class="bi bi-person-standing"></i>
-                                        </div>
-                                        <div class="service-name">Tawaf</div>
-                                        <div class="service-desc">Rp. 70.000.000</div>
-                                        <input type="checkbox" name="content[]" value="muthawifah" hidden>
-                                    </div>
-                                    <div class="content-item" data-content="muthawifah">
-                                        <div class="service-icon">
-                                            <i class="bi bi-person-standing"></i>
-                                        </div>
-                                        <div class="service-name">Dorongan sel</div>
-                                        <div class="service-desc">Rp. 70.000.000</div>
-                                        <input type="checkbox" name="content[]" value="muthawifah" hidden>
-                                    </div>
-
-
+                                    <div class="service-name">Umrah </div>
+                                    <div class="service-desc">Rp. 120.000.000</div>
+                                    <input type="checkbox" name="content[]" value="premium" hidden>
                                 </div>
-                         </div>
-                         <div class="detail-form" id="waqaf-details">
+
+                                <div class="content-item" data-content="standard">
+                                    <div class="service-icon">
+                                        <i class="bi bi-bus-front"></i>
+                                    </div>
+                                    <div class="service-name">Makkah</div>
+                                    <div class="service-desc">Rp. 80.000.000</div>
+                                    <input type="checkbox" name="content[]" value="standard" hidden>
+                                </div>
+
+                                <div class="content-item" data-content="muthawifah">
+                                    <div class="service-icon">
+                                        <i class="bi bi-person-standing"></i>
+                                    </div>
+                                    <div class="service-name">Tawaf</div>
+                                    <div class="service-desc">Rp. 70.000.000</div>
+                                    <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                </div>
+                                <div class="content-item" data-content="muthawifah">
+                                    <div class="service-icon">
+                                        <i class="bi bi-person-standing"></i>
+                                    </div>
+                                    <div class="service-name">Dorongan sel</div>
+                                    <div class="service-desc">Rp. 70.000.000</div>
+                                    <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="detail-form" id="waqaf-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Wakaf
                             </h6>
                             <div class="service-grid">
-                                    <div class="content-item" data-content="premium">
-                                        <div class="service-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
-                                                <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
-                                                <path
-                                                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
-                                            </svg>
-                                        </div>
-                                        <div class="service-name">Berbagi Air</div>
-                                        <input type="checkbox" name="content[]" value="premium" hidden>
+                                <div class="content-item" data-content="premium">
+                                    <div class="service-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
+                                            <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
+                                            <path
+                                                d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
+                                        </svg>
                                     </div>
-
-                                    <div class="content-item" data-content="standard">
-                                        <div class="service-icon">
-                                            <i class="bi bi-bus-front"></i>
-                                        </div>
-                                        <div class="service-name">Berbagi nasi kotak</div>
-                                        <div class="service-desc">Rp. 80.000.000</div>
-                                        <input type="checkbox" name="content[]" value="standard" hidden>
-                                    </div>
-
-                                    <div class="content-item" data-content="muthawifah">
-                                        <div class="service-icon">
-                                            <i class="bi bi-person-standing"></i>
-                                        </div>
-                                        <div class="service-name">Mushaf al quran</div>
-                                        <div class="service-desc">Rp. 70.000.000</div>
-                                        <input type="checkbox" name="content[]" value="muthawifah" hidden>
-                                    </div>
-
+                                    <div class="service-name">Berbagi Air</div>
+                                    <input type="checkbox" name="content[]" value="premium" hidden>
                                 </div>
 
-
+                                <div class="content-item" data-content="standard">
+                                    <div class="service-icon">
+                                        <i class="bi bi-bus-front"></i>
+                                    </div>
+                                    <div class="service-name">Berbagi nasi kotak</div>
+                                    <div class="service-desc">Rp. 80.000.000</div>
+                                    <input type="checkbox" name="content[]" value="standard" hidden>
                                 </div>
-                         </div>
+
+                                <div class="content-item" data-content="muthawifah">
+                                    <div class="service-icon">
+                                        <i class="bi bi-person-standing"></i>
+                                    </div>
+                                    <div class="service-name">Mushaf al quran</div>
+                                    <div class="service-desc">Rp. 70.000.000</div>
+                                    <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                </div>
+
+                            </div>
 
 
-                        <!-- Tambahkan detail untuk divisi lainnya di sini -->
+                        </div>
+                        <div class="detail-form" id="badal-details">
+                            <h6 class="detail-title">
+                                <i class="bi bi-briefcase"></i> Badal
+                            </h6>
+                            <button type="button" class="btn btn-sm btn-primary mb-2" id="addBadal">Tambah
+                                Badal</button>
 
+                            <div id="badalWrapper">
+                                <!-- Form Badal Template -->
+                                <div class="badal-form bg-white p-3 border mb-3">
+                                    <div class="form-group mb-2">
+                                        <label class="form-label">Nama yang dibadalkan</label>
+                                        <input type="text" class="form-control" name="nama_badal[]">
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label class="form-label">Harga</label>
+                                        <input type="number" class="form-control" name="harga_badal[]">
+                                    </div>
+
+                                    <!-- Tombol hapus -->
+                                    <div class="mt-2 text-end">
+                                        <button type="button" class="btn btn-danger btn-sm removeBadal">Hapus
+                                            Badal</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Form Actions -->
-                    <div class="form-actions">
-                        <button type="reset" class="btn btn-secondary">
-                            <i class="bi bi-x-circle"></i> Batal
-                        </button>
-                        <button type="submit" class="btn btn-submit">
-                            <i class="bi bi-check-circle"></i> Simpan Permintaan
-                        </button>
-                    </div>
-                </form>
+
+                    <!-- Tambahkan detail untuk divisi lainnya di sini -->
+
             </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="reset" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Batal
+                </button>
+                <button type="submit" class="btn btn-submit">
+                    <i class="bi bi-check-circle"></i> Simpan Permintaan
+                </button>
+            </div>
+            </form>
         </div>
+    </div>
     </div>
 
     <script>
@@ -1277,15 +1371,16 @@
 
             const documentItems = document.querySelectorAll("#document-item")
             documentItems.forEach(doc => {
-                doc.addEventListener("click", function(){
+                doc.addEventListener("click", function() {
                     doc.classList.toggle("selected")
                     const checkboxDocument = doc.querySelector("input[type='checkbox']")
                     checkboxDocument.checked = !checkboxDocument.checked
 
                     const documentType = doc.getAttribute("data-document");
                     const detailFormDocument = document.getElementById(`${documentType}-details`)
-                    if(detailFormDocument){
-                        detailFormDocument.style.display = checkboxDocument.checked ? 'none' : 'block'
+                    if (detailFormDocument) {
+                        detailFormDocument.style.display = checkboxDocument.checked ? 'none' :
+                            'block'
                     }
                 })
             })
@@ -1319,7 +1414,7 @@
                 });
             });
             const contentItem = document.querySelectorAll(".content-item");
-            contentItem.forEach(content =>{
+            contentItem.forEach(content => {
                 content.addEventListener("click", () => {
                     contentItem.forEach(con => con.classList.remove('selected'));
                     content.classList.add('selected')
@@ -1427,6 +1522,84 @@
                 checkbox.checked = !checkbox.checked;
                 item.classList.toggle('active', checkbox.checked);
             });
+        });
+
+
+
+
+        const addBtn = document.getElementById("addTicket");
+        const wrapper = document.getElementById("ticketWrapper");
+
+        addBtn.addEventListener("click", function() {
+            // clone form pertama
+            const newTicket = wrapper.firstElementChild.cloneNode(true);
+
+            // reset input value
+            newTicket.querySelectorAll("input").forEach(input => input.value = "");
+
+            wrapper.appendChild(newTicket);
+        });
+
+        // Event Delegation untuk hapus
+        wrapper.addEventListener("click", function(e) {
+            if (e.target.classList.contains("removeTicket")) {
+                if (wrapper.children.length > 1) {
+                    e.target.closest(".ticket-form").remove();
+                } else {
+                    alert("Minimal harus ada 1 tiket!");
+                }
+            }
+        });
+
+
+
+        const addHotelBtn = document.getElementById("addHotel");
+        const hotelWrapper = document.getElementById("hotelWrapper");
+
+        // tambah hotel
+        addHotelBtn.addEventListener("click", function() {
+            const newHotel = hotelWrapper.firstElementChild.cloneNode(true);
+
+            // reset input value
+            newHotel.querySelectorAll("input").forEach(input => input.value = "");
+
+            hotelWrapper.appendChild(newHotel);
+        });
+
+        // hapus hotel
+        hotelWrapper.addEventListener("click", function(e) {
+            if (e.target.classList.contains("removeHotel")) {
+                if (hotelWrapper.children.length > 1) {
+                    e.target.closest(".hotel-form").remove();
+                } else {
+                    alert("Minimal harus ada 1 form hotel!");
+                }
+            }
+        });
+
+
+        const addBadalBtn = document.getElementById("addBadal");
+        const badalWrapper = document.getElementById("badalWrapper");
+
+        // Tambah badal
+        addBadalBtn.addEventListener("click", function() {
+            const newBadal = badalWrapper.firstElementChild.cloneNode(true);
+
+            // reset value input
+            newBadal.querySelectorAll("input").forEach(input => input.value = "");
+
+            badalWrapper.appendChild(newBadal);
+        });
+
+        // Hapus badal
+        badalWrapper.addEventListener("click", function(e) {
+            if (e.target.classList.contains("removeBadal")) {
+                if (badalWrapper.children.length > 1) {
+                    e.target.closest(".badal-form").remove();
+                } else {
+                    alert("Minimal harus ada 1 form badal!");
+                }
+            }
         });
     </script>
 @endsection

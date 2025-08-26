@@ -424,10 +424,10 @@
                         <td data-label="Nama pelanggan">
                             <div class="customer-info">
                                 <div class="customer-avatar">
-                                    <img src="{{ url('storage/'.$order->pelanggan->foto) }}" alt="" width="20" height="20">
+
                                 </div>
                                 <div class="customer-details">
-                                    <div class="customer-name">{{ $order->pelanggan->nama_travel }}</div>
+                                    <div class="customer-name">{{$order->service->pelanggan->nama_travel}}</div>
                                     <div class="customer-type">Travel</div>
                                 </div>
                             </div>

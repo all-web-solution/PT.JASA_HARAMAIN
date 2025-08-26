@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-             $table->unsignedInteger('pelanggan_id');
-            $table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
+             $table->unsignedInteger('service_id');
+            $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
             $table->string('total_amount');
             $table->timestamps();
         });

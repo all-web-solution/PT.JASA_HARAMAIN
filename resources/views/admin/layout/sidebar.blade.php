@@ -29,7 +29,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('admin.payment') }}">
                 <i class="bi bi-credit-card-2-back"></i> PAYMENT
             </a>
         </li>

@@ -309,7 +309,7 @@
                                 <label class="form-label">Pilih Travel</label>
                                  <select name="pelanggan_id" id="pelanggan" class="form-control">
                                     @foreach ($travalers as $travel)
-                                        <option value="{{ $travel->id }}">{{ $travel->nama_travel }}</option>
+                                        <option value="{{ $travel->id }}">{{ $travel->pelanggan->nama_travel}}</option>
 
                                     @endforeach
                                 </select>
