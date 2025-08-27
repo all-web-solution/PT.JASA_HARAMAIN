@@ -139,7 +139,9 @@
         .transport-item,
         .service-car,
         .document-item,
-        .content-item {
+        .content-item,
+        .visa-item,
+        .vaksin-item {
             border: 2px solid var(--border-color);
             border-radius: 8px;
             padding: 1.25rem;
@@ -153,7 +155,9 @@
         .transport-item:hover,
         .service-car:hover,
         .document-item:hover,
-        .content-item:hover {
+        .content-item:hover,
+        .visa-item:hover,
+        .vaksin-item:hover {
             border-color: var(--haramain-secondary);
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -163,7 +167,9 @@
         .transport-item.selected,
         .service-car.selected,
         .document-item.selected,
-        .content-item.selected {
+        .content-item.selected,
+        .visa-item.selected,
+        .vaksin-item.selected {
             border-color: var(--haramain-secondary);
             background-color: var(--haramain-light);
         }
@@ -345,6 +351,67 @@
             font-size: 0.85rem;
             color: #666;
             margin-top: 5px;
+        }
+
+
+
+        .visa-item,
+        .vaksin-item {
+            display: block;
+            border: 2px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .service-vaksin-item.active {
+            border-color: #1a4b8c;
+            background-color: #e6f0fa;
+        }
+
+        .service-vaksin-item {
+            display: block;
+            border: 2px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .visa-item.active,
+        .vaksin-item.active {
+            border-color: #1a4b8c;
+            background-color: #e6f0fa;
+        }
+
+        .pendamping-wrapper {
+            display: block;
+            /* full width */
+            margin-bottom: 10px;
+        }
+
+        .pendamping-item {
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .pendamping-item.active {
+            border-color: #1a4b8c;
+            background-color: #e6f0fa;
+        }
+
+        .pendamping-form {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border-left: 3px solid #1a4b8c;
+            background: #f8f9fa;
+            border-radius: 5px;
         }
     </style>
 
@@ -828,63 +895,181 @@
 
                             <div class="form-group hidden" data-document="visa" id="visa-details">
                                 <label class="form-label">Visa</label>
-                                <div class="col-5 mt-3">
-                                    <label class="form-label fw-semibold">Jumlah</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
-                                        <input type="text" class="form-control" name="nama_hotel[]"
-                                            placeholder="Nama hotel">
+                                <div class="cars">
+                                    <div class="visa-item" data-visa="umrah">
+                                        <div class="visa-name">Visa Umrah</div>
+                                        <input type="checkbox" name="visa[]" value="umrah" hidden>
+                                    </div>
+                                    <div class="visa-item" data-visa="haji">
+                                        <div class="visa-name">Visa Haji</div>
+                                        <input type="checkbox" name="visa[]" value="haji" hidden>
+                                    </div>
+                                    <div class="visa-item" data-visa="ziarah">
+                                        <div class="visa-name">Visa Ziarah</div>
+                                        <input type="checkbox" name="visa[]" value="ziarah" hidden>
                                     </div>
                                 </div>
-
-                                <!-- Type Kamar -->
-                                <div class="col-5 mt-3">
-                                    <label class="form-label fw-semibold">Harga per item</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white"><i class="bi bi-door-closed"></i></span>
-                                        <input type="text" class="form-control" name="tipe_kamar[]"
-                                            placeholder="Tipe kamar">
+                                <div id="umrah-detail" class="hidden">
+                                    <h3>Form umrah</h3>
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Jumlah</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i
+                                                    class="bi bi-info-circle"></i></span>
+                                            <input type="text" class="form-control" name="catatan[]"
+                                                placeholder="Catatan tambahan">
+                                        </div>
+                                    </div>
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Harga</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i
+                                                    class="bi bi-info-circle"></i></span>
+                                            <input type="text" class="form-control" name="catatan[]"
+                                                placeholder="Catatan tambahan">
+                                        </div>
+                                    </div>
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Keterangan</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i
+                                                    class="bi bi-info-circle"></i></span>
+                                            <input type="text" class="form-control" name="catatan[]"
+                                                placeholder="Catatan tambahan">
+                                        </div>
                                     </div>
                                 </div>
-
-                                <!-- Jumlah Kamar -->
-                                <div class="col-5 mt-3">
-                                    <label class="form-label fw-semibold">Keterangan</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white"><i class="bi bi-grid"></i></span>
-                                        <input type="number" class="form-control" name="jumlah_kamar[]"
-                                            placeholder="Jumlah kamar">
+                                <div id="haji-detail" class="hidden">
+                                    <h3>Form haji</h3>
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Jumlah</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i
+                                                    class="bi bi-info-circle"></i></span>
+                                            <input type="text" class="form-control" name="catatan[]"
+                                                placeholder="Catatan tambahan">
+                                        </div>
+                                    </div>
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Harga</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i
+                                                    class="bi bi-info-circle"></i></span>
+                                            <input type="text" class="form-control" name="catatan[]"
+                                                placeholder="Catatan tambahan">
+                                        </div>
+                                    </div>
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Keterangan</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i
+                                                    class="bi bi-info-circle"></i></span>
+                                            <input type="text" class="form-control" name="catatan[]"
+                                                placeholder="Catatan tambahan">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="ziarah-detail" class="hidden">
+                                    <h3>Form ziarah</h3>
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Jumlah</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i
+                                                    class="bi bi-info-circle"></i></span>
+                                            <input type="text" class="form-control" name="catatan[]"
+                                                placeholder="Catatan tambahan">
+                                        </div>
+                                    </div>
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Harga</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i
+                                                    class="bi bi-info-circle"></i></span>
+                                            <input type="text" class="form-control" name="catatan[]"
+                                                placeholder="Catatan tambahan">
+                                        </div>
+                                    </div>
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Keterangan</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i
+                                                    class="bi bi-info-circle"></i></span>
+                                            <input type="text" class="form-control" name="catatan[]"
+                                                placeholder="Catatan tambahan">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group hidden" data-document="vaksin" id="vaksin-details">
                                 <label class="form-label">Vaksin</label>
-                                <div class="col-5 mt-3">
-                                    <label class="form-label fw-semibold">Jumlah</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
-                                        <input type="text" class="form-control" name="nama_hotel[]"
-                                            placeholder="Nama hotel">
+                                <div class="cars">
+                                    <div class="vaksin-item" data-vaksin="polio">
+                                        <div class="vaksin-name">Vaksin polio</div>
+                                        <input type="checkbox" name="vaksin[]" value="polio" hidden>
+                                    </div>
+                                    <div class="vaksin-item" data-vaksin="meningtis">
+                                        <div class="vaksin-name">Vaksin Meningtis</div>
+                                        <input type="checkbox" name="vaksin[]" value="meningtis" hidden>
                                     </div>
                                 </div>
+                                <div id="polio" class="hidden">
+                                    <h3>Form vaksin polio</h3>
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Jumlah</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
+                                            <input type="text" class="form-control" name="nama_hotel[]"
+                                                placeholder="Nama hotel">
+                                        </div>
+                                    </div>
 
-                                <!-- Type Kamar -->
-                                <div class="col-5 mt-3">
-                                    <label class="form-label fw-semibold">Harga per item</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white"><i class="bi bi-door-closed"></i></span>
-                                        <input type="text" class="form-control" name="tipe_kamar[]"
-                                            placeholder="Tipe kamar">
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Harga per item</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i
+                                                    class="bi bi-door-closed"></i></span>
+                                            <input type="text" class="form-control" name="tipe_kamar[]"
+                                                placeholder="Tipe kamar">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Keterangan</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i class="bi bi-grid"></i></span>
+                                            <input type="number" class="form-control" name="jumlah_kamar[]"
+                                                placeholder="Jumlah kamar">
+                                        </div>
                                     </div>
                                 </div>
+                                <div id="meningtis" class="hidden">
+                                    <h3>Form vaksin meningtis</h3>
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Jumlah</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
+                                            <input type="text" class="form-control" name="nama_hotel[]"
+                                                placeholder="Nama hotel">
+                                        </div>
+                                    </div>
 
-                                <!-- Jumlah Kamar -->
-                                <div class="col-5 mt-3">
-                                    <label class="form-label fw-semibold">Keterangan</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white"><i class="bi bi-grid"></i></span>
-                                        <input type="number" class="form-control" name="jumlah_kamar[]"
-                                            placeholder="Jumlah kamar">
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Harga per item</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i
+                                                    class="bi bi-door-closed"></i></span>
+                                            <input type="text" class="form-control" name="tipe_kamar[]"
+                                                placeholder="Tipe kamar">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-5 mt-3">
+                                        <label class="form-label fw-semibold">Keterangan</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i class="bi bi-grid"></i></span>
+                                            <input type="number" class="form-control" name="jumlah_kamar[]"
+                                                placeholder="Jumlah kamar">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1012,52 +1197,71 @@
                             </h6>
                             <div class="detail-section">
                                 <div class="service-grid">
-                                    <div class="content-item" data-pendamping="premium">
-                                        <div class="service-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
-                                                <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
-                                                <path
-                                                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
-                                            </svg>
+                                    <div class="pendamping-wrapper">
+                                        <div class="pendamping-item" data-pendamping="premium">
+                                            <div class="service-icon"><i class="bi bi-prescription2"></i></div>
+                                            <div class="service-name">Muthwif kelas premium</div>
+                                            <div class="service-desc">Rp. 120.000.000</div>
+                                            <input type="checkbox" name="pendamping[]" value="premium" hidden>
                                         </div>
-                                        <div class="service-name">Muthwif kelas premium</div>
-                                        <div class="service-desc">Rp. 120.000.000</div>
-                                        <input type="checkbox" name="pendamping[]" value="premium" hidden>
+                                        <div class="pendamping-form" id="form-premium">
+                                            <label class="form-label">Jumlah Premium</label>
+                                            <input type="number" class="form-control" name="jumlah_premium"
+                                                min="1">
+                                            <label class="form-label mt-2">Keterangan</label>
+                                            <textarea class="form-control" name="ket_premium"></textarea>
+                                        </div>
                                     </div>
 
-                                    <div class="content-item" data-pendamping="standard">
-                                        <div class="service-icon">
-                                            <i class="bi bi-bus-front"></i>
+                                    <div class="pendamping-wrapper">
+                                        <div class="pendamping-item" data-pendamping="standard">
+                                            <div class="service-icon"><i class="bi bi-bus-front"></i></div>
+                                            <div class="service-name">Muthwif kelas standard</div>
+                                            <div class="service-desc">Rp. 80.000.000</div>
+                                            <input type="checkbox" name="pendamping[]" value="standard" hidden>
                                         </div>
-                                        <div class="service-name">Muthwif kelas standard</div>
-                                        <div class="service-desc">Rp. 80.000.000</div>
-                                        <input type="checkbox" name="pendamping[]" value="standard" hidden>
+                                        <div class="pendamping-form" id="form-standard">
+                                            <label class="form-label">Jumlah Standard</label>
+                                            <input type="number" class="form-control" name="jumlah_standard"
+                                                min="1">
+                                            <label class="form-label mt-2">Keterangan</label>
+                                            <textarea class="form-control" name="ket_standard"></textarea>
+                                        </div>
                                     </div>
 
-                                    <div class="content-item" data-pendamping="muthawifah">
-                                        <div class="service-icon">
-                                            <i class="bi bi-person-standing"></i>
+
+                                    <div class="pendamping-wrapper">
+                                        <div class="pendamping-item" data-pendamping="muthawifah">
+                                            <div class="service-icon"><i class="bi bi-person-standing"></i></div>
+                                            <div class="service-name">Muthwifah</div>
+                                            <div class="service-desc">Rp. 70.000.000</div>
+                                            <input type="checkbox" name="pendamping[]" value="muthawifah" hidden>
                                         </div>
-                                        <div class="service-name">Muthwifah</div>
-                                        <div class="service-desc">Rp. 70.000.000</div>
-                                        <input type="checkbox" name="pendamping[]" value="muthawifah" hidden>
+                                        <div class="pendamping-form" id="form-muthawifah">
+                                            <label class="form-label">Jumlah Muthawifah</label>
+                                            <input type="number" class="form-control" name="jumlah_muthawifah"
+                                                min="1">
+                                            <label class="form-label mt-2">Keterangan</label>
+                                            <textarea class="form-control" name="ket_muthawifah"></textarea>
+                                        </div>
                                     </div>
 
-                                    <div class="content-item" data-pendamping="leader">
-                                        <div class="service-icon">
-                                            <i class="bi bi-people"></i>
+                                    <div class="pendamping-wrapper">
+                                        <div class="pendamping-item" data-pendamping="leader">
+                                            <div class="service-icon"><i class="bi bi-people"></i></div>
+                                            <div class="service-name">Team Leader</div>
+                                            <div class="service-desc">Rp. 100.000.000</div>
+                                            <input type="checkbox" name="pendamping[]" value="leader" hidden>
                                         </div>
-                                        <div class="service-name">Team Leader</div>
-                                        <div class="service-desc">Rp. 100.000.000</div>
-                                        <input type="checkbox" name="pendamping[]" value="leader" hidden>
-                                    </div>
-                                </div>
+                                        <div class="pendamping-form" id="form-leader">
+                                            <label class="form-label">Jumlah Leader</label>
+                                            <input type="number" class="form-control" name="jumlah_leader"
+                                                min="1">
+                                            <label class="form-label mt-2">Keterangan</label>
+                                            <textarea class="form-control" name="ket_leader"></textarea>
+                                        </div>
 
-                                <!-- Form Jumlah -->
-                                <div class="form-group" style="margin-top:15px;">
-                                    <label class="form-label">Jumlah</label>
-                                    <input type="number" class="form-control" name="jumlah_pendamping" min="1">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1132,7 +1336,7 @@
                             </h6>
                             <div class="detail-section">
                                 <div class="cars">
-                                    <label class="service-car">
+                                    <label class="service-car" data-tour="makkah">
                                         <div class="service-icon">
                                             <i class="bi bi-egg-fried"></i>
                                         </div>
@@ -1141,7 +1345,7 @@
                                         <input type="radio" name="services" value="meals" class="d-none">
                                     </label>
 
-                                    <label class="service-car">
+                                    <label class="service-car" data-tour="madinah">
                                         <div class="service-icon">
                                             <i class="bi bi-bus-front"></i>
                                         </div>
@@ -1150,7 +1354,7 @@
                                         <input type="radio" name="services" value="transport" class="d-none">
                                     </label>
 
-                                    <label class="service-car">
+                                    <label class="service-car" data-tour="alula">
                                         <div class="service-icon">
                                             <i class="bi bi-building"></i>
                                         </div>
@@ -1159,7 +1363,7 @@
                                         <input type="radio" name="services" value="hotel" class="d-none">
                                     </label>
 
-                                    <label class="service-car">
+                                    <label class="service-car" data-tour="thoif">
                                         <div class="service-icon">
                                             <i class="bi bi-map"></i>
                                         </div>
@@ -1170,6 +1374,144 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div id="tour-makkah-form" class="hidden tour-form">
+                            <h3>Form Tour Makkah</h3>
+                            <div class="cars">
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+
+                            </div>
+                        </div>
+                        <div id="tour-madinah-form" class="hidden tour-form">
+                            <h3>Form Tour Madinah</h3>
+                            <div class="cars">
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+
+                            </div>
+                        </div>
+                        <div id="tour-alula-form" class="hidden tour-form">
+                            <h3>Form Tour Al Ula</h3>
+                            <div class="cars">
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+
+                            </div>
+                        </div>
+                        <div id="tour-thoif-form" class="hidden tour-form">
+                            <h3>Form Tour Thoif</h3>
+                            <div class="cars">
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+                                <label class="service-car">
+                                    <div class="service-name">Mercy</div>
+                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
+                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
+                                    <div class="service-desc">Rp.3.000.000/hari</div>
+                                    <input type="radio" name="services" value="meals" class="d-none">
+                                </label>
+
+                            </div>
+                        </div>
+
                         <div class="detail-form" id="meals-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Makanan
@@ -1207,7 +1549,10 @@
                                     <input type="checkbox" name="content[]" value="muthawifah" hidden>
                                 </div>
 
-
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Jumlah </label>
+                                <input type="text" class="form-control" name="nama_bandara">
                             </div>
                         </div>
                         <div class="detail-form" id="dorongan-details">
@@ -1257,6 +1602,10 @@
 
 
                             </div>
+                            <div class="form-group">
+                                <label class="form-label">Jumlah </label>
+                                <input type="text" class="form-control" name="nama_bandara">
+                            </div>
                         </div>
                         <div class="detail-form" id="waqaf-details">
                             <h6 class="detail-title">
@@ -1294,6 +1643,10 @@
                                     <input type="checkbox" name="content[]" value="muthawifah" hidden>
                                 </div>
 
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Jumlah </label>
+                                <input type="text" class="form-control" name="nama_bandara">
                             </div>
 
 
@@ -1368,6 +1721,19 @@
 
                 });
             });
+            const visaItem = document.querySelectorAll('.visa-item');
+            visaItem.forEach(visa => {
+                visa.classList.toggle('selected');
+                const checkbox = visa.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+
+            })
+            const vaccineItem = document.querySelectorAll('.vaksin-item');
+            vaccineItem.forEach(vaccine => {
+                vaccine.classList.toggle('selected');
+                const checkbox = vaccine.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+            })
 
             const documentItems = document.querySelectorAll("#document-item")
             documentItems.forEach(doc => {
@@ -1600,6 +1966,129 @@
                     alert("Minimal harus ada 1 form badal!");
                 }
             }
+        });
+
+
+        document.querySelectorAll('.service-visa-item').forEach(car => {
+            car.addEventListener('click', function() {
+                // hapus active di semua
+                document.querySelectorAll('.service-visa-item').forEach(el => el.classList.remove(
+                    'active'));
+
+                // kasih active ke yg diklik
+                this.classList.add('active');
+
+                // set radio checked
+                this.querySelector('input[type="radio"]').checked = true;
+
+                // ambil value
+                let val = this.querySelector('input[type="radio"]').value;
+                console.log(val)
+            });
+        });
+
+
+        const items = document.querySelectorAll('.pendamping-item');
+
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                const form = item.nextElementSibling; // form berada tepat setelah item
+                const checkbox = item.querySelector('input[type="checkbox"]');
+
+                const isActive = item.classList.toggle('active');
+                checkbox.checked = isActive;
+                form.style.display = isActive ? 'block' : 'none';
+            });
+        });
+
+
+
+        const visaItems = document.querySelectorAll('.visa-item');
+        const formDetails = {
+            umrah: document.getElementById('umrah-detail'),
+            haji: document.getElementById('haji-detail'),
+            ziarah: document.getElementById('ziarah-detail')
+        };
+
+        // Tambahkan event listener untuk setiap item visa
+        visaItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Dapatkan jenis visa dari atribut data
+                const visaType = item.dataset.visa;
+                const checkbox = item.querySelector('input[type="checkbox"]');
+
+                // Toggle class 'active' untuk styling
+                item.classList.toggle('active');
+
+                // Toggle status 'checked' pada checkbox
+                checkbox.checked = !checkbox.checked;
+
+                // Tampilkan atau sembunyikan form yang sesuai berdasarkan status checkbox
+                if (checkbox.checked) {
+                    if (formDetails[visaType]) {
+                        formDetails[visaType].classList.remove('hidden');
+                    }
+                } else {
+                    if (formDetails[visaType]) {
+                        formDetails[visaType].classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+
+        const vaksinItems = document.querySelectorAll('.vaksin-item');
+        const formDetailsVaksin = {
+            polio: document.getElementById('polio'),
+            meningtis: document.getElementById('meningtis')
+        };
+
+        // Tambahkan event listener untuk setiap item vaksin
+        vaksinItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Dapatkan jenis vaksin dari atribut data
+                const vaksinType = item.dataset.vaksin;
+                const checkbox = item.querySelector('input[type="checkbox"]');
+
+                // Toggle class 'active' untuk styling
+                item.classList.toggle('active');
+
+                // Toggle status 'checked' pada checkbox
+                checkbox.checked = !checkbox.checked;
+
+                // Tampilkan atau sembunyikan form yang sesuai berdasarkan status checkbox
+                if (checkbox.checked) {
+                    if (formDetailsVaksin[vaksinType]) {
+                        formDetailsVaksin[vaksinType].classList.remove('hidden');
+                    }
+                } else {
+                    if (formDetailsVaksin[vaksinType]) {
+                        formDetailsVaksin[vaksinType].classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+
+
+        const tourOptions = document.querySelectorAll('.service-car');
+        const tourForms = document.querySelectorAll('.tour-form');
+
+        tourOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const tourType = option.dataset.tour;
+
+                // Sembunyikan semua form terlebih dahulu
+                tourForms.forEach(form => {
+                    form.classList.add('hidden');
+                });
+
+                // Tampilkan form yang sesuai
+                const selectedForm = document.getElementById(`tour-${tourType}-form`);
+                if (selectedForm) {
+                    selectedForm.classList.remove('hidden');
+                }
+            });
         });
     </script>
 @endsection
