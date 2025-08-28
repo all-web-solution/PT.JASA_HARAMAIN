@@ -12,17 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('planes', function (Blueprint $table) {
-            $table->id();
-            $table->string('bandara_asal');
-            $table->string('bandara_tujuan');
-            $table->date('tanggal_berangkat');
-            $table->string('maskapai')->nullable();
-            $table->string('transit')->nullable();
-            $table->string('pax');
-            $table->string('description');
+            $table->increments('id');
+            $table->unsignedInteger('service_id');
+            $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
+            $table->date('tanggal_keberangkatan');
+            $table->string('rute');
+            $table->string('maskapai');
+            $table->string('harga');
+            $table->string('keterangan');
             $table->timestamps();
         });
     }
+
     /**
      * Reverse the migrations.
      */

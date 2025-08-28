@@ -82,6 +82,11 @@
                 <i class="bi bi-speedometer2"></i> Kendaraan
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('transportation.customer') }}">
+                <i class="bi bi-speedometer2"></i> Customer
+            </a>
+        </li>
 
     </ul>
     @elseif (auth()->user()->role === 'konten dan dokumentasi')

@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Hotel extends Model
 {
     protected $fillable = [
-        'checkin',
-        'checkout',
-        'room_type',
-        'star',
-        'travel_id',
-    ];
+        'service_id',
+        'tanggal_checkin',
+        'tanggal_checkout',
+        'nama_hotel',
+        'tipe_kamar',
+        'jumlah_kamar',
+        'harga_perkamar',
+        'catatan'];
 
-    public function travel()
-    {
-        return $this->belongsTo(Pelanggan::class, 'travel_id');
+    public function service(){
+        return $this->belongsTo(Service::class);
     }
 }

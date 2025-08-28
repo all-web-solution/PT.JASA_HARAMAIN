@@ -6,15 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Plane extends Model
 {
-    protected $fillable = [
-        'bandara_asal',
-        'bandara_tujuan',
-        'tanggal_berangkat',
-        'maskapai',
-        'transit',
-        'pax',
-        'description'
-    ];
+    protected $fillable = ['service_id', 'tanggal_keberangkatan', 'rute', 'maskapai', 'harga', 'keterangan'];
 
-
+    public function service(){
+        return $this->belongsTo(Service::class);
+    }
 }

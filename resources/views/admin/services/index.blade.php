@@ -414,17 +414,21 @@
                     <tr>
                         <th>Customer/Travel</th>
 
-                        <th>Tgl Permintaan</th>
-                        <th>Tgl Deadline</th>
-                        
+                        <th>Tgl keberangkatan</th>
+                        <th>Tgl kepulangan</th>
+                        <th>Jumlah jamaah</th>
+                        <th>Layanan yang di pilih</th>
+
                     </tr>
                 </thead>
                 <tbody>
                    @foreach ($services as $service)
                     <tr>
                         <td>{{$service->pelanggan->nama_travel}}</td>
-                        <td>{{$service->departure_date}}</td>
-                        <td>{{$service->return_date}}</td>
+                        <td>{{$service->tanggal_keberangkatan}}</td>
+                        <td>{{$service->tanggal_kepulangan}}</td>
+                        <td>{{$service->total_jamaah}}</td>
+                       <td>{{ implode(', ', (array) $service->services) }}</td>
 
                     </tr>
                    @endforeach

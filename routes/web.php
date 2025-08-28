@@ -100,6 +100,7 @@ Route::middleware(['auth', 'hotel'])->group(function () {
            Route::put('/update/{id}', [TransportationController::class, 'updateCar'])->name('transportation.car.update');
            Route::delete('/delete/{id}', [TransportationController::class, 'deleteCar'])->name('transportation.car.delete');
         });
+        Route::get('/customer/transportation', [TransportationController::class, 'TransportationCustomer'])->name('transportation.customer');
    });
 
    Route::middleware(['auth', 'content'])->group(function(){

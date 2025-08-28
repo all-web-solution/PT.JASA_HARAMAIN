@@ -378,9 +378,6 @@
             <h5 class="card-title">
                 <i class="bi bi-list-check"></i>Daftar pesawat
             </h5>
-            <a href="{{ route('transportation.plane.create') }}" class="btn-add-new">
-                <i class="bi bi-plus-circle"></i> Tambah Hotel
-            </a>
         </div>
 
         <!-- Search and Filter -->
@@ -413,37 +410,24 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Asal</th>
-                        <th>Tujuan</th>
+                        <th>Nama Travel</th>
                         <th>Tanggal berangkat</th>
+                        <th>Rute</th>
                         <th>Maskapai</th>
-                        <th>Transit</th>
-                        <th>Pax</th>
-                        <th>Deskripsi</th>
-                        <th>Aksi</th>
+                        <th>Harga</th>
+                        <th>Keterangan</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($planes as $plane)
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td>{{$plane->bandara_asal}}</td>
-                        <td>{{$plane->bandara_tujuan}}</td>
-                        <td>{{$plane->tanggal_berangkat}}</td>
+                        <td>{{$plane->service->pelanggan->nama_travel}}</td>
+                        <td>{{ \Carbon\Carbon::parse($plane->tanggal_keberangkatan)->translatedFormat('d F Y') }}</td>
+                        <td>{{$plane->rute}}</td>
                         <td>{{$plane->maskapai}}</td>
-                        <td>{{$plane->transit}}</td>
-                        <td>{{$plane->pax}}</td>
-                        <td>{{$plane->description}}</td>
-                        <td>
-                            <a href="{{ route('transportation.plane.edit', $plane->id) }}">
-                                <button class="btn btn-warning">Edit</button>
-                            </a>
-                            <form action="{{ route('transportation.plane.delete', $plane->id) }}" method="post">
-                                @csrf
-                                @method('delete')
-                                <button class="btn btn-danger">Delete</button>
-                            </form>
-                        </td>
+                        <td>{{$plane->harga}}</td>
+                        <td>{{$plane->keterangan}}</td>
                     </tr>
                     @endforeach
                 </tbody>

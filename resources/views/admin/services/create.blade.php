@@ -440,7 +440,7 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Nama Travel</label>
-                                    <select class="form-control" name="travel_id" id="travel-select">
+                                    <select class="form-control" name="travel" id="travel-select">
                                         <option value="" disabled selected>Pilih Travel</option>
                                         @foreach ($pelanggans as $pelanggan)
                                             <option value="{{ $pelanggan->id }}"
@@ -454,7 +454,7 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Penanggung Jawab</label>
-                                    <input type="text" class="form-control" name="contact_person" readonly required
+                                    <input type="text" class="form-control" readonly required
                                         id="penanggung">
                                 </div>
                             </div>
@@ -464,13 +464,13 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" name="email" required id="email">
+                                    <input type="email" class="form-control"  required id="email">
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Telepon</label>
-                                    <input type="tel" class="form-control" name="phone" required id="phone">
+                                    <input type="tel" class="form-control" required id="phone">
                                 </div>
                             </div>
                         </div>
@@ -479,21 +479,21 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Keberangkatan</label>
-                                    <input type="date" class="form-control" name="departure_date" required>
+                                    <input type="date" class="form-control" name="tanggal_keberangkatan" required>
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Kepulangan</label>
-                                    <input type="date" class="form-control" name="return_date" required>
+                                    <input type="date" class="form-control" name="tanggal_kepulangan" required>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Jumlah Jamaah</label>
-                            <input type="number" class="form-control" name="total_jamaah" min="1" required>
-                        </div>
+    <label class="form-label">Jumlah Jamaah</label>
+    <input type="number" class="form-control" name="total_jamaah" min="1" required>
+</div>
                     </div>
 
                     <!-- Pilih Layanan Section -->
@@ -509,7 +509,7 @@
                                 </div>
                                 <div class="service-name">Transportasi</div>
                                 <div class="service-desc">Tiket & Transport</div>
-                                <input type="checkbox" name="services[]" value="transportasi" checked hidden>
+                                <input type="checkbox" name="services[]" value="transportasi" hidden>
                             </div>
 
                             <div class="service-item" data-service="hotel">
@@ -518,7 +518,7 @@
                                 </div>
                                 <div class="service-name">Hotel</div>
                                 <div class="service-desc">Akomodasi</div>
-                                <input type="checkbox" name="services[]" value="hotel" checked hidden>
+                                <input type="checkbox" name="services[]" value="hotel" hidden>
                             </div>
 
                             <div class="service-item" data-service="dokumen">
@@ -527,7 +527,7 @@
                                 </div>
                                 <div class="service-name">Dokumen</div>
                                 <div class="service-desc">Visa & Administrasi</div>
-                                <input type="checkbox" name="services[]" value="dokumen" checked hidden>
+                                <input type="checkbox" name="services[]" value="dokumen" hidden>
                             </div>
 
                             <div class="service-item" data-service="handling">
@@ -536,7 +536,7 @@
                                 </div>
                                 <div class="service-name">Handling</div>
                                 <div class="service-desc">Bandara & Hotel</div>
-                                <input type="checkbox" name="services[]" value="handling" checked hidden>
+                                <input type="checkbox" name="services[]" value="handling" hidden>
                             </div>
 
                             <div class="service-item" data-service="pendamping">
@@ -545,7 +545,7 @@
                                 </div>
                                 <div class="service-name">Pendamping</div>
                                 <div class="service-desc">Tour Leader & Mutawwif</div>
-                                <input type="checkbox" name="services[]" value="pendamping" checked hidden>
+                                <input type="checkbox" name="services[]" value="pendamping" hidden>
                             </div>
 
                             <div class="service-item" data-service="konten">
@@ -554,7 +554,7 @@
                                 </div>
                                 <div class="service-name">Konten</div>
                                 <div class="service-desc">Dokumentasi</div>
-                                <input type="checkbox" name="services[]" value="konten" checked hidden>
+                                <input type="checkbox" name="services[]" value="konten" hidden>
                             </div>
 
                             <div class="service-item" data-service="reyal">
@@ -563,7 +563,7 @@
                                 </div>
                                 <div class="service-name">Reyal</div>
                                 <div class="service-desc">Penukaran Mata Uang</div>
-                                <input type="checkbox" name="services[]" value="reyal" checked hidden>
+                                <input type="checkbox" name="services[]" value="reyal" hidden>
                             </div>
 
                             <div class="service-item" data-service="tour">
@@ -572,7 +572,7 @@
                                 </div>
                                 <div class="service-name">Tour</div>
                                 <div class="service-desc">City Tour & Ziarah</div>
-                                <input type="checkbox" name="services[]" value="tour" checked hidden>
+                                <input type="checkbox" name="services[]" value="tour" hidden>
                             </div>
 
                             <div class="service-item" data-service="meals">
@@ -581,7 +581,7 @@
                                 </div>
                                 <div class="service-name">Meals</div>
                                 <div class="service-desc">Makanan</div>
-                                <input type="checkbox" name="services[]" value="meals" checked hidden>
+                                <input type="checkbox" name="services[]" value="meals" hidden>
                             </div>
 
                             <div class="service-item" data-service="dorongan">
@@ -590,7 +590,7 @@
                                 </div>
                                 <div class="service-name">Dorongan</div>
                                 <div class="service-desc">Bagi penyandang disabilitas</div>
-                                <input type="checkbox" name="services[]" value="dorongan" checked hidden>
+                                <input type="checkbox" name="services[]" value="dorongan" hidden>
                             </div>
 
                             <div class="service-item" data-service="waqaf">
@@ -599,7 +599,7 @@
                                 </div>
                                 <div class="service-name">Waqaf</div>
                                 <div class="service-desc">Sedekah & Waqaf</div>
-                                <input type="checkbox" name="services[]" value="waqaf" checked hidden>
+                                <input type="checkbox" name="services[]" value="waqaf" hidden>
                             </div>
                             <div class="service-item" data-service="badal">
                                 <div class="service-icon">
@@ -607,7 +607,7 @@
                                 </div>
                                 <div class="service-name">Badal umrah</div>
                                 <div class="service-desc">Sedekah & Waqaf</div>
-                                <input type="checkbox" name="services[]" value="waqaf" checked hidden>
+                                <input type="checkbox" name="services[]" value="waqaf" hidden>
                             </div>
                         </div>
                     </div>
@@ -630,7 +630,7 @@
                                             <i class="bi bi-airplane"></i>
                                         </div>
                                         <div class="service-name">Pesawat</div>
-                                        <input type="checkbox" name="transportation[]" value="airplane" checked hidden>
+                                        <input type="checkbox" name="transportation[]" value="airplane" hidden>
                                     </div>
 
                                     <div class="transport-item" data-transportasi="bus">
@@ -638,7 +638,7 @@
                                             <i class="bi bi-bus-front"></i>
                                         </div>
                                         <div class="service-name">Transportasi darat</div>
-                                        <input type="checkbox" name="transportation[]" value="bus" checked hidden>
+                                        <input type="checkbox" name="transportation[]" value="bus" hidden>
                                     </div>
                                 </div>
                                 <div class="form-group" data-transportasi="airplane" id="pesawat">
@@ -719,34 +719,17 @@
                                 <div class="form-group" data-transportasi="bus" id="bis">
                                     <label class="form-label">Transportasi darat</label>
                                     <div class="cars">
+                                        @foreach ($transportations as $data)
                                         <label class="service-car">
-                                            <div class="service-name">Mercy</div>
-                                            <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                            <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                            <div class="service-desc">Rp.3.000.000/hari</div>
-                                            <input type="radio" name="services" value="meals" class="d-none">
+                                            <div class="service-name">{{$data->nama}}</div>
+                                            <div class="service-desc">Kapasitas: {{$data->kapasitas}}</div>
+                                            <div class="service-desc">Fasilitas: {{$data->fasilitas}}</div>
+                                            <div class="service-desc">Rp. {{$data->harga}}/hari</div>
+                                            <input type="radio" name="transportation_id" value="{{ $data->id }}" class="d-none">
                                         </label>
-                                        <label class="service-car">
-                                            <div class="service-name">Mercy</div>
-                                            <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                            <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                            <div class="service-desc">Rp.3.000.000/hari</div>
-                                            <input type="radio" name="services" value="meals" class="d-none">
-                                        </label>
-                                        <label class="service-car">
-                                            <div class="service-name">Mercy</div>
-                                            <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                            <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                            <div class="service-desc">Rp.3.000.000/hari</div>
-                                            <input type="radio" name="services" value="meals" class="d-none">
-                                        </label>
-                                        <label class="service-car">
-                                            <div class="service-name">Mercy</div>
-                                            <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                            <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                            <div class="service-desc">Rp.3.000.000/hari</div>
-                                            <input type="radio" name="services" value="meals" class="d-none">
-                                        </label>
+
+                                        @endforeach
+
 
                                     </div>
 
@@ -772,7 +755,7 @@
                                             <div class="input-group">
                                                 <span class="input-group-text bg-white"><i
                                                         class="bi bi-calendar-check"></i></span>
-                                                <input type="date" class="form-control" name="checkin[]">
+                                                <input type="date" class="form-control" name="tanggal_checkin[]">
                                             </div>
                                         </div>
 
@@ -782,7 +765,7 @@
                                             <div class="input-group">
                                                 <span class="input-group-text bg-white"><i
                                                         class="bi bi-calendar-x"></i></span>
-                                                <input type="date" class="form-control" name="checkout[]">
+                                                <input type="date" class="form-control" name="tanggal_checkout[]">
                                             </div>
                                         </div>
 
@@ -792,8 +775,8 @@
                                             <div class="input-group">
                                                 <span class="input-group-text bg-white"><i
                                                         class="bi bi-building"></i></span>
-                                                <input type="text" class="form-control" name="nama_hotel[]"
-                                                    placeholder="Nama hotel">
+                                                <input type="text" class="form-control" name="nama_hotel[]" placeholder="Nama hotel">
+
                                             </div>
                                         </div>
 
@@ -1144,25 +1127,25 @@
                                 <div class="form-col">
                                     <div class="form-group">
                                         <label class="form-label">Nama Hotel</label>
-                                        <input type="text" class="form-control" name="nama_hotel">
+                                        <input type="text" class="form-control" name="nama_hotel_handling">
                                     </div>
                                 </div>
                                 <div class="form-col">
                                     <div class="form-group">
                                         <label class="form-label">Tanggal</label>
-                                        <input type="date" class="form-control" name="tanggal_hotel">
+                                        <input type="date" class="form-control" name="tanggal_hotel_handling">
                                     </div>
                                 </div>
                                 <div class="form-col">
                                     <div class="form-group">
                                         <label class="form-label">Harga</label>
-                                        <input type="text" class="form-control" name="harga_hotel">
+                                        <input type="text" class="form-control" name="harga_hotel_handling">
                                     </div>
                                 </div>
                                 <div class="form-col">
                                     <div class="form-group">
                                         <label class="form-label">Pax</label>
-                                        <input type="text" class="form-control" name="pax_hotel">
+                                        <input type="text" class="form-control" name="pax_hotel_handling">
                                     </div>
                                 </div>
                             </div>
@@ -1523,7 +1506,7 @@
                                             fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
                                             <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
                                             <path
-                                                d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
+                                                d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zM2 3h10V1H3z" />
                                         </svg>
                                     </div>
                                     <div class="service-name">Nasi Box</div>
@@ -1548,108 +1531,141 @@
                                     <div class="service-desc">Rp. 70.000.000</div>
                                     <input type="checkbox" name="content[]" value="muthawifah" hidden>
                                 </div>
+                            </div>
+                        </div>
 
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Jumlah </label>
-                                <input type="text" class="form-control" name="nama_bandara">
-                            </div>
+                        <div id="premium-form" class="form-group hidden">
+                            <label class="form-label">Jumlah Nasi Box</label>
+                            <input type="text" class="form-control" name="jumlah_premium">
+                        </div>
+
+                        <div id="standard-form" class="form-group hidden">
+                            <label class="form-label">Jumlah Buffle Hotel</label>
+                            <input type="text" class="form-control" name="jumlah_standard">
+                        </div>
+
+                        <div id="muthawifah-form" class="form-group hidden">
+                            <label class="form-label">Jumlah Snack</label>
+                            <input type="text" class="form-control" name="jumlah_muthawifah">
                         </div>
                         <div class="detail-form" id="dorongan-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Dorongan
                             </h6>
                             <div class="service-grid">
-                                <div class="content-item" data-content="premium">
+                                <div class="content-item" data-content="umrah">
                                     <div class="service-icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
                                             <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
                                             <path
-                                                d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
+                                                d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zM2 3h10V1H3z" />
                                         </svg>
                                     </div>
-                                    <div class="service-name">Umrah </div>
+                                    <div class="service-name">Umrah</div>
                                     <div class="service-desc">Rp. 120.000.000</div>
-                                    <input type="checkbox" name="content[]" value="premium" hidden>
+                                    <input type="checkbox" name="content[]" value="umrah" hidden>
                                 </div>
 
-                                <div class="content-item" data-content="standard">
+                                <div class="content-item" data-content="makkah">
                                     <div class="service-icon">
                                         <i class="bi bi-bus-front"></i>
                                     </div>
                                     <div class="service-name">Makkah</div>
                                     <div class="service-desc">Rp. 80.000.000</div>
-                                    <input type="checkbox" name="content[]" value="standard" hidden>
+                                    <input type="checkbox" name="content[]" value="makkah" hidden>
                                 </div>
 
-                                <div class="content-item" data-content="muthawifah">
+                                <div class="content-item" data-content="tawaf">
                                     <div class="service-icon">
                                         <i class="bi bi-person-standing"></i>
                                     </div>
                                     <div class="service-name">Tawaf</div>
                                     <div class="service-desc">Rp. 70.000.000</div>
-                                    <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                    <input type="checkbox" name="content[]" value="tawaf" hidden>
                                 </div>
-                                <div class="content-item" data-content="muthawifah">
+
+                                <div class="content-item" data-content="dorongan-sel">
                                     <div class="service-icon">
                                         <i class="bi bi-person-standing"></i>
                                     </div>
                                     <div class="service-name">Dorongan sel</div>
                                     <div class="service-desc">Rp. 70.000.000</div>
-                                    <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                    <input type="checkbox" name="content[]" value="dorongan-sel" hidden>
                                 </div>
-
-
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">Jumlah </label>
-                                <input type="text" class="form-control" name="nama_bandara">
-                            </div>
+                        </div>
+
+                        <div id="umrah-form" class="form-group hidden">
+                            <label class="form-label">Jumlah Umrah</label>
+                            <input type="text" class="form-control" name="jumlah_umrah">
+                        </div>
+
+                        <div id="makkah-form" class="form-group hidden">
+                            <label class="form-label">Jumlah Makkah</label>
+                            <input type="text" class="form-control" name="jumlah_makkah">
+                        </div>
+
+                        <div id="tawaf-form" class="form-group hidden">
+                            <label class="form-label">Jumlah Tawaf</label>
+                            <input type="text" class="form-control" name="jumlah_tawaf">
+                        </div>
+
+                        <div id="dorongan-sel-form" class="form-group hidden">
+                            <label class="form-label">Jumlah Dorongan sel</label>
+                            <input type="text" class="form-control" name="jumlah_dorongan_sel">
                         </div>
                         <div class="detail-form" id="waqaf-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Wakaf
                             </h6>
                             <div class="service-grid">
-                                <div class="content-item" data-content="premium">
+                                <div class="content-item" data-content="berbagi-air">
                                     <div class="service-icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
                                             <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
                                             <path
-                                                d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
+                                                d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zM2 3h10V1H3z" />
                                         </svg>
                                     </div>
                                     <div class="service-name">Berbagi Air</div>
-                                    <input type="checkbox" name="content[]" value="premium" hidden>
+                                    <input type="checkbox" name="content[]" value="berbagi-air" hidden>
                                 </div>
 
-                                <div class="content-item" data-content="standard">
+                                <div class="content-item" data-content="berbagi-nasi">
                                     <div class="service-icon">
                                         <i class="bi bi-bus-front"></i>
                                     </div>
                                     <div class="service-name">Berbagi nasi kotak</div>
                                     <div class="service-desc">Rp. 80.000.000</div>
-                                    <input type="checkbox" name="content[]" value="standard" hidden>
+                                    <input type="checkbox" name="content[]" value="berbagi-nasi" hidden>
                                 </div>
 
-                                <div class="content-item" data-content="muthawifah">
+                                <div class="content-item" data-content="mushaf">
                                     <div class="service-icon">
                                         <i class="bi bi-person-standing"></i>
                                     </div>
                                     <div class="service-name">Mushaf al quran</div>
                                     <div class="service-desc">Rp. 70.000.000</div>
-                                    <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                    <input type="checkbox" name="content[]" value="mushaf" hidden>
                                 </div>
-
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">Jumlah </label>
-                                <input type="text" class="form-control" name="nama_bandara">
-                            </div>
+                        </div>
 
+                        <div id="berbagi-air-form" class="form-group hidden">
+                            <label class="form-label">Jumlah Berbagi Air</label>
+                            <input type="text" class="form-control" name="jumlah_berbagi_air">
+                        </div>
 
+                        <div id="berbagi-nasi-form" class="form-group hidden">
+                            <label class="form-label">Jumlah Berbagi Nasi Kotak</label>
+                            <input type="text" class="form-control" name="jumlah_berbagi_nasi">
+                        </div>
+
+                        <div id="mushaf-form" class="form-group hidden">
+                            <label class="form-label">Jumlah Mushaf al-Quran</label>
+                            <input type="text" class="form-control" name="jumlah_mushaf">
                         </div>
                         <div class="detail-form" id="badal-details">
                             <h6 class="detail-title">
@@ -1714,7 +1730,7 @@
                     const serviceType = item.getAttribute('data-service');
                     const detailForm = document.getElementById(`${serviceType}-details`);
                     if (detailForm) {
-                        detailForm.style.display = checkbox.checked ? 'none' : 'block';
+                        detailForm.style.display = checkbox.checked ? 'block' : 'none';
                     }
 
                     console.log(serviceType);
@@ -1762,10 +1778,10 @@
                     const transportType = item.getAttribute('data-transportasi');
                     if (transportType === 'airplane') {
                         document.getElementById('pesawat').style.display = checkbox.checked ?
-                            'none' : 'block';
+                            'block' : 'none';
                     } else if (transportType === 'bus') {
-                        document.getElementById('bis').style.display = checkbox.checked ? 'none' :
-                            'block';
+                        document.getElementById('bis').style.display = checkbox.checked ? 'block' :
+                            'none';
                     }
                 });
             });
@@ -2087,6 +2103,113 @@
                 const selectedForm = document.getElementById(`tour-${tourType}-form`);
                 if (selectedForm) {
                     selectedForm.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Dapatkan semua item makanan
+        const mealItems = document.querySelectorAll('.content-item');
+        // Buat objek untuk memetakan jenis makanan ke ID form
+        const formDetailMeals = {
+            premium: document.getElementById('premium-form'),
+            standard: document.getElementById('standard-form'),
+            muthawifah: document.getElementById('muthawifah-form')
+        };
+
+        // Tambahkan event listener untuk setiap item makanan
+        mealItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Dapatkan jenis makanan dari atribut data
+                const mealType = item.dataset.content;
+                const checkbox = item.querySelector('input[type="checkbox"]');
+
+                // Toggle class 'active' untuk styling
+                item.classList.toggle('active');
+
+                // Toggle status 'checked' pada checkbox
+                checkbox.checked = !checkbox.checked;
+
+                // Tampilkan atau sembunyikan form yang sesuai berdasarkan status checkbox
+                if (checkbox.checked) {
+                    if (formDetailMeals[mealType]) {
+                        formDetailMeals[mealType].classList.remove('hidden');
+                    }
+                } else {
+                    if (formDetailMeals[mealType]) {
+                        formDetailMeals[mealType].classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+        // Dapatkan semua item dorongan
+        const doronganItems = document.querySelectorAll('#dorongan-details .content-item');
+        // Buat objek untuk memetakan jenis dorongan ke ID form
+        const formDetailDorongans = {
+            umrah: document.getElementById('umrah-form'),
+            makkah: document.getElementById('makkah-form'),
+            tawaf: document.getElementById('tawaf-form'),
+            'dorongan-sel': document.getElementById('dorongan-sel-form')
+        };
+
+        // Tambahkan event listener untuk setiap item dorongan
+        doronganItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Dapatkan jenis dorongan dari atribut data
+                const doronganType = item.dataset.content;
+                const checkbox = item.querySelector('input[type="checkbox"]');
+
+                // Toggle class 'active' untuk styling
+                item.classList.toggle('active');
+
+                // Toggle status 'checked' pada checkbox
+                checkbox.checked = !checkbox.checked;
+
+                // Tampilkan atau sembunyikan form yang sesuai berdasarkan status checkbox
+                if (checkbox.checked) {
+                    if (formDetailDorongans[doronganType]) {
+                        formDetailDorongans[doronganType].classList.remove('hidden');
+                    }
+                } else {
+                    if (formDetailDorongans[doronganType]) {
+                        formDetailDorongans[doronganType].classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+
+        // Dapatkan semua item wakaf
+        const waqafItems = document.querySelectorAll('#waqaf-details .content-item');
+        // Buat objek untuk memetakan jenis wakaf ke ID form
+        const formDetailWakaf = {
+            'berbagi-air': document.getElementById('berbagi-air-form'),
+            'berbagi-nasi': document.getElementById('berbagi-nasi-form'),
+            'mushaf': document.getElementById('mushaf-form')
+        };
+
+        // Tambahkan event listener untuk setiap item wakaf
+        waqafItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Dapatkan jenis wakaf dari atribut data
+                const waqafType = item.dataset.content;
+                const checkbox = item.querySelector('input[type="checkbox"]');
+
+                // Toggle class 'active' untuk styling
+                item.classList.toggle('active');
+
+                // Toggle status 'checked' pada checkbox
+                checkbox.checked = !checkbox.checked;
+
+                // Tampilkan atau sembunyikan form yang sesuai berdasarkan status checkbox
+                if (checkbox.checked) {
+                    if (formDetailWakaf[waqafType]) {
+                        formDetailWakaf[waqafType].classList.remove('hidden');
+                    }
+                } else {
+                    if (formDetailWakaf[waqafType]) {
+                        formDetailWakaf[waqafType].classList.add('hidden');
+                    }
                 }
             });
         });

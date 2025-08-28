@@ -301,7 +301,7 @@
                 <!-- Data Travel Section -->
                 <div class="form-section">
                     <h6 class="form-section-title">
-                        <i class="bi bi-building"></i> Data Hotel
+                        <i class="bi bi-building"></i> Data Kendaraan
                     </h6>
 
                     <div class="form-row">
@@ -313,13 +313,21 @@
                         </div>
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="form-label">Tujuan</label>
-                                <input type="text" class="form-control" name="tujuan"
+                                <label class="form-label">Kapasitas</label>
+                                <input type="text" class="form-control" name="kapasitas"
                                        required  id="penanggung">
                             </div>
                         </div>
                     </div>
 
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Fasilitas</label>
+                                <input type="text" class="form-control" name="fasilitas" required id="email">
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
@@ -331,7 +339,7 @@
 
                 </div>
                 <button type="submit" class="btn btn-submit">
-                    <i class="bi bi-check-circle"></i> Simpan data hotel
+                    <i class="bi bi-check-circle"></i> Simpan data kendaraan
                 </button>
             </form>
         </div>

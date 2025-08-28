@@ -376,11 +376,8 @@
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">
-                <i class="bi bi-list-check"></i>Daftar kendaraan
+                <i class="bi bi-list-check"></i>Daftar Customer Kendaraan
             </h5>
-            <a href="{{ route('transportation.car.create') }}" class="btn-add-new">
-                <i class="bi bi-plus-circle"></i> Tambah Kendaraan
-            </a>
         </div>
 
         <!-- Search and Filter -->
@@ -413,35 +410,29 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama</th>
-                        <th>Kapasitas</th>
-                        <th>Fasilitas</th>
-                        <th>Harga</th>
-                        <th>Aksi</th>
-
+                        <th>Nama Travel</th>
+                        <th>Nama kendaraan</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($Transportations as $car)
+                    @foreach ($customers as $customer)
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td>{{$car->nama}}</td>
-                        <td>{{$car->kapasitas}}</td>
-                        <td>{{$car->fasilitas}}</td>
-                        <td>{{$car->harga}}</td>
-                        <td>
-                            <a href="{{ route('transportation.car.edit', $car->id) }}">
-                                <button class="btn btn-warning">Edit</button>
-                            </a>
-                            <form action="{{ route('transportation.car.delete', $car->id) }}" method="post">
-                                @csrf
-                                @method('delete')
-                                <button class="btn btn-danger">Hapus</button>
-                            </form>
-                        </td>
-
+                        <td>{{$customer->service->pelanggan->nama_travel}}</td>
+                        <td>{{$customer->transportation->nama}}</td>
                     </tr>
                     @endforeach
+                    {{-- @foreach ($planes as $plane)
+                    <tr>
+                        <td>{{$loop->iteration}}</td>
+                        <td>{{$plane->service->pelanggan->nama_travel}}</td>
+                        <td>{{ \Carbon\Carbon::parse($plane->tanggal_keberangkatan)->translatedFormat('d F Y') }}</td>
+                        <td>{{$plane->rute}}</td>
+                        <td>{{$plane->maskapai}}</td>
+                        <td>{{$plane->harga}}</td>
+                        <td>{{$plane->keterangan}}</td>
+                    </tr>
+                    @endforeach --}}
                 </tbody>
             </table>
         </div>

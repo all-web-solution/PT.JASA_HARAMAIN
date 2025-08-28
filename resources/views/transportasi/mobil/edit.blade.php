@@ -289,33 +289,33 @@
             <h5 class="card-title">
                 <i class="bi bi-plus-circle"></i>Edit Data Mobil
             </h5>
-            <a href="{{ route('transportation.car.update', $car->id) }}" class="btn btn-secondary">
+            <a href="{{ route('transportation.car.update', $Transportation->id) }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
         </div>
 
         <div class="card-body">
-            <form action="{{ route('transportation.car.store') }}" method="POST">
+             <form action="{{ route('transportation.car.update', $Transportation->id) }}" method="POST">
                 @csrf
-
+                @method('put')
                 <!-- Data Travel Section -->
                 <div class="form-section">
                     <h6 class="form-section-title">
-                        <i class="bi bi-building"></i> Data Hotel
+                        <i class="bi bi-building"></i>Ubah data Kendaraan
                     </h6>
 
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Nama</label>
-                                <input type="text" class="form-control" name="nama" required id="email" value="{{ $car->nama }}">
+                                <input type="text" class="form-control" name="nama" required id="email" value="{{ $Transportation->nama }}">
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="form-label">Tujuan</label>
-                                <input type="text" class="form-control" name="tujuan"
-                                       required  id="penanggung" value="{{ $car->tujuan }}">
+                                <label class="form-label">Kapasitas</label>
+                                <input type="text" class="form-control" name="kapasitas"
+                                       required  id="penanggung" value="{{ $Transportation->kapasitas }}">
                             </div>
                         </div>
                     </div>
@@ -323,15 +323,23 @@
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
+                                <label class="form-label">Fasilitas</label>
+                                <input type="text" class="form-control" name="fasilitas" required id="email" value="{{ $Transportation->fasilitas }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
                                 <label class="form-label">Harga</label>
-                                <input type="text" class="form-control" name="harga" required id="email" value="{{ $car->harga }}">
+                                <input type="text" class="form-control" name="harga" required id="email" value="{{ $Transportation->harga }}">
                             </div>
                         </div>
                     </div>
 
                 </div>
                 <button type="submit" class="btn btn-submit">
-                    <i class="bi bi-check-circle"></i> Simpan perubahan hotel
+                    <i class="bi bi-check-circle"></i> Simpan data perubahan kendaraan
                 </button>
             </form>
         </div>
