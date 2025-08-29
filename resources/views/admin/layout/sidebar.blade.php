@@ -51,12 +51,17 @@
     <ul class="nav flex-column mt-2">
         <li class="nav-item">
             <a class="nav-link active" href="{{ route('catering.index') }}">
-                <i class="bi bi-speedometer2"></i> CATERING
+                <i class="bi bi-speedometer2"></i> Catering
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link active" href="{{ route('handling.handling.index') }}">
-                <i class="bi bi-speedometer2"></i> HANDLING
+                <i class="bi bi-speedometer2"></i> Handling Pesawat
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('handling.handling.hotel') }}">
+                <i class="bi bi-speedometer2"></i> Handling Hotel
             </a>
         </li>
         <li class="nav-item">

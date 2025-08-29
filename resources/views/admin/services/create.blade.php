@@ -1469,7 +1469,7 @@
                                     </div>
                                     <div class="service-name">Snack</div>
                                     <div class="service-desc">Rp. 70.000.000</div>
-                                    <input type="checkbox" name="meals[]" value="Buffle Hotel" hidden>
+                                    <input type="checkbox" name="meals[]" value="snack" hidden>
                                 </div>
                             </div>
                         </div>

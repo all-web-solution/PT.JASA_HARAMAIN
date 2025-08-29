@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2>Handling Pesawat</h2>
+            <h2>Handling hotel</h2>
 
         </div>
         @if (session('success'))
@@ -16,26 +16,25 @@
                 <tr>
                     <th>ID</th>
                     <th>Nama customer</th>
-                    <th>Nama Bandara</th>
-                    <th>Jumlah jamaah</th>
+                    <th>Nama Hotel</th>
+                    <th>Tanggal</th>
                     <th>Harga</th>
-                    <th>Kedatangan jamaah</th>
+                    <th>Pax</th>
 
 
                 </tr>
             </thead>
             <tbody>
-                @foreach ($planes as $plane)
+                @foreach ($hotels as $hotel)
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td>{{$plane->handling->service->pelanggan->nama_travel}}</td>
-                        <td>{{$plane->nama_bandara}}</td>
-                        <td>{{$plane->jumlah_jamaah}}</td>
-                        <td>{{$plane->harga}}</td>
-                        <td>{{ \Carbon\Carbon::parse($plane->kedatangan_jamaah)->translatedFormat('l, d F Y') }}</td>
+                        <td>{{$hotel->handling->service->pelanggan->nama_travel}}</td>
+                        <td>{{$hotel->nama}}</td>
+                        <td>{{ \Carbon\Carbon::parse($hotel->tanggal)->translatedFormat('l, d F Y') }}</td>
+                        <td>{{$hotel->harga}}</td>
+                        <td>{{$hotel->pax}}</td>
                     </tr>
                 @endforeach
-
             </tbody>
         </table>
 

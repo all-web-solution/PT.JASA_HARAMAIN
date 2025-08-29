@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Handling;
 
 use App\Http\Controllers\Controller;
 use App\Models\Handling;
+use App\Models\HandlingHotel;
+use App\Models\HandlingPlanes;
 use Illuminate\Http\Request;
 
 class HandlingController extends Controller
@@ -13,7 +15,8 @@ class HandlingController extends Controller
      */
     public function index()
     {
-        return view('handling.handling.index');
+        $planes = HandlingPlanes::all();
+        return view('handling.handling.index', compact('planes'));
     }
 
     /**
@@ -62,5 +65,10 @@ class HandlingController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function hotel(){
+        $hotels = HandlingHotel::all();
+        return view('handling.handling.hotel', compact('hotels'));
     }
 }

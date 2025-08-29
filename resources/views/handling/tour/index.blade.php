@@ -17,25 +17,18 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Aksi</th>
+                    <th>Nama Customer</th>
+                    <th>Kendaraann yang di pilih</th>
+                    <th>Tujuan</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($tours as $tour)
                     <tr>
                     <td>{{$loop->iteration}}</td>
-                    <th>{{$tour->name}}</th>
-                    <th>
-                        <a href="{{ route('handling.tour.edit', $tour->id) }}">
-                            <button class="btn btn-warning">Edit</button>
-                        </a>
-                        <form action="{{ route('handling.tour.destroy', $tour->id) }}" method="post">
-                            @csrf
-                            @method('delete')
-                            <button class="btn btn-danger">Hapus</button>
-                        </form>
-                    </th>
+                    <td>{{$tour->service->pelanggan->nama_travel}}</td>
+                    <td>{{$tour->transportation->nama}}</td>
+                    <td>{{$tour->name}}</td>
                 </tr>
                 @endforeach
             </tbody>
