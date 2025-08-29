@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\Transaction;
 
 class PaymentController extends Controller
 {
@@ -14,8 +15,9 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $payments = Payment::all();
-        return view('admin.payment.index', compact('payments'));
+        $transactions = Transaction::all();
+
+        return view('admin.payment.index', compact('transactions'));
     }
 
     /**
@@ -28,41 +30,38 @@ class PaymentController extends Controller
     }
 
 
-    public function store(Request $request)
-    {
-        // Cari order
-        $order = Order::findOrFail($request->order_id);
+public function store(Request $request)
+{
+    $order = Order::findOrFail($request->order_id);
 
-        // Hitung total pembayaran yang sudah pernah dilakukan
-        $totalPaidSoFar = Payment::where('order_id', $order->id)->sum('paid_amount');
+    // ambil total utang dari order
+    $utang = $order->total_amount;
+    $bayar = $request->total_harga;
 
-        // Tambahkan pembayaran baru
-        $newPayment = (float) $request->total_harga;
-
-        // Hitung total dibayar setelah pembayaran baru
-        $totalPaid = $totalPaidSoFar + $newPayment;
-
-        // Hitung sisa utang
-        $outstandingDebt = $order->total_amount - $totalPaid;
-        $status = 'unpaid';
-        if ($totalPaid == 0) {
-            $status = 'unpaid';
-        } elseif ($totalPaid < $order->total_amount) {
-            $status = 'partial';
-        } elseif ($totalPaid >= $order->total_amount) {
-            $status = 'paid';
-        }
-
-        $payment = Payment::create([
-            'invoice'      => 'INV-' . time(),
-            'order_id'     => $order->id,
-            'total_amount' => $order->total_amount,
-            'paid_amount'  => $newPayment,
-            'status'       => $status,
-        ]);
-
-        return redirect()->route('admin.payment');
+    // hitung sisa hutang
+    $sisa = $utang - $bayar;
+    if ($sisa < 0) {
+        $sisa = 0; // kalau bayarnya lebih besar dari utang, sisanya nol
     }
+
+    // simpan ke transaksi
+    $transaction = Transaction::create([
+        'order_id' => $order->id,
+        'invoice_code' => 'INV-' . time(),
+        'total_hutang' => $utang,
+        'total_yang_di_bayarkan' => $bayar,
+        'sisa_hutang' => $sisa,
+    ]);
+
+    // update order supaya utangnya jadi sisa terbaru
+    $order->update([
+        'total_amount' => $sisa,
+    ]);
+
+    return redirect()->route('admin.payment');
+}
+
+
 
 
 

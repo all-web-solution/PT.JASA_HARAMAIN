@@ -422,15 +422,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($payments as $item)
-                    <tr>
-                        <th>{{$item->invoice}}</th>
-                        <th>{{$item->order->service->pelanggan->nama_travel}}</th>
-                        <th>{{$item->order->total_amount}}</th>
-                        <th>{{$item->paid_amount}}</th>
-                        <th>{{$item->remaining_amount}}</th>
-                        <th>Aksi</th>
-                    </tr>
+                    @foreach ($transactions as $item)
+                        <tr>
+                            <td>{{$item->invoice_code}}</td>
+                            <td>{{$item->order->service->pelanggan->nama_travel}}</td>
+                            <td>{{$item->total_hutang}}</td>
+                            <td>{{$item->total_yang_di_bayarkan}}</td>
+                            <td>{{$item->sisa_hutang}}</td>
+                        </tr>
                     @endforeach
 
                 </tbody>
