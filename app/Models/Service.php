@@ -40,4 +40,16 @@ public function planes()
     public function hotels(){
         return $this->hasMany(Hotel::class, 'service_id');
     }
+    public function handlings(){
+        return $this->hasMany(Handling::class, 'service_id');
+    }
+     public function meals(){
+        return $this->hasMany(Meal::class, 'service_id');
+    }
+     public function guides(){
+        return $this->hasMany(Guide::class, 'service_id');
+    }
+    public function tours(){
+        return $this->hasMany(Tour::class, 'service_id');
+    }
 }

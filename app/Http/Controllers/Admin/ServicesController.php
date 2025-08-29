@@ -66,9 +66,8 @@ class ServicesController extends Controller
                                 'catatan'           => $request->catatan[$i] ?? null,
                             ]);
                         }
-
                     }
-                break;
+                    break;
 
                 case 'transportasi':
                     if ($request->transportation) {
@@ -96,8 +95,126 @@ class ServicesController extends Controller
                     }
                     break;
 
-                case 'lainnya':
-                    $updateData['deskripsi_lainnya'] = $request->deskripsi_lainnya;
+                case 'handling':
+                    if ($request->filled('handlings')) {
+                        foreach ($request->handlings as $handling) {
+                            $habdlingModel = $service->handlings()->create([
+                                'name' => $handling
+                            ]);
+
+                            switch ($handling) {
+                                case 'hotel':
+                                    if ($request->filled('nama_hotel_handling')) {
+                                        $habdlingModel->handlingHotels()->create([
+                                            'nama'    => $request->nama_hotel_handling,
+                                            'tanggal' => $request->tanggal_hotel_handling,
+                                            'harga'   => $request->harga_hotel_handling,
+                                            'pax'     => $request->pax_hotel_handling,
+                                        ]);
+                                    }
+                                    break;
+                                case 'bandara':
+                                    if ($request->filled('nama_bandara_handling')) {
+                                        // $handlingModel->handlingPlanes()->create([
+                                        //    'nama_bandara' => $request->nama_bandara_handling,
+                                        //    'jumlah_jamaah' => $request->jumlah_jamaah_handling,
+                                        //    'harga' => $request->harga_bandara_handling,
+                                        //    'kedatangan_jamaah' => $request->kedatangan_jamaah_handling
+                                        // ]);
+                                        $habdlingModel->handlingPlanes()->create([
+                                            'nama_bandara' => $request->nama_bandara_handling,
+                                            'jumlah_jamaah' => $request->jumlah_jamaah_handling,
+                                            'harga' => $request->harga_bandara_handling,
+                                            'kedatangan_jamaah' => $request->kedatangan_jamaah_handling
+                                        ]);
+                                    }
+                            }
+                        }
+                    }
+                    break;
+                case 'meals':
+                    if ($request->filled('meals')) {
+                        foreach ($request->meals as $meal) {
+                            // Tentukan nama input jumlah sesuai meal
+                            switch (strtolower($meal)) {
+                                case 'nasi box':
+                                    $jumlah = $request->input('jumlah_nasi_box', 0);
+                                    break;
+                                case 'buffle hotel':
+                                    $jumlah = $request->input('jumlah_buffle_hotel', 0);
+                                    break;
+                                case 'snack':
+                                    $jumlah = $request->input('jumlah_snack', 0);
+                                    break;
+                                default:
+                                    $jumlah = 0;
+                            }
+
+                            $service->meals()->create([
+                                'nama' => $meal,
+                                'jumlah' => $jumlah,
+                            ]);
+                        }
+                    }
+                    break;
+                case 'pendamping':
+                    if ($request->filled('pendamping')) {
+                        foreach ($request->pendamping as $guide) {
+                            switch (strtolower($guide)) {
+                                case 'premium':
+                                    $jumlah = $request->input('jumlah_premium');
+                                    $keterangan = $request->input('ket_premium');
+                                    break;
+                                case 'standard':
+                                    $jumlah = $request->input('jumlah_standard');
+                                    $keterangan = $request->input('ket_standard');
+                                    break;
+                                case 'muthawifah':
+                                    $jumlah = $request->input('jumlah_muthwifah');
+                                    $keterangan = $request->input('ket_muthwifah');
+                                    break;
+                                case 'leader':
+                                    $jumlah = $request->input('jumlah_leader');
+                                    $keterangan = $request->input('ket_leader');
+                                    break;
+                            }
+
+                            $service->guides()->create([
+                                'nama' => $guide,
+                                'jumlah' => $jumlah,
+                                'keterangan' => $keterangan
+                            ]);
+                        }
+                    }
+                case 'tour':
+                    if ($request->filled('tours')) {
+                        foreach ($request->tours as $tour) {
+                            $transportation = 0;
+
+                            switch (strtolower($tour)) {
+                                case 'makkah':
+                                    $transportation = $request->input('select_car_makkah', 0);
+                                    break;
+                                case 'madinah':
+                                    $transportation = $request->input('select_car_madinah', 0);
+                                    break;
+                                case 'al ula':
+                                    $transportation = $request->input('select_car_al_ula', 0);
+                                    break;
+                                case 'thoif':
+                                    $transportation = $request->input('select_car_thoif', 0);
+                                    break;
+                                default:
+                                    $transportation = 0;
+                                    break;
+                            }
+
+                            $service->tours()->create([
+                                'transportation_id' => $transportation,
+                                'name'              => $tour,
+                            ]);
+                        }
+                    }
                     break;
             }
         }

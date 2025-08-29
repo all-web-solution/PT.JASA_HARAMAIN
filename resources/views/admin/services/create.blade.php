@@ -141,7 +141,12 @@
         .document-item,
         .content-item,
         .visa-item,
-        .vaksin-item {
+        .vaksin-item,
+        .service-tour,
+        .service-tour-makkah,
+        .service-tour-madinah,
+        .service-tour-al-ula,
+        .service-tour-thoif {
             border: 2px solid var(--border-color);
             border-radius: 8px;
             padding: 1.25rem;
@@ -157,7 +162,12 @@
         .document-item:hover,
         .content-item:hover,
         .visa-item:hover,
-        .vaksin-item:hover {
+        .vaksin-item:hover,
+        .service-tour:hover,
+        .service-tour-makkah:hover,
+        .service-tour-madinah:hover,
+        .service-tour-al-ula:hover,
+        .service-tour-thoif:hover {
             border-color: var(--haramain-secondary);
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -169,7 +179,12 @@
         .document-item.selected,
         .content-item.selected,
         .visa-item.selected,
-        .vaksin-item.selected {
+        .vaksin-item.selected,
+        .service-tour.selected,
+        .service-tour-makkah.selected,
+        .service-tour-madinah.selected,
+        .service-tour-al-ula.selected,
+        .service-tour-thoif.selected {
             border-color: var(--haramain-secondary);
             background-color: var(--haramain-light);
         }
@@ -322,7 +337,8 @@
             margin-top: 20px;
         }
 
-        .cars {
+        .cars,
+        .tours {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1rem;
@@ -454,8 +470,7 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Penanggung Jawab</label>
-                                    <input type="text" class="form-control" readonly required
-                                        id="penanggung">
+                                    <input type="text" class="form-control" readonly required id="penanggung">
                                 </div>
                             </div>
                         </div>
@@ -464,7 +479,7 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control"  required id="email">
+                                    <input type="email" class="form-control" required id="email">
                                 </div>
                             </div>
                             <div class="form-col">
@@ -491,9 +506,9 @@
                         </div>
 
                         <div class="form-group">
-    <label class="form-label">Jumlah Jamaah</label>
-    <input type="number" class="form-control" name="total_jamaah" min="1" required>
-</div>
+                            <label class="form-label">Jumlah Jamaah</label>
+                            <input type="number" class="form-control" name="total_jamaah" min="1" required>
+                        </div>
                     </div>
 
                     <!-- Pilih Layanan Section -->
@@ -720,14 +735,14 @@
                                     <label class="form-label">Transportasi darat</label>
                                     <div class="cars">
                                         @foreach ($transportations as $data)
-                                        <label class="service-car">
-                                            <div class="service-name">{{$data->nama}}</div>
-                                            <div class="service-desc">Kapasitas: {{$data->kapasitas}}</div>
-                                            <div class="service-desc">Fasilitas: {{$data->fasilitas}}</div>
-                                            <div class="service-desc">Rp. {{$data->harga}}/hari</div>
-                                            <input type="radio" name="transportation_id" value="{{ $data->id }}" class="d-none">
-                                        </label>
-
+                                            <label class="service-car">
+                                                <div class="service-name">{{ $data->nama }}</div>
+                                                <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
+                                                <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
+                                                <div class="service-desc">Rp. {{ $data->harga }}/hari</div>
+                                                <input type="radio" name="transportation_id"
+                                                    value="{{ $data->id }}" class="d-none">
+                                            </label>
                                         @endforeach
 
 
@@ -775,7 +790,8 @@
                                             <div class="input-group">
                                                 <span class="input-group-text bg-white"><i
                                                         class="bi bi-building"></i></span>
-                                                <input type="text" class="form-control" name="nama_hotel[]" placeholder="Nama hotel">
+                                                <input type="text" class="form-control" name="nama_hotel[]"
+                                                    placeholder="Nama hotel">
 
                                             </div>
                                         </div>
@@ -1156,19 +1172,19 @@
                                 <div class="form-col">
                                     <div class="form-group">
                                         <label class="form-label">Nama Bandara</label>
-                                        <input type="text" class="form-control" name="nama_bandara">
+                                        <input type="text" class="form-control" name="nama_bandara_handling">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Jumlah Jamaah</label>
-                                        <input type="text" class="form-control" name="jumlah_jamaah">
+                                        <input type="text" class="form-control" name="jumlah_jamaah_handling">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Harga</label>
-                                        <input type="text" class="form-control" name="harga_bandara">
+                                        <input type="text" class="form-control" name="harga_bandara_handling">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Kedatangan Jamaah</label>
-                                        <input type="date" class="form-control" name="kedatangan_jamaah">
+                                        <input type="date" class="form-control" name="kedatangan_jamaah_handling">
                                     </div>
                                 </div>
                             </div>
@@ -1318,180 +1334,104 @@
                                 <i class="bi bi-briefcase"></i> Tour
                             </h6>
                             <div class="detail-section">
-                                <div class="cars">
-                                    <label class="service-car" data-tour="makkah">
+                                <div class="tours">
+                                    <label class="service-tour" data-tour="makkah">
                                         <div class="service-icon">
                                             <i class="bi bi-egg-fried"></i>
                                         </div>
                                         <div class="service-name">City tour</div>
                                         <div class="service-desc">Makkah</div>
-                                        <input type="radio" name="services" value="meals" class="d-none">
+                                        <input type="checkbox" name="tours[]" value="makkah" class="d-none">
                                     </label>
 
-                                    <label class="service-car" data-tour="madinah">
+                                    <label class="service-tour" data-tour="madinah">
                                         <div class="service-icon">
                                             <i class="bi bi-bus-front"></i>
                                         </div>
                                         <div class="service-name">City tour</div>
                                         <div class="service-desc">Madinah</div>
-                                        <input type="radio" name="services" value="transport" class="d-none">
+                                        <input type="checkbox" name="tours[]" value="madinah" class="d-none">
                                     </label>
 
-                                    <label class="service-car" data-tour="alula">
+                                    <label class="service-tour" data-tour="alula">
                                         <div class="service-icon">
                                             <i class="bi bi-building"></i>
                                         </div>
                                         <div class="service-name">City tour</div>
                                         <div class="service-desc">Al Ula</div>
-                                        <input type="radio" name="services" value="hotel" class="d-none">
+                                        <input type="checkbox" name="tours[]" value="al ula" class="d-none">
                                     </label>
 
-                                    <label class="service-car" data-tour="thoif">
+                                    <label class="service-tour" data-tour="thoif">
                                         <div class="service-icon">
                                             <i class="bi bi-map"></i>
                                         </div>
                                         <div class="service-name">City Tour</div>
                                         <div class="service-desc">Thoif</div>
-                                        <input type="radio" name="services" value="tour" class="d-none">
+                                        <input type="checkbox" name="tours[]" value="thoif" class="d-none">
                                     </label>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="tour-makkah-form" class="hidden tour-form">
-                            <h3>Form Tour Makkah</h3>
-                            <div class="cars">
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
 
+                        <div id="tour-makkah-form" class="tour-form hidden">
+                            <h4>Transportasi Makkah</h4>
+                            <div class="makkah-tour">
+                                @foreach ($transportations as $trans)
+                                    <label class="service-tour-makkah">
+                                        <div class="service-name">{{ $trans->nama }}</div>
+                                        <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
+                                        <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
+                                        <div class="service-desc">Harga : {{ $trans->harga }}</div>
+                                        <input type="radio" name="select_car_makkah" value="{{ $trans->id }}" class="d-none">
+                                    </label>
+                                @endforeach
                             </div>
                         </div>
+
                         <div id="tour-madinah-form" class="hidden tour-form">
                             <h3>Form Tour Madinah</h3>
-                            <div class="cars">
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
+                            <div class="madinah-tour">
+                                @foreach ($transportations as $trans)
+                                    <label class="service-tour-makkah">
+                                        <div class="service-name">{{ $trans->nama }}</div>
+                                        <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
+                                        <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
+                                        <div class="service-desc">Harga : {{ $trans->harga }}</div>
+                                        <input type="radio" name="select_car_madinah" value="{{ $trans->id }}" class="d-none">
+                                    </label>
+                                @endforeach
 
                             </div>
                         </div>
                         <div id="tour-alula-form" class="hidden tour-form">
                             <h3>Form Tour Al Ula</h3>
-                            <div class="cars">
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
+                            <div class="al-ula-tour">
+                                @foreach ($transportations as $trans)
+                                    <label class="service-tour-makkah">
+                                        <div class="service-name">{{ $trans->nama }}</div>
+                                        <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
+                                        <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
+                                        <div class="service-desc">Harga : {{ $trans->harga }}</div>
+                                        <input type="radio" name="select_car_al-ula" value="{{ $trans->id }}" class="d-none">
+                                    </label>
+                                @endforeach
 
                             </div>
                         </div>
                         <div id="tour-thoif-form" class="hidden tour-form">
                             <h3>Form Tour Thoif</h3>
-                            <div class="cars">
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-                                <label class="service-car">
-                                    <div class="service-name">Mercy</div>
-                                    <div class="service-desc">Kapasitas: 40 - 50 orang</div>
-                                    <div class="service-desc">Fasilitas: AC, Bagasi</div>
-                                    <div class="service-desc">Rp.3.000.000/hari</div>
-                                    <input type="radio" name="services" value="meals" class="d-none">
-                                </label>
-
+                            <div class="thoif">
+                                @foreach ($transportations as $trans)
+                                    <label class="service-tour-makkah">
+                                        <div class="service-name">{{ $trans->nama }}</div>
+                                        <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
+                                        <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
+                                        <div class="service-desc">Harga : {{ $trans->harga }}</div>
+                                       <input type="radio" name="select_car_thoif" value="{{ $trans->id }}" class="d-none">
+                                    </label>
+                                @endforeach
                             </div>
                         </div>
 
@@ -1511,7 +1451,7 @@
                                     </div>
                                     <div class="service-name">Nasi Box</div>
                                     <div class="service-desc">Rp. 120.000.000</div>
-                                    <input type="checkbox" name="content[]" value="premium" hidden>
+                                    <input type="checkbox" name="meals[]" value="nasi box" hidden>
                                 </div>
 
                                 <div class="content-item" data-content="standard">
@@ -1520,7 +1460,7 @@
                                     </div>
                                     <div class="service-name">Buffle Hotel</div>
                                     <div class="service-desc">Rp. 80.000.000</div>
-                                    <input type="checkbox" name="content[]" value="standard" hidden>
+                                    <input type="checkbox" name="meals[]" value="Buffle Hotel" hidden>
                                 </div>
 
                                 <div class="content-item" data-content="muthawifah">
@@ -1529,24 +1469,24 @@
                                     </div>
                                     <div class="service-name">Snack</div>
                                     <div class="service-desc">Rp. 70.000.000</div>
-                                    <input type="checkbox" name="content[]" value="muthawifah" hidden>
+                                    <input type="checkbox" name="meals[]" value="Buffle Hotel" hidden>
                                 </div>
                             </div>
                         </div>
 
                         <div id="premium-form" class="form-group hidden">
                             <label class="form-label">Jumlah Nasi Box</label>
-                            <input type="text" class="form-control" name="jumlah_premium">
+                            <input type="text" class="form-control" name="jumlah_nasi_box">
                         </div>
 
                         <div id="standard-form" class="form-group hidden">
                             <label class="form-label">Jumlah Buffle Hotel</label>
-                            <input type="text" class="form-control" name="jumlah_standard">
+                            <input type="text" class="form-control" name="jumlah_buffle_hotel">
                         </div>
 
                         <div id="muthawifah-form" class="form-group hidden">
                             <label class="form-label">Jumlah Snack</label>
-                            <input type="text" class="form-control" name="jumlah_muthawifah">
+                            <input type="text" class="form-control" name="jumlah_snack">
                         </div>
                         <div class="detail-form" id="dorongan-details">
                             <h6 class="detail-title">
@@ -1795,6 +1735,32 @@
                     radio.checked = true;
                 });
             });
+
+            const serviceTour = document.querySelectorAll(".service-tour");
+
+            serviceTour.forEach(tour => {
+                tour.addEventListener("click", (event) => {
+                    event.preventDefault(); // cegah toggle radio default
+                    const typeTour = tour.getAttribute('data-tour');
+                    const detailForm = document.getElementById(`tour-${typeTour}-form`);
+                    const radioTour = tour.querySelector('input[type="checkbox"]');
+
+                    // toggle class selected
+                    const isSelected = tour.classList.toggle('selected');
+
+                    // toggle radio checked sesuai selected
+                    radioTour.checked = isSelected;
+
+                    // tampilkan atau sembunyikan form sesuai toggle
+                    if (detailForm) {
+                        detailForm.style.display = isSelected ? 'block' : 'none';
+                    }
+                });
+            });
+
+
+
+
             const contentItem = document.querySelectorAll(".content-item");
             contentItem.forEach(content => {
                 content.addEventListener("click", () => {
