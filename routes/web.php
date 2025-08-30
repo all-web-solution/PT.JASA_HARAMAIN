@@ -42,6 +42,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/payment', [PaymentController::class, 'index'])->name('admin.payment');
     Route::get('/payment/create', [PaymentController::class, 'create'])->name('admin.payment.create');
     Route::post('/payment/store', [PaymentController::class, 'store'])->name('admin.payment.stor');
+    Route::get('/nego/{id}', [ServicesController::class, 'nego'])->name('admin.service.nego');
+    Route::put('/update/{id}/nego', [ServicesController::class, 'updateNego'])->name('update.nego.admin');
 });
 
 Route::middleware(['auth', 'hotel'])->group(function () {

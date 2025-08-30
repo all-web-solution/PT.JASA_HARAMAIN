@@ -14,7 +14,9 @@ class Service extends Model
         'services',
         'tanggal_keberangkatan',
         'tanggal_kepulangan',
-        'total_jamaah'
+        'total_jamaah',
+        'status',
+        'unique_code'
     ];
 
     // Relasi ke Travel

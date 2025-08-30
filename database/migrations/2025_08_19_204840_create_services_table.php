@@ -15,7 +15,7 @@ return new class extends Migration
            $table->increments('id');
             $table->unsignedInteger('pelanggan_id');
             $table->foreign('pelanggan_id')->references('id')->on('pelanggans')->onDelete('cascade');
-            $table->json('services');
+            $table->string('services');
             $table->date('tanggal_keberangkatan');
             $table->date('tanggal_kepulangan'); // ganti underscore, bukan spasi
             $table->string('total_jamaah'); // lebih tepat angka
