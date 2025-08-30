@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
                 'role' => 'Transportasi & tiket',
             ],
             [
-                'name' => 'Visa dan acara visa dan acara',
+                'name' => 'Visa dan acara',
                 'full_name' => 'Visa dan acara Haramaini',
                 'email' => 'visa@gmail.com',
                 'phone' => '0857276101409',
@@ -71,7 +71,7 @@ class DatabaseSeeder extends Seeder
                 'role' => 'palugada',
             ],
             [
-                'name' => 'Konten dan dokumentasi konten dan dokumentasi',
+                'name' => 'Konten dan dokumentasi',
                 'full_name' => 'Konten dan dokumentasi Haramaini',
                 'email' => 'content@gmail.com',
                 'phone' => '0857486516616',

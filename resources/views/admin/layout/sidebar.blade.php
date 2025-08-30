@@ -94,10 +94,10 @@
         </li>
 
     </ul>
-    @elseif (auth()->user()->role === 'konten dan dokumentasi')
+    @elseif (auth()->user()->role === 'visa dan acara')
     <ul>
         <li class="nav-item">
-            <a class="nav-link active" href="{{ route('transportation.plane.index') }}">
+            <a class="nav-link active" href="{{ route('content.visa.index') }}">
                 <i class="bi bi-speedometer2"></i> Visa
             </a>
         </li>

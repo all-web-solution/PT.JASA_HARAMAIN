@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\UserController;
 use App\Models\Hotel;
+use Illuminate\Routing\RouteGroup;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Admin\OrderController;
@@ -106,30 +107,15 @@ Route::middleware(['auth', 'hotel'])->group(function () {
         Route::get('/customer/transportation', [TransportationController::class, 'TransportationCustomer'])->name('transportation.customer');
    });
 
-   Route::middleware(['auth', 'content'])->group(function(){
+   Route::middleware(['auth', 'visa'])->group(function(){
         Route::group(['prefix' => 'visa'], function(){
             Route::get('/', [VisaController::class, 'index'])->name('content.visa.index');
-            Route::get('/create', [VisaController::class, 'create'])->name('content.visa.create');
-            Route::post('/create', [VisaController::class, 'store'])->name('content.visa.store');
-            Route::get('/edit/{id}', [VisaController::class, 'edit'])->name('content.visa.edit');
-            Route::put('/update/{id}', [VisaController::class, 'update'])->name('content.visa.update');
-            Route::delete('/delete/{id}', [VisaController::class, 'destroy'])->name('content.visa.destroy');
         });
         Route::group(['prefix' => 'vaccine'], function(){
             Route::get('/', [VaccineController::class, 'index'])->name('content.vaccine.index');
-            Route::get('/create', [VaccineController::class, 'create'])->name('content.vaccine.create');
-            Route::post('/create', [VaccineController::class, 'store'])->name('content.vaccine.store');
-            Route::get('/edit/{id}', [VaccineController::class, 'edit'])->name('content.vaccine.edit');
-            Route::put('/update/{id}', [VaccineController::class, 'update'])->name('content.vaccine.update');
-            Route::delete('/delete/{id}', [VaccineController::class, 'destroy'])->name('content.vaccine.destroy');
         });
         Route::group(['prefix' => 'siskopatur'], function(){
             Route::get('/', [SiskopaturController::class, 'index'])->name('content.siskopatur.index');
-            Route::get('/create', [SiskopaturController::class, 'create'])->name('content.siskopatur.create');
-            Route::post('/create', [SiskopaturController::class, 'store'])->name('content.siskopatur.store');
-            Route::get('/edit/{id}', [SiskopaturController::class, 'edit'])->name('content.siskopatur.edit');
-            Route::put('/update/{id}', [SiskopaturController::class, 'update'])->name('content.siskopatur.update');
-            Route::delete('/delete/{id}', [SiskopaturController::class, 'destroy'])->name('content.siskopatur.destroy');
         });
    });
 

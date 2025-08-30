@@ -17,7 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
         'hotel' => \App\Http\Middleware\HotelMiddleware::class,
         'handling' => \App\Http\Middleware\HandlingMiddleware::class,
         'transportation' => \App\Http\Middleware\TransportationMiddleware::class,
-        'content' => \App\Http\Middleware\ContentMiddleware::class
+        'content' => \App\Http\Middleware\ContentMiddleware::class,
+        'visa' => \App\Http\Middleware\VisaMiddleware::class,
     ]);
 })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('service_id');
             $table->foreign('service_id')
@@ -19,7 +19,7 @@ return new class extends Migration
                 ->on('services')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->string('total_amount');
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('documents');
     }
 };

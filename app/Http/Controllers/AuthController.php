@@ -27,11 +27,7 @@ class AuthController extends Controller
             return redirect()->route('catering.index');
         } elseif ($user->role === 'transportasi & tiket') {
             return redirect()->route('transportation.plane.index');
-        } elseif ($user->role === 'reyal') {
-            return redirect()->route('reyal.index');
-        } elseif ($user->role === 'palugada') {
-            return redirect()->route('palugada.index');
-        } elseif ($user->role === 'konten dan dokumentasi') {
+        }elseif($user->role === 'visa dan acara'){
             return redirect()->route('content.visa.index');
         }
 

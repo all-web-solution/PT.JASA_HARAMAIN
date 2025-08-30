@@ -378,9 +378,6 @@
             <h5 class="card-title">
                 <i class="bi bi-list-check"></i>Daftar Siskopatuh
             </h5>
-            <a href="{{ route('content.siskopatur.create') }}" class="btn-add-new">
-                <i class="bi bi-plus-circle"></i> Tambah Siskopatuh
-            </a>
         </div>
 
         <!-- Search and Filter -->
@@ -412,28 +409,24 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>No</th>
+                       <th>No</th>
+                        <th>Nama</th>
+                        <th>Nama visa</th>
                         <th>Jumlah</th>
                         <th>Harga</th>
-                        <th>Aksi</th>
+                        <th>Keterangan</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($siskopatuhs as $item)
                     <tr>
-                        <td>{{$loop->iteration}}</td>
-                        <td>{{$item->number}}</td>
-                        <td>{{$item->price}}</td>
-                        <td>
-                            <a href="{{ route('content.siskopatur.edit', $item->id) }}">
-                                <button class="btn btn-warning">Edit</button>
-                            </a>
-                            <form action="{{ route('content.siskopatur.destroy', $item->id) }}" method="post">
-                                @csrf
-                                @method('delete')
-                                <button class="btn btn-danger">Delete</button>
-                            </form>
-                        </td>
+                          <td>{{$loop->iteration}}</td>
+                        <td>{{$item->document->service->pelanggan->nama_travel}}</td>
+                        <td>{{$item->nama}}</td>
+                        <td>{{$item->jumlah}}</td>
+                        <td>{{$item->harga}}</td>
+                        <td>{{$item->keterangan}}</td>
+
                     </tr>
 
                     @endforeach

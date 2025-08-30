@@ -865,7 +865,7 @@
                                             </svg>
                                         </div>
                                         <div class="service-name">Visa</div>
-                                        <input type="checkbox" name="documents[]" value="visa" checked hidden>
+                                        <input type="checkbox" name="documents[]" value="visa"  hidden>
                                     </div>
                                     <div class="document-item" data-document="vaksin" id="document-item">
                                         <div class="service-icon">
@@ -878,7 +878,7 @@
                                         </div>
                                         <div class="service-name">Vaksin</div>
 
-                                        <input type="checkbox" name="documents[]" value="vaksin" checked hidden>
+                                        <input type="checkbox" name="documents[]" value="vaksin" hidden>
                                     </div>
 
                                     <div class="document-item" data-document="sikopatur" id="document-item">
@@ -886,7 +886,7 @@
                                             <i class="bi bi-bus-front"></i>
                                         </div>
                                         <div class="service-name">Sikopatur</div>
-                                        <input type="checkbox" name="documents[]" value="bus" checked hidden>
+                                        <input type="checkbox" name="documents[]" value="siskopatuh" hidden>
                                     </div>
                                 </div>
 
@@ -910,93 +910,21 @@
                                 </div>
                                 <div id="umrah-detail" class="hidden">
                                     <h3>Form umrah</h3>
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Jumlah</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-info-circle"></i></span>
-                                            <input type="text" class="form-control" name="catatan[]"
-                                                placeholder="Catatan tambahan">
-                                        </div>
-                                    </div>
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Harga</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-info-circle"></i></span>
-                                            <input type="text" class="form-control" name="catatan[]"
-                                                placeholder="Catatan tambahan">
-                                        </div>
-                                    </div>
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Keterangan</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-info-circle"></i></span>
-                                            <input type="text" class="form-control" name="catatan[]"
-                                                placeholder="Catatan tambahan">
-                                        </div>
-                                    </div>
+                                    <input type="text" class="form-control" name="jumlah_umrah" placeholder="Jumlah visa yang di butuhkan">
+                                    <input type="text" class="form-control" name="harga_umrah" placeholder="Harga visa umrah">
+                                    <input type="text" class="form-control" name="keterangan_umrah" placeholder="keterangan">
                                 </div>
                                 <div id="haji-detail" class="hidden">
                                     <h3>Form haji</h3>
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Jumlah</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-info-circle"></i></span>
-                                            <input type="text" class="form-control" name="catatan[]"
-                                                placeholder="Catatan tambahan">
-                                        </div>
-                                    </div>
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Harga</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-info-circle"></i></span>
-                                            <input type="text" class="form-control" name="catatan[]"
-                                                placeholder="Catatan tambahan">
-                                        </div>
-                                    </div>
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Keterangan</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-info-circle"></i></span>
-                                            <input type="text" class="form-control" name="catatan[]"
-                                                placeholder="Catatan tambahan">
-                                        </div>
-                                    </div>
+                                    <input type="text" class="form-control" name="jumlah_haji" placeholder="Jumlah visa haji yang di butuhkan">
+                                    <input type="text" class="form-control" name="harga_haji" placeholder="Harga visa haji">
+                                    <input type="text" class="form-control" name="keterangan_haji" placeholder="keterangan">
                                 </div>
                                 <div id="ziarah-detail" class="hidden">
                                     <h3>Form ziarah</h3>
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Jumlah</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-info-circle"></i></span>
-                                            <input type="text" class="form-control" name="catatan[]"
-                                                placeholder="Catatan tambahan">
-                                        </div>
-                                    </div>
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Harga</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-info-circle"></i></span>
-                                            <input type="text" class="form-control" name="catatan[]"
-                                                placeholder="Catatan tambahan">
-                                        </div>
-                                    </div>
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Keterangan</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-info-circle"></i></span>
-                                            <input type="text" class="form-control" name="catatan[]"
-                                                placeholder="Catatan tambahan">
-                                        </div>
-                                    </div>
+                                    <input type="text" class="form-control" name="jumlah_ziarah" placeholder="Jumlah visa ziarah yang di butuhkan">
+                                    <input type="text" class="form-control" name="harga_ziarah" placeholder="Harga visa ziarah">
+                                    <input type="text" class="form-control" name="keterangan_ziarah" placeholder="keterangan">
                                 </div>
                             </div>
                             <div class="form-group hidden" data-document="vaksin" id="vaksin-details">
@@ -1013,95 +941,23 @@
                                 </div>
                                 <div id="polio" class="hidden">
                                     <h3>Form vaksin polio</h3>
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Jumlah</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
-                                            <input type="text" class="form-control" name="nama_hotel[]"
-                                                placeholder="Nama hotel">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Harga per item</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-door-closed"></i></span>
-                                            <input type="text" class="form-control" name="tipe_kamar[]"
-                                                placeholder="Tipe kamar">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Keterangan</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i class="bi bi-grid"></i></span>
-                                            <input type="number" class="form-control" name="jumlah_kamar[]"
-                                                placeholder="Jumlah kamar">
-                                        </div>
-                                    </div>
+                                    <input type="text" class="form-control" name="jumlah_polio" placeholder="Jumlah vaksin polio yang di butuhkan">
+                                    <input type="text" class="form-control" name="harga_polio" placeholder="Harga vaksin polio">
+                                    <input type="text" class="form-control" name="keterangan_polio" placeholder="Keterangan">
                                 </div>
                                 <div id="meningtis" class="hidden">
                                     <h3>Form vaksin meningtis</h3>
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Jumlah</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
-                                            <input type="text" class="form-control" name="nama_hotel[]"
-                                                placeholder="Nama hotel">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Harga per item</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-door-closed"></i></span>
-                                            <input type="text" class="form-control" name="tipe_kamar[]"
-                                                placeholder="Tipe kamar">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Keterangan</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i class="bi bi-grid"></i></span>
-                                            <input type="number" class="form-control" name="jumlah_kamar[]"
-                                                placeholder="Jumlah kamar">
-                                        </div>
-                                    </div>
+                                    <input type="text" class="form-control" name="jumlah_meningtis" placeholder="Jumlah vaksin meningtis">
+                                    <input type="text" class="form-control" name="harga_meningtis" placeholder="Harga vaksin meningtis">
+                                    <input type="text" class="form-control" name="keterangan_meningtis" placeholder="Keterangan">
                                 </div>
                             </div>
                             <div class="form-group hidden" data-document="sikopatur" id="sikopatur-details">
-                                <label class="form-label">Sikopatur</label>
-                                <div class="col-5 mt-3">
-                                    <label class="form-label fw-semibold">Jumlah</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
-                                        <input type="text" class="form-control" name="nama_hotel[]"
-                                            placeholder="Nama hotel">
-                                    </div>
-                                </div>
 
-                                <!-- Type Kamar -->
-                                <div class="col-5 mt-3">
-                                    <label class="form-label fw-semibold">Harga per item</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white"><i class="bi bi-door-closed"></i></span>
-                                        <input type="text" class="form-control" name="tipe_kamar[]"
-                                            placeholder="Tipe kamar">
-                                    </div>
-                                </div>
-
-                                <!-- Jumlah Kamar -->
-                                <div class="col-5 mt-3">
-                                    <label class="form-label fw-semibold">Keterangan</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white"><i class="bi bi-grid"></i></span>
-                                        <input type="number" class="form-control" name="jumlah_kamar[]"
-                                            placeholder="Jumlah kamar">
-                                    </div>
-                                </div>
+                                    <h3>Form Siskopatuh</h3>
+                                    <input type="text" class="form-control" name="jumlah_siskopatur" placeholder="Jumlah siskopatuh">
+                                    <input type="text" class="form-control" name="harga_siskopatur" placeholder="Harga siskopatuh">
+                                    <input type="text" class="form-control" name="keterangan_siskopatur" placeholder="Keterangan">
                             </div>
                         </div>
 
@@ -1384,7 +1240,8 @@
                                         <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
                                         <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
                                         <div class="service-desc">Harga : {{ $trans->harga }}</div>
-                                        <input type="radio" name="select_car_makkah" value="{{ $trans->id }}" class="d-none">
+                                        <input type="radio" name="select_car_makkah" value="{{ $trans->id }}"
+                                            class="d-none">
                                     </label>
                                 @endforeach
                             </div>
@@ -1399,7 +1256,8 @@
                                         <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
                                         <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
                                         <div class="service-desc">Harga : {{ $trans->harga }}</div>
-                                        <input type="radio" name="select_car_madinah" value="{{ $trans->id }}" class="d-none">
+                                        <input type="radio" name="select_car_madinah" value="{{ $trans->id }}"
+                                            class="d-none">
                                     </label>
                                 @endforeach
 
@@ -1414,7 +1272,8 @@
                                         <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
                                         <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
                                         <div class="service-desc">Harga : {{ $trans->harga }}</div>
-                                        <input type="radio" name="select_car_al-ula" value="{{ $trans->id }}" class="d-none">
+                                        <input type="radio" name="select_car_al-ula" value="{{ $trans->id }}"
+                                            class="d-none">
                                     </label>
                                 @endforeach
 
@@ -1429,7 +1288,8 @@
                                         <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
                                         <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
                                         <div class="service-desc">Harga : {{ $trans->harga }}</div>
-                                       <input type="radio" name="select_car_thoif" value="{{ $trans->id }}" class="d-none">
+                                        <input type="radio" name="select_car_thoif" value="{{ $trans->id }}"
+                                            class="d-none">
                                     </label>
                                 @endforeach
                             </div>
@@ -1538,7 +1398,7 @@
 
                         <div id="umrah-form" class="form-group hidden">
                             <label class="form-label">Jumlah Umrah</label>
-                            <input type="text" class="form-control" name="jumlah_umrah">
+                            <input type="text" class="form-control" name="jumlah_umrah_dorongan">
                         </div>
 
                         <div id="makkah-form" class="form-group hidden">
@@ -1643,13 +1503,13 @@
 
             <!-- Form Actions -->
             <div class="form-actions">
-                  <button type="submit" name="action" value="save" class="btn btn-primary">
-        Simpan
-    </button>
+                <button type="submit" name="action" value="save" class="btn btn-primary">
+                    Simpan
+                </button>
 
-    <button type="submit" name="action" value="nego" class="btn btn-warning">
-        Nego
-    </button>
+                <button type="submit" name="action" value="nego" class="btn btn-warning">
+                    Nego
+                </button>
             </div>
             </form>
         </div>
@@ -1678,19 +1538,8 @@
 
                 });
             });
-            const visaItem = document.querySelectorAll('.visa-item');
-            visaItem.forEach(visa => {
-                visa.classList.toggle('selected');
-                const checkbox = visa.querySelector('input[type="checkbox"]');
-                checkbox.checked = !checkbox.checked;
 
-            })
-            const vaccineItem = document.querySelectorAll('.vaksin-item');
-            vaccineItem.forEach(vaccine => {
-                vaccine.classList.toggle('selected');
-                const checkbox = vaccine.querySelector('input[type="checkbox"]');
-                checkbox.checked = !checkbox.checked;
-            })
+
 
             const documentItems = document.querySelectorAll("#document-item")
             documentItems.forEach(doc => {
@@ -1702,8 +1551,8 @@
                     const documentType = doc.getAttribute("data-document");
                     const detailFormDocument = document.getElementById(`${documentType}-details`)
                     if (detailFormDocument) {
-                        detailFormDocument.style.display = checkboxDocument.checked ? 'none' :
-                            'block'
+                        detailFormDocument.style.display = checkboxDocument.checked ? 'block' :
+                            'none'
                     }
                 })
             })
@@ -1952,10 +1801,10 @@
         });
 
 
-        document.querySelectorAll('.service-visa-item').forEach(car => {
+        document.querySelectorAll('.visa-item').forEach(car => {
             car.addEventListener('click', function() {
                 // hapus active di semua
-                document.querySelectorAll('.service-visa-item').forEach(el => el.classList.remove(
+                document.querySelectorAll('.visa-item').forEach(el => el.classList.remove(
                     'active'));
 
                 // kasih active ke yg diklik
@@ -2034,7 +1883,7 @@
                 const checkbox = item.querySelector('input[type="checkbox"]');
 
                 // Toggle class 'active' untuk styling
-                item.classList.toggle('active');
+                item.classList.toggle('selected');
 
                 // Toggle status 'checked' pada checkbox
                 checkbox.checked = !checkbox.checked;

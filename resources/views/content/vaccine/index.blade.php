@@ -378,9 +378,7 @@
             <h5 class="card-title">
                 <i class="bi bi-list-check"></i>Daftar Vaksin
             </h5>
-            <a href="{{ route('content.vaccine.create') }}" class="btn-add-new">
-                <i class="bi bi-plus-circle"></i> Tambah Vaksin
-            </a>
+
         </div>
 
         <!-- Search and Filter -->
@@ -413,7 +411,11 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama</th>
+                        <th>Nama Customer</th>
+                        <th>Nama Vaksin</th>
+                        <th>Jumlah</th>
+                        <th>Harga</th>
+                        <th>Keterangan</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -421,17 +423,12 @@
                     @foreach ($vaccines as $item)
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td>{{$item->name}}</td>
-                        <td>
-                            <a href="{{ route('content.vaccine.edit', $item->id) }}">
-                                <button class="btn btn-warning">Edit</button>
-                            </a>
-                            <form action="{{ route('content.vaccine.destroy', $item->id) }}" method="post">
-                                @csrf
-                                @method('delete')
-                                <button class="btn btn-danger">Delete</button>
-                            </form>
-                        </td>
+                        <td>{{$item->document->service->pelanggan->nama_travel}}</td>
+                        <td>{{$item->nama}}</td>
+                        <td>{{$item->jumlah}}</td>
+                        <td>{{$item->harga}}</td>
+                        <td>{{$item->keterangan}}</td>
+
                     </tr>
 
                     @endforeach

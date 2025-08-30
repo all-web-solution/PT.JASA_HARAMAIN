@@ -54,4 +54,7 @@ public function planes()
     public function tours(){
         return $this->hasMany(Tour::class, 'service_id');
     }
+    public function documents(){
+        return $this->hasMany(Document::class, 'service_id');
+    }
 }

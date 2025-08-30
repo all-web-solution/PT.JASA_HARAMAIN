@@ -378,9 +378,7 @@
             <h5 class="card-title">
                 <i class="bi bi-list-check"></i>Daftar Visa
             </h5>
-            <a href="{{ route('content.visa.create') }}" class="btn-add-new">
-                <i class="bi bi-plus-circle"></i> Tambah Visa
-            </a>
+            
         </div>
 
         <!-- Search and Filter -->
@@ -414,26 +412,21 @@
                     <tr>
                         <th>No</th>
                         <th>Nama</th>
+                        <th>Nama visa</th>
+                        <th>Jumlah</th>
                         <th>Harga</th>
-                        <th>Aksi</th>
+                        <th>Keterangan</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($visas as $visa)
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td>{{$visa->name}}</td>
-                        <td>{{$visa->price}}</td>
-                        <td>
-                            <a href="{{ route('content.visa.edit', $visa->id) }}">
-                                <button class="btn btn-warning">Edit</button>
-                            </a>
-                            <form action="{{ route('content.visa.destroy', $visa->id) }}" method="post">
-                                @csrf
-                                @method('delete')
-                                <button class="btn btn-danger">Delete</button>
-                            </form>
-                        </td>
+                        <td>{{$visa->document->service->pelanggan->nama_travel}}</td>
+                        <td>{{$visa->nama}}</td>
+                        <td>{{$visa->jumlah}}</td>
+                        <td>{{$visa->harga}}</td>
+                        <td>{{$visa->keterangan}}</td>
                     </tr>
 
                     @endforeach
