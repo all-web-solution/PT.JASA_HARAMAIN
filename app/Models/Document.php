@@ -8,7 +8,10 @@ class Document extends Model
 {
     protected $fillable = [
         'service_id',
-        'name'
+        'name',
+        'pas_foto',
+        'paspor',
+        'ktp'
     ];
 
     public function service(){

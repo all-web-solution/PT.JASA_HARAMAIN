@@ -415,6 +415,9 @@
                         <th>Jumlah</th>
                         <th>Harga</th>
                         <th>Keterangan</th>
+                        <th>Pas foto</th>
+                        <th>KTP</th>
+                        <th>Paspor</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -426,7 +429,9 @@
                         <td>{{$item->jumlah}}</td>
                         <td>{{$item->harga}}</td>
                         <td>{{$item->keterangan}}</td>
-
+                        <td><img src="{{ url('storage/' . $item->document->pas_foto) }}" alt="" width="100" height="100"></td>
+                        <td><img src="{{ url('storage/' . $item->document->ktp) }}" alt="" width="100" height="100"></td>
+                        <td><img src="{{ url('storage/' . $item->document->paspor) }}" alt="" width="100" height="100"></td>
                     </tr>
 
                     @endforeach

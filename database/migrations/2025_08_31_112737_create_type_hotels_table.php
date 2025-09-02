@@ -11,16 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('documents', function (Blueprint $table) {
+        Schema::create('type_hotels', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('service_id');
-            $table->foreign('service_id')
-                ->references('id')
-                ->on('services')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-            $table->string('name');
-
+            $table->foreignId('hotel_id')->constrained('hotels')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('nama_tipe'); // Double, Triple, Kuard, Kuint
+            $table->integer('jumlah')->default(0);
             $table->timestamps();
         });
     }
@@ -30,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('documents');
+        Schema::dropIfExists('type_hotels');
     }
 };

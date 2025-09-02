@@ -414,37 +414,25 @@
                     <tr>
                         <th>No</th>
                         <th>Checkin</th>
-                        <th>Checout</th>
-                        <th>Type</th>
-                        <th>Star</th>
-                        <th>Aksi</th>
+                        <th>Checkout</th>
+                        <th>Nama Hotel</th>
+                        <th>Harga perkamar</th>
+                        <th>Type kamar</th>
+                        <th>Total type kamar</th>
+                        <th>Catatan</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($hotels as $hotel)
                     <tr>
                         <td data-label="No">{{ $loop->iteration }}</td>
-                        <td data-label="Checkin">{{ \Carbon\Carbon::parse($hotel->checkin)->translatedFormat('d F Y') }}</td>
-                        <td data-label="Checkout">{{ \Carbon\Carbon::parse($hotel->checkout)->translatedFormat('d F Y') }}</td>
-                        <td data-label="Type">{{ $hotel->room_type }}</td>
-                        <td data-label="Star">{{ $hotel->star }}</td>
-                        <td data-label="Aksi">
-                            <button class="btn-action btn-view" title="Lihat Detail">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <a href="{{ route('hotel.edit', $hotel->id) }}">
-                                <button class="btn-action btn-edit" title="Edit">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-                            </a>
-                            <form action="{{ route('hotel.destroy', $hotel->id) }}" method="post">
-                                @csrf
-                                @method('delete')
-                                <button class="btn-action btn-delete" title="Hapus">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                        </td>
+                        <td>{{ \Carbon\Carbon::parse($hotel->tanggal_checkin)->translatedFormat('l, d F Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($hotel->tanggal_checkout)->translatedFormat('l, d F Y') }}</td>
+                        <td>{{$hotel->nama_hotel}}</td>
+                        <td>{{$hotel->harga_perkamar}}</td>
+                        <td>{{$hotel->catatan}}</td>
+                        <td>{{$hotel->typeHotels}}</td>
+
                     </tr>
                     @endforeach
                 </tbody>

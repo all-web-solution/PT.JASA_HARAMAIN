@@ -19,7 +19,10 @@ return new class extends Migration
             $table->string('rute');
             $table->string('maskapai');
             $table->string('harga');
+            $table->string('tiket_berangkat');
+            $table->string('tiket_pulang');
             $table->string('keterangan');
+            
             $table->timestamps();
         });
     }

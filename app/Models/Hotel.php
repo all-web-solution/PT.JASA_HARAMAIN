@@ -14,9 +14,14 @@ class Hotel extends Model
         'tipe_kamar',
         'jumlah_kamar',
         'harga_perkamar',
-        'catatan'];
+        'catatan',
+        'visa'];
 
     public function service(){
         return $this->belongsTo(Service::class);
     }
+    public function typeHotels()
+{
+    return $this->hasMany(TypeHotel::class);
+}
 }

@@ -458,15 +458,17 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Nama Travel</label>
-                                    <select class="form-control" name="travel" id="travel-select" >
-                                            <option value="{{ $service->pelanggan->id }}" name="pelanggan_id">{{$service->pelanggan->nama_travel}}</option>
+                                    <select class="form-control" name="travel" id="travel-select">
+                                        <option value="{{ $service->pelanggan->id }}" name="pelanggan_id">
+                                            {{ $service->pelanggan->nama_travel }}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Penanggung Jawab</label>
-                                    <input type="text" class="form-control" readonly required id="penanggung" value="{{ $service->pelanggan->penanggung_jawab }}">
+                                    <input type="text" class="form-control" readonly required id="penanggung"
+                                        value="{{ $service->pelanggan->penanggung_jawab }}">
                                 </div>
                             </div>
                         </div>
@@ -475,13 +477,15 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" required id="email" value="{{ $service->pelanggan->email }}" readonly>
+                                    <input type="email" class="form-control" required id="email"
+                                        value="{{ $service->pelanggan->email }}" readonly>
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Telepon</label>
-                                    <input type="tel" class="form-control" required id="phone" value="{{ $service->pelanggan->phone }}" readonly>
+                                    <input type="tel" class="form-control" required id="phone"
+                                        value="{{ $service->pelanggan->phone }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -490,142 +494,147 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Keberangkatan</label>
-                                    <input type="date" class="form-control" name="tanggal_keberangkatan" required value="{{ $service->tanggal_keberangkatan }}" readonly>
+                                    <input type="date" class="form-control" name="tanggal_keberangkatan" required
+                                        value="{{ $service->tanggal_keberangkatan }}" readonly>
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Kepulangan</label>
-                                    <input type="date" class="form-control" name="tanggal_kepulangan" required value="{{ $service->tanggal_kepulangan }}" readonly>
+                                    <input type="date" class="form-control" name="tanggal_kepulangan" required
+                                        value="{{ $service->tanggal_kepulangan }}" readonly>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Jumlah Jamaah</label>
-                            <input type="number" class="form-control" name="total_jamaah" min="1" required value="{{ $service->total_jamaah }}" readonly>
+                            <input type="number" class="form-control" name="total_jamaah" min="1" required
+                                value="{{ $service->total_jamaah }}" readonly>
                         </div>
                     </div>
 
                     <!-- Pilih Layanan Section -->
                     @php
-
-                        $selectedServices = is_array($service->services) ? $service->services : json_decode($service->services, true);
+                        $selectedServices = $selectedServices ?? [];
                     @endphp
+
                     <div class="form-section">
                         <h6 class="form-section-title">
                             <i class="bi bi-list-check"></i> Pilih Layanan yang Dibutuhkan
                         </h6>
 
                         <div class="service-grid">
-                            <div class="service-item {{ in_array('transportasi', $selectedServices ?? []) ? 'selected' : '' }}" data-service="transportasi">
-                                <div class="service-icon">
-                                    <i class="bi bi-airplane"></i>
-                                </div>
+                            <div class="service-item {{ in_array('transportasi', $selectedServices) ? 'selected' : '' }}"
+                                data-service="transportasi">
+                                <div class="service-icon"><i class="bi bi-airplane"></i></div>
                                 <div class="service-name">Transportasi</div>
                                 <div class="service-desc">Tiket & Transport</div>
-                               <input type="checkbox" name="services[]" value="transportasi" hidden {{ in_array('transportasi', $selectedServices ?? []) ? 'checked' : '' }}>
+                                <input type="checkbox" name="services[]" value="transportasi" hidden
+                                    {{ in_array('transportasi', $selectedServices) ? 'checked' : '' }}>
                             </div>
 
-                            <div class="service-item {{ in_array('hotel', $selectedServices ?? []) ? 'selected' : '' }}" data-service="hotel">
-                                <div class="service-icon">
-                                    <i class="bi bi-building"></i>
-                                </div>
+                            <div class="service-item {{ in_array('hotel', $selectedServices) ? 'selected' : '' }}"
+                                data-service="hotel">
+                                <div class="service-icon"><i class="bi bi-building"></i></div>
                                 <div class="service-name">Hotel</div>
                                 <div class="service-desc">Akomodasi</div>
-                                <input type="checkbox" name="services[]" value="hotel" hidden>
+                                <input type="checkbox" name="services[]" value="hotel" hidden
+                                    {{ in_array('hotel', $selectedServices) ? 'checked' : '' }}>
                             </div>
 
-                            <div class="service-item {{ in_array('dokumen', $selectedServices ?? []) ? 'selected' : '' }}" data-service="dokumen">
-                                <div class="service-icon">
-                                    <i class="bi bi-file-text"></i>
-                                </div>
+                            <div class="service-item {{ in_array('dokumen', $selectedServices) ? 'selected' : '' }}"
+                                data-service="dokumen">
+                                <div class="service-icon"><i class="bi bi-file-text"></i></div>
                                 <div class="service-name">Dokumen</div>
                                 <div class="service-desc">Visa & Administrasi</div>
-                                <input type="checkbox" name="services[]" value="dokumen" hidden>
+                                <input type="checkbox" name="services[]" value="dokumen" hidden
+                                    {{ in_array('dokumen', $selectedServices) ? 'checked' : '' }}>
                             </div>
 
-                            <div class="service-item {{ in_array('handling', $selectedServices ?? []) ? 'selected' : '' }}" data-service="handling">
-                                <div class="service-icon">
-                                    <i class="bi bi-briefcase"></i>
-                                </div>
+                            <div class="service-item {{ in_array('handling', $selectedServices) ? 'selected' : '' }}"
+                                data-service="handling">
+                                <div class="service-icon"><i class="bi bi-briefcase"></i></div>
                                 <div class="service-name">Handling</div>
                                 <div class="service-desc">Bandara & Hotel</div>
-                                <input type="checkbox" name="services[]" value="handling" hidden>
+                                <input type="checkbox" name="services[]" value="handling" hidden
+                                    {{ in_array('handling', $selectedServices) ? 'checked' : '' }}>
                             </div>
 
-                            <div class="service-item {{ in_array('pendamping', $selectedServices ?? []) ? 'selected' : '' }}" data-service="pendamping">
-                                <div class="service-icon">
-                                    <i class="bi bi-people"></i>
-                                </div>
+                            <div class="service-item {{ in_array('pendamping', $selectedServices) ? 'selected' : '' }}"
+                                data-service="pendamping">
+                                <div class="service-icon"><i class="bi bi-people"></i></div>
                                 <div class="service-name">Pendamping</div>
                                 <div class="service-desc">Tour Leader & Mutawwif</div>
-                                <input type="checkbox" name="services[]" value="pendamping" hidden>
+                                <input type="checkbox" name="services[]" value="pendamping" hidden
+                                    {{ in_array('pendamping', $selectedServices) ? 'checked' : '' }}>
                             </div>
 
-                            <div class="service-item {{ in_array('konten', $selectedServices ?? []) ? 'selected' : '' }}" data-service="konten">
-                                <div class="service-icon">
-                                    <i class="bi bi-camera"></i>
-                                </div>
+                            <div class="service-item {{ in_array('konten', $selectedServices) ? 'selected' : '' }}"
+                                data-service="konten">
+                                <div class="service-icon"><i class="bi bi-camera"></i></div>
                                 <div class="service-name">Konten</div>
                                 <div class="service-desc">Dokumentasi</div>
-                                <input type="checkbox" name="services[]" value="konten" hidden>
+                                <input type="checkbox" name="services[]" value="konten" hidden
+                                    {{ in_array('konten', $selectedServices) ? 'checked' : '' }}>
                             </div>
 
-                            <div class="service-item {{ in_array('reyal', $selectedServices ?? []) ? 'selected' : '' }}" data-service="reyal">
-                                <div class="service-icon">
-                                    <i class="bi bi-currency-exchange"></i>
-                                </div>
+                            <div class="service-item {{ in_array('reyal', $selectedServices) ? 'selected' : '' }}"
+                                data-service="reyal">
+                                <div class="service-icon"><i class="bi bi-currency-exchange"></i></div>
                                 <div class="service-name">Reyal</div>
                                 <div class="service-desc">Penukaran Mata Uang</div>
-                                <input type="checkbox" name="services[]" value="reyal" hidden>
+                                <input type="checkbox" name="services[]" value="reyal" hidden
+                                    {{ in_array('reyal', $selectedServices) ? 'checked' : '' }}>
                             </div>
 
-                            <div class="service-item {{ in_array('tour', $selectedServices ?? []) ? 'selected' : '' }}" data-service="tour">
-                                <div class="service-icon">
-                                    <i class="bi bi-geo-alt"></i>
-                                </div>
+                            <div class="service-item {{ in_array('tour', $selectedServices) ? 'selected' : '' }}"
+                                data-service="tour">
+                                <div class="service-icon"><i class="bi bi-geo-alt"></i></div>
                                 <div class="service-name">Tour</div>
                                 <div class="service-desc">City Tour & Ziarah</div>
-                                <input type="checkbox" name="services[]" value="tour" hidden>
+                                <input type="checkbox" name="services[]" value="tour" hidden
+                                    {{ in_array('tour', $selectedServices) ? 'checked' : '' }}>
                             </div>
 
-                            <div class="service-item {{ in_array('meals', $selectedServices ?? []) ? 'selected' : '' }}" data-service="meals">
-                                <div class="service-icon">
-                                    <i class="bi bi-egg-fried"></i>
-                                </div>
+                            <div class="service-item {{ in_array('meals', $selectedServices) ? 'selected' : '' }}"
+                                data-service="meals">
+                                <div class="service-icon"><i class="bi bi-egg-fried"></i></div>
                                 <div class="service-name">Meals</div>
                                 <div class="service-desc">Makanan</div>
-                                <input type="checkbox" name="services[]" value="meals" hidden>
+                                <input type="checkbox" name="services[]" value="meals" hidden
+                                    {{ in_array('meals', $selectedServices) ? 'checked' : '' }}>
                             </div>
 
-                            <div class="service-item {{ in_array('dorongan', $selectedServices ?? []) ? 'selected' : '' }}" data-service="dorongan">
-                                <div class="service-icon">
-                                    <i class="bi bi-basket"></i>
-                                </div>
+                            <div class="service-item {{ in_array('dorongan', $selectedServices) ? 'selected' : '' }}"
+                                data-service="dorongan">
+                                <div class="service-icon"><i class="bi bi-basket"></i></div>
                                 <div class="service-name">Dorongan</div>
                                 <div class="service-desc">Bagi penyandang disabilitas</div>
-                                <input type="checkbox" name="services[]" value="dorongan" hidden>
+                                <input type="checkbox" name="services[]" value="dorongan" hidden
+                                    {{ in_array('dorongan', $selectedServices) ? 'checked' : '' }}>
                             </div>
 
-                            <div class="service-item {{ in_array('waqaf', $selectedServices ?? []) ? 'selected' : '' }}" data-service="waqaf">
-                                <div class="service-icon">
-                                    <i class="bi bi-gift"></i>
-                                </div>
-                                <div class="service-name">Waqaf</div>
-                                <div class="service-desc">Sedekah & Waqaf</div>
-                                <input type="checkbox" name="services[]" value="waqaf" hidden>
+                            <div class="service-item {{ in_array('wakaf', $selectedServices) ? 'selected' : '' }}"
+                                data-service="wakaf">
+                                <div class="service-icon"><i class="bi bi-gift"></i></div>
+                                <div class="service-name">Wakaf</div>
+                                <div class="service-desc">Sedekah & Wakaf</div>
+                                <input type="checkbox" name="services[]" value="wakaf" hidden
+                                    {{ in_array('wakaf', $selectedServices) ? 'checked' : '' }}>
                             </div>
-                            <div class="service-item {{ in_array('badal', $selectedServices ?? []) ? 'selected' : '' }}" data-service="badal">
-                                <div class="service-icon">
-                                    <i class="bi bi-gift"></i>
-                                </div>
-                                <div class="service-name">Badal umrah</div>
-                                <div class="service-desc">Sedekah & Waqaf</div>
-                                <input type="checkbox" name="services[]" value="waqaf" hidden>
+
+                            <div class="service-item {{ in_array('badal', $selectedServices) ? 'selected' : '' }}"
+                                data-service="badal">
+                                <div class="service-icon"><i class="bi bi-gift"></i></div>
+                                <div class="service-name">Badal Umrah</div>
+                                <div class="service-desc">Layanan Badal Umrah</div>
+                                <input type="checkbox" name="services[]" value="badal" hidden
+                                    {{ in_array('badal', $selectedServices) ? 'checked' : '' }}>
                             </div>
                         </div>
                     </div>
+
 
                     <!-- Detail Layanan Section -->
                     <div class="form-section">
@@ -1384,7 +1393,8 @@
                                         <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
                                         <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
                                         <div class="service-desc">Harga : {{ $trans->harga }}</div>
-                                        <input type="radio" name="select_car_makkah" value="{{ $trans->id }}" class="d-none">
+                                        <input type="radio" name="select_car_makkah" value="{{ $trans->id }}"
+                                            class="d-none">
                                     </label>
                                 @endforeach
                             </div>
@@ -1399,7 +1409,8 @@
                                         <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
                                         <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
                                         <div class="service-desc">Harga : {{ $trans->harga }}</div>
-                                        <input type="radio" name="select_car_madinah" value="{{ $trans->id }}" class="d-none">
+                                        <input type="radio" name="select_car_madinah" value="{{ $trans->id }}"
+                                            class="d-none">
                                     </label>
                                 @endforeach
 
@@ -1414,7 +1425,8 @@
                                         <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
                                         <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
                                         <div class="service-desc">Harga : {{ $trans->harga }}</div>
-                                        <input type="radio" name="select_car_al-ula" value="{{ $trans->id }}" class="d-none">
+                                        <input type="radio" name="select_car_al-ula" value="{{ $trans->id }}"
+                                            class="d-none">
                                     </label>
                                 @endforeach
 
@@ -1429,7 +1441,8 @@
                                         <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
                                         <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
                                         <div class="service-desc">Harga : {{ $trans->harga }}</div>
-                                       <input type="radio" name="select_car_thoif" value="{{ $trans->id }}" class="d-none">
+                                        <input type="radio" name="select_car_thoif" value="{{ $trans->id }}"
+                                            class="d-none">
                                     </label>
                                 @endforeach
                             </div>
@@ -1643,13 +1656,13 @@
 
             <!-- Form Actions -->
             <div class="form-actions">
-                  <button type="submit" name="action" value="save" class="btn btn-primary">
-        Simpan
-    </button>
+                <button type="submit" name="action" value="save" class="btn btn-primary">
+                    Simpan
+                </button>
 
-    <button type="submit" name="action" value="nego" class="btn btn-warning">
-        Nego
-    </button>
+                <button type="submit" name="action" value="nego" class="btn btn-warning">
+                    Nego
+                </button>
             </div>
             </form>
         </div>

@@ -20,6 +20,9 @@
                     <th>Tanggal</th>
                     <th>Harga</th>
                     <th>Pax</th>
+                    <th>Foto kode booking</th>
+                    <th>Foto rumlis</th>
+                    <td>Identitas koper</td>
 
 
                 </tr>
@@ -33,6 +36,9 @@
                         <td>{{ \Carbon\Carbon::parse($hotel->tanggal)->translatedFormat('l, d F Y') }}</td>
                         <td>{{$hotel->harga}}</td>
                         <td>{{$hotel->pax}}</td>
+                        <td><img src="{{ url('storage/' . $hotel->kode_booking) }}" alt="" width="100" height="100"></td>
+                        <td><img src="{{ url('storage/' . $hotel->rumlis) }}" alt="" width="100" height="100"></td>
+                        <td><img src="{{ url('storage/' . $hotel->identitas_koper) }}" alt="" width="100" height="100"></td>
                     </tr>
                 @endforeach
             </tbody>

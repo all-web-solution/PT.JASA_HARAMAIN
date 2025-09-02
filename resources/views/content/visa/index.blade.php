@@ -378,7 +378,7 @@
             <h5 class="card-title">
                 <i class="bi bi-list-check"></i>Daftar Visa
             </h5>
-            
+
         </div>
 
         <!-- Search and Filter -->
@@ -416,6 +416,9 @@
                         <th>Jumlah</th>
                         <th>Harga</th>
                         <th>Keterangan</th>
+                        <th>Pas foto</th>
+                        <th>KTP</th>
+                        <th>Paspor</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -427,6 +430,11 @@
                         <td>{{$visa->jumlah}}</td>
                         <td>{{$visa->harga}}</td>
                         <td>{{$visa->keterangan}}</td>
+                        <td><img src="{{ url('storage/' . $visa->document->pas_foto) }}" alt="" width="100" height="100"></td>
+                        <td><img src="{{ url('storage/' . $visa->document->ktp) }}" alt="" width="100" height="100"></td>
+                        <td><img src="{{ url('storage/' . $visa->document->paspor) }}" alt="" width="100" height="100"></td>
+
+
                     </tr>
 
                     @endforeach

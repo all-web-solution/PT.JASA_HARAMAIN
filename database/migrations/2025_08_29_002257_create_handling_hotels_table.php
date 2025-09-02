@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('tanggal');
             $table->string('harga');
             $table->string('pax');
+            
             $table->timestamps();
         });
     }

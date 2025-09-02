@@ -17,13 +17,24 @@ class ServicesController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Service::with('pelanggan');
+        // Ambil data nego → group per pelanggan
+        $nego = Service::where('status', 'nego')
+            ->selectRaw('MIN(id) as id,
+                     pelanggan_id,
+                     MIN(tanggal_keberangkatan) as tanggal_keberangkatan,
+                     MIN(tanggal_kepulangan) as tanggal_kepulangan,
+                     SUM(total_jamaah) as total_jamaah,
+                     GROUP_CONCAT(services) as services,
+                     MIN(unique_code) as unique_code,
+                     status')
+            ->groupBy('pelanggan_id', 'status')
+            ->get();
 
-        if ($request->filled('service')) {
-            $query->whereJsonContains('services', $request->service);
-        }
+        // Ambil semua data deal → tampilkan per service
+        $deal = Service::where('status', 'deal')->get();
 
-        $services = $query->get();
+        // Gabungkan
+        $services = $nego->merge($deal);
 
         return view('admin.services.index', compact('services'));
     }
@@ -43,6 +54,37 @@ class ServicesController extends Controller
 
     public function store(Request $request)
     {
+        // Tentukan file paspor & visa global
+        $pasporGlobal = null;
+        $visaGlobal = null;
+
+        // 1. Transportasi dipilih
+        if ($request->filled('transportation')) {
+            $pasporGlobal = $request->file('paspor_transportasi')
+                ? $request->file('paspor_transportasi')->store('paspor', 'public')
+                : null;
+            $visaGlobal = $request->file('visa_transportasi')
+                ? $request->file('visa_transportasi')->store('visa', 'public')
+                : null;
+        }
+        // 2. Transportasi tidak dipilih, hotel dipilih
+        elseif ($request->filled('nama_hotel')) {
+            $pasporGlobal = $request->file('paspor_hotel')
+                ? $request->file('paspor_hotel')->store('hotel/paspor', 'public')
+                : null;
+            $visaGlobal = $request->file('visa_hotel')
+                ? $request->file('visa_hotel')->store('hotel/visa', 'public')
+                : null;
+        }
+        // 3. Tidak pilih keduanya → upload sendiri
+        else {
+            $pasporGlobal = $request->file('paspor')
+                ? $request->file('paspor')->store('documents/paspor', 'public')
+                : null;
+            $visaGlobal = $request->file('visa')
+                ? $request->file('visa')->store('documents/visa', 'public')
+                : null;
+        }
         $request->validate([
             'travel' => 'required|exists:pelanggans,id',
             'services' => 'required|array',
@@ -94,27 +136,45 @@ class ServicesController extends Controller
             // Relasi detail
             switch ($srvLower) {
                 case 'hotel':
+
+                    // Simpan hotel
                     if ($request->filled('tanggal_checkin')) {
                         foreach ($request->tanggal_checkin as $i => $tglCheckin) {
                             if ($tglCheckin) {
-                                $service->hotels()->create([
+                                $hotel = $service->hotels()->create([
                                     'tanggal_checkin' => $tglCheckin,
                                     'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
                                     'nama_hotel' => $request->nama_hotel[$i] ?? null,
-                                    'tipe_kamar' => $request->tipe_kamar[$i] ?? null,
-                                    'jumlah_kamar' => $request->jumlah_kamar[$i] ?? null,
                                     'harga_perkamar' => $request->harga_per_kamar[$i] ?? null,
                                     'catatan' => $request->catatan[$i] ?? null,
+                                    
                                 ]);
+
+                                // Simpan tipe kamar per hotel
+                                if (isset($request->tipe_kamar[$i])) {
+                                    foreach ($request->tipe_kamar[$i] as $tipe) {
+                                        if (!empty($tipe['nama']) && !empty($tipe['jumlah']) && $tipe['jumlah'] > 0) {
+                                            $hotel->typeHotels()->create([
+                                                'nama_tipe' => $tipe['nama'],
+                                                'jumlah' => $tipe['jumlah'],
+                                            ]);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                     break;
 
+
+
+
                 case 'transportasi':
                     if ($request->filled('transportation')) {
                         foreach ($request->transportation as $i => $tipe) {
                             $tipeLower = strtolower($tipe);
+
+                            // === Pesawat ===
                             if ($tipeLower === 'airplane' && $request->filled('tanggal')) {
                                 foreach ($request->tanggal as $j => $tgl) {
                                     if ($tgl) {
@@ -124,15 +184,33 @@ class ServicesController extends Controller
                                             'maskapai' => $request->maskapai[$j] ?? null,
                                             'harga' => $request->harga[$j] ?? null,
                                             'keterangan' => $request->keterangan[$j] ?? null,
+
+                                            // upload paspor & visa (global, bukan per tiket)
+                                            'paspor' => $pasporGlobal,
+                                            'visa' => $visaGlobal,
+
+                                            // upload tiket per item (array)
+                                            'tiket_berangkat' => isset($request->file('tiket_berangkat')[$j])
+                                                ? $request->file('tiket_berangkat')[$j]->store('tiket') : null,
+                                            'tiket_pulang' => isset($request->file('tiket_pulang')[$j])
+                                                ? $request->file('tiket_pulang')[$j]->store('tiket') : null,
                                         ]);
                                     }
                                 }
                             }
 
+
+
+                            // === Transportasi Darat (Bus, Mobil dll) ===
                             if ($tipeLower === 'bus' && $request->filled('transportation_id')) {
                                 foreach ((array)$request->transportation_id as $busId) {
                                     $service->transportationItem()->create([
                                         'transportation_id' => $busId,
+                                        // tambahin upload file paspor & visa
+                                        'paspor' => $request->file('paspor_transportasi')
+                                            ? $request->file('paspor_transportasi')->store('paspor') : null,
+                                        'visa' => $request->file('visa_transportasi')
+                                            ? $request->file('visa_transportasi')->store('visa') : null,
                                     ]);
                                 }
                             }
@@ -140,29 +218,51 @@ class ServicesController extends Controller
                     }
                     break;
 
+
                 case 'handling':
                     if ($request->filled('handlings')) {
                         foreach ($request->handlings as $handling) {
-                            $handlingModel = $service->handlings()->create(['name' => $handling]);
+                            $handlingModel = $service->handlings()->create([
+                                'name' => $handling
+                            ]);
 
                             switch (strtolower($handling)) {
+                                // ================== HOTEL ==================
                                 case 'hotel':
                                     if ($request->filled('nama_hotel_handling')) {
                                         $handlingModel->handlingHotels()->create([
-                                            'nama' => $request->nama_hotel_handling,
-                                            'tanggal' => $request->tanggal_hotel_handling,
-                                            'harga' => $request->harga_hotel_handling,
-                                            'pax' => $request->pax_hotel_handling,
+                                            'nama'           => $request->nama_hotel_handling,
+                                            'tanggal'        => $request->tanggal_hotel_handling,
+                                            'harga'          => $request->harga_hotel_handling,
+                                            'pax'            => $request->pax_hotel_handling,
+                                            'kode_booking'   => $request->file('kode_booking_hotel_handling')
+                                                ? $request->file('kode_booking_hotel_handling')->store('handling/hotel', 'public')
+                                                : null,
+                                            'rumlis'         => $request->file('rumlis_hotel_handling')
+                                                ? $request->file('rumlis_hotel_handling')->store('handling/hotel', 'public')
+                                                : null,
+                                            'identitas_koper' => $request->file('identitas_hotel_handling')
+                                                ? $request->file('identitas_hotel_handling')->store('handling/hotel', 'public')
+                                                : null,
                                         ]);
                                     }
                                     break;
+
+                                // ================== BANDARA ==================
                                 case 'bandara':
                                     if ($request->filled('nama_bandara_handling')) {
                                         $handlingModel->handlingPlanes()->create([
-                                            'nama_bandara' => $request->nama_bandara_handling,
-                                            'jumlah_jamaah' => $request->jumlah_jamaah_handling,
-                                            'harga' => $request->harga_bandara_handling,
-                                            'kedatangan_jamaah' => $request->kedatangan_jamaah_handling
+                                            'nama_bandara'   => $request->nama_bandara_handling,
+                                            'jumlah_jamaah'  => $request->jumlah_jamaah_handling,
+                                            'harga'          => $request->harga_bandara_handling,
+                                            'kedatangan_jamaah' => $request->kedatangan_jamaah_handling,
+                                            'paket_info'     => $request->file('paket_info')
+                                                ? $request->file('paket_info')->store('handling/bandara', 'public')
+                                                : null,
+                                            'nama_supir'     => $request->nama_supir,
+                                            'identitas_koper' => $request->file('identitas_koper_bandara_handling')
+                                                ? $request->file('identitas_koper_bandara_handling')->store('handling/bandara', 'public')
+                                                : null,
                                         ]);
                                     }
                                     break;
@@ -170,6 +270,7 @@ class ServicesController extends Controller
                         }
                     }
                     break;
+
 
                 case 'meals':
                     if ($request->filled('meals')) {
@@ -233,47 +334,57 @@ class ServicesController extends Controller
                 case 'dokumen':
                     if ($request->filled('documents')) {
                         foreach ($request->documents as $doc) {
+
+                            // Simpan file kalau ada
+                            $pasFotoPath = $request->hasFile('pas_foto')
+                                ? $request->file('pas_foto')->store('documents/pas_foto', 'public')
+                                : null;
+
+                            $ktpPath = $request->hasFile('ktp')
+                                ? $request->file('ktp')->store('documents/ktp', 'public')
+                                : null;
+
                             // Buat service document
                             $docService = $service->documents()->create([
-                                'name' => $doc,
+                                'name'      => $doc,
+                                'pas_foto'  => $pasFotoPath,
+                                'paspor'    => $pasporGlobal,
+                                'ktp'       => $ktpPath,
                             ]);
 
-
+                            // === VISA ===
                             if ($doc === 'visa' && $request->filled('visa')) {
                                 foreach ($request->visa as $visaType) {
                                     $docService->visaDetails()->create([
-                                        'nama' => $visaType,
-                                        'jumlah' => $request->input('jumlah_' . $visaType, 0),
-                                        'harga' => $request->input('harga_' . $visaType, 0),
+                                        'nama'       => $visaType,
+                                        'jumlah'     => $request->input('jumlah_' . $visaType, 0),
+                                        'harga'      => $request->input('harga_' . $visaType, 0),
                                         'keterangan' => $request->input('keterangan_' . $visaType, null),
                                     ]);
                                 }
                             }
 
-
+                            // === VAKSIN ===
                             if ($doc === 'vaksin' && $request->filled('vaksin')) {
-
                                 foreach ($request->vaksin as $vaksinType) {
                                     $docService->vaksinDetails()->create([
-                                        'nama' => $vaksinType,
-                                        'jumlah' => $request->input('jumlah_' . $vaksinType, 0),
-                                        'harga' => $request->input('harga_' . $vaksinType, 0),
+                                        'nama'       => $vaksinType,
+                                        'jumlah'     => $request->input('jumlah_' . $vaksinType, 0),
+                                        'harga'      => $request->input('harga_' . $vaksinType, 0),
                                         'keterangan' => $request->input('keterangan_' . $vaksinType, null),
                                     ]);
-
                                 }
                             }
 
-
+                            // === SISKOPATUH ===
                             if ($doc === 'siskopatuh') {
-                               $docService->sikopaturDetails()->create([
-                                'nama' => 'siskopatuh',
-                                'jumlah'=> $request->input('jumlah_siskopatur'),
-                                'harga' => $request->input('harga_siskopatur'),
-                                'keterangan' => $request->input('keterangan_siskopatur')
-                               ]);
+                                $docService->sikopaturDetails()->create([
+                                    'nama'       => 'siskopatuh',
+                                    'jumlah'     => $request->input('jumlah_siskopatur'),
+                                    'harga'      => $request->input('harga_siskopatur'),
+                                    'keterangan' => $request->input('keterangan_siskopatur')
+                                ]);
                             }
-
                         }
                     }
                     break;
@@ -292,14 +403,36 @@ class ServicesController extends Controller
     public function nego($id)
     {
         $service = Service::findOrFail($id);
+
+        // ambil semua services milik pelanggan_id yg sama
+        $allServices = Service::where('pelanggan_id', $service->pelanggan_id)
+            ->pluck('services') // ambil kolom services saja
+            ->toArray();
+
+        // decode JSON jika perlu, dan gabungkan semua
+        $selectedServices = collect($allServices)
+            ->map(function ($item) {
+                return is_array($item) ? $item : json_decode($item, true);
+            })
+            ->flatten()
+            ->unique()
+            ->toArray();
         $transportations = Transportation::all();
-        return view('admin.services.nego', ['service' => $service, 'transportations' => $transportations]);
+        return view('admin.services.nego', [
+            'service' => $service,
+            'selectedServices' => $selectedServices,
+            'transportations' => $transportations
+        ]);
     }
+
     public function updateNego(Request $request, $id)
     {
         $oldService = Service::findOrFail($id);
         $newStatus = $request->action === 'nego' ? 'nego' : 'deal';
-        $oldService->update(['status' => $newStatus]);
+
+        // ✅ Update semua service dari pelanggan ini, bukan cuma 1 baris
+        Service::where('pelanggan_id', $oldService->pelanggan_id)
+            ->update(['status' => $newStatus]);
 
         $prefixMap = [
             'hotel' => 'H',
@@ -323,11 +456,12 @@ class ServicesController extends Controller
             $lastService = Service::where('unique_code', 'like', $prefix . '-%')
                 ->orderBy('id', 'desc')
                 ->first();
+
             $number = $lastService ? ((int) explode('-', $lastService->unique_code)[1] + 1) : 1;
             $uniqueCode = $prefix . '-' . $number;
 
             // Jika status berubah menjadi deal atau service baru → buat baris baru
-            $service = Service::create([
+            Service::create([
                 'pelanggan_id' => $request->travel,
                 'services' => [$srv],
                 'tanggal_keberangkatan' => $request->tanggal_keberangkatan,
@@ -336,10 +470,6 @@ class ServicesController extends Controller
                 'status' => $newStatus,
                 'unique_code' => $uniqueCode,
             ]);
-
-
-            // Tambahkan relasi detail service baru (copas dari store)
-            // hotel, transportasi, handling, meals, pendamping, tour, dll.
         }
 
         return redirect()->route('admin.services')

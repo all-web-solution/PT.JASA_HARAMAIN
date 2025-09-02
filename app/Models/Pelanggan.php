@@ -67,4 +67,16 @@ class Pelanggan extends Model
                 return $query->latest();
         }
     }
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'pelanggan_service')
+                    ->withPivot([
+                        'id', // include the pivot's ID
+                        'tanggal_keberangkatan',
+                        'tanggal_kepulangan',
+                        'total_jamaah',
+                        'status',
+                        'unique_code'
+                    ])->withTimestamps();
+    }
 }
