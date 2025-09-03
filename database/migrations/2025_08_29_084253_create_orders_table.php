@@ -20,6 +20,9 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->string('total_amount');
+            $table->string('invoice');
+            $table->string('total_yang_dibayarkan');
+            $table->string('sisa_hutang');
             $table->timestamps();
         });
     }

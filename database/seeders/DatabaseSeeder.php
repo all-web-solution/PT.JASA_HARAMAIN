@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\GuideItems;
+use App\Models\Transportation;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -84,6 +86,64 @@ class DatabaseSeeder extends Seeder
             User::create(array_merge($user, [
                 'password' => Hash::make('password'),
             ]));
+        }
+
+         $pendampings = [
+            [
+                'nama' => 'Muthawif kelas premium',
+                'harga' => 12000,
+                'keterangan' => 'Lorem ipsum',
+            ],
+            [
+                'nama' => 'Muthawif kelas standart',
+                'harga' => 1000,
+                'keterangan' => 'Lorem ipsum',
+            ],
+            [
+                'nama' => 'Muthawifah',
+                'harga' => 8000,
+                'keterangan' => 'Muthawifah',
+            ],
+            [
+                'nama' => 'Team leader',
+                'harga' => 1300,
+                'keterangan' => 'kata kata',
+            ],
+        ];
+
+        foreach ($pendampings as $p) {
+           GuideItems::create($p);
+        }
+
+        $transportations = [
+            [
+                'nama' => 'Bus Eksekutif',
+                'kapasitas' => 50,
+                'fasilitas' => 'AC, Reclining Seat, LCD TV',
+                'harga' => 500000,
+            ],
+            [
+                'nama' => 'Bus Pariwisata',
+                'kapasitas' => 40,
+                'fasilitas' => 'AC, Reclining Seat',
+                'harga' => 400000,
+            ],
+            [
+                'nama' => 'Mobil Minibus',
+                'kapasitas' => 15,
+                'fasilitas' => 'AC, Audio System',
+                'harga' => 200000,
+            ],
+            [
+                'nama' => 'Mobil SUV',
+                'kapasitas' => 7,
+                'fasilitas' => 'AC, Audio System, GPS',
+                'harga' => 250000,
+            ],
+        ];
+
+        foreach ($transportations as $t) {
+           Transportation::create($t);
         }
     }
 }

@@ -12,18 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('guides', function (Blueprint $table) {
-            $table->id();
-             $table->unsignedInteger('service_id');
-            $table->foreign('service_id')
-                ->references('id')
-                ->on('services')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-            $table->string('nama');
-            $table->string('jumlah');
-            $table->string('keterangan');
-            $table->timestamps();
-        });
+    $table->id();
+    $table->unsignedInteger('service_id');
+    $table->unsignedBigInteger('guide_id'); // <- tambahkan ini
+
+    $table->foreign('service_id')
+        ->references('id')
+        ->on('services')
+        ->cascadeOnDelete()
+        ->cascadeOnUpdate();
+
+    $table->foreign('guide_id')
+        ->references('id')
+        ->on('guide_items')
+        ->cascadeOnDelete()
+        ->cascadeOnUpdate();
+
+    $table->timestamps();
+});
+
     }
 
     /**

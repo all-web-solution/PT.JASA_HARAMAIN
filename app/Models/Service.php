@@ -57,4 +57,7 @@ public function planes()
     public function documents(){
         return $this->hasMany(Document::class, 'service_id');
     }
+    public function filess(){
+        return $this->hasMany(File::class, 'service_id');
+    }
 }

@@ -16,6 +16,7 @@ use App\Http\Controllers\Content\SiskopaturController;
 use App\Http\Controllers\Content\VisaController;
 use App\Http\Controllers\Content\VaccineController;
 use App\Http\Controllers\TransportationController;
+use Symfony\Component\HttpKernel\DependencyInjection\ServicesResetter;
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.index');
@@ -45,6 +46,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/payment/store', [PaymentController::class, 'store'])->name('admin.payment.stor');
     Route::get('/nego/{id}', [ServicesController::class, 'nego'])->name('admin.service.nego');
     Route::put('/update/{id}/nego', [ServicesController::class, 'updateNego'])->name('update.nego.admin');
+    Route::get('/services/{service_id}/upload-berkas', [ServicesController::class, 'uploadBerkas'])->name('service.uploadBerkas');
+    Route::post('/services/store-berkas', [ServicesController::class, 'storeBerkas'])->name('service.storeBerkas');
+    Route::get('/service/files', [ServicesController::class, 'showFile'])->name('admin.service.file');
+    Route::post('{order}/payment', [ServicesController::class, 'payment'])->name('orders.payment');
+      Route::get('{order}/bayar', [ServicesController::class, 'bayar'])->name('orders.bayar');
+
 });
 
 Route::middleware(['auth', 'hotel'])->group(function () {

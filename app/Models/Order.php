@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Order extends Model
 {
-    protected $fillable = ['service_id', 'total_amount'];
+    protected $fillable = ['service_id','invoice','total_amount', 'total_yang_dibayarkan', 'sisa_hutang'];
 
     public function service(){
         return $this->BelongsTo(Service::class);

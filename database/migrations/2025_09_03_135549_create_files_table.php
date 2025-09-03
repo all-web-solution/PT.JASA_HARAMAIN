@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hotels', function (Blueprint $table) {
+        Schema::create('files', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('service_id');
             $table->foreign('service_id')
@@ -19,12 +19,10 @@ return new class extends Migration
                 ->on('services')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->date('tanggal_checkin');
-            $table->date('tanggal_checkout');
-            $table->string('nama_hotel');
-            $table->string('harga_perkamar');
-            $table->string('jumlah_kamar');
-            $table->string('catatan');
+            $table->string('pas_foto');
+            $table->string('paspor');
+            $table->string('ktp');
+            $table->string('visa');
             $table->timestamps();
         });
     }
@@ -34,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hotels');
+        Schema::dropIfExists('files');
     }
 };

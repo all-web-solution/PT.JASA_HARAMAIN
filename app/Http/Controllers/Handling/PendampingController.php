@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Handling;
 
 use App\Http\Controllers\Controller;
 use App\Models\Guide;
+use App\Models\GuideItems;
 use Illuminate\Http\Request;
 
 class PendampingController extends Controller
@@ -13,7 +14,7 @@ class PendampingController extends Controller
      */
     public function index()
     {
-         $guides = Guide::all();
+         $guides = GuideItems::all();
         return view('handling.pendamping.index',  compact('guides'));
     }
 
@@ -31,9 +32,11 @@ class PendampingController extends Controller
      */
     public function store(Request $request)
     {
-       Guide::create([
-        'pendamping_type' => $request->name,
-        'harga' => $request->description]);
+       GuideItems::create([
+        'nama' => $request->nama,
+        'harga' => $request->harga,
+        'keterangan' => $request->keterangan
+    ]);
 
         return redirect()->route('handling.pendamping.index');
     }
@@ -51,7 +54,7 @@ class PendampingController extends Controller
      */
     public function edit(string $id)
     {
-        $guide = Guide::findOrFail($id);
+        $guide = GuideItems::findOrFail($id);
         return view('handling.pendamping.edit', compact('guide'));
     }
 
@@ -60,10 +63,11 @@ class PendampingController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $guide = Guide::findOrFail($id);
+        $guide = GuideItems::findOrFail($id);
         $guide->update([
-            'pendamping_type' => $request->name,
-            'harga' => $request->description
+            'nama' => $request->nama,
+            'harga' => $request->harga,
+            'keterangan' => $request->keterangan
         ]);
         return redirect()->route('handling.pendamping.index');
     }
@@ -73,7 +77,7 @@ class PendampingController extends Controller
      */
     public function destroy(string $id)
     {
-        $guide = Guide::findOrFail($id);
+        $guide = GuideItems::findOrFail($id);
         $guide->delete();
         return redirect()->route('handling.pendamping.index');
 

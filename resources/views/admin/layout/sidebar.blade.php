@@ -23,16 +23,18 @@
                 <i class="bi bi-people-fill"></i> SERVICES
             </a>
         </li>
+        <!-- Enhanced Menu lainnya -->
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.service.file') }}">
+                <i class="bi bi-people-fill"></i> BERKAS
+            </a>
+        </li>
         <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.order') }}">
                 <i class="bi bi-credit-card-2-back"></i> ORDER
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.payment') }}">
-                <i class="bi bi-credit-card-2-back"></i> PAYMENT
-            </a>
-        </li>
+       
         <li class="nav-item">
             <a class="nav-link" href="{{ route('user.index') }}">
                 <i class="bi bi-people-fill"></i> USERS
@@ -67,6 +69,11 @@
         <li class="nav-item">
             <a class="nav-link active" href="{{ route('handling.pendamping.index') }}">
                 <i class="bi bi-speedometer2"></i> Pendamping
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('handling.pendamping.index') }}">
+                <i class="bi bi-speedometer2"></i> Pendamping Customer
             </a>
         </li>
         <li class="nav-item">

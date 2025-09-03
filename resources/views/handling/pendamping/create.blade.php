@@ -301,20 +301,27 @@
                 <!-- Data Travel Section -->
                 <div class="form-section">
                     <h6 class="form-section-title">
-                        <i class="bi bi-building"></i> Data Catering
+                        <i class="bi bi-building"></i> Data Pendamping
                     </h6>
 
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="form-label">Type pendamping</label>
-                                <input type="text" class="form-control" name="name" required id="email">
+                                <label class="form-label">Nama</label>
+                                <input type="text" class="form-control" name="nama" required id="email">
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Harga</label>
-                                <input type="text" class="form-control" name="description"
+                                <input type="text" class="form-control" name="harga"
+                                       required  id="penanggung">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Keterangan</label>
+                                <input type="text" class="form-control" name="keterangan"
                                        required  id="penanggung">
                             </div>
                         </div>

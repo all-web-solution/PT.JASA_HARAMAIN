@@ -1,5 +1,4 @@
 @extends('admin.master')
-@section('title', 'Order List')
 @section('content')
     <style>
         :root {
@@ -377,102 +376,50 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-list-check"></i>Daftar pesanan
+                    <i class="bi bi-list-check"></i>Pembayaran Order: {{ $order->invoice }}
                 </h5>
-                <a href="{{ route('admin.order.create') }}" class="btn-add-new">
-                    <i class="bi bi-plus-circle"></i> Tambah karyawan
-                </a>
-            </div>
 
-            <!-- Search and Filter -->
-            <div class="search-filter-container">
-                <div class="search-box">
-                    <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Cari customer/kode service...">
-                </div>
-                <div class="filter-group">
-                    <select class="filter-select">
-                        <option>Semua Status</option>
-                        <option>Pending</option>
-                        <option>Diproses</option>
-                        <option>Selesai</option>
-                        <option>Ditolak</option>
-                    </select>
-                    <select class="filter-select">
-                        <option>Semua Periode</option>
-                        <option>Hari Ini</option>
-                        <option>Minggu Ini</option>
-                        <option>Bulan Ini</option>
-                        <option>Custom</option>
-                    </select>
-                </div>
             </div>
-
             <!-- Services Table -->
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Invoice</th>
-                            <th>Nama pelanggan</th>
-                            <th>Total harga keeseluruhan</th>
-                            <th>Jumlah yang di bayarkan</th>
-                            <th>Sisa hutang</th>
+                            <th>Kode unik</th>
+                            <th>Customer/Travel</th>
+                            <th>Tgl keberangkatan</th>
+                            <th>Tgl kepulangan</th>
+                            <th>Jumlah jamaah</th>
+                            <th>Layanan yang di pilih</th>
                             <th>Aksi</th>
+
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($orders as $order)
-                            <tr>
-                                <td>{{ $order->invoice }}</td>
-                                <td data-label="Nama pelanggan">
-                                    <div class="customer-info">
-                                        <div class="customer-details">
-                                            <div class="customer-name">{{ $order->service->pelanggan->nama_travel }}</div>
-                                            <div class="customer-type">Travel</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td data-label="Total harga keeseluruhan">
-                                    {{ number_format($order->total_amount, 0, ',', '.') }}</td>
-                                <td>{{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}</td>
-                                <td>{{ number_format($order->sisa_hutang, 0, ',', '.') }}</td>
-                                <td data-label="Aksi">
-                                    @if ($order->total_yang_dibayarkan < $order->total_amount)
-                                        <a href="{{ route('orders.bayar', $order->id) }}">
-                                            <button class="btn btn-success">Bayar sekarang</button>
-                                        </a>
-                                    @else
-                                        <span class="badge bg-success">Lunas</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
+                        @if ($order->service)
+                            {{-- Meals --}}
+                            @foreach ($order->service->meals as $meal)
+                                <tr>
+                                    <td>{{ $meal->nama }}</td>
+                                    <td>{{ $meal->jumlah }}</td>
+                                    <td>Rp. {{ number_format($meal->harga ?? 0, 0, ',', '.') }}</td>
+                                    <td>Rp. {{ number_format(($meal->harga ?? 0) * $meal->jumlah, 0, ',', '.') }}</td>
+                                </tr>
+                            @endforeach
+                        @endif
                     </tbody>
-
                 </table>
             </div>
 
-            <!-- Pagination -->
-            <div class="pagination-container">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+            @if ($order->sisa_hutang > 0)
+                <form action="{{ route('orders.payment', $order->id) }}" method="POST">
+                    @csrf
+                    <input type="number" name="jumlah_dibayarkan" placeholder="Jumlah yang dibayarkan" required>
+                    <button type="submit">Bayar</button>
+                </form>
+            @else
+                <p>Lunas! Tidak ada sisa hutang.</p>
+            @endif
         </div>
     </div>
 
@@ -483,7 +430,7 @@
 
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    if (confirm('Apakah Anda yakin ingin menghapus order ini?')) {
+                    if (confirm('Apakah Anda yakin ingin menghapus permintaan service ini?')) {
                         // Here you would typically send a delete request to your backend
                         const row = this.closest('tr');
                         row.style.opacity = '0';

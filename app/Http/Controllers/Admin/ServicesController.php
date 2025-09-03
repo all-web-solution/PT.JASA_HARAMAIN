@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\File;
+use App\Models\GuideItems;
 use App\Models\Hotel;
 use App\Models\Pelanggan;
 use App\Models\Service;
@@ -12,6 +14,7 @@ use App\Models\Transportation;
 use App\Models\TransportationOrder;
 use Dom\Document;
 use Illuminate\Http\Request;
+use App\Models\Order;
 
 class ServicesController extends Controller
 {
@@ -43,7 +46,8 @@ class ServicesController extends Controller
     {
         $pelanggans = Pelanggan::all();
         $transportations = Transportation::all();
-        return view('admin.services.create', compact('pelanggans', 'transportations'));
+        $guides = GuideItems::all();
+        return view('admin.services.create', compact('pelanggans', 'transportations', 'guides'));
     }
 
     public function show($id)
@@ -136,35 +140,43 @@ class ServicesController extends Controller
             // Relasi detail
             switch ($srvLower) {
                 case 'hotel':
-
-                    // Simpan hotel
-                    if ($request->filled('tanggal_checkin')) {
-                        foreach ($request->tanggal_checkin as $i => $tglCheckin) {
-                            if ($tglCheckin) {
+                    if ($request->filled('nama_hotel')) {
+                        foreach ($request->nama_hotel as $i => $namaHotel) {
+                            if ($namaHotel) {
                                 $hotel = $service->hotels()->create([
-                                    'tanggal_checkin' => $tglCheckin,
+                                    'nama_hotel'       => $namaHotel,
+                                    'tanggal_checkin'  => $request->tanggal_checkin[$i] ?? null,
                                     'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
-                                    'nama_hotel' => $request->nama_hotel[$i] ?? null,
-                                    'harga_perkamar' => $request->harga_per_kamar[$i] ?? null,
-                                    'catatan' => $request->catatan[$i] ?? null,
-                                    
+                                    'harga_perkamar'   => $request->harga_per_kamar[$i] ?? 0,
+                                    'jumlah_kamar'     => $request->jumlah_kamar[$i] ?? 0,
+                                    'catatan'          => $request->catatan[$i] ?? null,
                                 ]);
 
-                                // Simpan tipe kamar per hotel
-                                if (isset($request->tipe_kamar[$i])) {
-                                    foreach ($request->tipe_kamar[$i] as $tipe) {
-                                        if (!empty($tipe['nama']) && !empty($tipe['jumlah']) && $tipe['jumlah'] > 0) {
-                                            $hotel->typeHotels()->create([
-                                                'nama_tipe' => $tipe['nama'],
-                                                'jumlah' => $tipe['jumlah'],
-                                            ]);
-                                        }
+                                // Ambil tipe kamar
+                                $tipeKamar   = $request->tipe_kamar[$i]['nama']   ?? [];
+                                $jumlahKamar = $request->tipe_kamar[$i]['jumlah'] ?? [];
+
+                                $typeHotelsData = [];
+                                foreach ($tipeKamar as $j => $namaTipe) {
+                                    $jumlah = $jumlahKamar[$j] ?? 0;
+                                    if (!empty($namaTipe) && (int)$jumlah > 0) {
+                                        $typeHotelsData[] = [
+                                            'nama_tipe' => (string) $namaTipe,
+                                            'jumlah'    => (int) $jumlah,
+                                        ];
                                     }
+                                }
+
+                                if (!empty($typeHotelsData)) {
+                                    $hotel->typeHotels()->createMany($typeHotelsData);
                                 }
                             }
                         }
                     }
                     break;
+
+
+
 
 
 
@@ -184,11 +196,6 @@ class ServicesController extends Controller
                                             'maskapai' => $request->maskapai[$j] ?? null,
                                             'harga' => $request->harga[$j] ?? null,
                                             'keterangan' => $request->keterangan[$j] ?? null,
-
-                                            // upload paspor & visa (global, bukan per tiket)
-                                            'paspor' => $pasporGlobal,
-                                            'visa' => $visaGlobal,
-
                                             // upload tiket per item (array)
                                             'tiket_berangkat' => isset($request->file('tiket_berangkat')[$j])
                                                 ? $request->file('tiket_berangkat')[$j]->store('tiket') : null,
@@ -391,13 +398,36 @@ class ServicesController extends Controller
             }
         }
 
-        return redirect()->route('admin.services')
+
+
+
+        // 4. Buat order
+        $order = Order::create([
+            'service_id' => $service->id,
+            'total_amount' => $request->input('total_amount', 0), // ambil dari input hidden
+            'invoice' => 'INV-' . time(),
+            'total_yang_dibayarkan' => $request->input('total_amount', 0),
+            'sisa_hutang' => $request->input('total_amount'),
+        ]);
+
+
+        return redirect()->route('service.uploadBerkas', [
+            'service_id' => $service->id,
+            'total_jamaah' => $request->total_jamaah
+        ])
             ->with('success', 'Data service berhasil disimpan.');
     }
 
 
 
-
+    public function uploadBerkas(Request $request, $service_id)
+    {
+        $service = Service::findOrFail($service_id);
+        return view('admin.services.upload_berkas', [
+            'service_id' => $service->id,
+            'total_jamaah' => $service->total_jamaah
+        ]);
+    }
 
 
     public function nego($id)
@@ -474,5 +504,86 @@ class ServicesController extends Controller
 
         return redirect()->route('admin.services')
             ->with('success', 'Data nego berhasil diperbarui.');
+    }
+
+    public function storeBerkas(Request $request)
+    {
+        $request->validate([
+            'service_id' => 'required|exists:services,id',
+        ]);
+
+        $service = Service::findOrFail($request->service_id);
+
+        $pasFotoFiles = $request->file('pas_foto', []);
+        $pasporFiles  = $request->file('paspor', []);
+        $ktpFiles     = $request->file('ktp', []);
+        $visaFiles    = $request->file('visa', []);
+
+        $totalJamaah = count($pasFotoFiles);
+
+        for ($i = 0; $i < $totalJamaah; $i++) {
+            $service->filess()->create([
+                'pas_foto' => isset($pasFotoFiles[$i]) ? $pasFotoFiles[$i]->store('documents/pas_foto', 'public') : null,
+                'paspor'   => isset($pasporFiles[$i]) ? $pasporFiles[$i]->store('documents/paspor', 'public') : null,
+                'ktp'      => isset($ktpFiles[$i]) ? $ktpFiles[$i]->store('documents/ktp', 'public') : null,
+                'visa'     => isset($visaFiles[$i]) ? $visaFiles[$i]->store('documents/visa', 'public') : null,
+            ]);
+        }
+
+        return redirect()->route('admin.services')->with('success', 'Berkas berhasil diupload.');
+    }
+    public function showFile()
+    {
+        $files = File::all();
+        return view('admin.services.show_file', ['files' => $files]);
+    }
+
+    public function bayar(Order $order)
+    {
+        $order->load('service.meals'); // load relasi sesuai kebutuhan
+        return view('admin.order.bayar', compact('order'));
+    }
+
+    public function payment(Request $request, Order $order)
+    {
+        $request->validate([
+            'jumlah_dibayarkan' => 'required|numeric|min:1',
+        ]);
+
+        $jumlahBayar = (int) $request->jumlah_dibayarkan;
+
+        // Hitung sisa hutang
+        $sisaHutang = $order->total_amount - $jumlahBayar;
+        if ($sisaHutang < 0) {
+            $sisaHutang = 0;
+        }
+
+        // Ambil invoice terakhir untuk service ini
+        $lastOrder = Order::where('service_id', $order->service_id)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $lastNumber = 0;
+        if ($lastOrder && $lastOrder->invoice) {
+            $parts = explode('-', $lastOrder->invoice);
+            $lastNumber = isset($parts[1]) ? (int) $parts[1] : 0;
+        }
+        $newInvoiceCode = 'INV-' . ($lastNumber + 1);
+
+        $order->total_yang_dibayarkan += $jumlahBayar;
+        $order->sisa_hutang = $order->total_amount - $order->total_yang_dibayarkan;
+        $order->save();
+
+        // Buat order baru untuk pembayaran ini
+        Order::create([
+            'service_id' => $order->service_id,
+            'total_amount' => $sisaHutang,          // total amount = sisa hutang
+            'total_yang_dibayarkan' => $jumlahBayar,
+            'sisa_hutang' => $sisaHutang,
+            'invoice' => $newInvoiceCode,
+        ]);
+
+        return redirect()->route('orders.bayar', $order->id)
+            ->with('success', 'Pembayaran berhasil! Sisa hutang: Rp. ' . number_format($sisaHutang, 0, ',', '.'));
     }
 }
