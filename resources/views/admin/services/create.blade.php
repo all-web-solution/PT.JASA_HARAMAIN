@@ -460,6 +460,13 @@
         .hidden {
             display: none;
         }
+        #meal-item{
+            background-color: #fff;
+            margin:10px 0px;
+            padding: 10px;
+            border-radius: 7px;
+
+        }
     </style>
 
     <div class="service-create-container">
@@ -1404,7 +1411,7 @@
                         <div class="">
                             @foreach ($meals as $meal)
                                 <div class="meal-item" data-meal="{{ strtolower(str_replace(' ', '-', $meal->name)) }}"
-                                    data-price="{{ $meal->price }}">
+                                    data-price="{{ $meal->price }}" id="meal-item">
                                     <div class="service-name">{{ $meal->name }}</div>
                                     <div class="service-desc">{{ number_format($meal->price, 0, ',', '.') }}</div>
                                     <input type="checkbox" name="meals[]" value="{{ $meal->id }}" hidden>
