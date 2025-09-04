@@ -32,9 +32,7 @@ public function planes()
         return $this->hasMany(Plane::class, 'service_id');
     }
 
-    public function transportation(){
-        return $this->hasMany(Transportation::class, 'service_id');
-    }
+
     public function transportationItem(){
     return $this->hasMany(TransportationItem::class, 'service_id');
     }

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('meals', function (Blueprint $table) {
+       Schema::create('meals', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('service_id');
             $table->foreign('service_id')
@@ -19,7 +19,7 @@ return new class extends Migration
                 ->on('services')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->string('nama');
+            $table->foreignId('meal_id')->constrained('meal_items')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('jumlah');
             $table->timestamps();
         });

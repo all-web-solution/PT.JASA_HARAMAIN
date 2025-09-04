@@ -6,8 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Meal extends Model
 {
-    protected $fillable = ['service_id', 'nama', 'jumlah'];
+    protected $fillable = ['service_id', 'meal_id', 'jumlah'];
     public function service(){
         return $this->belongsTo(Service::class);
+    }
+    public function mealItem(){
+        return $this->belongsTo(MealItem::class, 'id');
     }
 }

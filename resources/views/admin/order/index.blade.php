@@ -437,15 +437,20 @@
                                     {{ number_format($order->total_amount, 0, ',', '.') }}</td>
                                 <td>{{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}</td>
                                 <td>{{ number_format($order->sisa_hutang, 0, ',', '.') }}</td>
-                                <td data-label="Aksi">
-                                    @if ($order->total_yang_dibayarkan < $order->total_amount)
+                                <td>
+                                    @if ($order->sisa_hutang == 0)
+                                        <span class="badge bg-success">Lunas</span>
+                                    @elseif ($loop->last)
+                                        {{-- hanya row terakhir yg bisa bayar --}}
                                         <a href="{{ route('orders.bayar', $order->id) }}">
                                             <button class="btn btn-success">Bayar sekarang</button>
                                         </a>
                                     @else
-                                        <span class="badge bg-success">Lunas</span>
+                                        <span class="badge bg-warning">Sudah Bayar</span>
                                     @endif
                                 </td>
+
+
                             </tr>
                         @endforeach
                     </tbody>

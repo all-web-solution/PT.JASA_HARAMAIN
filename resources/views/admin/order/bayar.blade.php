@@ -390,9 +390,7 @@
                             <th>Tgl keberangkatan</th>
                             <th>Tgl kepulangan</th>
                             <th>Jumlah jamaah</th>
-                            <th>Layanan yang di pilih</th>
-                            <th>Aksi</th>
-
+                            <th>Layanan yang dipilih</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -400,18 +398,79 @@
                             {{-- Meals --}}
                             @foreach ($order->service->meals as $meal)
                                 <tr>
-                                    <td>{{ $meal->nama }}</td>
-                                    <td>{{ $meal->jumlah }}</td>
-                                    <td>Rp. {{ number_format($meal->harga ?? 0, 0, ',', '.') }}</td>
-                                    <td>Rp. {{ number_format(($meal->harga ?? 0) * $meal->jumlah, 0, ',', '.') }}</td>
+                                    <td>{{ $meal->service->unique_code }}</td>
+                                    <td>{{ $meal->service->pelanggan->nama_travel }}</td>
+                                    <td>{{ $meal->service->tanggal_keberangkatan }}</td>
+                                    <td>{{ $meal->service->tanggal_kepulangan }}</td>
+                                    <td>{{ $meal->service->total_jamaah }}</td>
+                                    <td>
+                                        {{-- Meals --}}
+                                        @if ($meal->service->meals->count())
+                                            <strong>Meals:</strong>
+                                            @foreach ($meal->service->meals as $meal)
+                                                {{ $meal->mealItem->name}} - {{ $meal->mealItem->price }} <br>
+                                            @endforeach
+                                        @endif
+
+                                        @if ($meal->service->transportationItem->count())
+                                            <strong>Transportasi:</strong>
+                                            @foreach ($meal->service->meals as $meal)
+                                                {{ $meal->mealItem->name}} - {{ $meal->mealItem->price }} <br>
+                                            @endforeach
+                                        @endif
+                                        @if ($meal->service->hotels->count())
+                                            <strong>Hotel:</strong>
+                                            @foreach ($meal->service->meals as $meal)
+                                                {{ $meal->mealItem->name}} - {{ $meal->mealItem->price }} <br>
+                                            @endforeach
+                                        @endif
+                                        @if ($meal->service->handlings->count())
+                                            <strong>handling:</strong>
+                                            @foreach ($meal->service->meals as $meal)
+                                                {{ $meal->mealItem->name}} - {{ $meal->mealItem->price }} <br>
+                                            @endforeach
+                                        @endif
+                                        @if ($meal->service->guides->count())
+                                            <strong>Guide:</strong>
+                                            @foreach ($meal->service->meals as $meal)
+                                                {{ $meal->mealItem->name}} - {{ $meal->mealItem->price }} <br>
+                                            @endforeach
+                                        @endif
+                                        @if ($meal->service->tours->count())
+                                            <strong>Tour:</strong>
+                                            @foreach ($meal->service->meals as $meal)
+                                                {{ $meal->mealItem->name}} - {{ $meal->mealItem->price }} <br>
+                                            @endforeach
+                                        @endif
+                                        @if ($meal->service->document)
+                                            <strong>Document:</strong>
+                                            @foreach ($meal->service->meals as $meal)
+                                                {{ $meal->mealItem->name}} - {{ $meal->mealItem->price }} <br>
+                                            @endforeach
+                                        @endif
+                                        @if ($meal->service->filess)
+                                            <strong>File:</strong>
+                                            @foreach ($meal->service->meals as $meal)
+                                                {{ $meal->mealItem->name}} - {{ $meal->mealItem->price }} <br>
+                                            @endforeach
+                                        @endif
+
+
+
+
+
+                                    </td>
+
+
                                 </tr>
                             @endforeach
                         @endif
                     </tbody>
                 </table>
+
             </div>
 
-            @if ($order->sisa_hutang > 0)
+            {{-- @if ($order->sisa_hutang > 0)
                 <form action="{{ route('orders.payment', $order->id) }}" method="POST">
                     @csrf
                     <input type="number" name="jumlah_dibayarkan" placeholder="Jumlah yang dibayarkan" required>
@@ -419,8 +478,19 @@
                 </form>
             @else
                 <p>Lunas! Tidak ada sisa hutang.</p>
-            @endif
+            @endif --}}
         </div>
+        <form action="{{ route('orders.payment', $order->id) }}" method="POST">
+            @csrf
+            <div class="mb-3">
+                <label for="nama_travel" class="form-label">Jumlah yang di bayarkan</label>
+                <input type="number" class="form-control" id="nama_travel" name="jumlah_dibayarkan"
+                    placeholder="Jumlah yang dibayarkan" required>
+            </div>
+            <button type="submit" name="action" value="save" class="btn btn-primary">
+                Simpan
+            </button>
+        </form>
     </div>
 
     <script>

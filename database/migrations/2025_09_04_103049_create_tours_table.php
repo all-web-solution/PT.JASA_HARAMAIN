@@ -19,12 +19,11 @@ return new class extends Migration
                 ->on('services')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-
             // ubah jadi nullable
             $table->foreignId('transportation_id')->nullable()->constrained('transportations')->cascadeOnDelete()->cascadeOnUpdate();
-
-            $table->string('name');
+            $table->foreignId('tour_id')->nullable()->constrained('tour_items')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
+           
         });
     }
 

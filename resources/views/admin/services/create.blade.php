@@ -439,6 +439,27 @@
             border-radius: 8px;
             background: #f0f8ff;
         }
+
+        .service-tour,
+        .transport-option {
+            display: block;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .service-tour.active,
+        .transport-option.active {
+            border-color: #0d6efd;
+            background: #e9f2ff;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 
     <div class="service-create-container">
@@ -638,7 +659,7 @@
                     </div>
 
                     <!-- Detail Layanan Section -->
-                     <div class="form-section">
+                    <div class="form-section">
                         <h6 class="form-section-title">
                             <i class="bi bi-card-checklist"></i> Detail Permintaan per Divisi
                         </h6>
@@ -1221,23 +1242,28 @@
                             <div class="service-grid">
                                 @foreach ($guides as $guide)
                                     <div class="pendamping-wrapper">
-                                        <div class="pendamping-item" data-pendamping="premium">
+                                        <div class="pendamping-item" data-pendamping="guide-{{ $guide->id }}"
+                                            data-price="{{ $guide->harga }}">
                                             <div class="service-name">{{ $guide->nama }}</div>
-                                            <div class="service-desc">{{ $guide->harga }}</div>
-                                            <input type="checkbox" name="pendamping[]" value="premium" hidden>
+                                            <div class="service-desc">Rp {{ number_format($guide->harga, 0, ',', '.') }}
+                                            </div>
+                                            <input type="checkbox" name="pendamping[]" value="{{ $guide->id }}"
+                                                hidden>
                                         </div>
-                                        <div class="pendamping-form" id="form-premium">
-                                            <label class="form-label">Jumlah Premium</label>
-                                            <input type="number" class="form-control" name="jumlah_premium"
-                                                min="1">
+                                        <div class="pendamping-form hidden" id="form-guide-{{ $guide->id }}">
+                                            <label class="form-label">Jumlah {{ $guide->nama }}</label>
+                                            <input type="number" class="form-control jumlah-pendamping"
+                                                data-name="{{ $guide->nama }}" data-price="{{ $guide->harga }}"
+                                                name="jumlah_{{ $guide->id }}" min="1">
                                             <label class="form-label mt-2">Keterangan</label>
-                                            <textarea class="form-control" name="ket_premium"></textarea>
+                                            <textarea class="form-control" name="ket_{{ $guide->id }}"></textarea>
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
                         </div>
                     </div>
+
                     <!-- content -->
                     <div class="detail-form" id="konten-details">
                         <h6 class="detail-title">
@@ -1337,96 +1363,65 @@
                         <div class="detail-section">
                             <div class="tours">
                                 @foreach ($tours as $tour)
-                                <label class="service-tour" data-tour="makkah">
-                                    <div class="service-name">City tour</div>
-                                    <div class="service-desc">{{ $tour->name }}</div>
-                                    <input type="checkbox" name="tours[]" value="makkah" class="d-none">
-                                </label>
-
+                                    <label class="service-tour"
+                                        data-tour="{{ strtolower(str_replace(' ', '-', $tour->name)) }}">
+                                        <div class="service-name">{{ $tour->name }}</div>
+                                        <input type="checkbox" name="tours[]" value="{{ $tour->id }}"
+                                            class="d-none">
+                                    </label>
                                 @endforeach
-
-
                             </div>
                         </div>
                     </div>
 
-
-                    <div id="tour-makkah-form" class="tour-form hidden">
-                        <h4>Transportasi Makkah</h4>
-                        <div class="makkah-tour">
-                            @foreach ($transportations as $trans)
-                                <label class="service-tour-makkah">
-                                    <div class="service-name">{{ $trans->nama }}</div>
-                                    <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
-                                    <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
-                                    <div class="service-desc">Harga : {{ $trans->harga }}</div>
-                                    <input type="radio" name="select_car_makkah" value="{{ $trans->id }}"
-                                        class="d-none">
-                                </label>
-                            @endforeach
+                    {{-- FORM TRANSPORTASI --}}
+                    @foreach ($tours as $tour)
+                        @php
+                            $slug = strtolower(str_replace(' ', '-', $tour->name));
+                        @endphp
+                        <div id="tour-{{ $slug }}-form" class="tour-form hidden">
+                            <h4>Transportasi {{ $tour->name }}</h4>
+                            <div class="transport-options">
+                                @foreach ($transportations as $trans)
+                                    <label class="transport-option">
+                                        <div class="service-name">{{ $trans->nama }}</div>
+                                        <div class="service-desc">Kapasitas: {{ $trans->kapasitas }}</div>
+                                        <div class="service-desc">Fasilitas: {{ $trans->fasilitas }}</div>
+                                        <div class="service-desc">Harga: {{ $trans->harga }}</div>
+                                        <input type="radio" name="select_car_{{ $slug }}"
+                                            value="{{ $trans->id }}" class="d-none">
+                                    </label>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
+                    @endforeach
 
-                    <div id="tour-madinah-form" class="hidden tour-form">
-                        <h3>Form Tour Madinah</h3>
-                        <div class="madinah-tour">
-                            @foreach ($transportations as $trans)
-                                <label class="service-tour-makkah">
-                                    <div class="service-name">{{ $trans->nama }}</div>
-                                    <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
-                                    <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
-                                    <div class="service-desc">Harga : {{ $trans->harga }}</div>
-                                    <input type="radio" name="select_car_madinah" value="{{ $trans->id }}"
-                                        class="d-none">
-                                </label>
-                            @endforeach
-
-                        </div>
-                    </div>
-                    <div id="tour-alula-form" class="hidden tour-form">
-                        <h3>Form Tour Al Ula</h3>
-                        <div class="al-ula-tour">
-                            @foreach ($transportations as $trans)
-                                <label class="service-tour-makkah">
-                                    <div class="service-name">{{ $trans->nama }}</div>
-                                    <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
-                                    <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
-                                    <div class="service-desc">Harga : {{ $trans->harga }}</div>
-                                    <input type="radio" name="select_car_al-ula" value="{{ $trans->id }}"
-                                        class="d-none">
-                                </label>
-                            @endforeach
-
-                        </div>
-                    </div>
-                    <div id="tour-thoif-form" class="hidden tour-form">
-                        <h3>Form Tour Thoif</h3>
-                        <div class="thoif">
-                            @foreach ($transportations as $trans)
-                                <label class="service-tour-makkah">
-                                    <div class="service-name">{{ $trans->nama }}</div>
-                                    <div class="service-desc">Kapasitas : {{ $trans->kapasitas }}</div>
-                                    <div class="service-desc">Fasilitas : {{ $trans->fasilitas }}</div>
-                                    <div class="service-desc">Harga : {{ $trans->harga }}</div>
-                                    <input type="radio" name="select_car_thoif" value="{{ $trans->id }}"
-                                        class="d-none">
-                                </label>
-                            @endforeach
-                        </div>
-                    </div>
 
                     <div class="detail-form" id="meals-details">
                         <h6 class="detail-title">
                             <i class="bi bi-briefcase"></i> Makanan
                         </h6>
-                        <div class="service-grid">
+                        <div class="">
                             @foreach ($meals as $meal)
+                                <div class="meal-item" data-meal="{{ strtolower(str_replace(' ', '-', $meal->name)) }}"
+                                    data-price="{{ $meal->price }}">
+                                    <div class="service-name">{{ $meal->name }}</div>
+                                    <div class="service-desc">{{ number_format($meal->price, 0, ',', '.') }}</div>
+                                    <input type="checkbox" name="meals[]" value="{{ $meal->id }}" hidden>
 
-                            <div class="meal-item" data-content="premium">
-                                <div class="service-name">{{ $meal->name }}</div>
-                                <div class="service-desc">{{ $meal->price }}</div>
-                                <input type="checkbox" name="meals[]" value="nasi box" hidden>
-                            </div>
+                                </div>
+                                <!-- form jumlah hidden -->
+                                <div id="form-{{ strtolower(str_replace(' ', '-', $meal->name)) }}"
+                                    class="form-jumlah hidden mt-2">
+                                    <input
+                                    type="number"
+                                    class="jumlah-meal form-control"
+                                    min="0"
+                                        value="0"
+                                        name="jumlah_meals[{{ $meal->name }}]"
+                                        data-name="{{ $meal->name }}"
+                                        data-price="{{ $meal->price }}">
+                                </div>
                             @endforeach
 
 
@@ -1575,17 +1570,17 @@
 
             </div>
             <div class="form-section" id="cart-total-price" style="display: none;">
-    <h6 class="form-section-title">
-        <i class="bi bi-card-checklist"></i> Detail product yang dipilih
-    </h6>
-    <ul id="cart-items" class="list-group mt-2"></ul>
-    <div class="mt-3 text-end">
-        <strong>Total:
-            <input type="hidden" name="total_amount" id="cart-total" value="0">
-            <span id="cart-total-text">Rp. 0</span>
-        </strong>
-    </div>
-</div>
+                <h6 class="form-section-title">
+                    <i class="bi bi-card-checklist"></i> Detail product yang dipilih
+                </h6>
+                <ul id="cart-items" class="list-group mt-2"></ul>
+                <div class="mt-3 text-end">
+                    <strong>Total:
+                        <input type="hidden" name="total_amount" id="cart-total" value="0">
+                        <span id="cart-total-text">Rp. 0</span>
+                    </strong>
+                </div>
+            </div>
 
 
             <!-- Form Actions -->
@@ -2133,29 +2128,25 @@
         document.addEventListener("DOMContentLoaded", function() {
             const cartSection = document.getElementById("cart-total-price");
             const cartList = document.getElementById("cart-items");
-            const cartTotal = document.getElementById("cart-total");
 
             function formatRupiah(angka) {
                 return "Rp. " + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
 
-           function hitungTotal() {
-    let total = 0;
-    cartList.querySelectorAll("li").forEach(li => {
-        total += parseInt(li.dataset.price || 0);
-    });
+            function hitungTotal() {
+                let total = 0;
+                cartList.querySelectorAll("li").forEach(li => {
+                    total += parseInt(li.dataset.price || 0);
+                });
 
-    // Update input value
-    document.getElementById('cart-total').value = total;
-
-    // Update tampilan untuk user
-    document.getElementById('cart-total-text').innerText = formatRupiah(total);
-}
+                document.getElementById('cart-total').value = total;
+                document.getElementById('cart-total-text').innerText = formatRupiah(total);
+            }
 
             function toggleCartItem(name, unitPrice, jumlah) {
                 const existingItem = cartList.querySelector(`[data-name="${name}"]`);
-
                 if (existingItem) existingItem.remove();
+
                 if (jumlah > 0) {
                     const totalHarga = unitPrice * jumlah;
                     const li = document.createElement("li");
@@ -2163,8 +2154,8 @@
                     li.setAttribute("data-name", name);
                     li.setAttribute("data-price", totalHarga);
                     li.innerHTML = `
-                <span>${name} <small class="text-muted item-qty">x${jumlah}</small></span>
-                <span class="fw-bold item-price">${formatRupiah(totalHarga)}</span>
+                <span>${name} <small class="text-muted">x${jumlah}</small></span>
+                <span class="fw-bold">${formatRupiah(totalHarga)}</span>
             `;
                     cartList.appendChild(li);
                 }
@@ -2173,65 +2164,88 @@
                 hitungTotal();
             }
 
-            function attachItemListeners(selector, formsMap) {
-                document.querySelectorAll(selector).forEach(item => {
-                    item.addEventListener("click", function() {
-                        const name = this.querySelector(".service-name")?.innerText.trim() ||
-                            "Unknown";
-                        const priceText = this.querySelector(".service-desc")?.innerText.trim() ||
-                            "0";
-                        const unitPrice = parseInt(priceText.replace(/[^0-9]/g, "")) || 0;
+            // toggle form ketika klik item pendamping
+            document.querySelectorAll(".pendamping-item").forEach(item => {
+                item.addEventListener("click", () => {
+                    const key = item.dataset.pendamping;
+                    const form = document.getElementById("form-" + key);
+                    form.classList.toggle("hidden");
 
-                        const formId = formsMap[this.dataset.content];
-                        const jumlahInput = document.querySelector(formId + " input");
+                    if (form.classList.contains("hidden")) {
+                        const jumlahInput = form.querySelector("input[type='number']");
                         if (jumlahInput) {
-                            // toggle form visibility
-                            const formElem = document.querySelector(formId);
-                            formElem.classList.toggle("hidden");
-
-                            // jika form disembunyikan, hapus dari cart
-                            if (formElem.classList.contains("hidden")) {
-                                toggleCartItem(name, unitPrice, 0);
-                                jumlahInput.value = ""; // reset value
-                            } else {
-                                // update cart saat input berubah
-                                jumlahInput.oninput = function() {
-                                    const qty = parseInt(this.value || 0);
-                                    toggleCartItem(name, unitPrice, qty);
-                                };
-
-                                // update cart sesuai nilai awal
-                                const initialQty = parseInt(jumlahInput.value || 0);
-                                toggleCartItem(name, unitPrice, initialQty);
-                            }
+                            toggleCartItem(item.querySelector(".service-name").innerText, parseInt(
+                                item.dataset.price), 0);
+                            jumlahInput.value = "";
                         }
-                    });
+                    }
                 });
-            }
-
-            // Meal items
-            attachItemListeners(".meal-item", {
-                "premium": "#premium-form",
-                "standard": "#standard-form",
-                "muthawifah": "#muthawifah-form"
             });
 
-            // Dorongan items
-            attachItemListeners(
-                ".meal-item[data-content='umrah'], .meal-item[data-content='makkah'], .meal-item[data-content='tawaf'], .meal-item[data-content='dorongan-sel']", {
-                    "umrah": "#umrah-form",
-                    "makkah": "#makkah-form",
-                    "tawaf": "#tawaf-form",
-                    "dorongan-sel": "#dorongan-sel-form"
+            // update cart ketika jumlah diubah
+            document.querySelectorAll(".jumlah-pendamping").forEach(input => {
+                input.addEventListener("input", function() {
+                    const qty = parseInt(this.value || 0);
+                    const name = this.dataset.name;
+                    const price = parseInt(this.dataset.price);
+                    toggleCartItem(name, price, qty);
                 });
-
-            // Wakaf items
-            attachItemListeners(".wakaf-item", {
-                "berbagi-air": "#berbagi-air-form",
-                "berbagi-nasi": "#berbagi-nasi-form",
-                "mushaf": "#mushaf-form"
             });
+
+
+            // toggle cart ketika klik meal item
+            // document.querySelectorAll(".meal-item").forEach(item => {
+            //     item.addEventListener("click", () => {
+            //         const name = item.querySelector(".service-name").innerText;
+            //         const price = parseInt(item.querySelector(".service-desc").innerText);
+
+            //         // cek apakah sudah ada di cart
+            //         const existingItem = cartList.querySelector(`[data-name="${name}"]`);
+            //         if (existingItem) {
+            //             // kalau ada, hapus
+            //             existingItem.remove();
+            //         } else {
+            //             // kalau belum, tambahkan qty default = 1
+            //             toggleCartItem(name, price, 1);
+            //         }
+
+            //         cartSection.style.display = cartList.children.length > 0 ? "block" : "none";
+            //         hitungTotal();
+            //     });
+            // });
+            // toggle form ketika klik meal
+            document.querySelectorAll(".meal-item").forEach(item => {
+                item.addEventListener("click", () => {
+                    const key = item.dataset.meal;
+                    const form = document.getElementById("form-" + key);
+
+                    form.classList.toggle("hidden");
+
+                    if (form.classList.contains("hidden")) {
+                        // reset qty dan hapus dari cart
+                        const jumlahInput = form.querySelector("input[type='number']");
+                        if (jumlahInput) {
+                            toggleCartItem(item.querySelector(".service-name").innerText, parseInt(
+                                item.dataset.price), 0);
+                            jumlahInput.value = 0;
+                        }
+                    }
+                });
+            });
+
+            // update cart ketika jumlah meal diubah
+            document.querySelectorAll(".jumlah-meal").forEach(input => {
+                input.addEventListener("input", function() {
+                    const qty = parseInt(this.value || 0);
+                    const name = this.dataset.name;
+                    const price = parseInt(this.dataset.price);
+
+                    toggleCartItem(name, price, qty);
+                });
+            });
+
         });
+
 
 
         //transportasi button add transportasi
@@ -2284,26 +2298,69 @@
 
 
         document.querySelectorAll('.form-group').forEach(form => {
-    const input = form.querySelector('input');
-    if (form.classList.contains('hidden')) {
-        input.removeAttribute('required');
-    } else {
-        // kalau form ditampilkan, bisa tambahkan required sesuai kebutuhan
-        input.setAttribute('required', 'required');
-    }
-});
+            const input = form.querySelector('input');
+            if (form.classList.contains('hidden')) {
+                input.removeAttribute('required');
+            } else {
+                // kalau form ditampilkan, bisa tambahkan required sesuai kebutuhan
+                input.setAttribute('required', 'required');
+            }
+        });
 
 
 
 
-document.getElementById('my-form').addEventListener('submit', function(e){
-    document.querySelectorAll('.form-group').forEach(form => {
-        const input = form.querySelector('input');
-        if (form.classList.contains('hidden')) {
-            input.removeAttribute('required');
-        }
-    });
-});
+        document.getElementById('my-form').addEventListener('submit', function(e) {
+            document.querySelectorAll('.form-group').forEach(form => {
+                const input = form.querySelector('input');
+                if (form.classList.contains('hidden')) {
+                    input.removeAttribute('required');
+                }
+            });
+        });
 
+
+
+
+
+
+
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const tourItems = document.querySelectorAll(".service-tour");
+
+            tourItems.forEach(item => {
+                item.addEventListener("click", () => {
+                    const checkbox = item.querySelector("input[type='checkbox']");
+                    const tourSlug = item.getAttribute("data-tour");
+                    const form = document.getElementById(`tour-${tourSlug}-form`);
+
+                    // toggle aktif / nonaktif
+                    const isActive = item.classList.toggle("active");
+                    checkbox.checked = isActive;
+                    form.classList.toggle("hidden", !isActive);
+                });
+            });
+
+            // transportasi radio toggle
+            const transportOptions = document.querySelectorAll(".transport-option");
+            transportOptions.forEach(option => {
+                option.addEventListener("click", () => {
+                    const input = option.querySelector("input[type='radio']");
+                    const groupName = input.getAttribute("name");
+
+                    // reset semua dalam group
+                    document.querySelectorAll(`input[name='${groupName}']`).forEach(radio => {
+                        radio.checked = false;
+                        radio.closest(".transport-option").classList.remove("active");
+                    });
+
+                    // set aktif yg dipilih
+                    input.checked = true;
+                    option.classList.add("active");
+                });
+            });
+        });
     </script>
 @endsection
