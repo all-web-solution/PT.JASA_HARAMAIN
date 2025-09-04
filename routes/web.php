@@ -71,6 +71,7 @@ Route::middleware(['auth', 'hotel'])->group(function () {
             Route::get('/{id}/edit', [App\Http\Controllers\Handling\CateringController::class, 'edit'])->name('catering.edit');
             Route::put('update/{id}', [App\Http\Controllers\Handling\CateringController::class, 'update'])->name('catering.update');
             Route::delete('/delete/{id}', [App\Http\Controllers\Handling\CateringController::class, 'destroy'])->name('catering.delete');
+            Route::get('/customer', [App\Http\Controllers\Handling\CateringController::class, 'customer'])->name('catering.customer');
         });
         Route::group(['prefix' => 'handling'], function(){
             Route::get('/',  [App\Http\Controllers\Handling\HandlingController::class, 'index'])->name('handling.handling.index');

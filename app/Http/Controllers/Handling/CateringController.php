@@ -56,4 +56,9 @@ class CateringController extends Controller
          $meal->delete();
          return redirect()->route('catering.index');
     }
+
+    public function show(){
+        $customerMeal = Meal::all();
+        return view('handling.catering.customer', compact('customerMeal'));
+    }
 }

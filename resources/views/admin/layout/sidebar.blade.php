@@ -34,7 +34,7 @@
                 <i class="bi bi-credit-card-2-back"></i> ORDER
             </a>
         </li>
-       
+
         <li class="nav-item">
             <a class="nav-link" href="{{ route('user.index') }}">
                 <i class="bi bi-people-fill"></i> USERS
@@ -54,6 +54,11 @@
         <li class="nav-item">
             <a class="nav-link active" href="{{ route('catering.index') }}">
                 <i class="bi bi-speedometer2"></i> Catering
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('catering.customer') }}">
+                <i class="bi bi-speedometer2"></i> Catering Customer
             </a>
         </li>
         <li class="nav-item">
