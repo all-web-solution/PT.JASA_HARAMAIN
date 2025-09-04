@@ -1336,30 +1336,16 @@
                         </h6>
                         <div class="detail-section">
                             <div class="tours">
+                                @foreach ($tours as $tour)
                                 <label class="service-tour" data-tour="makkah">
                                     <div class="service-name">City tour</div>
-                                    <div class="service-desc">Makkah</div>
+                                    <div class="service-desc">{{ $tour->name }}</div>
                                     <input type="checkbox" name="tours[]" value="makkah" class="d-none">
                                 </label>
 
-                                <label class="service-tour" data-tour="madinah">
+                                @endforeach
 
-                                    <div class="service-name">City tour</div>
-                                    <div class="service-desc">Madinah</div>
-                                    <input type="checkbox" name="tours[]" value="madinah" class="d-none">
-                                </label>
 
-                                <label class="service-tour" data-tour="alula">
-                                    <div class="service-name">City tour</div>
-                                    <div class="service-desc">Al Ula</div>
-                                    <input type="checkbox" name="tours[]" value="al ula" class="d-none">
-                                </label>
-
-                                <label class="service-tour" data-tour="thoif">
-                                    <div class="service-name">City Tour</div>
-                                    <div class="service-desc">Thoif</div>
-                                    <input type="checkbox" name="tours[]" value="thoif" class="d-none">
-                                </label>
                             </div>
                         </div>
                     </div>
@@ -1434,26 +1420,16 @@
                             <i class="bi bi-briefcase"></i> Makanan
                         </h6>
                         <div class="service-grid">
-                            <div class="meal-item" data-content="premium">
+                            @foreach ($meals as $meal)
 
-                                <div class="service-name">Nasi Box</div>
-                                <div class="service-desc">Rp. 120.000.000</div>
+                            <div class="meal-item" data-content="premium">
+                                <div class="service-name">{{ $meal->name }}</div>
+                                <div class="service-desc">{{ $meal->price }}</div>
                                 <input type="checkbox" name="meals[]" value="nasi box" hidden>
                             </div>
+                            @endforeach
 
-                            <div class="meal-item" data-content="standard">
 
-                                <div class="service-name">Buffle Hotel</div>
-                                <div class="service-desc">Rp. 80.000.000</div>
-                                <input type="checkbox" name="meals[]" value="Buffle Hotel" hidden>
-                            </div>
-
-                            <div class="meal-item" data-content="muthawifah">
-
-                                <div class="service-name">Snack</div>
-                                <div class="service-desc">Rp. 70.000.000</div>
-                                <input type="checkbox" name="meals[]" value="snack" hidden>
-                            </div>
                         </div>
                     </div>
 

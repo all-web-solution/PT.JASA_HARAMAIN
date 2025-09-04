@@ -286,43 +286,37 @@
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">
-                <i class="bi bi-plus-circle"></i>Tambah data Catering
+                <i class="bi bi-plus-circle"></i>Ubah data menu
             </h5>
-            <a href="{{ route('catering.index') }}" class="btn btn-secondary">
+            <a href="" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
         </div>
 
         <div class="card-body">
-            <form action="{{ route('catering.update', $catering->id) }}" method="POST">
+            <form action="{{ route('catering.update', $meal->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
                 <!-- Data Travel Section -->
                 <div class="form-section">
                     <h6 class="form-section-title">
-                        <i class="bi bi-building"></i> Data Catering
+                        <i class="bi bi-building"></i> Data Menu
                     </h6>
 
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Nama</label>
-                                <input type="text" class="form-control" name="name" value="{{ $catering->name }}">
+                                <input type="text" class="form-control" name="name" value="{{ $meal->name }}">
                             </div>
                         </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Description</label>
-                                <input type="text" class="form-control" name="description"
-                                       required  value="{{ $catering->description }}">
-                            </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Price</label>
                                 <input type="text" class="form-control" name="price"
-                                       required  value="{{ $catering->price }}">
+                                       required  value="{{ $meal->price }}">
                             </div>
                         </div>
                     </div>

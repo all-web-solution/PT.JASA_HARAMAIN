@@ -286,7 +286,7 @@
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">
-                <i class="bi bi-plus-circle"></i>Tambah data Catering
+                <i class="bi bi-plus-circle"></i>Tambah data makanan
             </h5>
             <a href="{{ route('catering.index') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Kembali
@@ -300,7 +300,7 @@
                 <!-- Data Travel Section -->
                 <div class="form-section">
                     <h6 class="form-section-title">
-                        <i class="bi bi-building"></i> Data Catering
+                        <i class="bi bi-building"></i> Data Makanan
                     </h6>
 
                     <div class="form-row">
@@ -308,13 +308,6 @@
                             <div class="form-group">
                                 <label class="form-label">Nama</label>
                                 <input type="text" class="form-control" name="name" required id="email">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Description</label>
-                                <input type="text" class="form-control" name="description"
-                                       required  id="penanggung">
                             </div>
                         </div>
                         <div class="form-col">

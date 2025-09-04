@@ -15,6 +15,8 @@ use App\Models\TransportationOrder;
 use Dom\Document;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\TourItem;
+use App\Models\MealItem;
 
 class ServicesController extends Controller
 {
@@ -47,7 +49,9 @@ class ServicesController extends Controller
         $pelanggans = Pelanggan::all();
         $transportations = Transportation::all();
         $guides = GuideItems::all();
-        return view('admin.services.create', compact('pelanggans', 'transportations', 'guides'));
+        $tours = TourItem::all();
+        $meals = MealItem::all();
+        return view('admin.services.create', compact('pelanggans', 'transportations', 'guides', 'tours', 'meals'));
     }
 
     public function show($id)

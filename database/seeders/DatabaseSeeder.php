@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\GuideItems;
+use App\Models\MealItem;
+use App\Models\TourItem;
 use App\Models\Transportation;
 use Illuminate\Database\Seeder;
 use App\Models\User;
@@ -144,6 +146,29 @@ class DatabaseSeeder extends Seeder
 
         foreach ($transportations as $t) {
            Transportation::create($t);
+        }
+         $tours = [
+            ['name' => 'Makkah'],
+            ['name' => 'Madinah'],
+            ['name' => 'Al Ula'],
+            ['name' => 'Thoif'],
+        ];
+
+        foreach ($tours as $tour) {
+            TourItem::create($tour);
+        }
+
+        $meals = [
+           [ "name" => "Nasi Box",
+            "price" => "15000"],
+           [ "name" => "Buffle Hotel",
+            "price" => "10000"],
+           [ "name" => "snack",
+            "price" => "6000"],
+        ];
+
+        foreach($meals as $meal){
+            MealItem::create($meal);
         }
     }
 }
