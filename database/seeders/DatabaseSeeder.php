@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\GuideItems;
 use App\Models\MealItem;
+use App\Models\Route;
 use App\Models\TourItem;
 use App\Models\Transportation;
 use Illuminate\Database\Seeder;
@@ -169,6 +170,35 @@ class DatabaseSeeder extends Seeder
 
         foreach($meals as $meal){
             MealItem::create($meal);
+        }
+        $routes = [
+            ['transportation_id' => 1, "route" => "jeddah to makkah" , "price" => 250],
+            ['transportation_id' => 1, "route" => "makkah to ziyarat" , "price" => 170],
+            ['transportation_id' => 1, "route" => "makkah - madinah, madinah - makkah" , "price" => 450],
+            ['transportation_id' => 1, "route" => "madina to ziyarat" , "price" => 170],
+            ['transportation_id' => 1, "route" => "makkah to jeddah" , "price" => 250],
+            ['transportation_id' => 1, "route" => "jeddah to madina" , "price" => 250],
+            ['transportation_id' => 2, "route" => "jeddah to makkah" , "price" => 250],
+            ['transportation_id' => 2, "route" => "makkah to ziyarat" , "price" => 170],
+            ['transportation_id' => 2, "route" => "makkah - madinah, madinah - makkah" , "price" => 450],
+            ['transportation_id' => 2, "route" => "madina to ziyarat" , "price" => 170],
+            ['transportation_id' => 2, "route" => "makkah to jeddah" , "price" => 250],
+            ['transportation_id' => 2, "route" => "jeddah to madina" , "price" => 250],
+            ['transportation_id' => 3, "route" => "jeddah to makkah" , "price" => 250],
+            ['transportation_id' => 3, "route" => "makkah to ziyarat" , "price" => 170],
+            ['transportation_id' => 3, "route" => "makkah - madinah, madinah - makkah" , "price" => 450],
+            ['transportation_id' => 3, "route" => "madina to ziyarat" , "price" => 170],
+            ['transportation_id' => 3, "route" => "makkah to jeddah" , "price" => 250],
+            ['transportation_id' => 3, "route" => "jeddah to madina" , "price" => 250],
+            ['transportation_id' => 4, "route" => "jeddah to makkah" , "price" => 250],
+            ['transportation_id' => 4, "route" => "makkah to ziyarat" , "price" => 170],
+            ['transportation_id' => 4, "route" => "makkah - madinah, madinah - makkah" , "price" => 450],
+            ['transportation_id' => 4, "route" => "madina to ziyarat" , "price" => 170],
+            ['transportation_id' => 4, "route" => "makkah to jeddah" , "price" => 250],
+            ['transportation_id' => 4, "route" => "jeddah to madina" , "price" => 250],
+        ];
+        foreach($routes as $route){
+            Route::create($route);
         }
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Plane;
 use App\Models\Transportation;
 use App\Models\TransportationItem;
+use App\Models\Route;
 
 class TransportationController extends Controller
 {
@@ -63,6 +64,14 @@ class TransportationController extends Controller
         $customers = TransportationItem::all();
         return view('transportasi.mobil.customer', compact('customers'));
     }
+
+    public function detailCar($id){
+        $transportation = Transportation::findOrFail($id);
+        $routes = Route::where('transportation_id', $transportation->id)->get();
+
+        return view('transportasi.mobil.detail', compact('transportation', 'routes'));
+    }
+
 
 
 }

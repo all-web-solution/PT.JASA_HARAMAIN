@@ -460,9 +460,10 @@
         .hidden {
             display: none;
         }
-        #meal-item{
+
+        #meal-item {
             background-color: #fff;
-            margin:10px 0px;
+            margin: 10px 0px;
             padding: 10px;
             border-radius: 7px;
 
@@ -679,17 +680,11 @@
                             <div class="detail-section">
                                 <div class="service-grid">
                                     <div class="transport-item" data-transportasi="airplane">
-                                        <div class="service-icon">
-                                            <i class="bi bi-airplane"></i>
-                                        </div>
                                         <div class="service-name">Pesawat</div>
                                         <input type="checkbox" name="transportation[]" value="airplane" hidden>
                                     </div>
 
                                     <div class="transport-item" data-transportasi="bus">
-                                        <div class="service-icon">
-                                            <i class="bi bi-bus-front"></i>
-                                        </div>
                                         <div class="service-name">Transportasi darat</div>
                                         <input type="checkbox" name="transportation[]" value="bus" hidden>
                                     </div>
@@ -786,28 +781,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                {{-- <div class="form-group" data-transportasi="bus" id="bis">
-                                    <label class="form-label">Transportasi darat</label>
-                                    <button type="button" class="btn btn-submit" id="add-transport-btn">Tambah
-                                        Transportasi</button>
-
-                                    <div id="new-transport-forms"></div> <!-- container card baru -->
-
-                                    <div class="cars" id="cars-container">
-                                        @foreach ($transportations as $data)
-                                            <div class="service-car" data-id="{{ $data->id }}"
-                                                data-routes='@json($data->rutes)'>
-                                                <div class="service-name">{{ $data->nama }}</div>
-                                                <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
-                                                <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
-                                                <div class="service-desc">Rp. {{ $data->harga }}/hari</div>
-                                                <input type="radio" name="transportation_id"
-                                                    value="{{ $data->id }}" class="d-none">
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div> --}}
                                 <div class="form-group" data-transportasi="bus" id="bis">
                                     <label class="form-label">Transportasi darat</label>
                                     <button type="button" class="btn btn-submit" id="add-transport-btn">Tambah
@@ -815,28 +788,46 @@
 
                                     <div id="new-transport-forms">
                                         <div class="transport-set">
-                                            <div class="cars">
-                                                @foreach ($transportations as $data)
-                                                    <div class="service-car" data-id="{{ $data->id }}"
-                                                        data-routes='@json($data->rutes)'>
+                                            <div class="cars mt-3">
+                                                {{-- @foreach ($transportations as $data)
+                                                    <div class="service-car"
+                                                        data-id="{{ $data->id }}"
+                                                        data-routes='@json($data->routes)'>
+
                                                         <div class="service-name">{{ $data->nama }}</div>
                                                         <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
                                                         <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
-                                                        <div class="service-desc">Rp. {{ $data->harga }}/hari</div>
-                                                        <input type="radio" name="transportation_id_0"
-                                                            value="{{ $data->id }}" class="d-none">
+                                                        <div class="service-desc">Rp. {{ number_format($data->harga) }}/hari</div>
+
+                                                        <input type="radio" name="transportation_id[]" value="{{ $data->id }}" class="d-none">
+                                                    </div>
+                                                @endforeach --}}
+                                                @foreach ($transportations as $i => $data)
+                                                    <div class="service-car"
+                                                        data-id="{{ $data->id }}"
+                                                        data-routes='@json($data->routes)'>
+
+                                                        <div class="service-name">{{ $data->nama }}</div>
+                                                        <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
+                                                        <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
+                                                        <div class="service-desc">Rp. {{ number_format($data->harga) }}/hari</div>
+
+                                                        <input type="radio" name="transportation_id[{{ $i }}]" value="{{ $data->id }}" class="d-none">
                                                     </div>
                                                 @endforeach
+
                                             </div>
-                                            <div class="route-select">
+
+
+                                            <div class="route-select hidden" id="route-select">
                                                 <label class="form-label mt-2">Pilih Rute:</label>
-                                                <select name="rute_transportation_0" class="form-control">
+                                                <select name="rute_id[]" class="form-control">
                                                     <option value="">-- Pilih Rute --</option>
-                                                    <option value="Makkah - Madinah">Makkah - Madinah</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
 
 
@@ -1420,13 +1411,8 @@
                                 <!-- form jumlah hidden -->
                                 <div id="form-{{ strtolower(str_replace(' ', '-', $meal->name)) }}"
                                     class="form-jumlah hidden mt-2">
-                                    <input
-                                    type="number"
-                                    class="jumlah-meal form-control"
-                                    min="0"
-                                        value="0"
-                                        name="jumlah_meals[{{ $meal->name }}]"
-                                        data-name="{{ $meal->name }}"
+                                    <input type="number" class="jumlah-meal form-control" min="0" value="0"
+                                        name="jumlah_meals[{{ $meal->name }}]" data-name="{{ $meal->name }}"
                                         data-price="{{ $meal->price }}">
                                 </div>
                             @endforeach
@@ -1576,7 +1562,7 @@
                     <!-- Tambahkan detail untuk divisi lainnya di sini -->
 
             </div>
-            <div class="form-section" id="cart-total-price" style="display: none;">
+            <div class="form-section p-3" id="cart-total-price" style="display: none;">
                 <h6 class="form-section-title">
                     <i class="bi bi-card-checklist"></i> Detail product yang dipilih
                 </h6>
@@ -1604,7 +1590,7 @@
         </div>
     </div>
     </div>
-
+    <script src="{{ asset('js/transportasi_transportasi.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -1665,15 +1651,7 @@
                 });
             });
 
-            const serviceCars = document.querySelectorAll('.service-car');
-            serviceCars.forEach(car => {
-                car.addEventListener('click', () => {
-                    serviceCars.forEach(c => c.classList.remove('selected'));
-                    car.classList.add('selected');
-                    const radio = car.querySelector('input[type="radio"]');
-                    radio.checked = true;
-                });
-            });
+
 
             const serviceTour = document.querySelectorAll(".service-tour");
 
@@ -1696,7 +1674,6 @@
                     }
                 });
             });
-
 
 
 
@@ -2255,48 +2232,7 @@
 
 
 
-        //transportasi button add transportasi
-        document.addEventListener("DOMContentLoaded", function() {
-            const addBtn = document.getElementById("add-transport-btn");
-            const container = document.getElementById("new-transport-forms");
 
-            // Fungsi untuk setup klik card agar bisa memilih
-            function setupCardClick(card) {
-                card.addEventListener("click", function() {
-                    // Hapus active dari semua sibling
-                    const allCards = card.parentElement.querySelectorAll(".service-car");
-                    allCards.forEach(c => c.classList.remove("active"));
-
-                    // Tandai card ini sebagai terpilih
-                    card.classList.add("active");
-
-                    // Pilih radio inputnya
-                    const radio = card.querySelector('input[type="radio"]');
-                    if (radio) radio.checked = true;
-                });
-            }
-
-            // Setup untuk card yang sudah ada
-            const initialCards = container.querySelectorAll(".service-car");
-            initialCards.forEach(card => setupCardClick(card));
-
-            addBtn.addEventListener("click", function() {
-                // Clone card + rute
-                const firstCard = container.querySelector(".cars").cloneNode(true);
-                const firstRoute = container.querySelector(".route-select").cloneNode(true);
-
-                // Kosongkan pilihan rute
-                firstRoute.querySelector("select").value = "";
-
-                // Masukkan ke container
-                container.appendChild(firstCard);
-                container.appendChild(firstRoute);
-
-                // Setup klik untuk semua card baru
-                const newCards = firstCard.querySelectorAll(".service-car");
-                newCards.forEach(card => setupCardClick(card));
-            });
-        });
 
 
 

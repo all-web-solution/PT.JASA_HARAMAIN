@@ -213,18 +213,25 @@ class ServicesController extends Controller
 
 
                             // === Transportasi Darat (Bus, Mobil dll) ===
-                            if ($tipeLower === 'bus' && $request->filled('transportation_id')) {
-                                foreach ((array)$request->transportation_id as $busId) {
+                           if ($tipeLower === 'bus' && $request->filled('transportation_id')) {
+                                foreach ((array)$request->transportation_id as $index => $busId) {
                                     $service->transportationItem()->create([
                                         'transportation_id' => $busId,
-                                        // tambahin upload file paspor & visa
-                                        'paspor' => $request->file('paspor_transportasi')
-                                            ? $request->file('paspor_transportasi')->store('paspor') : null,
-                                        'visa' => $request->file('visa_transportasi')
-                                            ? $request->file('visa_transportasi')->store('visa') : null,
+                                        'route_id'          => $request->rute_id[$index] ?? null, // simpan juga route kalau ada
                                     ]);
                                 }
+
+                                foreach($request->rute_id as $rute){
+                                    foreach($request->transportation_id as $index => $i){
+                                        $service->transportationItem()->create([
+                                            'transportation_id' => $i,
+                                            'route_id'          => $rute ?? 0 // simpan juga route kalau ada
+                                        ]);
+                                    }
+                                };
+
                             }
+
                         }
                     }
                     break;

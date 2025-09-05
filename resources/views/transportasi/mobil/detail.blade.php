@@ -376,33 +376,47 @@
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">
-                <i class="bi bi-list-check"></i>Daftar Customer Kendaraan
+                <i class="bi bi-list-check"></i>Detail {{ $transportation->nama }}
             </h5>
         </div>
-
-        <!-- Search and Filter -->
-        <div class="search-filter-container">
-            <div class="search-box">
-                <i class="bi bi-search"></i>
-                <input type="text" placeholder="Cari customer/kode service...">
-            </div>
-            <div class="filter-group">
-                <select class="filter-select">
-                    <option>Semua Status</option>
-                    <option>Pending</option>
-                    <option>Diproses</option>
-                    <option>Selesai</option>
-                    <option>Ditolak</option>
-                </select>
-                <select class="filter-select">
-                    <option>Semua Periode</option>
-                    <option>Hari Ini</option>
-                    <option>Minggu Ini</option>
-                    <option>Bulan Ini</option>
-                    <option>Custom</option>
-                </select>
-            </div>
+        <!-- Services Table -->
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Kapasitas</th>
+                        <th>Fasilitas</th>
+                        <th>Harga</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <td>{{ $transportation->id }}</td>
+                    <td>{{ $transportation->nama }}</td>
+                    <td>{{ $transportation->kapasitas }}</td>
+                    <td>{{ $transportation->fasilitas }}</td>
+                    <td>{{ $transportation->harga }}</td>
+                </tbody>
+            </table>
         </div>
+
+
+    </div>
+</div>
+<div class="service-list-container">
+    <!-- Services List -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                <i class="bi bi-list-check"></i>Daftar rute {{ $transportation->nama }}
+            </h5>
+            <a href="{{ route('transportation.car.detail.create', $transportation->id) }}">
+                <button class="btn btn-primary">Tambah Rute</button>
+            </a>
+        </div>
+
+
 
         <!-- Services Table -->
         <div class="table-responsive">
@@ -410,31 +424,30 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Travel</th>
-                        <th>Nama kendaraan</th>
-                        <th>Route</th>
+                        <th>Nama Rute</th>
+                        <th>Harga</th>
+                        <th>Aksi</th>
+
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($customers as $customer)
-                    <tr>
-                        <td>{{$loop->iteration}}</td>
-                        <td>{{$customer->service->pelanggan->nama_travel}}</td>
-                        <td>{{$customer->transportation->nama}}</td>
-                        <td>{{ $customer->route->route }}</td>
-                    </tr>
+                    @foreach ($routes as $route)
+                       <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $route->route }}</td>
+                        <td>{{ $route->price }}</td>
+                        <td class="d-flex">
+                            <a href="{{ route('transportation.car.detail.route.edit', $route->id) }}">
+                                <button class="btn btn-warning">Edit</button>
+                            </a>
+                            <form action="{{ route('transportation.car.detail.route.delete', $route->id) }}" method="post">
+                                @csrf
+                                @method('delete')
+                                 <button class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                       </tr>
                     @endforeach
-                    {{-- @foreach ($planes as $plane)
-                    <tr>
-                        <td>{{$loop->iteration}}</td>
-                        <td>{{$plane->service->pelanggan->nama_travel}}</td>
-                        <td>{{ \Carbon\Carbon::parse($plane->tanggal_keberangkatan)->translatedFormat('d F Y') }}</td>
-                        <td>{{$plane->rute}}</td>
-                        <td>{{$plane->maskapai}}</td>
-                        <td>{{$plane->harga}}</td>
-                        <td>{{$plane->keterangan}}</td>
-                    </tr>
-                    @endforeach --}}
                 </tbody>
             </table>
         </div>

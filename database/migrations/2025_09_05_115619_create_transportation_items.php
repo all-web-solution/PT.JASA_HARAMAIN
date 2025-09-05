@@ -20,6 +20,7 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->foreignId('transportation_id')->constrained('transportations')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('route_id')->constrained('routes')->cascadeOnDelete()->cascadeOnUpdate();
 
             $table->timestamps();
         });

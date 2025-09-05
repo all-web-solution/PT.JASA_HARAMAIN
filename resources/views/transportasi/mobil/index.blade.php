@@ -429,15 +429,18 @@
                         <td>{{$car->kapasitas}}</td>
                         <td>{{$car->fasilitas}}</td>
                         <td>{{$car->harga}}</td>
-                        <td>
+                        <td class="d-flex">
                             <a href="{{ route('transportation.car.edit', $car->id) }}">
                                 <button class="btn btn-warning">Edit</button>
                             </a>
-                            <form action="{{ route('transportation.car.delete', $car->id) }}" method="post">
+                            <form action="{{ route('transportation.car.delete', $car->id) }}" method="post" class="mx-4">
                                 @csrf
                                 @method('delete')
                                 <button class="btn btn-danger">Hapus</button>
                             </form>
+                            <a href="{{ route('transportation.car.detail', $car->id) }}">
+                                <button class="btn btn-primary">Detail</button>
+                            </a>
                         </td>
 
                     </tr>
