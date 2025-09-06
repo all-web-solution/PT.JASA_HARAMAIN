@@ -28,7 +28,7 @@ class AuthController extends Controller
         } elseif ($user->role === 'transportasi & tiket') {
             return redirect()->route('transportation.plane.index');
         }elseif($user->role === 'visa dan acara'){
-            return redirect()->route('content.visa.index');
+            return redirect()->route('visa.document.index');
         }
 
         return redirect()->route('login')->withErrors(['email' => 'Role tidak dikenali.']);

@@ -107,20 +107,15 @@
 
     </ul>
     @elseif (auth()->user()->role === 'visa dan acara')
-    <ul>
+        <ul class="nav flex-column mt-2">
         <li class="nav-item">
-            <a class="nav-link active" href="{{ route('content.visa.index') }}">
-                <i class="bi bi-speedometer2"></i> Visa
+            <a class="nav-link active" href="{{ route('visa.document.index') }}">
+               Dokumen
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" href="{{ route('content.vaccine.index') }}">
-                <i class="bi bi-speedometer2"></i> Vaksin
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" href="{{ route('content.siskopatur.index') }}">
-                <i class="bi bi-speedometer2"></i> Siskopatuh
+            <a class="nav-link active" href="{{ route('visa.document.customer') }}">
+               Daftar Customer
             </a>
         </li>
     </ul>

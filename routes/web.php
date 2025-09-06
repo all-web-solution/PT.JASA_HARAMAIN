@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Content\SiskopaturController;
 use App\Http\Controllers\Content\VisaController;
 use App\Http\Controllers\Content\VaccineController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\TransportationController;
 use Symfony\Component\HttpKernel\DependencyInjection\ServicesResetter;
 
@@ -123,15 +124,19 @@ Route::middleware(['auth', 'hotel'])->group(function () {
    });
 
    Route::middleware(['auth', 'visa'])->group(function(){
-        Route::group(['prefix' => 'visa'], function(){
-            Route::get('/', [VisaController::class, 'index'])->name('content.visa.index');
-        });
-        Route::group(['prefix' => 'vaccine'], function(){
-            Route::get('/', [VaccineController::class, 'index'])->name('content.vaccine.index');
-        });
-        Route::group(['prefix' => 'siskopatur'], function(){
-            Route::get('/', [SiskopaturController::class, 'index'])->name('content.siskopatur.index');
-        });
+       Route::get('/document', [DocumentController::class, 'index'])->name('visa.document.index');
+       Route::get('/document/create', [DocumentController::class, 'create'])->name('visa.document.create');
+       Route::post('/document/create', [DocumentController::class, 'store'])->name('visa.document.store');
+       Route::get('/document/edit/{id}', [DocumentController::class, 'edit'])->name('visa.document.edit');
+       Route::put('/document/edit/{id}', [DocumentController::class, 'update'])->name('visa.document.update');
+       Route::delete('/document/delete/{id}', [DocumentController::class, 'destroy'])->name('visa.document.delete');
+       Route::get('/document/{id}/detail', [DocumentController::class, 'show'])->name('visa.document.show');
+       Route::get('/document/{id}/detail/create', [DocumentController::class, 'createDocument'])->name('visa.document.show.create');
+       Route::post('/document/{id}/detail/store', [DocumentController::class, 'createDocumentStore'])->name('visa.document.show.store');
+       Route::get('/document/{id}/detail/edit', [DocumentController::class, 'createDocumentEdit'])->name('visa.document.show.edit');
+       Route::put('/document/{id}/detail/update', [DocumentController::class, 'createDocumentUpdate'])->name('visa.document.show.update');
+       Route::delete('/document/{id}/detail/delete', [DocumentController::class, 'createDocumentDelete'])->name('visa.document.show.delete');
+       Route::get('/document/customer', [DocumentController::class, 'customer'])->name('visa.document.customer');
    });
 
 

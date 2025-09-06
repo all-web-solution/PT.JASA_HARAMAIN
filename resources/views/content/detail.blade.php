@@ -376,66 +376,70 @@
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">
-                <i class="bi bi-list-check"></i>Daftar Vaksin
+                <i class="bi bi-list-check"></i>Detail
             </h5>
-
+        </div>
+        <!-- Services Table -->
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <td>{{ $document->name }}</td>
+                </tbody>
+            </table>
         </div>
 
-        <!-- Search and Filter -->
-        <div class="search-filter-container">
-            <div class="search-box">
-                <i class="bi bi-search"></i>
-                <input type="text" placeholder="Cari customer/kode service...">
-            </div>
-            <div class="filter-group">
-                <select class="filter-select">
-                    <option>Semua Status</option>
-                    <option>Pending</option>
-                    <option>Diproses</option>
-                    <option>Selesai</option>
-                    <option>Ditolak</option>
-                </select>
-                <select class="filter-select">
-                    <option>Semua Periode</option>
-                    <option>Hari Ini</option>
-                    <option>Minggu Ini</option>
-                    <option>Bulan Ini</option>
-                    <option>Custom</option>
-                </select>
-            </div>
+
+    </div>
+</div>
+<div class="service-list-container">
+    <!-- Services List -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                <i class="bi bi-list-check"></i>Daftar rute
+            </h5>
+            <a href="{{ route('visa.document.show.create', $document->id) }}">
+                <button class="btn btn-primary">Tambah Documen bawaan</button>
+            </a>
         </div>
+
+
 
         <!-- Services Table -->
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
-                         <th>No</th>
-                        <th>Nama</th>
-                        <th>Nama visa</th>
-                        <th>Jumlah</th>
-                        <th>Harga</th>
-                        <th>Keterangan</th>
-                        <th>Pas foto</th>
-                        <th>KTP</th>
-                        <th>Paspor</th>
+                        <th>No</th>
+                        <th>Nama Dokumen</th>
+
+                        <th>Aksi</th>
+
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($vaccines as $item)
+                    @foreach ($childrens as $child)
                     <tr>
-                        <td>{{$loop->iteration}}</td>
-                        <td>{{$item->document->service->pelanggan->nama_travel}}</td>
-                        <td>{{$item->nama}}</td>
-                        <td>{{$item->jumlah}}</td>
-                        <td>{{$item->harga}}</td>
-                        <td>{{$item->keterangan}}</td>
-                         <td><img src="{{ url('storage/' . $item->document->pas_foto) }}" alt="" width="100" height="100"></td>
-                        <td><img src="{{ url('storage/' . $item->document->ktp) }}" alt="" width="100" height="100"></td>
-                        <td><img src="{{ url('storage/' . $item->document->paspor) }}" alt="" width="100" height="100"></td>
+                        <td>No</td>
+                        <td>{{ $child->name }}</td>
+
+                        <td>
+                            <a href="{{ route('visa.document.show.edit', $child->id) }}">
+                                <button class="btn btn-warning">Edit</button>
+                            </a>
+                            <form action="{{ route('visa.document.show.delete', $child->id) }}" method="post">
+                                @csrf
+                                @method('delete')
+                                <button class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
 
                     </tr>
-
                     @endforeach
                 </tbody>
             </table>

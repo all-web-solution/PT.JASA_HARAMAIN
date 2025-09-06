@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Document;
+use App\Models\DocumentChildren;
 use App\Models\GuideItems;
 use App\Models\MealItem;
 use App\Models\Route;
@@ -199,6 +201,29 @@ class DatabaseSeeder extends Seeder
         ];
         foreach($routes as $route){
             Route::create($route);
+        }
+
+        $documents = [
+            ["name" => "visa"],
+            ["name" => "vaksin"],
+            ["name" => "siskopatuh"]
+        ];
+        foreach($documents as $document){
+            Document::create($document);
+        }
+
+        $documentChildren = [
+            ['document_id' => 1, 'name' => 'visa umrah'],
+            ['document_id' => 1, 'name' => 'visa haji'],
+            ['document_id' => 1, 'name' => 'visa ziarah'],
+            ['document_id' => 1, 'name' => 'visa personal'],
+            ['document_id' => 1, 'name' => 'visa group'],
+            ['document_id' => 2, 'name' => 'polio'],
+            ['document_id' => 2, 'name' => 'meningtis'],
+        ];
+
+        foreach($documentChildren as $data){
+            DocumentChildren::create($data);
         }
     }
 }

@@ -287,34 +287,36 @@
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">
-                <i class="bi bi-plus-circle"></i>Tambah Vaksin
+                <i class="bi bi-plus-circle"></i>Tambah Document {{ $document->name }}
             </h5>
-            <a href="{{ route('content.vaccine.index') }}" class="btn btn-secondary">
+            <a href="{{ route('visa.document.index') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
         </div>
 
         <div class="card-body">
-            <form action="{{ route('content.vaccine.store') }}" method="POST">
+            <form action="{{ route('visa.document.update', $document->id) }}" method="POST">
                 @csrf
+                @method('put')
+
 
                 <!-- Data Travel Section -->
                 <div class="form-section">
                     <h6 class="form-section-title">
-                        <i class="bi bi-building"></i> Data Vaksin
+                        <i class="bi bi-building"></i> Ubah Data Dokumen
                     </h6>
 
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Nama</label>
-                                <input type="text" class="form-control" name="name" required id="email">
+                                <input type="text" class="form-control" name="nama" required id="email" value="{{ $document->name }}">
                             </div>
                         </div>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-submit">
-                    <i class="bi bi-check-circle"></i> Simpan data Vaksin
+                    <i class="bi bi-check-circle"></i> Simpan data dokument
                 </button>
             </form>
         </div>

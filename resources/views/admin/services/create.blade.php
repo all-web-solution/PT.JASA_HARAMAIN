@@ -139,6 +139,7 @@
         .transport-item,
         .service-car,
         .document-item,
+        .child-item
         .content-item,
         .visa-item,
         .vaksin-item,
@@ -160,6 +161,7 @@
         .transport-item:hover,
         .service-car:hover,
         .document-item:hover,
+        .child-item:hover,
         .content-item:hover,
         .visa-item:hover,
         .vaksin-item:hover,
@@ -177,6 +179,7 @@
         .transport-item.selected,
         .service-car.selected,
         .document-item.selected,
+        .child-item.selected,
         .content-item.selected,
         .visa-item.selected,
         .vaksin-item.selected,
@@ -349,7 +352,8 @@
             display: none;
         }
 
-        .document-item {
+        .document-item,
+        .child-item {
             border: 1px solid #ccc;
             padding: 12px;
             cursor: pointer;
@@ -358,7 +362,8 @@
             transition: 0.2s;
         }
 
-        .document-item.active {
+        .document-item.active,
+        .child-item.active {
             border-color: #28a745;
             background: #f0fff4;
         }
@@ -461,7 +466,8 @@
             display: none;
         }
 
-        #meal-item {
+        #meal-item,
+        .content-item {
             background-color: #fff;
             margin: 10px 0px;
             padding: 10px;
@@ -803,16 +809,18 @@
                                                     </div>
                                                 @endforeach --}}
                                                 @foreach ($transportations as $i => $data)
-                                                    <div class="service-car"
-                                                        data-id="{{ $data->id }}"
+                                                    <div class="service-car" data-id="{{ $data->id }}"
                                                         data-routes='@json($data->routes)'>
 
                                                         <div class="service-name">{{ $data->nama }}</div>
                                                         <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
                                                         <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
-                                                        <div class="service-desc">Rp. {{ number_format($data->harga) }}/hari</div>
+                                                        <div class="service-desc">Rp.
+                                                            {{ number_format($data->harga) }}/hari</div>
 
-                                                        <input type="radio" name="transportation_id[{{ $i }}]" value="{{ $data->id }}" class="d-none">
+                                                        <input type="radio"
+                                                            name="transportation_id[{{ $i }}]"
+                                                            value="{{ $data->id }}" class="d-none">
                                                     </div>
                                                 @endforeach
 
@@ -993,132 +1001,64 @@
                         <h6 class="detail-title">
                             <i class="bi bi-file-text"></i> Dokumen
                         </h6>
+
+                        {{-- List parent document --}}
                         <div class="detail-section">
                             <div class="service-grid">
-                                <div class="document-item" data-document="visa" id="document-item">
-                                    <div class="service-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-passport-fill" viewBox="0 0 16 16">
-                                            <path d="M8 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4" />
-                                            <path
-                                                d="M2 3.252a1.5 1.5 0 0 1 1.232-1.476l8-1.454A1.5 1.5 0 0 1 13 1.797v.47A2 2 0 0 1 14 4v10a2 2 0 0 1-2 2H4a2 2 0 0 1-1.51-.688 1.5 1.5 0 0 1-.49-1.11V3.253ZM5 8a3 3 0 1 0 6 0 3 3 0 0 0-6 0m0 4.5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 0-1h-5a.5.5 0 0 0-.5.5" />
-                                        </svg>
+                                @foreach ($documents as $document)
+                                    <div class="document-item" data-document="{{ $document->id }}">
+                                        <div class="service-name">{{ $document->name }}</div>
+                                        <input type="checkbox" name="documents[]" value="{{ $document->id }}" hidden>
                                     </div>
-                                    <div class="service-name">Visa</div>
-                                    <input type="checkbox" name="documents[]" value="visa" hidden>
-                                </div>
-                                <div class="document-item" data-document="vaksin" id="document-item">
-                                    <div class="service-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
-                                            <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2z" />
-                                            <path
-                                                d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4zM3 3h10V1H3z" />
-                                        </svg>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        {{-- Loop parent --}}
+                        @foreach ($documents as $document)
+                            @if ($document->childrens && $document->childrens->isNotEmpty())
+                                {{-- Parent with children --}}
+                                <div class="form-group hidden" id="doc-{{ $document->id }}-details">
+                                    <label class="form-label">{{ $document->name }}</label>
+                                    <div class="cars">
+                                        @foreach ($document->childrens as $child)
+                                            <div class="child-item" data-parent="doc-{{ $document->id }}"
+                                                data-child="child-{{ $child->id }}">
+                                                <div class="child-name">{{ $child->name }}</div>
+                                                <input type="checkbox" name="child_documents[]"
+                                                    value="{{ $child->id }}" hidden>
+                                            </div>
+                                        @endforeach
                                     </div>
-                                    <div class="service-name">Vaksin</div>
 
-                                    <input type="checkbox" name="documents[]" value="vaksin" hidden>
+                                    {{-- Loop form children --}}
+                                    @foreach ($document->childrens as $child)
+                                        <div class="child-form hidden" id="child-{{ $child->id }}-form">
+                                            <h3>Form {{ $child->name }}</h3>
+                                            <input type="text" class="form-control" name="jumlah_{{ $child->id }}"
+                                                placeholder="Jumlah {{ $child->name }}">
+                                            <input type="text" class="form-control" name="harga_{{ $child->id }}"
+                                                placeholder="Harga {{ $child->name }}">
+                                            <input type="text" class="form-control"
+                                                name="keterangan_{{ $child->id }}"
+                                                placeholder="Keterangan {{ $child->name }}">
+                                        </div>
+                                    @endforeach
                                 </div>
-
-                                <div class="document-item" data-document="sikopatur" id="document-item">
-                                    <div class="service-icon">
-                                        <i class="bi bi-bus-front"></i>
-                                    </div>
-                                    <div class="service-name">Sikopatur</div>
-                                    <input type="checkbox" name="documents[]" value="siskopatuh" hidden>
+                            @else
+                                <div class="form-group hidden" id="doc-{{ $document->id }}-form">
+                                    <h3>Form {{ $document->name }}</h3>
+                                    <input type="text" class="form-control" name="jumlah_{{ $document->id }}"
+                                        placeholder="Jumlah {{ $document->name }}">
+                                    <input type="text" class="form-control" name="harga_{{ $document->id }}"
+                                        placeholder="Harga {{ $document->name }}">
+                                    <input type="text" class="form-control" name="keterangan_{{ $document->id }}"
+                                        placeholder="Keterangan {{ $document->name }}">
                                 </div>
-                            </div>
-
-                        </div>
-
-                        <div class="form-group hidden" data-document="visa" id="visa-details">
-                            <label class="form-label">Visa</label>
-                            <div class="cars">
-                                <div class="visa-item" data-visa="umrah">
-                                    <div class="visa-name">Visa Umrah</div>
-                                    <input type="checkbox" name="visa[]" value="umrah" hidden>
-                                </div>
-                                <div class="visa-item" data-visa="haji">
-                                    <div class="visa-name">Visa Haji</div>
-                                    <input type="checkbox" name="visa[]" value="haji" hidden>
-                                </div>
-                                <div class="visa-item" data-visa="ziarah">
-                                    <div class="visa-name">Visa Ziarah</div>
-                                    <input type="checkbox" name="visa[]" value="ziarah" hidden>
-                                </div>
-                            </div>
-                            <div id="umrah-detail" class="hidden">
-                                <h3>Form umrah</h3>
-                                <input type="text" class="form-control" name="jumlah_umrah"
-                                    placeholder="Jumlah visa yang di butuhkan">
-                                <input type="text" class="form-control" name="harga_umrah"
-                                    placeholder="Harga visa umrah">
-                                <input type="text" class="form-control" name="keterangan_umrah"
-                                    placeholder="keterangan">
-                            </div>
-                            <div id="haji-detail" class="hidden">
-                                <h3>Form haji</h3>
-                                <input type="text" class="form-control" name="jumlah_haji"
-                                    placeholder="Jumlah visa haji yang di butuhkan">
-                                <input type="text" class="form-control" name="harga_haji"
-                                    placeholder="Harga visa haji">
-                                <input type="text" class="form-control" name="keterangan_haji"
-                                    placeholder="keterangan">
-                            </div>
-                            <div id="ziarah-detail" class="hidden">
-                                <h3>Form ziarah</h3>
-                                <input type="text" class="form-control" name="jumlah_ziarah"
-                                    placeholder="Jumlah visa ziarah yang di butuhkan">
-                                <input type="text" class="form-control" name="harga_ziarah"
-                                    placeholder="Harga visa ziarah">
-                                <input type="text" class="form-control" name="keterangan_ziarah"
-                                    placeholder="keterangan">
-                            </div>
-                        </div>
-                        <div class="form-group hidden" data-document="vaksin" id="vaksin-details">
-                            <label class="form-label">Vaksin</label>
-                            <div class="cars">
-                                <div class="vaksin-item" data-vaksin="polio">
-                                    <div class="vaksin-name">Vaksin polio</div>
-                                    <input type="checkbox" name="vaksin[]" value="polio" hidden>
-                                </div>
-                                <div class="vaksin-item" data-vaksin="meningtis">
-                                    <div class="vaksin-name">Vaksin Meningtis</div>
-                                    <input type="checkbox" name="vaksin[]" value="meningtis" hidden>
-                                </div>
-                            </div>
-                            <div id="polio" class="hidden">
-                                <h3>Form vaksin polio</h3>
-                                <input type="text" class="form-control" name="jumlah_polio"
-                                    placeholder="Jumlah vaksin polio yang di butuhkan">
-                                <input type="text" class="form-control" name="harga_polio"
-                                    placeholder="Harga vaksin polio">
-                                <input type="text" class="form-control" name="keterangan_polio"
-                                    placeholder="Keterangan">
-                            </div>
-                            <div id="meningtis" class="hidden">
-                                <h3>Form vaksin meningtis</h3>
-                                <input type="text" class="form-control" name="jumlah_meningtis"
-                                    placeholder="Jumlah vaksin meningtis">
-                                <input type="text" class="form-control" name="harga_meningtis"
-                                    placeholder="Harga vaksin meningtis">
-                                <input type="text" class="form-control" name="keterangan_meningtis"
-                                    placeholder="Keterangan">
-                            </div>
-                        </div>
-                        <div class="form-group hidden" data-document="sikopatur" id="sikopatur-details">
-
-                            <h3>Form Siskopatuh</h3>
-                            <input type="text" class="form-control" name="jumlah_siskopatur"
-                                placeholder="Jumlah siskopatuh">
-                            <input type="text" class="form-control" name="harga_siskopatur"
-                                placeholder="Harga siskopatuh">
-                            <input type="text" class="form-control" name="keterangan_siskopatur"
-                                placeholder="Keterangan">
-                        </div>
-
+                            @endif
+                        @endforeach
                     </div>
+
 
 
                     <!-- Handling -->
@@ -1272,7 +1212,7 @@
 
                                 <!-- UMRAH -->
                                 <div class="content-wrapper">
-                                    <div class="content-item" data-content="umrah">
+                                    <div class="content-item meal-item" data-content="umrah">
                                         <div class="service-name">Moment Umrah</div>
                                         <div class="service-desc">Rp. 120.000.000</div>
                                         <input type="checkbox" name="content[]" value="umrah" hidden>
@@ -1591,6 +1531,7 @@
     </div>
     </div>
     <script src="{{ asset('js/transportasi_transportasi.js') }}"></script>
+    <script src="{{ asset('js/document.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -1616,21 +1557,7 @@
 
 
 
-            const documentItems = document.querySelectorAll("#document-item")
-            documentItems.forEach(doc => {
-                doc.addEventListener("click", function() {
-                    doc.classList.toggle("selected")
-                    const checkboxDocument = doc.querySelector("input[type='checkbox']")
-                    checkboxDocument.checked = !checkboxDocument.checked
 
-                    const documentType = doc.getAttribute("data-document");
-                    const detailFormDocument = document.getElementById(`${documentType}-details`)
-                    if (detailFormDocument) {
-                        detailFormDocument.style.display = checkboxDocument.checked ? 'block' :
-                            'none'
-                    }
-                })
-            })
 
             // Toggle seleksi transport item
             const transportItems = document.querySelectorAll('.transport-item');

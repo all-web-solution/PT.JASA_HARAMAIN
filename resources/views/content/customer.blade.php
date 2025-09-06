@@ -1,5 +1,4 @@
 @extends('admin.master')
-@section('title', 'Order List')
 @section('content')
     <style>
         :root {
@@ -377,81 +376,40 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-list-check"></i>Daftar pesanan
+                    <i class="bi bi-list-check"></i>Daftar Customer permit Dokumen
                 </h5>
             </div>
 
-            <!-- Search and Filter -->
-            <div class="search-filter-container">
-                <div class="search-box">
-                    <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Cari customer/kode service...">
-                </div>
-                <div class="filter-group">
-                    <select class="filter-select">
-                        <option>Semua Status</option>
-                        <option>Pending</option>
-                        <option>Diproses</option>
-                        <option>Selesai</option>
-                        <option>Ditolak</option>
-                    </select>
-                    <select class="filter-select">
-                        <option>Semua Periode</option>
-                        <option>Hari Ini</option>
-                        <option>Minggu Ini</option>
-                        <option>Bulan Ini</option>
-                        <option>Custom</option>
-                    </select>
-                </div>
-            </div>
+
 
             <!-- Services Table -->
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Invoice</th>
+                            <th>No</th>
                             <th>Nama pelanggan</th>
-                            <th>Total harga keeseluruhan</th>
-                            <th>Jumlah yang di bayarkan</th>
-                            <th>Sisa hutang</th>
-                            <th>Aksi</th>
+                            <th>Nama Dokumen</th>
+                            <th>Nama Dokumen bawaan</th>
+                            <th>jumlah</th>
+                            <th>Harga</th>
+                            <th>Keterangan</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($orders as $order)
+                        @foreach ($customers as $doc)
                             <tr>
-                                <td>{{ $order->invoice }}</td>
-                                <td data-label="Nama pelanggan">
-                                    <div class="customer-info">
-                                        <div class="customer-details">
-                                            <div class="customer-name">{{ $order->service->pelanggan->nama_travel }}</div>
-                                            <div class="customer-type">Travel</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td data-label="Total harga keeseluruhan">
-                                    {{ number_format($order->total_amount, 0, ',', '.') }}</td>
-                                <td>{{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}</td>
-                                <td>{{ number_format($order->sisa_hutang, 0, ',', '.') }}</td>
-                                <td>
-                                    @if ($order->sisa_hutang == 0)
-                                        <span class="badge bg-success">Lunas</span>
-                                    @elseif ($loop->last)
-                                        {{-- hanya row terakhir yg bisa bayar --}}
-                                        <a href="{{ route('orders.bayar', $order->id) }}">
-                                            <button class="btn btn-success">Bayar sekarang</button>
-                                        </a>
-                                    @else
-                                        <span class="badge bg-warning">Sudah Bayar</span>
-                                    @endif
-                                </td>
-
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $doc->service->pelanggan->nama_travel }}</td>
+                                <td>{{ $doc->documents}}</td>
+                                <td>{{ $doc->DocumentChildren->name }}</td>
+                                <td>{{ $doc->jumlah }}</td>
+                                <td>{{ $doc->harga }}</td>
+                                <td>{{ $doc->keterangan }}</td>
 
                             </tr>
                         @endforeach
                     </tbody>
-
                 </table>
             </div>
 
@@ -485,7 +443,7 @@
 
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    if (confirm('Apakah Anda yakin ingin menghapus order ini?')) {
+                    if (confirm('Apakah Anda yakin ingin menghapus permintaan service ini?')) {
                         // Here you would typically send a delete request to your backend
                         const row = this.closest('tr');
                         row.style.opacity = '0';

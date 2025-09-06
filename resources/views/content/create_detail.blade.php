@@ -287,42 +287,34 @@
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">
-                <i class="bi bi-plus-circle"></i>Tambah visa
+                <i class="bi bi-plus-circle"></i>Tambah Document {{ $document->name }}
             </h5>
-            <a href="{{ route('content.visa.index') }}" class="btn btn-secondary">
+            <a href="{{ route('visa.document.show', $document->id) }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
         </div>
 
         <div class="card-body">
-            <form action="{{ route('content.visa.store') }}" method="POST">
+            <form action="{{ route('visa.document.show.store', $document->id) }}" method="POST">
                 @csrf
 
                 <!-- Data Travel Section -->
                 <div class="form-section">
                     <h6 class="form-section-title">
-                        <i class="bi bi-building"></i> Data Hotel
+                        <i class="bi bi-building"></i> Data Dokumen
                     </h6>
 
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Nama</label>
-                                <input type="text" class="form-control" name="name" required id="email">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Harga</label>
-                                <input type="text" class="form-control" name="price" required id="email">
+                                <input type="text" class="form-control" name="nama" required id="email">
                             </div>
                         </div>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-submit">
-                    <i class="bi bi-check-circle"></i> Simpan data visa
+                    <i class="bi bi-check-circle"></i> Simpan data dokument
                 </button>
             </form>
         </div>
