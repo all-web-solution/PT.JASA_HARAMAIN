@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+          Schema::create('exchanges', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('service_id');
             $table->foreign('service_id')
@@ -19,12 +19,11 @@ return new class extends Migration
                 ->on('services')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->string('total_amount');
-            $table->string('invoice');
-            $table->string('total_yang_dibayarkan');
-            $table->string('sisa_hutang');
-            $table->string('status_pembayaran')->default('belum_bayar');
-            $table->timestamps();
+            $table->enum('tipe', ['tamis', 'tumis']); // tamis = rupiah -> reyal, tumis = reyal -> rupiah
+            $table->decimal('jumlah_input', 15, 2);   // jumlah rupiah atau reyal
+            $table->decimal('kurs', 15, 2);           // kurs input admin
+            $table->decimal('hasil', 15, 2);          // hasil konversi
+            $table->timestamps();                     // created_at & updated_at
         });
     }
 
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('exchanges');
     }
 };

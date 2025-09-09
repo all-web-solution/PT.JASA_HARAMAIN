@@ -61,4 +61,13 @@ public function planes()
     public function customers(){
         return $this->hasMany(CustomerDocument::class);
     }
+    public function reyals(){
+        return $this->hasMany(Exchange::class, 'service_id');
+    }
+    public function wakafs(){
+        return $this->hasMany(WakafCustomer::class, 'service_id');
+    }
+    public function dorongans(){
+        return $this->hasMany(DoronganOrder::class, 'service_id');
+    }
 }

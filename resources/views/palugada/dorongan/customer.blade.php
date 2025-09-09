@@ -376,184 +376,56 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-list-check"></i>Pembayaran Order: {{ $order->invoice }}
+                    <i class="bi bi-list-check"></i>Daftar pesanan dorongan
                 </h5>
-
             </div>
+            <!-- Services Table -->
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Kode unik</th>
-                            <th>Customer/Travel</th>
-                            <th>Tgl keberangkatan</th>
-                            <th>Tgl kepulangan</th>
-                            <th>Jumlah jamaah</th>
-                            <th>Layanan yang dipilih</th>
+                            <th>No</th>
+                            <th>Nama Customer</th>
+                            <th>Dorongan yang di pilih</th>
+                            <th>Jumlah</th>
+
                         </tr>
                     </thead>
                     <tbody>
-                        @if ($order->service)
+                        @foreach ($data as $item)
                             <tr>
-                                <td>{{ $order->service->unique_code }}</td>
-                                <td>{{ $order->service->pelanggan->nama_travel }}</td>
-                                <td>{{ $order->service->tanggal_keberangkatan }}</td>
-                                <td>{{ $order->service->tanggal_kepulangan }}</td>
-                                <td>{{ $order->service->total_jamaah }}</td>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->service->pelanggan->nama_travel }}</td>
+                                <td>{{ $item->dorongan->name }}</td>
                                 <td>
-                                    {{-- Meals --}}
-                                    @if ($order->service->meals)
-                                        <strong>Meals:</strong><br>
-                                        @foreach ($order->service->meals as $meal)
-                                            {{ $meal->mealItem->name }} - Rp.
-                                            {{ number_format($meal->mealItem->price, 0, ',', '.') }}<br>
-                                        @endforeach
-                                    @endif
-
-                                    {{-- Transportation --}}
-                                    @if ($order->service->transportationItem)
-                                        <strong>Transportasi:</strong><br>
-
-                                    @endif
-
-                                    {{-- Hotels --}}
-                                    @if ($order->service->hotels)
-                                        <strong>Hotel:</strong><br>
-                                        {{-- @foreach ($order->service->hotels as $hotel)
-                                            {{ $hotel->name }} - Rp. {{ number_format($hotel->price, 0, ',', '.') }}<br>
-                                        @endforeach --}}
-                                    @endif
-
-                                    {{-- Handlings --}}
-                                    @if ($order->service->handlings)
-                                        <strong>Handling:</strong><br>
-                                        {{-- @foreach ($order->service->handlings as $handling)
-                                            {{ $handling->name }} - Rp.
-                                            {{ number_format($handling->price, 0, ',', '.') }}<br>
-                                        @endforeach --}}
-                                    @endif
-
-                                    {{-- Guides --}}
-                                    @if ($order->service->guides)
-                                        <strong>Guide:</strong><br>
-                                        {{-- @foreach ($order->service->guides as $guide)
-                                            {{ $guide->name }} - Rp. {{ number_format($guide->price, 0, ',', '.') }}<br>
-                                        @endforeach --}}
-                                    @endif
-
-                                    {{-- Tours --}}
-                                    @if ($order->service->tours)
-                                        <strong>Tour:</strong><br>
-                                        {{-- @foreach ($order->service->tours as $tour)
-                                            {{ $tour->name }} - Rp. {{ number_format($tour->price, 0, ',', '.') }}<br>
-                                        @endforeach --}}
-                                    @endif
-
-                                    {{-- Documents (as a single item) --}}
-                                    {{-- @if ($order->service->document)
-                                        <strong>Document:</strong><br>
-
-                                        {{ $order->service->document->name }} - Rp.
-                                        {{ number_format($order->service->document->price, 0, ',', '.') }}
-                                    @endif --}}
-
-                                    {{-- Files (as a single item) --}}
-                                    {{-- @if ($order->service->filess)
-                                        <strong>File:</strong><br>
-
-                                        {{ $order->service->filess->name }} - Rp.
-                                        {{ number_format($order->service->filess->price, 0, ',', '.') }}
-                                    @endif --}}
+                                    {{ $item->jumlah }}
                                 </td>
                             </tr>
-                        @else
-                            <tr>
-                                <td colspan="6" class="text-center">Tidak ada layanan yang tersedia.</td>
-                            </tr>
-                        @endif
+                        @endforeach
                     </tbody>
                 </table>
             </div>
 
-            {{-- @if ($order->sisa_hutang > 0)
-                <form action="{{ route('orders.payment', $order->id) }}" method="POST">
-                    @csrf
-                    <input type="number" name="jumlah_dibayarkan" placeholder="Jumlah yang dibayarkan" required>
-                    <button type="submit">Bayar</button>
-                </form>
-            @else
-                <p>Lunas! Tidak ada sisa hutang.</p>
-            @endif --}}
-        </div>
-        <form action="{{ route('orders.payment', $order->id) }}" method="POST">
-            @csrf
-            <div class="mb-3">
-                <label for="nama_travel" class="form-label">Jumlah yang di bayarkan</label>
-                <input type="number" class="form-control" id="nama_travel" name="jumlah_dibayarkan"
-                    placeholder="Jumlah yang dibayarkan" required>
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
-            <button type="submit" name="action" value="save" class="btn btn-primary">
-                Simpan
-            </button>
-        </form>
+        </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Delete confirmation
-            const deleteButtons = document.querySelectorAll('.btn-delete');
-
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    if (confirm('Apakah Anda yakin ingin menghapus permintaan service ini?')) {
-                        // Here you would typically send a delete request to your backend
-                        const row = this.closest('tr');
-                        row.style.opacity = '0';
-                        setTimeout(() => {
-                            row.remove();
-                            alert('Permintaan service berhasil dihapus!');
-                        }, 300);
-
-                        /*
-                        fetch('/services/' + serviceId, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                row.remove();
-                                alert('Permintaan service berhasil dihapus!');
-                            }
-                        });
-                        */
-                    }
-                });
-            });
-
-            // Search functionality
-            const searchInput = document.querySelector('.search-box input');
-            searchInput.addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') {
-                    const searchTerm = this.value.toLowerCase();
-                    const rows = document.querySelectorAll('tbody tr');
-
-                    rows.forEach(row => {
-                        const customerName = row.querySelector('td:first-child .customer-name')
-                            .textContent.toLowerCase();
-                        const serviceCode = row.querySelector('td:nth-child(2)').textContent
-                            .toLowerCase();
-
-                        if (customerName.includes(searchTerm) || serviceCode.includes(searchTerm)) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-                }
-            });
-        });
-    </script>
 @endsection

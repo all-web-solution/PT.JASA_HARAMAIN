@@ -418,39 +418,45 @@
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach ($orders as $order)
-                            <tr>
-                                <td>{{ $order->invoice }}</td>
-                                <td data-label="Nama pelanggan">
-                                    <div class="customer-info">
-                                        <div class="customer-details">
-                                            <div class="customer-name">{{ $order->service->pelanggan->nama_travel }}</div>
-                                            <div class="customer-type">Travel</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td data-label="Total harga keeseluruhan">
-                                    {{ number_format($order->total_amount, 0, ',', '.') }}</td>
-                                <td>{{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}</td>
-                                <td>{{ number_format($order->sisa_hutang, 0, ',', '.') }}</td>
-                                <td>
-                                    @if ($order->sisa_hutang == 0)
-                                        <span class="badge bg-success">Lunas</span>
-                                    @elseif ($loop->last)
-                                        {{-- hanya row terakhir yg bisa bayar --}}
-                                        <a href="{{ route('orders.bayar', $order->id) }}">
-                                            <button class="btn btn-success">Bayar sekarang</button>
-                                        </a>
-                                    @else
-                                        <span class="badge bg-warning">Sudah Bayar</span>
-                                    @endif
-                                </td>
+<tbody>
+    @foreach ($orders as $order)
+        <tr>
+            <td>{{ $order->invoice }}</td>
+            <td data-label="Nama pelanggan">
+                <div class="customer-info">
+                    <div class="customer-details">
+                        <div class="customer-name">{{ $order->service->pelanggan->nama_travel }}</div>
+                        <div class="customer-type">Travel</div>
+                    </div>
+                </div>
+            </td>
+            <td data-label="Total harga keseluruhan">
+                {{ number_format($order->total_amount, 0, ',', '.') }}
+            </td>
+            <td>{{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}</td>
+            <td>{{ number_format($order->sisa_hutang, 0, ',', '.') }}</td>
+            <td>
+    @if ($order->sisa_hutang == 0)
+        {{-- Sudah lunas --}}
+        <span class="badge bg-success">Lunas</span>
+    @elseif (($order->total_yang_dibayarkan ?? 0) > 0)
+        {{-- Sudah ada pembayaran tapi belum lunas --}}
+        <span class="badge bg-warning">Sudah Bayar</span>
+    @else
+        {{-- Belum bayar sama sekali --}}
+        <a href="{{ route('orders.bayar', $order->id) }}">
+            <button class="btn btn-sm btn-primary">Bayar Sekarang</button>
+        </a>
+    @endif
+</td>
+        </tr>
+    @endforeach
+</tbody>
 
 
-                            </tr>
-                        @endforeach
-                    </tbody>
+
+
+
 
                 </table>
             </div>

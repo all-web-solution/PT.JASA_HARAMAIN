@@ -416,6 +416,9 @@
                         <th>Maskapai</th>
                         <th>Harga</th>
                         <th>Keterangan</th>
+                        <th>Tiket berangkat</th>
+                        <th>Tiket pulang</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -428,6 +431,13 @@
                         <td>{{$plane->maskapai}}</td>
                         <td>{{$plane->harga}}</td>
                         <td>{{$plane->keterangan}}</td>
+                        <td><img src="{{ url('storage/' . $plane->tiket_berangkat) }}" alt="" width="100px"></td>
+                        <td><img src="{{ url('storage/' . $plane->tiket_pulang) }}" alt="" width="100px"></td>
+                        <td>
+                            <a href="{{ route('transportation.plane.edit', $plane->id) }}">
+                                <button class="btn btn-warning">Edit</button>
+                            </a>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>

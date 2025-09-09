@@ -295,27 +295,27 @@
         </div>
 
         <div class="card-body">
-            <form action="{{ route('transportation.plane.update', $plane->id) }}" method="POST">
+            <form action="{{ route('transportation.plane.update', $pesawat->id) }}" method="POST">
                 @csrf
                 @method('put')
                 <!-- Data Travel Section -->
                 <div class="form-section">
                     <h6 class="form-section-title">
-                        <i class="bi bi-building"></i> Data Hotel
+                        <i class="bi bi-building"></i> Data pesawat
                     </h6>
 
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="form-label">Bandara asal</label>
-                                <input type="text" class="form-control" name="asal" required id="email" value="{{ $plane->bandara_asal }}">
+                                <label class="form-label">Tanggal keberangkatan</label>
+                                <input type="text" class="form-control" name="asal" required id="email" value="{{ $pesawat->tanggal_keberangkatan }}" readonly>
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="form-label">Bandara tujuan</label>
+                                <label class="form-label">Rute</label>
                                 <input type="text" class="form-control" name="tujuan"
-                                       required  id="penanggung" value="{{ $plane->bandara_tujuan }}">
+                                       required  id="penanggung" value="{{ $pesawat->rute }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -323,36 +323,30 @@
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="form-label">Tanggal berangkat</label>
-                                <input type="date" class="form-control" name="tanggal" required id="email" value="{{ $plane->tangal_berangkat }}">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
                                 <label class="form-label">Maskapai</label>
-                                <input type="text" class="form-control" name="maskapai" required id="phone" value="{{ $plane->maskapai }}">
+                                <input type="text" class="form-control" name="maskapai" required id="phone" value="{{ $pesawat->maskapai }}" readonly>
                             </div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="form-label">Transit</label>
-                                <input type="text" class="form-control" name="transit" required id="email" value="{{ $plane->transit }}">
+                                <label class="form-label">Harga</label>
+                                <input type="text" class="form-control" name="harga" required id="email" value="{{ $pesawat->transit }}">
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="form-label">Pax</label>
-                                <input type="text" class="form-control" name="pax" required id="phone" value="{{ $plane->pax }}">
+                                <label class="form-label">Tiket berangkat</label>
+                                <input type="text" class="form-control" name="pax" required id="phone" value="{{ $pesawat->pax }}" readonly>
                             </div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="form-label">Deskripsi</label>
-                                <input type="text" class="form-control" name="deskripsi" required id="email" value="{{ $plane->description}}">
+                                <label class="form-label">Tiket pulang</label>
+                                <input type="text" class="form-control" name="deskripsi" required id="email" value="{{ $pesawat->description}}" readonly>
                             </div>
                         </div>
                     </div>

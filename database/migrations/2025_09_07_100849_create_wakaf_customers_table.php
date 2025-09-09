@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('wakaf_customers', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('service_id');
             $table->foreign('service_id')
@@ -19,11 +19,8 @@ return new class extends Migration
                 ->on('services')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->string('total_amount');
-            $table->string('invoice');
-            $table->string('total_yang_dibayarkan');
-            $table->string('sisa_hutang');
-            $table->string('status_pembayaran')->default('belum_bayar');
+            $table->foreignId('wakaf_id')->constrained('wakafs')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('jumlah');
             $table->timestamps();
         });
     }
@@ -33,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('wakaf_customers');
     }
 };

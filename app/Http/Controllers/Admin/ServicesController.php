@@ -19,6 +19,10 @@ use App\Models\TourItem;
 use App\Models\MealItem;
 use App\Models\Document as DocumentModel;
 use App\Models\CustomerDocument;
+use App\Models\Wakaf;
+use App\Models\Dorongan;
+use App\Models\DoronganOrder;
+use Illuminate\Support\Facades\DB;
 
 class ServicesController extends Controller
 {
@@ -54,7 +58,18 @@ class ServicesController extends Controller
         $tours = TourItem::all();
         $meals = MealItem::all();
         $documents = DocumentModel::with('childrens')->get();
-        return view('admin.services.create', compact('pelanggans', 'transportations', 'guides', 'tours', 'meals', 'documents'));
+        $wakaf = Wakaf::all();
+        $dorongan = Dorongan::all();
+        return view('admin.services.create', compact(
+            'pelanggans',
+            'transportations',
+            'guides',
+            'tours',
+            'meals',
+            'documents',
+            'wakaf',
+            'dorongan'
+        ));
     }
 
     public function show($id)
@@ -182,12 +197,6 @@ class ServicesController extends Controller
                     }
                     break;
 
-
-
-
-
-
-
                 case 'transportasi':
                     if ($request->filled('transportation')) {
                         foreach ($request->transportation as $i => $tipe) {
@@ -205,9 +214,10 @@ class ServicesController extends Controller
                                             'keterangan' => $request->keterangan[$j] ?? null,
                                             // upload tiket per item (array)
                                             'tiket_berangkat' => isset($request->file('tiket_berangkat')[$j])
-                                                ? $request->file('tiket_berangkat')[$j]->store('tiket') : null,
+                                                ? $request->file('tiket_berangkat')[$j]->store('tiket', 'public') : null,
+
                                             'tiket_pulang' => isset($request->file('tiket_pulang')[$j])
-                                                ? $request->file('tiket_pulang')[$j]->store('tiket') : null,
+                                                ? $request->file('tiket_pulang')[$j]->store('tiket', 'public') : null,
                                         ]);
                                     }
                                 }
@@ -236,8 +246,6 @@ class ServicesController extends Controller
                         }
                     }
                     break;
-
-
                 case 'handling':
                     if ($request->filled('handlings')) {
                         foreach ($request->handlings as $handling) {
@@ -383,6 +391,46 @@ class ServicesController extends Controller
                                     ]);
                                 }
                             }
+                        }
+                    }
+                    break;
+                case 'reyal':
+                    if ($request->tipe == 'tamis') {
+                        $service->reyals()->create([
+                            'tipe'          => $request->input('tipe'),
+                            'jumlah_input'  => $request->input('jumlah_rupiah'),
+                            'kurs'          => $request->input('kurs_tamis'),
+                            'hasil'         => $request->input('hasil_tamis'),
+                        ]);
+                    } elseif ($request->tipe == 'tumis') {
+                        $service->reyals()->create([
+                            'tipe'          => $request->input('tipe'),
+                            'jumlah_input'  => $request->input('jumlah_reyal'),
+                            'kurs'          => $request->input('kurs_tumis'),
+                            'hasil'         => $request->input('hasil_tumis'),
+                        ]);
+                    }
+                    break;
+                case 'waqaf':
+                    if ($request->has('wakaf')) {
+                        foreach ($request->wakaf as $add) {
+                            $service->wakafs()->create([
+                                'wakaf_id' => $add,
+                                'jumlah'   => $request->jumlah_wakaf[$add] ?? 1, // default 1 kalau kosong
+                            ]);
+                        }
+                    }
+                    break;
+                case 'dorongan':
+                    if ($request->has('dorongan')) {
+                        foreach ($request->input('dorongan') as $doronganId) {
+                            $jumlah = $request->input("jumlah_dorongan.$doronganId");
+
+                            DoronganOrder::create([
+                                'service_id'  => $service->id,
+                                'dorongan_id' => $doronganId,
+                                'jumlah'      => $jumlah ?? 1,
+                            ]);
                         }
                     }
                     break;
@@ -534,46 +582,66 @@ class ServicesController extends Controller
         $order->load('service.meals'); // load relasi sesuai kebutuhan
         return view('admin.order.bayar', compact('order'));
     }
-    public function payment(Request $request, Order $order)
-    {
-        $request->validate([
-            'jumlah_dibayarkan' => 'required|numeric|min:1',
-        ]);
+public function payment(Request $request, Order $order)
+{
+    // 1. Validasi input
+    $request->validate([
+        'jumlah_dibayarkan' => 'required|numeric|min:1',
+    ]);
 
-        $jumlahBayar = (int) $request->jumlah_dibayarkan;
+    $jumlahBayar = (int) $request->jumlah_dibayarkan;
 
-        // Ambil row terakhir (bisa row master kalau belum ada pembayaran)
-        $lastOrder = Order::where('service_id', $order->service_id)
-            ->orderBy('id', 'desc')
-            ->first();
+    // Gunakan transaksi untuk memastikan kedua operasi berhasil atau gagal bersamaan
+    DB::beginTransaction();
 
-        // Kalau row terakhir itu master, maka total_amount = total keseluruhan
-        $totalSebelumnya = $lastOrder->sisa_hutang ?? $lastOrder->total_amount;
+    try {
+        // 2. Hitung jumlah yang dibayarkan dan sisa hutang
+        $totalDibayarBaru = $order->total_yang_dibayarkan + $jumlahBayar;
+        $sisaHutangBaru = $order->total_amount - $totalDibayarBaru;
 
-        // Hitung sisa hutang baru
-        $sisaHutang = $totalSebelumnya - $jumlahBayar;
-        if ($sisaHutang < 0) {
-            $sisaHutang = 0;
+        // 3. Tentukan status pembayaran untuk order lama
+        $statusLama = 'sudah_bayar';
+        if ($sisaHutangBaru <= 0) {
+            $statusLama = 'lunas';
         }
 
-        // Buat invoice baru
-        $lastNumber = 0;
-        if ($lastOrder && $lastOrder->invoice) {
-            $parts = explode('-', $lastOrder->invoice);
-            $lastNumber = isset($parts[1]) ? (int) $parts[1] : 0;
-        }
-        $newInvoiceCode = 'INV-' . ($lastNumber + 1);
-
-        // Simpan pembayaran baru
-        Order::create([
-            'service_id'            => $order->service_id,
-            'total_amount'          => $totalSebelumnya, // dari sisa hutang sebelumnya
-            'total_yang_dibayarkan' => $jumlahBayar,     // jumlah dibayar kali ini
-            'sisa_hutang'           => $sisaHutang,
-            'invoice'               => $newInvoiceCode,
+        // 4. Update order yang sedang diproses
+        $order->update([
+            'total_yang_dibayarkan' => $totalDibayarBaru,
+            'sisa_hutang'           => max(0, $sisaHutangBaru), // Pastikan sisa hutang tidak negatif
+            'status_pembayaran'     => $statusLama,
         ]);
 
-        return redirect()->route('admin.order', $order->id)
-            ->with('success', 'Pembayaran berhasil! Sisa hutang: Rp. ' . number_format($sisaHutang, 0, ',', '.'));
+        // 5. Buat order baru untuk SISA HUTANG jika pembayaran belum lunas
+        if ($sisaHutangBaru > 0) {
+            // Logika untuk membuat invoice baru yang lebih unik
+            $newInvoice = 'INV-' . date('YmdHis') . '-' . mt_rand(100, 999);
+
+            Order::create([
+                'service_id'            => $order->service_id,
+                'total_amount'          => $sisaHutangBaru,
+                'total_yang_dibayarkan' => 0,
+                'sisa_hutang'           => $sisaHutangBaru,
+                'invoice'               => $newInvoice,
+                'status_pembayaran'     => 'belum_bayar',
+            ]);
+        }
+
+        // 6. Jika semua operasi berhasil, commit transaksi
+        DB::commit();
+
+        return redirect()->route('admin.order')
+            ->with('success', 'Pembayaran berhasil! Sisa hutang: Rp. ' . number_format(max(0, $sisaHutangBaru), 0, ',', '.'));
+
+    } catch (\Exception $e) {
+        // Jika ada error, rollback (batalkan) semua perubahan
+        DB::rollBack();
+
+        return redirect()->back()
+            ->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
     }
+}
+
+
+
 }

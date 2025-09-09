@@ -119,6 +119,31 @@
             </a>
         </li>
     </ul>
+    @elseif (auth()->user()->role === 'palugada')
+    <ul class="nav flex-column mt-2">
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('wakaf.index') }}">
+               Wakaf
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('wakaf.customer') }}">
+                Customer Wakaf
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('dorongan.index') }}">
+               Dorongan
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('dorongan.customer') }}">
+               Customer dorongan
+            </a>
+        </li>
+    </ul>
     @endif
+
+
 
 </div>

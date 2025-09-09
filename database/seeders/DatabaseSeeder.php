@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Document;
 use App\Models\DocumentChildren;
+use App\Models\Dorongan;
 use App\Models\GuideItems;
 use App\Models\MealItem;
 use App\Models\Route;
@@ -11,6 +12,7 @@ use App\Models\TourItem;
 use App\Models\Transportation;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\Models\Wakaf;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -224,6 +226,24 @@ class DatabaseSeeder extends Seeder
 
         foreach($documentChildren as $data){
             DocumentChildren::create($data);
+        }
+        $wakaf = [
+            ["nama" => "Al quran", "Harga" => "12000"],
+            ["nama" => "Air", "Harga" => "1000"],
+            ["nama" => "Mushaf", "Harga" => "16000"],
+        ];
+
+        foreach($wakaf as $item){
+            Wakaf::create($item);
+        }
+        $dorongan = [
+            ["name" => "umrah", "price" => "12.000"],
+            ["name" => "makkah", "price" => "8.000"],
+            ["name" => "tawaf", "price" => "7.000"],
+            ["name" => "dorongan sel", "price" => "7.000"],
+        ];
+        foreach($dorongan as $data){
+            Dorongan::create($data);
         }
     }
 }
