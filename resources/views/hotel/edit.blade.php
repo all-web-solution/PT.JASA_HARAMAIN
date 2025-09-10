@@ -307,36 +307,14 @@
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="form-label">Checkin</label>
-                                <input type="date" class="form-control" name="checkin" required id="email" value="{{ $hotel->checkin }}">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Checkout</label>
-                                <input type="date" class="form-control" name="checkout"
-                                       required  id="penanggung" value="{{ $hotel->checkout }}">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Room type</label>
-                                <input type="text" class="form-control" name="room" required id="email" value="{{ $hotel->room_type }}">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Star</label>
-                                <input type="text" class="form-control" name="star" required id="phone" value="{{ $hotel->star }}">
+                                <label class="form-label">Masukan Harga</label>
+                                <input type="text" class="form-control" name="harga" required id="email">
                             </div>
                         </div>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-submit">
-                    <i class="bi bi-check-circle"></i> Simpan perubahan hotel
+                    <i class="bi bi-check-circle"></i> Tambah Harga
                 </button>
             </form>
         </div>

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->date('tanggal_checkin');
             $table->date('tanggal_checkout');
             $table->string('nama_hotel');
-            $table->string('harga_perkamar');
+            $table->string('harga_perkamar')->nullable();
             $table->string('jumlah_kamar');
             $table->string('catatan');
             $table->timestamps();

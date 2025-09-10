@@ -421,6 +421,7 @@
                             <th>Type kamar</th>
                             <th>Total type kamar</th>
                             <th>Catatan</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -438,6 +439,11 @@
                                     <td>{{ $tipe->nama_tipe }}</td>
                                     <td>{{ $tipe->jumlah }}</td>
                                     <td>{{ $hotel->catatan }}</td>
+                                    <td>
+                                        <a href="{{ route('hotel.edit', $hotel->id) }}">
+                                            <button class="btn btn-warning">Tambah harga</button>
+                                        </a>
+                                    </td>
                                 </tr>
                             @endforeach
                         @endforeach

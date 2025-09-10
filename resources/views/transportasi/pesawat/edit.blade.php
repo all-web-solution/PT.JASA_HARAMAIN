@@ -301,33 +301,8 @@
                 <!-- Data Travel Section -->
                 <div class="form-section">
                     <h6 class="form-section-title">
-                        <i class="bi bi-building"></i> Data pesawat
+                        <i class="bi bi-building"></i> Masukan harga
                     </h6>
-
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Tanggal keberangkatan</label>
-                                <input type="text" class="form-control" name="asal" required id="email" value="{{ $pesawat->tanggal_keberangkatan }}" readonly>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Rute</label>
-                                <input type="text" class="form-control" name="tujuan"
-                                       required  id="penanggung" value="{{ $pesawat->rute }}" readonly>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Maskapai</label>
-                                <input type="text" class="form-control" name="maskapai" required id="phone" value="{{ $pesawat->maskapai }}" readonly>
-                            </div>
-                        </div>
-                    </div>
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
@@ -335,21 +310,9 @@
                                 <input type="text" class="form-control" name="harga" required id="email" value="{{ $pesawat->transit }}">
                             </div>
                         </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Tiket berangkat</label>
-                                <input type="text" class="form-control" name="pax" required id="phone" value="{{ $pesawat->pax }}" readonly>
-                            </div>
-                        </div>
+
                     </div>
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Tiket pulang</label>
-                                <input type="text" class="form-control" name="deskripsi" required id="email" value="{{ $pesawat->description}}" readonly>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
                 <button type="submit" class="btn btn-submit">
                     <i class="bi bi-check-circle"></i> Simpan perubahan pesawat

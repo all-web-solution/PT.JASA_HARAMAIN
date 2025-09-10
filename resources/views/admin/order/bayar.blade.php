@@ -413,15 +413,17 @@
                                     {{-- Transportation --}}
                                     @if ($order->service->transportationItem)
                                         <strong>Transportasi:</strong><br>
-
+                                        @foreach ($order->service->transportationItem as $hotel)
+                                            {{ $hotel }} <br>
+                                        @endforeach
                                     @endif
 
                                     {{-- Hotels --}}
                                     @if ($order->service->hotels)
                                         <strong>Hotel:</strong><br>
-                                        {{-- @foreach ($order->service->hotels as $hotel)
-                                            {{ $hotel->name }} - Rp. {{ number_format($hotel->price, 0, ',', '.') }}<br>
-                                        @endforeach --}}
+                                        @foreach ($order->service->hotels as $hotel)
+                                            {{ $hotel->nama_hotel }} <br>
+                                        @endforeach
                                     @endif
 
                                     {{-- Handlings --}}

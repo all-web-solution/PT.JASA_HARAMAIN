@@ -8,6 +8,7 @@ use App\Models\Plane;
 use App\Models\Transportation;
 use App\Models\TransportationItem;
 use App\Models\Route;
+use App\Models\Service;
 
 class TransportationController extends Controller
 {
@@ -87,21 +88,28 @@ class TransportationController extends Controller
         $pesawat = Plane::findOrFail($id);
         return view('transportasi.pesawat.edit', compact('pesawat'));
     }
-    public function update(Request $request, $id)
+public function update(Request $request, $id)
     {
+        // Temukan pesawat dan perbarui harganya
         $plane = Plane::findOrFail($id);
         $plane->update(['harga' => $request->harga]);
-        $order = Order::where('service_id', $plane->service->id)->first();
 
-        if ($order) {
-            $service = $plane->service;
+        // Pastikan pesawat memiliki layanan (service) master yang terhubung
+        if ($plane->service) {
+            // Dapatkan ID dari layanan master yang terhubung ke pesawat ini
+            $serviceId = $plane->service->id;
 
+            // Hitung total harga semua pesawat yang terhubung ke layanan master ini
+            $totalPlanes = $plane->service->planes()->sum('harga');
 
-            $totalPlanes = $service->planes()->sum('harga');
-            $grandTotal = $totalPlanes;
+            // Hitung total harga semua hotel yang terhubung ke layanan master yang SAMA
+            $totalHotels = $plane->service->hotels()->sum('harga_perkamar');
 
+            // Hitung total gabungan dari pesawat dan hotel
+            $grandTotal = $totalPlanes + $totalHotels;
 
-            $order->update([
+            // Perbarui pesanan (order) yang terhubung ke layanan master ini
+            Order::where('service_id', $serviceId)->update([
                 'total_amount' => $grandTotal,
                 'sisa_hutang' => $grandTotal
             ]);
