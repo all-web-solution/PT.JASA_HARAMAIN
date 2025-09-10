@@ -80,6 +80,12 @@ class ServicesController extends Controller
 
     public function store(Request $request)
     {
+         $masterPrefix = 'TRX';
+        $lastService = \App\Models\Service::where('unique_code', 'like', $masterPrefix . '-%')
+            ->orderBy('id', 'desc')
+            ->first();
+        $lastNumber = $lastService ? (int) explode('-', $lastService->unique_code)[1] : 0;
+        $uniqueCode = $masterPrefix . '-' . ($lastNumber + 1);
         // Tentukan file paspor & visa global
         $pasporGlobal = null;
         $visaGlobal = null;
@@ -149,9 +155,18 @@ class ServicesController extends Controller
             $uniqueCode = $prefix . '-' . ($lastNumber + 1);
 
             // Buat service
-            $service = Service::create([
+            // $service = Service::create([
+            //     'pelanggan_id' => $request->travel,
+            //     'services' => [$srvLower],
+            //     'tanggal_keberangkatan' => $request->tanggal_keberangkatan,
+            //     'tanggal_kepulangan' => $request->tanggal_kepulangan,
+            //     'total_jamaah' => $request->total_jamaah,
+            //     'status' => $status,
+            //     'unique_code' => $uniqueCode,
+            // ]);
+             $service = \App\Models\Service::create([
                 'pelanggan_id' => $request->travel,
-                'services' => [$srvLower],
+                'services' => $request->services,
                 'tanggal_keberangkatan' => $request->tanggal_keberangkatan,
                 'tanggal_kepulangan' => $request->tanggal_kepulangan,
                 'total_jamaah' => $request->total_jamaah,
@@ -436,25 +451,20 @@ class ServicesController extends Controller
                     break;
             }
         }
-
-
-
-
         // 4. Buat order
         $order = Order::create([
-            'service_id' => $service->id,
-            'total_amount' => $request->input('total_amount', 0), // ambil dari input hidden
-            'invoice' => 'INV-' . time(),
-            'total_yang_dibayarkan' => $request->input('total_amount', 0),
-            'sisa_hutang' => $request->input('total_amount'),
-        ]);
+        'service_id' => $service->id, // Menggunakan service ID master
+        'total_amount' => $request->input('total_amount', 0),
+        'invoice' => 'INV-' . time(),
+        'total_yang_dibayarkan' => $request->input('total_amount', 0),
+        'sisa_hutang' => $request->input('total_amount'),
+    ]);
 
 
-        return redirect()->route('service.uploadBerkas', [
+         return redirect()->route('service.uploadBerkas', [
             'service_id' => $service->id,
             'total_jamaah' => $request->total_jamaah
-        ])
-            ->with('success', 'Data service berhasil disimpan.');
+        ])->with('success', 'Data service berhasil disimpan.');
     }
 
 

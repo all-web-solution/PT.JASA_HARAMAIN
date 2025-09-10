@@ -90,31 +90,31 @@ class TransportationController extends Controller
     }
 public function update(Request $request, $id)
     {
-        // Temukan pesawat dan perbarui harganya
-        $plane = Plane::findOrFail($id);
-        $plane->update(['harga' => $request->harga]);
+       $plane = Plane::findOrFail($id);
+       $plane->update(['harga' => $request->harga]);
 
-        // Pastikan pesawat memiliki layanan (service) master yang terhubung
-        if ($plane->service) {
-            // Dapatkan ID dari layanan master yang terhubung ke pesawat ini
-            $serviceId = $plane->service->id;
+       if($plane->service){
+            $pelangganId = $plane->service->pelanggan_id;
+            $allServices = Service::where('pelanggan_id', $pelangganId)->get();
+            $GrandTotal = 0;
 
-            // Hitung total harga semua pesawat yang terhubung ke layanan master ini
-            $totalPlanes = $plane->service->planes()->sum('harga');
+            foreach ($allServices as $service) {
+                // Hitung total semua pesawat yang terhubung ke layanan ini
+                $totalPlanes = $service->planes()->sum('harga');
 
-            // Hitung total harga semua hotel yang terhubung ke layanan master yang SAMA
-            $totalHotels = $plane->service->hotels()->sum('harga_perkamar');
+                // Hitung total semua hotel yang terhubung ke layanan ini
+                $totalHotels = $service->hotels()->sum('harga_perkamar');
 
-            // Hitung total gabungan dari pesawat dan hotel
-            $grandTotal = $totalPlanes + $totalHotels;
-
-            // Perbarui pesanan (order) yang terhubung ke layanan master ini
-            Order::where('service_id', $serviceId)->update([
-                'total_amount' => $grandTotal,
-                'sisa_hutang' => $grandTotal
+                // Tambahkan ke total keseluruhan
+                $GrandTotal += $totalPlanes + $totalHotels;
+            }
+            Order::whereHas('service', function ($query) use ($pelangganId) {
+                $query->where('pelanggan_id', $pelangganId);
+            })->update([
+                'total_amount' => $GrandTotal,
+                'sisa_hutang' => $GrandTotal
             ]);
-        }
-
+       }
         return redirect()->route('transportation.plane.index')
             ->with('success', 'Harga pesawat & total order berhasil diperbarui!');
     }

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Hotel;
+use App\Models\Order;
+use App\Models\Service;
+
 
 class HotelController extends Controller
 {
@@ -53,28 +56,39 @@ class HotelController extends Controller
         return view('hotel.edit', compact('hotel'));
     }
 
-    public function update(Request $request, $id)
+public function update(Request $request, $id)
     {
-        // Temukan hotel dan perbarui harganya
+        // 1. Temukan hotel dan perbarui harganya
         $hotel = Hotel::findOrFail($id);
         $hotel->update(['harga_perkamar' => $request->harga]);
 
-        // Pastikan hotel memiliki layanan (service) master yang terhubung
+        // 2. Jika hotel terhubung ke layanan (service)
         if ($hotel->service) {
-            // Dapatkan ID dari layanan master yang terhubung ke hotel ini
-            $serviceId = $hotel->service->id;
+            // 3. Dapatkan pelanggan dari layanan hotel ini
+            $pelangganId = $hotel->service->pelanggan_id;
 
-            // Hitung total harga semua hotel yang terhubung ke layanan master ini
-            $totalHotels = $hotel->service->hotels()->sum('harga_perkamar');
+            // 4. Cari SEMUA layanan (services) yang dimiliki oleh pelanggan ini
+            $allServices = Service::where('pelanggan_id', $pelangganId)->get();
 
-            // Hitung total harga semua pesawat yang terhubung ke layanan master yang SAMA
-            $totalPlanes = $hotel->service->planes()->sum('harga');
+            // 5. Inisialisasi total harga
+            $grandTotal = 0;
 
-            // Hitung total gabungan dari hotel dan pesawat
-            $grandTotal = $totalHotels + $totalPlanes;
+            // 6. Loop melalui semua layanan pelanggan untuk menghitung total
+            foreach ($allServices as $service) {
+                // Hitung total semua hotel yang terhubung ke layanan ini
+                $totalHotels = $service->hotels()->sum('harga_perkamar');
 
-            // Perbarui pesanan (order) yang terhubung ke layanan master ini
-            \App\Models\Order::where('service_id', $serviceId)->update([
+                // Hitung total semua pesawat yang terhubung ke layanan ini
+                $totalPlanes = $service->planes()->sum('harga');
+
+                // Tambahkan ke total keseluruhan
+                $grandTotal += $totalHotels + $totalPlanes;
+            }
+
+            // 7. Perbarui pesanan (order) yang terhubung ke service yang mana saja untuk pelanggan ini
+            Order::whereHas('service', function ($query) use ($pelangganId) {
+                $query->where('pelanggan_id', $pelangganId);
+            })->update([
                 'total_amount' => $grandTotal,
                 'sisa_hutang' => $grandTotal
             ]);
