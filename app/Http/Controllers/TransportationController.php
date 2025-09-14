@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Plane;
+use App\Models\PriceListTicket;
 use App\Models\Transportation;
 use App\Models\TransportationItem;
 use App\Models\Route;
@@ -86,7 +87,8 @@ class TransportationController extends Controller
     public function edit($id)
     {
         $pesawat = Plane::findOrFail($id);
-        return view('transportasi.pesawat.edit', compact('pesawat'));
+        $listTickets = PriceListTicket::all();
+        return view('transportasi.pesawat.edit', compact('pesawat', 'listTickets'));
     }
 public function update(Request $request, $id)
     {

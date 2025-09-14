@@ -48,6 +48,11 @@
                 <i class="bi bi-speedometer2"></i> HOTEL
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('hotel.price.index') }}">
+                <i class="bi bi-speedometer2"></i> Price List Hotel
+            </a>
+        </li>
     </ul>
     @elseif (auth()->user()->role === 'handling')
     <ul class="nav flex-column mt-2">
@@ -104,6 +109,11 @@
                 <i class="bi bi-speedometer2"></i> Customer
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('price.list.ticket') }}">
+                <i class="bi bi-speedometer2"></i> Price list tiket
+            </a>
+        </li>
 
     </ul>
     @elseif (auth()->user()->role === 'visa dan acara')
@@ -137,8 +147,26 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" href="{{ route('dorongan.customer') }}">
+        <a class="nav-link active" href="{{ route('dorongan.customer') }}">
                Customer dorongan
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('palugada.badal') }}">
+               Badal
+            </a>
+        </li>
+    </ul>
+    @elseif (auth()->user()->role == 'konten dan dokumentasi')
+    <ul>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('content.index') }}">
+                Daftar kontent
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('content.customer') }}">
+                Customer
             </a>
         </li>
     </ul>

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\ServicesController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContentController;
 use App\Http\Controllers\DoronganController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\RouteController;
@@ -19,8 +20,11 @@ use App\Http\Controllers\Content\SiskopaturController;
 use App\Http\Controllers\Content\VisaController;
 use App\Http\Controllers\Content\VaccineController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\PriceListHotelController;
+use App\Http\Controllers\PriceListTicket;
 use App\Http\Controllers\ReyalController;
 use App\Http\Controllers\TransportationController;
+use App\Models\PriceListHotel;
 use Symfony\Component\HttpKernel\DependencyInjection\ServicesResetter;
 
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -65,6 +69,12 @@ Route::middleware(['auth', 'hotel'])->group(function () {
     Route::get('hotel/{id}', [HotelController::class, 'edit'])->name('hotel.edit');
     Route::put('hotel/{id}/update', [HotelController::class, 'update'])->name('hotel.update');
     Route::delete('hotel/{id}/delete', [HotelController::class, 'destroy'])->name('hotel.destroy');
+    Route::get('/price', [PriceListHotelController::class, 'index'])->name('hotel.price.index');
+    Route::get('/price/create', [PriceListHotelController::class, 'create'])->name('hotel.price.create');
+    Route::post('/price/store', [PriceListHotelController::class, 'store'])->name('hotel.price.post');
+    Route::get('/price/edit/{id}', [PriceListHotelController::class, 'edit'])->name('hotel.price.edit');
+    Route::put('/price/update/{id}', [PriceListHotelController::class, 'update'])->name('hotel.price.update');
+    Route::delete('/price/delete/{id}', [PriceListHotelController::class, 'destroy'])->name('hotel.price.delete');
 });
 Route::middleware(['auth', 'handling'])->group(function () {
     Route::group(['prefix' => 'catering',], function () {
@@ -107,7 +117,12 @@ Route::middleware(['auth', 'transportation'])->group(function () {
         Route::get('/edit/{id}', [TransportationController::class, 'edit'])->name('transportation.plane.edit');
         Route::put('/update/{id}', [TransportationController::class, 'update'])->name('transportation.plane.update');
         Route::delete('/delete/{id}', [TransportationController::class, 'delete'])->name('transportation.plane.delete');
-        
+        Route::get('/price-list/ticket', [PriceListTicket::class, 'index'])->name('price.list.ticket');
+        Route::get('/price-list/ticket/create', [PriceListTicket::class, 'create'])->name('price.list.ticket.create');
+        Route::post('/price-list/ticket/post', [PriceListTicket::class, 'store'])->name('price.list.ticket.post');
+        Route::get('/price-list/ticket/edit/{id}', [PriceListTicket::class, 'edit'])->name('price.list.ticket.edit');
+        Route::put('/price-list/ticket/update/{id}', [PriceListTicket::class, 'update'])->name('price.list.ticket.update');
+        Route::delete('/price-list/ticket/delete/{id}', [PriceListTicket::class, 'destroy'])->name('price.list.ticket.delete');
     });
     Route::group(['prefix' => 'cars'], function () {
         Route::get('/', [TransportationController::class, 'indexCar'])->name('transportation.car.index');
@@ -168,4 +183,18 @@ Route::middleware(['auth', 'palugada'])->group(function () {
     Route::put('dorongan/update/{id}', [DoronganController::class, 'update'])->name('dorongan.update');
     Route::delete('dorongan/delete/{id}', [DoronganController::class, 'destroy'])->name('dorongan.destroy');
     Route::get('dorongan/customer', [DoronganController::class, 'customer'])->name('dorongan.customer');
+
+    Route::get('/badal', function(){
+        $wakaf = \App\Models\Badal::all();
+        return view('palugada.badal', compact('wakaf'));
+    })->name('palugada.badal');
+});
+Route::middleware(['auth', 'content'])->group(function(){
+    Route::get('/content', [ContentController::class, 'index'])->name('content.index');
+    Route::get('/content/create', [ContentController::class, 'create'])->name('content.create');
+    Route::post('/content/store', [ContentController::class, 'store'])->name('content.store');
+    Route::get('/content/edit/{id}', [ContentController::class, 'edit'])->name('content.edit');
+    Route::put('/content/update/{id}', [ContentController::class, 'update'])->name('content.update');
+    Route::delete('/content/delete/{id}', [ContentController::class, 'destroy'])->name('content.destroy');
+    Route::get('/content/customer', [ContentController::class, 'customer'])->name('content.customer');
 });

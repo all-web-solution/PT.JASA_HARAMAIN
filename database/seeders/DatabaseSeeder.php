@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ContentItem;
 use App\Models\Document;
 use App\Models\DocumentChildren;
 use App\Models\Dorongan;
@@ -244,6 +245,16 @@ class DatabaseSeeder extends Seeder
         ];
         foreach($dorongan as $data){
             Dorongan::create($data);
+        }
+
+        $contents= [
+            ["name" => "Moment Umrah", "price" => 12000],
+            ["name" => "Moment mekkah", "price" => 13000],
+            ["name" => "Moment madinah", "price" => 52000],
+            ["name" => "Full content", "price" => 62000],
+        ];
+        foreach($contents as $content){
+            ContentItem::create($content);
         }
     }
 }

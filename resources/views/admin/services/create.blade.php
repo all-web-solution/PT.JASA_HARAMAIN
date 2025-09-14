@@ -465,14 +465,33 @@
             display: none;
         }
 
-        #meal-item,
+        .meal-item,
         .content-item,
-        .dorongan-item {
+        .dorongan-item,
+        .wakaf-item {
             background-color: #fff;
             margin: 10px 0px;
             padding: 10px;
             border-radius: 7px;
 
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .wakaf-item {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .wakaf-item.active {
+            background-color: #e6f0fa;
+            border-color: #1a4b8c;
         }
     </style>
 
@@ -667,7 +686,7 @@
                                 </div>
                                 <div class="service-name">Badal umrah</div>
                                 <div class="service-desc">Sedekah & Waqaf</div>
-                                <input type="checkbox" name="services[]" value="waqaf" hidden>
+                                <input type="checkbox" name="services[]" value="badal" hidden>
                             </div>
                         </div>
                     </div>
@@ -687,12 +706,12 @@
                                 <div class="service-grid">
                                     <div class="transport-item" data-transportasi="airplane">
                                         <div class="service-name">Pesawat</div>
-                                        <input type="checkbox" name="transportation[]" value="airplane" >
+                                        <input type="checkbox" name="transportation[]" value="airplane">
                                     </div>
 
                                     <div class="transport-item" data-transportasi="bus">
                                         <div class="service-name">Transportasi darat</div>
-                                        <input type="checkbox" name="transportation[]" value="bus" >
+                                        <input type="checkbox" name="transportation[]" value="bus">
                                     </div>
                                 </div>
                                 <div class="form-group" data-transportasi="airplane" id="pesawat">
@@ -1125,7 +1144,7 @@
                         </div> <!-- Tutup Form Hotel -->
 
                         <!-- Form Bandara -->
-                        <div class="form-group" data-handling="bandara" id="bandara" >
+                        <div class="form-group" data-handling="bandara" id="bandara">
                             <label class="form-label">Bandara</label>
                             <div class="form-col">
                                 <div class="form-group">
@@ -1196,70 +1215,27 @@
                         </h6>
                         <div class="detail-section">
                             <div class="service-grid">
-
+                                @foreach ($contents as $content)
+                                    <div class="content-wrapper">
+                                        <div class="content-item" data-content="{{ $content->id }}"
+                                            data-price="{{ $content->price }}">
+                                            <div class="service-name">{{ $content->name }}</div>
+                                            <div class="service-desc">Rp.
+                                                {{ number_format($content->price, 0, ',', '.') }}</div>
+                                            <input type="checkbox" name="content[]" value="{{ $content->id }}" hidden>
+                                        </div>
+                                        <div class="content-form hidden" id="form-{{ $content->name }}">
+                                            <label class="form-label">Jumlah Umrah</label>
+                                            <input type="number" class="form-control" name="jumlah_{{ $content->id }}"
+                                                min="1">
+                                            <label class="form-label mt-2">Keterangan</label>
+                                            <textarea class="form-control" name="ket_{{ $content->id }}"></textarea>
+                                        </div>
+                                    </div>
+                                @endforeach
                                 <!-- UMRAH -->
-                                <div class="content-wrapper">
-                                    <div class="content-item meal-item" data-content="umrah">
-                                        <div class="service-name">Moment Umrah</div>
-                                        <div class="service-desc">Rp. 120.000.000</div>
-                                        <input type="checkbox" name="content[]" value="umrah" hidden>
-                                    </div>
-                                    <div class="content-form hidden" id="form-umrah">
-                                        <label class="form-label">Jumlah Umrah</label>
-                                        <input type="number" class="form-control" name="jumlah_umrah" min="1">
-                                        <label class="form-label mt-2">Keterangan</label>
-                                        <textarea class="form-control" name="ket_umrah"></textarea>
-                                    </div>
-                                </div>
 
-                                <!-- MEKKAH -->
-                                <div class="content-wrapper">
-                                    <div class="content-item" data-content="mekkah">
 
-                                        <div class="service-name">Moment Mekkah</div>
-                                        <div class="service-desc">Rp. 80.000.000</div>
-                                        <input type="checkbox" name="content[]" value="mekkah" hidden>
-                                    </div>
-                                    <div class="content-form hidden" id="form-mekkah">
-                                        <label class="form-label">Jumlah Mekkah</label>
-                                        <input type="number" class="form-control" name="jumlah_mekkah" min="1">
-                                        <label class="form-label mt-2">Keterangan</label>
-                                        <textarea class="form-control" name="ket_mekkah"></textarea>
-                                    </div>
-                                </div>
-
-                                <!-- MADINAH -->
-                                <div class="content-wrapper">
-                                    <div class="content-item" data-content="madinah">
-
-                                        <div class="service-name">Moment Madinah</div>
-                                        <div class="service-desc">Rp. 70.000.000</div>
-                                        <input type="checkbox" name="content[]" value="madinah" hidden>
-                                    </div>
-                                    <div class="content-form hidden" id="form-madinah">
-                                        <label class="form-label">Jumlah Madinah</label>
-                                        <input type="number" class="form-control" name="jumlah_madinah" min="1">
-                                        <label class="form-label mt-2">Keterangan</label>
-                                        <textarea class="form-control" name="ket_madinah"></textarea>
-                                    </div>
-                                </div>
-
-                                <!-- FULL CONTENT -->
-                                <div class="content-wrapper">
-                                    <div class="content-item" data-content="full-content">
-
-                                        <div class="service-name">Full content</div>
-                                        <div class="service-desc">Rp. 100.000.000</div>
-                                        <input type="checkbox" name="content[]" value="full-content" hidden>
-                                    </div>
-                                    <div class="content-form hidden" id="form-full-content">
-                                        <label class="form-label">Jumlah Full Content</label>
-                                        <input type="number" class="form-control" name="jumlah_full_content"
-                                            min="1">
-                                        <label class="form-label mt-2">Keterangan</label>
-                                        <textarea class="form-control" name="ket_full_content"></textarea>
-                                    </div>
-                                </div>
 
                             </div>
                         </div>
@@ -1392,35 +1368,37 @@
                         </div>
                     </div>
 
-                    <div id="premium-form" class="form-group hidden">
-                        <label class="form-label">Jumlah Nasi Box</label>
-                        <input type="text" class="form-control" name="jumlah_nasi_box">
-                    </div>
 
-                    <div id="standard-form" class="form-group hidden">
-                        <label class="form-label">Jumlah Buffle Hotel</label>
-                        <input type="text" class="form-control" name="jumlah_buffle_hotel">
-                    </div>
-
-                    <div id="muthawifah-form" class="form-group hidden">
-                        <label class="form-label">Jumlah Snack</label>
-                        <input type="text" class="form-control" name="jumlah_snack">
-                    </div>
                     <div class="detail-form" id="dorongan-details">
                         <h6 class="detail-title">
                             <i class="bi bi-briefcase"></i> Dorongan
                         </h6>
                         <div class="service-grid">
                             @foreach ($dorongan as $item)
-                                <div class="dorongan-item" data-content="{{ $item->name }}"
-                                    data-price="{{ $item->price }}">
-                                    <div class="service-name">{{ $item->name }}</div>
-                                    <div class="service-desc">{{ $item->price }}</div>
-                                    <input type="checkbox" name="dorongan[]" value="{{ $item->name }}" hidden>
+                                @php $slug = Str::slug($item->name); @endphp
+                                <div class="dorongan-wrapper">
+                                    <div class="dorongan-item" data-dorongan="{{ $slug }}" data-price="{{ $item->price }}">
+                                        <div class="service-name">{{ $item->name }}</div>
+                                        <div class="service-desc">Rp. {{ $item->price }}</div>
+                                        <input type="checkbox" name="dorongan[]" value="{{ $item->id }}" hidden>
+                                    </div>
+
+                                    <!-- form jumlah -->
+                                    <div class="dorongan-form hidden" id="form-{{ $slug }}">
+                                        <label class="form-label">Jumlah {{ $item->name }}</label>
+                                        <input type="number"
+                                            class="form-control jumlah-dorongan"
+                                            name="jumlah_dorongan[{{ $item->id }}]"
+                                            min="1"
+                                            value="1"
+                                            data-name="{{ $item->name }}"
+                                            data-price="{{ $item->price }}">
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
                     </div>
+
 
                     <!-- wadah form dinamis -->
                     <div id="jumlah-dorongan-container" class="mt-3"></div>
@@ -1436,42 +1414,26 @@
                             <i class="bi bi-briefcase"></i> Wakaf
                         </h6>
                         <div class="service-grid">
-                            <div class="wakaf-item" data-content="berbagi-air">
-
-                                <div class="service-name">Berbagi Air</div>
-                                <input type="checkbox" name="wakaf[]" value="berbagi-air" hidden>
-                            </div>
-
-                            <div class="wakaf-item" data-content="berbagi-nasi">
-
-                                <div class="service-name">Berbagi nasi kotak</div>
-                                <div class="service-desc">Rp. 80.000.000</div>
-                                <input type="checkbox" name="wakaf[]" value="berbagi-nasi" hidden>
-                            </div>
-
-                            <div class="wakaf-item" data-content="mushaf">
-
-                                <div class="service-name">Mushaf al quran</div>
-                                <div class="service-desc">Rp. 70.000.000</div>
-                                <input type="checkbox" name="wakaf[]" value="mushaf" hidden>
-                            </div>
+                            @foreach ($wakaf as $item)
+                                <div class="wakaf-item" data-target="form-{{ Str::slug($item->nama) }}">
+                                    <div class="service-name">{{ $item->nama }}</div>
+                                    <div class="service-desc">Rp. {{ $item->harga }}</div>
+                                    <input type="checkbox" name="wakaf[]" value="{{ $item->id }}" hidden>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
 
-                    <div id="berbagi-air-form" class="form-group hidden">
-                        <label class="form-label">Jumlah Berbagi Air</label>
-                        <input type="text" class="form-control" name="jumlah_berbagi_air">
-                    </div>
+                    {{-- form otomatis dari wakaf --}}
+                    @foreach ($wakaf as $item)
+                        <div id="form-{{ Str::slug($item->nama) }}" class="form-group hidden">
+                            <label class="form-label">Jumlah {{ $item->nama }}</label>
+                            <input type="text" class="form-control" name="jumlah_wakaf[{{ $item->id }}]">
+                        </div>
+                    @endforeach
 
-                    <div id="berbagi-nasi-form" class="form-group hidden">
-                        <label class="form-label">Jumlah Berbagi Nasi Kotak</label>
-                        <input type="text" class="form-control" name="jumlah_berbagi_nasi">
-                    </div>
 
-                    <div id="mushaf-form" class="form-group hidden">
-                        <label class="form-label">Jumlah Mushaf al-Quran</label>
-                        <input type="text" class="form-control" name="jumlah_mushaf">
-                    </div>
+
                     <div class="detail-form" id="badal-details">
                         <h6 class="detail-title">
                             <i class="bi bi-briefcase"></i> Badal
@@ -1538,6 +1500,11 @@
     <script src="{{ asset('js/reyal.js') }}"></script>
     <script src="{{ asset('js/handling.js') }}"></script>
     <script src="{{ asset('js/cart-total-price.js') }}"></script>
+    <script src="{{ asset('js/content.js') }}"></script>
+    <script src="{{ asset('js/wakaf.js') }}"></script>
+    <script src="{{ asset('js/badal.js') }}"></script>
+    <script src="{{ asset('js/pendamping.js') }}"></script>
+    <script src="{{ asset('js/tour.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -1652,33 +1619,34 @@
 
 
 
-document.addEventListener("DOMContentLoaded", function() {
-    // Tampilkan form transportasi sesuai klik
-    const transportItems = document.querySelectorAll(".transport-item");
-    transportItems.forEach(item => {
-        item.addEventListener("click", function() {
-            const type = item.dataset.transportasi;
+        document.addEventListener("DOMContentLoaded", function() {
+            // Tampilkan form transportasi sesuai klik
+            const transportItems = document.querySelectorAll(".transport-item");
+            transportItems.forEach(item => {
+                item.addEventListener("click", function() {
+                    const type = item.dataset.transportasi;
 
-            // Hilangkan selected semua
-            transportItems.forEach(i => i.classList.remove("selected"));
-            item.classList.add("selected");
+                    // Hilangkan selected semua
+                    transportItems.forEach(i => i.classList.remove("selected"));
+                    item.classList.add("selected");
 
-            // Tampilkan form yang sesuai
-            const forms = document.querySelectorAll("#transportasi-details .form-group[data-transportasi]");
-            forms.forEach(f => {
-                if(f.dataset.transportasi === type){
-                    f.style.display = "block";
-                } else {
-                    f.style.display = "none";
-                }
+                    // Tampilkan form yang sesuai
+                    const forms = document.querySelectorAll(
+                        "#transportasi-details .form-group[data-transportasi]");
+                    forms.forEach(f => {
+                        if (f.dataset.transportasi === type) {
+                            f.style.display = "block";
+                        } else {
+                            f.style.display = "none";
+                        }
+                    });
+                });
             });
-        });
-    });
 
-    // Inisialisasi default: sembunyikan semua form transportasi
-    const forms = document.querySelectorAll("#transportasi-details .form-group[data-transportasi]");
-    forms.forEach(f => f.style.display = "none");
-});
+            // Inisialisasi default: sembunyikan semua form transportasi
+            const forms = document.querySelectorAll("#transportasi-details .form-group[data-transportasi]");
+            forms.forEach(f => f.style.display = "none");
+        });
 
 
 
@@ -2115,6 +2083,43 @@ document.addEventListener("DOMContentLoaded", function() {
         //     });
         //
 
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select all elements with the class 'meal-item'
+            const mealItems = document.querySelectorAll('.meal-item');
 
+            // Loop through each meal item to add a click event listener
+            mealItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Get the data-meal attribute value, e.g., 'nasi-box'
+                    const mealData = this.getAttribute('data-meal');
+
+                    // Find the corresponding form using its ID, e.g., 'form-nasi-box'
+                    const targetForm = document.getElementById(`form-${mealData}`);
+
+                    // Check if the form exists
+                    if (targetForm) {
+                        // Toggle the 'hidden' class to show or hide the form
+                        targetForm.classList.toggle('hidden');
+
+                        // Toggle the 'selected' class for styling feedback
+                        this.classList.toggle('selected');
+
+                        // Uncheck the hidden checkbox when the item is unselected
+                        const checkbox = this.querySelector('input[type="checkbox"]');
+                        if (checkbox) {
+                            checkbox.checked = !targetForm.classList.contains('hidden');
+                        }
+
+                        // If the form is hidden, reset its input value to 0
+                        if (targetForm.classList.contains('hidden')) {
+                            const input = targetForm.querySelector('input[type="number"]');
+                            if (input) {
+                                input.value = 0;
+                            }
+                        }
+                    }
+                });
+            });
+        });
     </script>
 @endsection

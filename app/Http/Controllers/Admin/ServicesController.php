@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ContentCustomer;
+use App\Models\ContentItem;
 use App\Models\File;
 use App\Models\GuideItems;
 use App\Models\Hotel;
@@ -23,6 +25,7 @@ use App\Models\Wakaf;
 use App\Models\Dorongan;
 use App\Models\DoronganOrder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Badal;
 
 class ServicesController extends Controller
 {
@@ -60,6 +63,7 @@ class ServicesController extends Controller
         $documents = DocumentModel::with('childrens')->get();
         $wakaf = Wakaf::all();
         $dorongan = Dorongan::all();
+        $contents = ContentItem::all();
         return view('admin.services.create', compact(
             'pelanggans',
             'transportations',
@@ -68,7 +72,8 @@ class ServicesController extends Controller
             'meals',
             'documents',
             'wakaf',
-            'dorongan'
+            'dorongan',
+            'contents'
         ));
     }
 
@@ -427,14 +432,17 @@ class ServicesController extends Controller
                     }
                     break;
                 case 'waqaf':
-                    if ($request->has('wakaf')) {
-                        foreach ($request->wakaf as $add) {
-                            $service->wakafs()->create([
-                                'wakaf_id' => $add,
-                                'jumlah'   => $request->jumlah_wakaf[$add] ?? 1, // default 1 kalau kosong
-                            ]);
+
+                        if ($request->filled('jumlah_wakaf')) {
+                            foreach ($request->jumlah_wakaf as $wakafId => $jumlah) {
+                                if (!empty($jumlah)) { // skip kalau kosong
+                                    $service->wakafs()->create([
+                                        'wakaf_id' => $wakafId,
+                                        'jumlah'   => intval($jumlah),
+                                    ]);
+                                }
+                            }
                         }
-                    }
                     break;
                 case 'dorongan':
                     if ($request->has('dorongan')) {
@@ -445,6 +453,39 @@ class ServicesController extends Controller
                                 'service_id'  => $service->id,
                                 'dorongan_id' => $doronganId,
                                 'jumlah'      => $jumlah ?? 1,
+                            ]);
+                        }
+                    }
+                    break;
+               case 'konten':
+                    // Cek apakah ada konten yang dipilih dari form
+                    if ($request->has('content') && is_array($request->input('content'))) {
+                        foreach ($request->input('content') as $contentId) {
+                            // Ambil data jumlah dan keterangan untuk konten yang dipilih
+                            $jumlahKonten = $request->input("jumlah_" . $contentId);
+                            $keteranganKonten = $request->input("ket_" . $contentId);
+
+                            // Lakukan validasi dasar untuk memastikan jumlah tidak kosong dan merupakan angka
+                            if ($jumlahKonten && is_numeric($jumlahKonten)) {
+                                ContentCustomer::create([
+                                    'service_id' => $service->id,
+                                    'content_id' => $contentId,
+                                    'jumlah' => $jumlahKonten,
+                                    'keterangan' => $keteranganKonten,
+                                ]);
+                            }
+                        }
+                    }
+                    break;
+                case 'badal' :
+                   if ($request->has('nama_badal')) {
+                        foreach ($request->nama_badal as $index => $nama) {
+                            $harga = $request->harga_badal[$index] ?? 0;
+
+                            Badal::create([
+                                'service_id' => $service->id, // pastikan variabel $service ada
+                                'name'       => $nama,
+                                'price'      => $harga,
                             ]);
                         }
                     }

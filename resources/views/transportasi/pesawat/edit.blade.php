@@ -307,7 +307,17 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Harga</label>
-                                <input type="text" class="form-control" name="harga" required id="email" value="{{ $pesawat->transit }}">
+                                 <select class="form-control" name="harga" id="travel-select">
+                                        <option value="" disabled selected>Pilih Travel</option>
+                                        @foreach ($listTickets as $item)
+                                            <option value="{{ $item->harga }}" >
+                                                Tanggal : {{ $item->tanggal }} -
+                                                Jam : {{ $item->jam_berangkat }} -
+                                                Kelas : {{ $item->kelas }} -
+                                                Harga : {{ $item->harga }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                             </div>
                         </div>
 

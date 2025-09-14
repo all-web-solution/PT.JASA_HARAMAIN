@@ -64,10 +64,17 @@ public function planes()
     public function reyals(){
         return $this->hasMany(Exchange::class, 'service_id');
     }
-    public function wakafs(){
+     public function wakafs()
+    {
         return $this->hasMany(WakafCustomer::class, 'service_id');
     }
     public function dorongans(){
         return $this->hasMany(DoronganOrder::class, 'service_id');
+    }
+    public function contents(){
+        return $this->hasMany(ContentCustomer::class, 'service_id');
+    }
+    public function badals(){
+        return $this->hasMany(Badal::class, 'service_id');
     }
 }

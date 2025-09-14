@@ -369,11 +369,6 @@
                 border-bottom-right-radius: 8px;
             }
         }
-        <style>
-    .hidden-price {
-        display: none;
-    }
-</style>
     </style>
 
     <div class="service-list-container">
@@ -381,177 +376,35 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-list-check"></i>Pembayaran Order: {{ $order->invoice }}
+                    <i class="bi bi-list-check"></i>Daftar Badal
                 </h5>
 
             </div>
+            <!-- Services Table -->
             <div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Kode unik</th>
-                <th>Customer/Travel</th>
-                <th>Tgl keberangkatan</th>
-                <th>Tgl kepulangan</th>
-                <th>Jumlah jamaah</th>
-                <th>Layanan yang dipilih</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if ($order->service)
-                <tr>
-                    <td>{{ $order->service->unique_code }}</td>
-                    <td>{{ $order->service->pelanggan->nama_travel }}</td>
-                    <td>{{ $order->service->tanggal_keberangkatan }}</td>
-                    <td>{{ $order->service->tanggal_kepulangan }}</td>
-                    <td>{{ $order->service->total_jamaah }}</td>
-                    <td>
-                        {{-- Tombol untuk menampilkan/menyembunyikan harga Transportasi & Hotel --}}
-                        <button class="btn btn-sm btn-primary mb-2" onclick="togglePrices()">Lihat Harga</button>
-
-                        {{-- Tampilkan detail layanan --}}
-
-                        @if ($order->service->meals->count() > 0)
-                            <strong>Meals:</strong><br>
-                            @foreach ($order->service->meals as $meal)
-                                {{ $meal->mealItem->name }} - Rp. {{ number_format($meal->mealItem->price, 0, ',', '.') }}<br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                        @if ($order->service->planes->count() > 0)
-                            <strong>Transportasi:</strong><br>
-                            @foreach ($order->service->planes as $plane)
-                                {{ $plane->maskapai }} ({{ $plane->kode_keberangkatan }} - {{ $plane->kode_kepulangan }})
-                                <span class="hidden-price">
-                                    - Rp. {{ number_format($plane->harga, 0, ',', '.') }}
-                                </span>
-                                <br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                        @if ($order->service->hotels->count() > 0)
-                            <strong>Hotel:</strong><br>
-                            @foreach ($order->service->hotels as $hotel)
-                                {{ $hotel->nama_hotel }}
-                                <span class="hidden-price">
-                                    - Rp. {{ number_format($hotel->harga_perkamar, 0, ',', '.') }}
-                                </span>
-                                <br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                        @if ($order->service->handlings->count() > 0)
-                            <strong>Handling:</strong><br>
-                            @foreach ($order->service->handlings as $handling)
-                                {{ $handling->name }} - Rp. {{ number_format($handling->price, 0, ',', '.') }}<br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                        @if ($order->service->guides->count() > 0)
-                            <strong>Guide:</strong><br>
-                            @foreach ($order->service->guides as $guide)
-                                {{ $guide->name }} - Rp. {{ number_format($guide->price, 0, ',', '.') }}<br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                    </td>
-                </tr>
-            @else
-                <tr>
-                    <td colspan="6" class="text-center">Tidak ada layanan yang tersedia.</td>
-                </tr>
-            @endif
-        </tbody>
-    </table>
-</div>
-        </div>
-        <form action="{{ route('orders.payment', $order->id) }}" method="POST">
-            @csrf
-            <div class="mb-3">
-                <label for="nama_travel" class="form-label">Jumlah yang di bayarkan</label>
-                <input type="number" class="form-control" id="nama_travel" name="jumlah_dibayarkan"
-                    placeholder="Jumlah yang dibayarkan" required>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Customer/Travel</th>
+                            <th>Nama yang di badalkan</th>
+                            <th>Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($wakaf as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->service->pelanggan->nama_travel }}</td>
+                            <td>{{ $item->name }}</td>
+                            <td>{{ $item->price }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
-            <button type="submit" name="action" value="save" class="btn btn-primary">
-                Simpan
-            </button>
-        </form>
+
+
+        </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Delete confirmation
-            const deleteButtons = document.querySelectorAll('.btn-delete');
-
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    if (confirm('Apakah Anda yakin ingin menghapus permintaan service ini?')) {
-                        // Here you would typically send a delete request to your backend
-                        const row = this.closest('tr');
-                        row.style.opacity = '0';
-                        setTimeout(() => {
-                            row.remove();
-                            alert('Permintaan service berhasil dihapus!');
-                        }, 300);
-
-                        /*
-                        fetch('/services/' + serviceId, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                row.remove();
-                                alert('Permintaan service berhasil dihapus!');
-                            }
-                        });
-                        */
-                    }
-                });
-            });
-
-            // Search functionality
-            const searchInput = document.querySelector('.search-box input');
-            searchInput.addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') {
-                    const searchTerm = this.value.toLowerCase();
-                    const rows = document.querySelectorAll('tbody tr');
-
-                    rows.forEach(row => {
-                        const customerName = row.querySelector('td:first-child .customer-name')
-                            .textContent.toLowerCase();
-                        const serviceCode = row.querySelector('td:nth-child(2)').textContent
-                            .toLowerCase();
-
-                        if (customerName.includes(searchTerm) || serviceCode.includes(searchTerm)) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-                }
-            });
-        });
-
-
-    function togglePrices() {
-        const prices = document.querySelectorAll('.hidden-price');
-
-        prices.forEach(function(price) {
-            if (price.style.display === "none" || price.style.display === "") {
-                price.style.display = "inline";
-            } else {
-                price.style.display = "none";
-            }
-        });
-    }
-    </script>
 @endsection

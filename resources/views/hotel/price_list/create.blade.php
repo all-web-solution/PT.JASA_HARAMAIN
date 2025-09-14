@@ -287,44 +287,56 @@
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">
-                <i class="bi bi-plus-circle"></i>Ubah Hotel
+                <i class="bi bi-plus-circle"></i>Tambah Hotel
             </h5>
-            <a href="{{ route('hotel.index') }}" class="btn btn-secondary">
+            <a href="{{ route('hotel.price.index') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
         </div>
 
         <div class="card-body">
-            <form action="{{ route('hotel.update', $hotel->id) }}" method="POST">
+            <form action="{{ route('hotel.price.post') }}" method="POST">
                 @csrf
-                @method('put')
+
                 <!-- Data Travel Section -->
                 <div class="form-section">
                     <h6 class="form-section-title">
-                        <i class="bi bi-building"></i> Data Hotel
+                        <i class="bi bi-building"></i> Data harga tiket
                     </h6>
 
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="form-label">Masukan Harga</label>
-                                <select name="harga" id="" class="form-control">
-                                    <option value="">=== Pilih harga ===</option>
-                                    @foreach (\App\Models\PriceListHotel::all() as $list)
-                                        <option value="{{ $list->harga }}">
-                                            {{ $list->tanggal }} -
-                                            {{ $list->nama_hotel }} -
-                                            {{ $list->tipe_kamar }} -
-                                            {{ $list->harga }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <label class="form-label">Tanggal</label>
+                                <input type="date" class="form-control" name="tanggal" required id="email">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Nama hotel</label>
+                                <input type="text" class="form-control" name="nama_hotel"
+                                       required  id="penanggung">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Tipe kamar</label>
+                                <input type="text" class="form-control" name="tipe_kamar" required id="email">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Harga</label>
+                                <input type="text" class="form-control" name="harga" required id="email">
                             </div>
                         </div>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-submit">
-                    <i class="bi bi-check-circle"></i> Tambah Harga
+                    <i class="bi bi-check-circle"></i> Simpan data hotel
                 </button>
             </form>
         </div>

@@ -369,11 +369,6 @@
                 border-bottom-right-radius: 8px;
             }
         }
-        <style>
-    .hidden-price {
-        display: none;
-    }
-</style>
     </style>
 
     <div class="service-list-container">
@@ -381,106 +376,70 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-list-check"></i>Pembayaran Order: {{ $order->invoice }}
+                    <i class="bi bi-list-check"></i>Daftar Konten
                 </h5>
-
+                <a href="{{ route('content.create') }}" class="btn-add-new">
+                    <i class="bi bi-plus-circle"></i> Tambah Konten
+                </a>
             </div>
+
+
+
+            <!-- Services Table -->
             <div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Kode unik</th>
-                <th>Customer/Travel</th>
-                <th>Tgl keberangkatan</th>
-                <th>Tgl kepulangan</th>
-                <th>Jumlah jamaah</th>
-                <th>Layanan yang dipilih</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if ($order->service)
-                <tr>
-                    <td>{{ $order->service->unique_code }}</td>
-                    <td>{{ $order->service->pelanggan->nama_travel }}</td>
-                    <td>{{ $order->service->tanggal_keberangkatan }}</td>
-                    <td>{{ $order->service->tanggal_kepulangan }}</td>
-                    <td>{{ $order->service->total_jamaah }}</td>
-                    <td>
-                        {{-- Tombol untuk menampilkan/menyembunyikan harga Transportasi & Hotel --}}
-                        <button class="btn btn-sm btn-primary mb-2" onclick="togglePrices()">Lihat Harga</button>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama pelanggan</th>
+                            <th>Nama konten</th>
+                            <th>Jumlah</th>
+                            <th>Keterangan</th>
 
-                        {{-- Tampilkan detail layanan --}}
 
-                        @if ($order->service->meals->count() > 0)
-                            <strong>Meals:</strong><br>
-                            @foreach ($order->service->meals as $meal)
-                                {{ $meal->mealItem->name }} - Rp. {{ number_format($meal->mealItem->price, 0, ',', '.') }}<br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                        @if ($order->service->planes->count() > 0)
-                            <strong>Transportasi:</strong><br>
-                            @foreach ($order->service->planes as $plane)
-                                {{ $plane->maskapai }} ({{ $plane->kode_keberangkatan }} - {{ $plane->kode_kepulangan }})
-                                <span class="hidden-price">
-                                    - Rp. {{ number_format($plane->harga, 0, ',', '.') }}
-                                </span>
-                                <br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                        @if ($order->service->hotels->count() > 0)
-                            <strong>Hotel:</strong><br>
-                            @foreach ($order->service->hotels as $hotel)
-                                {{ $hotel->nama_hotel }}
-                                <span class="hidden-price">
-                                    - Rp. {{ number_format($hotel->harga_perkamar, 0, ',', '.') }}
-                                </span>
-                                <br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                        @if ($order->service->handlings->count() > 0)
-                            <strong>Handling:</strong><br>
-                            @foreach ($order->service->handlings as $handling)
-                                {{ $handling->name }} - Rp. {{ number_format($handling->price, 0, ',', '.') }}<br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                        @if ($order->service->guides->count() > 0)
-                            <strong>Guide:</strong><br>
-                            @foreach ($order->service->guides as $guide)
-                                {{ $guide->name }} - Rp. {{ number_format($guide->price, 0, ',', '.') }}<br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                    </td>
-                </tr>
-            @else
-                <tr>
-                    <td colspan="6" class="text-center">Tidak ada layanan yang tersedia.</td>
-                </tr>
-            @endif
-        </tbody>
-    </table>
-</div>
-        </div>
-        <form action="{{ route('orders.payment', $order->id) }}" method="POST">
-            @csrf
-            <div class="mb-3">
-                <label for="nama_travel" class="form-label">Jumlah yang di bayarkan</label>
-                <input type="number" class="form-control" id="nama_travel" name="jumlah_dibayarkan"
-                    placeholder="Jumlah yang dibayarkan" required>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($customer as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->service->pelanggan->nama_travel }}</td>
+                                <td>{{ $item->content->name }}</td>
+                                <td>{{ $item->jumlah }}</td>
+                                <td>
+                                    @if ($item->keterangan)
+                                        {{ $item->keteangan }}
+                                    @else
+                                    Tidak ada
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
-            <button type="submit" name="action" value="save" class="btn btn-primary">
-                Simpan
-            </button>
-        </form>
+
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -540,18 +499,5 @@
                 }
             });
         });
-
-
-    function togglePrices() {
-        const prices = document.querySelectorAll('.hidden-price');
-
-        prices.forEach(function(price) {
-            if (price.style.display === "none" || price.style.display === "") {
-                price.style.display = "inline";
-            } else {
-                price.style.display = "none";
-            }
-        });
-    }
     </script>
 @endsection
