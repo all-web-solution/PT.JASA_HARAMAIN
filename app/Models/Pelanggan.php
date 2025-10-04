@@ -69,14 +69,19 @@ class Pelanggan extends Model
     }
     public function services()
     {
-        return $this->belongsToMany(Service::class, 'pelanggan_service')
-                    ->withPivot([
-                        'id', // include the pivot's ID
-                        'tanggal_keberangkatan',
-                        'tanggal_kepulangan',
-                        'total_jamaah',
-                        'status',
-                        'unique_code'
-                    ])->withTimestamps();
+        return $this->hasMany(Service::class, 'pelanggan_id');
     }
+
+
+
+    public function getTotalTransaksiAttribute()
+{
+    return $this->services->flatMap->orders->sum('total');
+}
+
+public function getTotalHutangAttribute()
+{
+    return $this->services->flatMap->orders->where('status', 'hutang')->sum('total');
+}
+
 }

@@ -25,18 +25,24 @@ use App\Http\Controllers\PriceListTicket;
 use App\Http\Controllers\ReyalController;
 use App\Http\Controllers\TransportationController;
 use App\Models\PriceListHotel;
+use App\Http\Controllers\TypeController;
 use Symfony\Component\HttpKernel\DependencyInjection\ServicesResetter;
+use App\Http\Controllers\InvoiceController;
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.index');
     Route::get('/admin/services', [ServicesController::class, 'index'])->name('admin.services');
     Route::get('/services/create', [ServicesController::class, 'create'])->name('services.create');
+    Route::delete('/services/delete/{id}', [ServicesController::class, 'destroy'])->name('services.delete');
+    Route::get('/services/edit/{id}', [ServicesController::class, 'edit'])->name('services.edit');
+    Route::put('/services/update/{id}', [ServicesController::class, 'update'])->name('services.update');
     Route::get('/admin/pelanggan', [PelangganController::class, 'index'])->name('admin.pelanggan');
     Route::get('/pelanggan/create', [PelangganController::class, 'create'])->name('admin.pelanggan.create');
     Route::post('/pelanggan', [PelangganController::class, 'store'])->name('admin.pelanggan.store');
     Route::get('/pelanggan/{pelanggan}/edit', [PelangganController::class, 'edit'])->name('admin.pelanggan.edit');
     Route::put('/pelanggan/{pelanggan}', [PelangganController::class, 'update'])->name('admin.pelanggan.update');
     Route::delete('/pelanggan/{pelanggan}', [PelangganController::class, 'destroy'])->name('admin.pelanggan.destroy');
+    Route::get('/pelanggan/{pelanggan}/show', [PelangganController::class, 'show'])->name('admin.pelanggan.show');
     Route::post('/services', [ServicesController::class, 'store'])->name('services.store');
     Route::get('/users', [UserController::class, 'index'])->name('user.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('user.create');
@@ -60,6 +66,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/service/files', [ServicesController::class, 'showFile'])->name('admin.service.file');
     Route::post('{order}/payment', [ServicesController::class, 'payment'])->name('orders.payment');
     Route::get('{order}/bayar', [ServicesController::class, 'bayar'])->name('orders.bayar');
+    Route::get('/invoice/{service}', [InvoiceController::class, 'show'])->name('invoice.show');
+    Route::get('/invoice/{service}/download', [InvoiceController::class, 'download'])->name('invoice.download');
+    Route::get('/invoice/{id}/cetak', [InvoiceController::class, 'cetak'])->name('invoice.cetak');
 });
 
 Route::middleware(['auth', 'hotel'])->group(function () {
@@ -75,6 +84,12 @@ Route::middleware(['auth', 'hotel'])->group(function () {
     Route::get('/price/edit/{id}', [PriceListHotelController::class, 'edit'])->name('hotel.price.edit');
     Route::put('/price/update/{id}', [PriceListHotelController::class, 'update'])->name('hotel.price.update');
     Route::delete('/price/delete/{id}', [PriceListHotelController::class, 'destroy'])->name('hotel.price.delete');
+    Route::get('/price/type/', [TypeController::class, 'index'])->name('hotel.type.index');
+    Route::get('/price/type/create', [TypeController::class, 'create'])->name('hotel.type.create');
+    Route::post('/price/type/create', [TypeController::class, 'store'])->name('hotel.type.store');
+    Route::get('/price/type/edit/{id}', [TypeController::class, 'edit'])->name('hotel.type.edit');
+    Route::put('/price/type/update/{id}', [TypeController::class, 'update'])->name('hotel.type.update');
+    Route::delete('/price/type/delete/{id}', [TypeController::class, 'destroy'])->name('hotel.type.delete');
 });
 Route::middleware(['auth', 'handling'])->group(function () {
     Route::group(['prefix' => 'catering',], function () {
@@ -98,6 +113,7 @@ Route::middleware(['auth', 'handling'])->group(function () {
         Route::get('/edit/{id}',  [App\Http\Controllers\Handling\PendampingController::class, 'edit'])->name('handling.pendamping.edit');
         Route::put('/update/{id}', [App\Http\Controllers\Handling\PendampingController::class, 'update'])->name('handling.pendamping.update');
         Route::delete('/delete/{id}', [App\Http\Controllers\Handling\PendampingController::class, 'destroy'])->name('handling.pendamping.destroy');
+        Route::get('/customer', [App\Http\Controllers\Handling\PendampingController::class, 'customer'])->name('handling.pendamping.customer');
     });
     Route::group(['prefix' => 'tour'], function () {
         Route::get('/',  [App\Http\Controllers\Handling\TourController::class, 'index'])->name('handling.tour.index');

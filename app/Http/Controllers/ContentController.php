@@ -19,9 +19,11 @@ class ContentController extends Controller
     public function store(Request $request){
         ContentItem::create([
             'name' => $request->nama,
-            'price' => $request->harga
+            'price' => $request->harg
         ]);
         return redirect()->route('content.index');
+
+     
     }
     public function edit($id){
         $content = ContentItem::find($id);

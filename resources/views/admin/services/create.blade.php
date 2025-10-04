@@ -1,4 +1,5 @@
 @extends('admin.master')
+
 @section('content')
     <style>
         :root {
@@ -65,7 +66,6 @@
             padding: 1.5rem;
         }
 
-        /* Form Styles */
         .form-section {
             margin-bottom: 2rem;
             padding-bottom: 1.5rem;
@@ -127,26 +127,36 @@
             flex: 1;
         }
 
-        /* Service Selection */
-        .service-grid {
+        .service-grid,
+        .cars,
+        .tours {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 1rem;
             margin-bottom: 1.5rem;
         }
 
+        .service-option,
         .service-item,
         .transport-item,
+        .type-item,
         .service-car,
+        .handling-item,
         .document-item,
-        .child-item .content-item,
+        .child-item,
+        .content-item,
         .visa-item,
         .vaksin-item,
         .service-tour,
         .service-tour-makkah,
         .service-tour-madinah,
         .service-tour-al-ula,
-        .service-tour-thoif {
+        .service-tour-thoif,
+        .pendamping-item,
+        .meal-item,
+        .dorongan-item,
+        .wakaf-item,
+        .transport-option {
             border: 2px solid var(--border-color);
             border-radius: 8px;
             padding: 1.25rem;
@@ -156,9 +166,12 @@
             background-color: white;
         }
 
+        .service-option:hover,
         .service-item:hover,
         .transport-item:hover,
+        .type-item:hover,
         .service-car:hover,
+        .handling-item:hover,
         .document-item:hover,
         .child-item:hover,
         .content-item:hover,
@@ -168,14 +181,22 @@
         .service-tour-makkah:hover,
         .service-tour-madinah:hover,
         .service-tour-al-ula:hover,
-        .service-tour-thoif:hover {
+        .service-tour-thoif:hover,
+        .pendamping-item:hover,
+        .meal-item:hover,
+        .dorongan-item:hover,
+        .wakaf-item:hover,
+        .transport-option:hover {
             border-color: var(--haramain-secondary);
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
+        .service-option.selected,
         .service-item.selected,
         .transport-item.selected,
+        .type-item.selected,
+        .handling-item.selected,
         .service-car.selected,
         .document-item.selected,
         .child-item.selected,
@@ -186,7 +207,12 @@
         .service-tour-makkah.selected,
         .service-tour-madinah.selected,
         .service-tour-al-ula.selected,
-        .service-tour-thoif.selected {
+        .service-tour-thoif.selected,
+        .pendamping-item.selected,
+        .meal-item.selected,
+        .dorongan-item.selected,
+        .wakaf-item.selected,
+        .transport-option.selected {
             border-color: var(--haramain-secondary);
             background-color: var(--haramain-light);
         }
@@ -208,7 +234,6 @@
             color: var(--text-secondary);
         }
 
-        /* Detail Form */
         .detail-form {
             background-color: var(--haramain-light);
             border-radius: 8px;
@@ -241,7 +266,6 @@
             color: var(--haramain-secondary);
         }
 
-        /* Buttons */
         .btn {
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
@@ -295,14 +319,15 @@
             border-top: 1px solid var(--border-color);
         }
 
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .form-row {
                 flex-direction: column;
                 gap: 0;
             }
 
-            .service-grid {
+            .service-grid,
+            .cars,
+            .tours {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
 
@@ -316,182 +341,13 @@
             }
         }
 
-        .transportasi-item {
-            display: flex
-        }
-
-        #pesawat,
-        #bis,
-        #visa,
-        #vaksin,
-        #sikopatur,
-        #bandara,
-        #hotel,
-        #pendamping-details,
-        #konten-details,
-        #reyal-details,
-        #tour-details,
-        #meals-details,
-        #dorongan-details,
-        #waqaf-details,
-        #badal-details {
-            display: none;
-            margin-top: 20px;
-        }
-
-        .cars,
-        .tours {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .document-item,
-        .child-item {
-            border: 1px solid #ccc;
-            padding: 12px;
-            cursor: pointer;
-            border-radius: 10px;
-            text-align: center;
-            transition: 0.2s;
-        }
-
-        .document-item.active,
-        .child-item.active {
-            border-color: #28a745;
-            background: #f0fff4;
-        }
-
-        .service-desc {
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 5px;
-        }
-
-
-
-        .visa-item,
-        .vaksin-item {
-            display: block;
-            border: 2px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .service-vaksin-item.active {
-            border-color: #1a4b8c;
-            background-color: #e6f0fa;
-        }
-
-        .service-vaksin-item {
-            display: block;
-            border: 2px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .visa-item.active,
-        .vaksin-item.active {
-            border-color: #1a4b8c;
-            background-color: #e6f0fa;
-        }
-
-        .pendamping-wrapper {
-            display: block;
-            /* full width */
-            margin-bottom: 10px;
-        }
-
-        .pendamping-item {
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        .pendamping-item.active {
-            border-color: #1a4b8c;
-            background-color: #e6f0fa;
-        }
-
-        .pendamping-form {
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            border-left: 3px solid #1a4b8c;
-            background: #f8f9fa;
-            border-radius: 5px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .content-item.active {
-            border: 2px solid #0d6efd;
-            border-radius: 8px;
-            background: #f0f8ff;
-        }
-
-        .service-tour,
-        .transport-option {
-            display: block;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .service-tour.active,
-        .transport-option.active {
-            border-color: #0d6efd;
-            background: #e9f2ff;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .meal-item,
-        .content-item,
-        .dorongan-item,
-        .wakaf-item {
-            background-color: #fff;
-            margin: 10px 0px;
-            padding: 10px;
-            border-radius: 7px;
-
-        }
-
         .hidden {
             display: none !important;
         }
 
-        .wakaf-item {
-            cursor: pointer;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .wakaf-item.active {
-            background-color: #e6f0fa;
-            border-color: #1a4b8c;
+        .card-reyal.selected {
+            border: 2px solid var(--haramain-secondary);
+            background-color: var(--haramain-light);
         }
     </style>
 
@@ -510,7 +366,6 @@
                 <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
-                    <!-- Data Travel Section -->
                     <div class="form-section">
                         <h6 class="form-section-title">
                             <i class="bi bi-building"></i> Data Travel
@@ -520,7 +375,7 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Nama Travel</label>
-                                    <select class="form-control" name="travel" id="travel-select">
+                                    <select class="form-control" name="travel" id="travel-select" required>
                                         <option value="" disabled selected>Pilih Travel</option>
                                         @foreach ($pelanggans as $pelanggan)
                                             <option value="{{ $pelanggan->id }}"
@@ -534,7 +389,7 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Penanggung Jawab</label>
-                                    <input type="text" class="form-control" readonly required id="penanggung">
+                                    <input type="text" class="form-control" readonly id="penanggung">
                                 </div>
                             </div>
                         </div>
@@ -575,1551 +430,1037 @@
                         </div>
                     </div>
 
-                    <!-- Pilih Layanan Section -->
                     <div class="form-section">
                         <h6 class="form-section-title">
                             <i class="bi bi-list-check"></i> Pilih Layanan yang Dibutuhkan
                         </h6>
 
                         <div class="service-grid">
-                            <div class="service-item" data-service="transportasi">
-                                <div class="service-icon">
-                                    <i class="bi bi-airplane"></i>
+                            @foreach ([
+                                'transportasi' => ['icon' => 'bi-airplane', 'name' => 'Transportasi', 'desc' => 'Tiket & Transport'],
+                                'hotel' => ['icon' => 'bi-building', 'name' => 'Hotel', 'desc' => 'Akomodasi'],
+                                'dokumen' => ['icon' => 'bi-file-text', 'name' => 'Dokumen', 'desc' => 'Visa & Administrasi'],
+                                'handling' => ['icon' => 'bi-briefcase', 'name' => 'Handling', 'desc' => 'Bandara & Hotel'],
+                                'pendamping' => ['icon' => 'bi-people', 'name' => 'Pendamping', 'desc' => 'Tour Leader & Mutawwif'],
+                                'konten' => ['icon' => 'bi-camera', 'name' => 'Konten', 'desc' => 'Dokumentasi'],
+                                'reyal' => ['icon' => 'bi-currency-exchange', 'name' => 'Reyal', 'desc' => 'Penukaran Mata Uang'],
+                                'tour' => ['icon' => 'bi-geo-alt', 'name' => 'Tour', 'desc' => 'City Tour & Ziarah'],
+                                'meals' => ['icon' => 'bi-egg-fried', 'name' => 'Meals', 'desc' => 'Makanan'],
+                                'dorongan' => ['icon' => 'bi-basket', 'name' => 'Dorongan', 'desc' => 'Bagi penyandang disabilitas'],
+                                'waqaf' => ['icon' => 'bi-gift', 'name' => 'Waqaf', 'desc' => 'Sedekah & Waqaf'],
+                                'badal' => ['icon' => 'bi-gift', 'name' => 'Badal Umrah', 'desc' => 'Umrah Badal'],
+                            ] as $key => $service)
+                                <div class="service-item" data-service="{{ $key }}">
+                                    <div class="service-icon"><i class="bi {{ $service['icon'] }}"></i></div>
+                                    <div class="service-name">{{ $service['name'] }}</div>
+                                    <div class="service-desc">{{ $service['desc'] }}</div>
+                                    <input type="checkbox" name="services[]" value="{{ $key }}" class="d-none">
                                 </div>
-                                <div class="service-name">Transportasi</div>
-                                <div class="service-desc">Tiket & Transport</div>
-                                <input type="checkbox" name="services[]" value="transportasi" hidden>
-                            </div>
-
-                            <div class="service-item" data-service="hotel">
-                                <div class="service-icon">
-                                    <i class="bi bi-building"></i>
-                                </div>
-                                <div class="service-name">Hotel</div>
-                                <div class="service-desc">Akomodasi</div>
-                                <input type="checkbox" name="services[]" value="hotel" hidden>
-                            </div>
-
-                            <div class="service-item" data-service="dokumen">
-                                <div class="service-icon">
-                                    <i class="bi bi-file-text"></i>
-                                </div>
-                                <div class="service-name">Dokumen</div>
-                                <div class="service-desc">Visa & Administrasi</div>
-                                <input type="checkbox" name="services[]" value="dokumen" hidden>
-                            </div>
-
-                            <div class="service-item" data-service="handling">
-                                <div class="service-icon">
-                                    <i class="bi bi-briefcase"></i>
-                                </div>
-                                <div class="service-name">Handling</div>
-                                <div class="service-desc">Bandara & Hotel</div>
-                                <input type="checkbox" name="services[]" value="handling" hidden>
-                            </div>
-
-                            <div class="service-item" data-service="pendamping">
-                                <div class="service-icon">
-                                    <i class="bi bi-people"></i>
-                                </div>
-                                <div class="service-name">Pendamping</div>
-                                <div class="service-desc">Tour Leader & Mutawwif</div>
-                                <input type="checkbox" name="services[]" value="pendamping" hidden>
-                            </div>
-
-                            <div class="service-item" data-service="konten">
-                                <div class="service-icon">
-                                    <i class="bi bi-camera"></i>
-                                </div>
-                                <div class="service-name">Konten</div>
-                                <div class="service-desc">Dokumentasi</div>
-                                <input type="checkbox" name="services[]" value="konten" hidden>
-                            </div>
-
-                            <div class="service-item" data-service="reyal">
-                                <div class="service-icon">
-                                    <i class="bi bi-currency-exchange"></i>
-                                </div>
-                                <div class="service-name">Reyal</div>
-                                <div class="service-desc">Penukaran Mata Uang</div>
-                                <input type="checkbox" name="services[]" value="reyal" hidden>
-                            </div>
-
-                            <div class="service-item" data-service="tour">
-                                <div class="service-icon">
-                                    <i class="bi bi-geo-alt"></i>
-                                </div>
-                                <div class="service-name">Tour</div>
-                                <div class="service-desc">City Tour & Ziarah</div>
-                                <input type="checkbox" name="services[]" value="tour" hidden>
-                            </div>
-
-                            <div class="service-item" data-service="meals">
-                                <div class="service-icon">
-                                    <i class="bi bi-egg-fried"></i>
-                                </div>
-                                <div class="service-name">Meals</div>
-                                <div class="service-desc">Makanan</div>
-                                <input type="checkbox" name="services[]" value="meals" hidden>
-                            </div>
-
-                            <div class="service-item" data-service="dorongan">
-                                <div class="service-icon">
-                                    <i class="bi bi-basket"></i>
-                                </div>
-                                <div class="service-name">Dorongan</div>
-                                <div class="service-desc">Bagi penyandang disabilitas</div>
-                                <input type="checkbox" name="services[]" value="dorongan" hidden>
-                            </div>
-
-                            <div class="service-item" data-service="waqaf">
-                                <div class="service-icon">
-                                    <i class="bi bi-gift"></i>
-                                </div>
-                                <div class="service-name">Waqaf</div>
-                                <div class="service-desc">Sedekah & Waqaf</div>
-                                <input type="checkbox" name="services[]" value="waqaf" hidden>
-                            </div>
-                            <div class="service-item" data-service="badal">
-                                <div class="service-icon">
-                                    <i class="bi bi-gift"></i>
-                                </div>
-                                <div class="service-name">Badal umrah</div>
-                                <div class="service-desc">Sedekah & Waqaf</div>
-                                <input type="checkbox" name="services[]" value="badal" hidden>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
 
-                    <!-- Detail Layanan Section -->
                     <div class="form-section">
                         <h6 class="form-section-title">
                             <i class="bi bi-card-checklist"></i> Detail Permintaan per Divisi
                         </h6>
-                        <!-- Transportasi -->
-                        <div class="detail-form" id="transportasi-details">
-                            <h6 class="detail-title">
-                                <i class="bi bi-airplane"></i> Transportasi
-                            </h6>
 
+                        {{-- TRANSPORTASI FORM --}}
+                        <div class="detail-form hidden" id="transportasi-details">
+                            <h6 class="detail-title"><i class="bi bi-airplane"></i> Transportasi</h6>
                             <div class="detail-section">
                                 <div class="service-grid">
                                     <div class="transport-item" data-transportasi="airplane">
                                         <div class="service-name">Pesawat</div>
-                                        <input type="checkbox" name="transportation[]" value="airplane">
+                                        <input type="checkbox" name="transportation[]" value="airplane" class="d-none">
                                     </div>
-
                                     <div class="transport-item" data-transportasi="bus">
                                         <div class="service-name">Transportasi darat</div>
-                                        <input type="checkbox" name="transportation[]" value="bus">
+                                        <input type="checkbox" name="transportation[]" value="bus" class="d-none">
                                     </div>
                                 </div>
-                                <div class="form-group" data-transportasi="airplane" id="pesawat">
-                                    <div class="flex justify-between mb-2">
-                                        <label class="form-label">Tiket Pesawat</label>
-                                        <button type="button" class="btn btn-sm btn-primary" id="addTicket">Tambah
-                                            Tiket</button>
-                                    </div>
-
+                                <div class="form-group hidden" data-transportasi="airplane" id="pesawat">
+                                    <label class="form-label">Tiket Pesawat</label>
+                                    <button type="button" class="btn btn-sm btn-primary" id="addTicket">Tambah Tiket</button>
                                     <div id="ticketWrapper">
-                                        <!-- Form Tiket Template -->
                                         <div class="ticket-form bg-white p-3 border mb-3">
-                                            <div class="row align-items-center">
-                                                <!-- Tanggal -->
-                                                <div class="col-5">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
                                                     <label class="form-label fw-semibold">Tanggal Keberangkatan</label>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text bg-white"><i
-                                                                class="bi bi-airplane"></i></span>
-                                                        <input type="date" class="form-control" name="tanggal[]">
-                                                    </div>
+                                                    <input type="date" class="form-control" name="tanggal[]">
                                                 </div>
-
-                                                <!-- Rute -->
-                                                <div class="col-5">
+                                                <div class="col-md-6">
                                                     <label class="form-label fw-semibold">Rute</label>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text bg-white"><i
-                                                                class="bi bi-airplane-fill"></i></span>
-                                                        <input type="text" class="form-control" name="rute[]"
-                                                            placeholder="Contoh: CGK - JED">
-                                                    </div>
+                                                    <input type="text" class="form-control" name="rute[]" placeholder="Contoh: CGK - JED">
                                                 </div>
-
-                                                <!-- Maskapai -->
-                                                <div class="col-5 mt-3">
+                                                <div class="col-md-6">
                                                     <label class="form-label fw-semibold">Maskapai</label>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text bg-white"><i
-                                                                class="bi bi-airplane"></i></span>
-                                                        <input type="text" class="form-control" name="maskapai[]"
-                                                            placeholder="Nama maskapai">
-                                                    </div>
+                                                    <input type="text" class="form-control" name="maskapai[]" placeholder="Nama maskapai">
                                                 </div>
-
-                                                <!-- Harga -->
-                                                <div class="col-5 mt-3">
-                                                    <label class="form-label fw-semibold">Harga</label>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text bg-white"><i
-                                                                class="bi bi-cash"></i></span>
-                                                        <input type="number" class="form-control" name="harga[]"
-                                                            placeholder="Harga tiket">
-                                                    </div>
-                                                </div>
-                                                <div class="col-5 mt-3">
-                                                    <label class="form-label fw-semibold">Tiket pesawat pergi</label>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text bg-white"><i
-                                                                class="bi bi-cash"></i></span>
-                                                        <input type="file" class="form-control"
-                                                            name="tiket_berangkat[]" placeholder="Harga tiket">
-                                                    </div>
-                                                </div>
-                                                <div class="col-5 mt-3">
-                                                    <label class="form-label fw-semibold">Tiket pesawat pulang</label>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text bg-white"><i
-                                                                class="bi bi-cash"></i></span>
-                                                        <input type="file" class="form-control" name="tiket_pulang[]"
-                                                            placeholder="Harga tiket">
-                                                    </div>
-                                                </div>
-
-                                                <!-- Keterangan -->
-                                                <div class="col-5 mt-3">
+                                                <div class="col-md-6">
                                                     <label class="form-label fw-semibold">Keterangan</label>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text bg-white"><i
-                                                                class="bi bi-info-circle"></i></span>
-                                                        <input type="text" class="form-control" name="keterangan[]"
-                                                            placeholder="Keterangan">
-                                                    </div>
+                                                    <input type="text" class="form-control" name="keterangan[]" placeholder="Keterangan">
+                                                </div>
+                                                <div class="col-12">
+                                                    <label for="paspor-tiket-0" class="form-label">Jumlah (Jamaah)</label>
+                                                    <input type="text" class="form-control" id="paspor-tiket-0" name="jumlah[]">
                                                 </div>
                                             </div>
-
-                                            <!-- Tombol hapus -->
                                             <div class="mt-3 text-end">
-                                                <button type="button" class="btn btn-danger btn-sm removeTicket">Hapus
-                                                    Tiket</button>
+                                                <button type="button" class="btn btn-danger btn-sm removeTicket">Hapus Tiket</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group" data-transportasi="bus" id="bis">
+                                <div class="form-group hidden" data-transportasi="bus" id="bis">
                                     <label class="form-label">Transportasi darat</label>
-                                    <button type="button" class="btn btn-submit" id="add-transport-btn">Tambah
-                                        Transportasi</button>
-
+                                    <button type="button" class="btn btn-submit" id="add-transport-btn">Tambah Transportasi</button>
                                     <div id="new-transport-forms">
-                                        <div class="transport-set">
-                                            <div class="cars mt-3">
+                                        <div class="transport-set card p-3 mt-3" data-index="0">
+                                            <div class="cars">
                                                 @foreach ($transportations as $i => $data)
-                                                    <div class="service-car" data-id="{{ $data->id }}"
-                                                        data-routes='@json($data->routes)'>
-
+                                                    <div class="service-car" data-id="{{ $data->id }}" data-routes='@json($data->routes)' data-name="{{ $data->nama }}" data-price="{{ $data->harga }}">
                                                         <div class="service-name">{{ $data->nama }}</div>
                                                         <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
                                                         <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
-                                                        <div class="service-desc">Rp.
-                                                            {{ number_format($data->harga) }}/hari</div>
-
-                                                        <input type="radio"
-                                                            name="transportation_id[{{ $i }}]"
-                                                            value="{{ $data->id }}" class="d-none">
+                                                        <div class="service-desc">Rp. {{ number_format($data->harga) }}/hari</div>
+                                                        <input type="radio" name="transportation_id[0]" value="{{ $data->id }}" class="d-none">
                                                     </div>
                                                 @endforeach
-
                                             </div>
-
-
-                                            <div class="route-select hidden" id="route-select">
+                                            <div class="route-select hidden">
                                                 <label class="form-label mt-2">Pilih Rute:</label>
-                                                <select name="rute_id[]" class="form-control">
+                                                <select name="rute_id[0]" class="form-control">
                                                     <option value="">-- Pilih Rute --</option>
                                                 </select>
                                             </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-
-
-                            </div>
-
-
-                        </div>
-                    </div>
-
-                    <!-- Hotel -->
-                    <div class="detail-form" id="hotel-details">
-                        <h6 class="detail-title">
-                            <i class="bi bi-building"></i> Hotel
-                        </h6>
-                        <button type="button" class="btn btn-sm btn-primary mb-2" id="addHotel">Tambah
-                            Hotel</button>
-
-                        <div id="hotelWrapper">
-                            <!-- Form Hotel Template -->
-                            <div class="hotel-form bg-white p-3 border mb-3">
-                                <div class="row align-items-center">
-                                    <!-- Checkin -->
-                                    <div class="col-5">
-                                        <label class="form-label fw-semibold">Tanggal Checkin</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-calendar-check"></i></span>
-                                            <input type="date" class="form-control" name="tanggal_checkin[]">
-                                        </div>
-                                    </div>
-
-                                    <!-- Checkout -->
-                                    <div class="col-5">
-                                        <label class="form-label fw-semibold">Tanggal Checkout</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-calendar-x"></i></span>
-                                            <input type="date" class="form-control" name="tanggal_checkout[]">
-                                        </div>
-                                    </div>
-
-                                    <!-- Nama Hotel -->
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Nama Hotel</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
-                                            <input type="text" class="form-control" name="nama_hotel[]"
-                                                placeholder="Nama hotel">
-
-
-                                        </div>
-                                    </div>
-
-                                    <!-- Type Kamar -->
-                                    <!-- Type Kamar (Checkbox + Jumlah) -->
-                                    <!-- Type Kamar (Checkbox + Jumlah dinamis) -->
-                                    <div class="col-12 mt-3">
-                                        <label class="form-label fw-semibold">Tipe Kamar</label>
-                                        <div class="row">
-                                            <!-- Double -->
-                                            <div class="col-3">
-                                                <div class="form-check">
-                                                    <input class="form-check-input tipe-kamar" type="checkbox"
-                                                        id="doubleCheck0" data-target="doubleJumlah0"
-                                                        name="tipe_kamar[0][nama][]" value="Double">
-                                                    <label class="form-check-label" for="doubleCheck0">Double</label>
-                                                </div>
-                                                <input type="number" class="form-control mt-1 jumlah-input d-none"
-                                                    id="doubleJumlah0" name="tipe_kamar[0][jumlah][]"
-                                                    placeholder="Jumlah" min="0">
+                                            <div class="mt-2 text-end">
+                                                <button type="button" class="btn btn-danger btn-sm remove-transport">Hapus</button>
                                             </div>
-
-                                            <!-- Triple -->
-                                            <div class="col-3">
-                                                <div class="form-check">
-                                                    <input class="form-check-input tipe-kamar" type="checkbox"
-                                                        id="tripleCheck0" data-target="tripleJumlah0"
-                                                        name="tipe_kamar[0][nama][]" value="Triple">
-                                                    <label class="form-check-label" for="tripleCheck0">Triple</label>
-                                                </div>
-                                                <input type="number" class="form-control mt-1 jumlah-input d-none"
-                                                    id="tripleJumlah0" name="tipe_kamar[0][jumlah][]"
-                                                    placeholder="Jumlah" min="0">
-                                            </div>
-
-                                            <!-- Kuard -->
-                                            <div class="col-3">
-                                                <div class="form-check">
-                                                    <input class="form-check-input tipe-kamar" type="checkbox"
-                                                        id="kuardCheck0" data-target="kuardJumlah0"
-                                                        name="tipe_kamar[0][nama][]" value="Kuard">
-                                                    <label class="form-check-label" for="kuardCheck0">Kuard</label>
-                                                </div>
-                                                <input type="number" class="form-control mt-1 jumlah-input d-none"
-                                                    id="kuardJumlah0" name="tipe_kamar[0][jumlah][]" placeholder="Jumlah"
-                                                    min="0">
-                                            </div>
-
-                                            <!-- Kuint -->
-                                            <div class="col-3">
-                                                <div class="form-check">
-                                                    <input class="form-check-input tipe-kamar" type="checkbox"
-                                                        id="kuintCheck0" data-target="kuintJumlah0"
-                                                        name="tipe_kamar[0][nama][]" value="Kuint">
-                                                    <label class="form-check-label" for="kuintCheck0">Kuint</label>
-                                                </div>
-                                                <input type="number" class="form-control mt-1 jumlah-input d-none"
-                                                    id="kuintJumlah0" name="tipe_kamar[0][jumlah][]" placeholder="Jumlah"
-                                                    min="0">
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
-                                    <!-- Jumlah Kamar -->
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Jumlah Kamar</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i class="bi bi-grid"></i></span>
-                                            <input type="number" class="form-control" name="jumlah_kamar[]"
-                                                placeholder="Jumlah kamar">
-                                        </div>
-                                    </div>
-
-                                    <!-- Harga Per Kamar -->
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Harga per Kamar</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i class="bi bi-cash"></i></span>
-                                            <input type="number" class="form-control" name="harga_per_kamar[]"
-                                                placeholder="Harga per kamar">
-                                        </div>
-                                    </div>
-
-                                    <!-- Catatan -->
-                                    <div class="col-5 mt-3">
-                                        <label class="form-label fw-semibold">Catatan</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-info-circle"></i></span>
-                                            <input type="text" class="form-control" name="catatan[]"
-                                                placeholder="Catatan tambahan">
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Tombol hapus -->
-                                <div class="mt-3 text-end">
-                                    <button type="button" class="btn btn-danger btn-sm removeHotel">Hapus
-                                        Hotel</button>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <!-- Dokumen -->
-                    <div class="detail-form" id="dokumen-details">
-                        <h6 class="detail-title">
-                            <i class="bi bi-file-text"></i> Dokumen
-                        </h6>
-
-                        {{-- List parent document --}}
-                        <div class="detail-section">
-                            <div class="service-grid">
-                                @foreach ($documents as $document)
-                                    <div class="document-item" data-document="{{ $document->id }}">
-                                        <div class="service-name">{{ $document->name }}</div>
-                                        <input type="checkbox" name="documents[]" value="{{ $document->id }}" hidden>
-                                    </div>
-                                @endforeach
                             </div>
                         </div>
 
-                        {{-- Loop parent --}}
-                        @foreach ($documents as $document)
-                            @if ($document->childrens && $document->childrens->isNotEmpty())
-                                {{-- Parent with children --}}
-                                <div class="form-group hidden" id="doc-{{ $document->id }}-details">
-                                    <label class="form-label">{{ $document->name }}</label>
-                                    <div class="cars">
-                                        @foreach ($document->childrens as $child)
-                                            <div class="child-item" data-parent="doc-{{ $document->id }}"
-                                                data-child="child-{{ $child->id }}">
-                                                <div class="child-name">{{ $child->name }}</div>
-                                                <input type="checkbox" name="child_documents[]"
-                                                    value="{{ $child->id }}" hidden>
+                        {{-- HOTEL FORM --}}
+                        <div class="detail-form hidden" id="hotel-details">
+                            <h6 class="detail-title"><i class="bi bi-building"></i> Hotel</h6>
+                            <button type="button" class="btn btn-sm btn-primary mb-2" id="addHotel">Tambah Hotel</button>
+                            <div id="hotelWrapper">
+                                <div class="hotel-form bg-white p-3 border mb-3" data-index="0">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Tanggal Checkin</label>
+                                            <input type="date" class="form-control" name="tanggal_checkin[0]">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Tanggal Checkout</label>
+                                            <input type="date" class="form-control" name="tanggal_checkout[0]">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold">Nama Hotel</label>
+                                            <input type="text" class="form-control" name="nama_hotel[0]" placeholder="Nama hotel" data-field="nama_hotel">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold">Tipe Kamar</label>
+                                            <div class="service-grid">
+                                                @foreach ($types as $type)
+                                                    <div class="type-item" data-type-id="{{ $type->id }}" data-price="{{ $type->jumlah }}" data-name="{{ $type->nama_tipe }}">
+                                                        <div class="service-name">{{ $type->nama_tipe }}</div>
+                                                        <div class="service-desc">Rp. {{ number_format($type->jumlah) }}</div>
+                                                    </div>
+                                                @endforeach
                                             </div>
-                                        @endforeach
+                                            <div class="type-input-container hidden"></div>
+                                        </div>
                                     </div>
+                                    <div class="mt-3 text-end">
+                                        <button type="button" class="btn btn-danger btn-sm removeHotel">Hapus Hotel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                    {{-- Loop form children --}}
-                                    @foreach ($document->childrens as $child)
-                                        <div class="child-form hidden" id="child-{{ $child->id }}-form">
-                                            <h3>Form {{ $child->name }}</h3>
-                                            <input type="text" class="form-control" name="jumlah_{{ $child->id }}"
-                                                placeholder="Jumlah {{ $child->name }}">
-                                            <input type="text" class="form-control" name="harga_{{ $child->id }}"
-                                                placeholder="Harga {{ $child->name }}">
-                                            <input type="text" class="form-control"
-                                                name="keterangan_{{ $child->id }}"
-                                                placeholder="Keterangan {{ $child->name }}">
+                        {{-- DOKUMEN FORM --}}
+                        <div class="detail-form hidden" id="dokumen-details">
+                            <h6 class="detail-title"><i class="bi bi-file-text"></i> Dokumen</h6>
+                            <div class="detail-section">
+                                <div class="service-grid">
+                                    @foreach ($documents as $document)
+                                        <div class="document-item" data-document-id="{{ $document->id }}" data-has-children="{{ $document->childrens->isNotEmpty() ? 'true' : 'false' }}" data-name="{{ $document->name }}" data-price="{{ $document->price }}">
+                                            <div class="service-name">{{ $document->name }}</div>
                                         </div>
                                     @endforeach
                                 </div>
-                            @else
-                                <div class="form-group hidden" id="doc-{{ $document->id }}-form">
-                                    <h3>Form {{ $document->name }}</h3>
-                                    <input type="text" class="form-control" name="jumlah_{{ $document->id }}"
-                                        placeholder="Jumlah {{ $document->name }}">
-                                    <input type="text" class="form-control" name="harga_{{ $document->id }}"
-                                        placeholder="Harga {{ $document->name }}">
-                                    <input type="text" class="form-control" name="keterangan_{{ $document->id }}"
-                                        placeholder="Keterangan {{ $document->name }}">
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-
-
-
-                    <!-- Handling -->
-                    <div class="detail-form" id="handling-details">
-                        <h6 class="detail-title">
-                            <i class="bi bi-briefcase"></i> Handling
-                        </h6>
-                        <div class="detail-section">
-                            <div class="service-grid">
-                                <!-- Handling Hotel -->
-                                <div class="document-item" data-handling="hotel">
-
-                                    <div class="service-name">Hotel</div>
-                                    <input type="checkbox" name="handlings[]" value="hotel" hidden>
-                                </div>
-
-                                <!-- Handling Bandara -->
-                                <div class="document-item" data-handling="bandara">
-
-                                    <div class="service-name">Bandara</div>
-                                    <input type="checkbox" name="handlings[]" value="bandara" hidden>
-                                </div>
                             </div>
-                        </div>
-                        <!-- Form Hotel -->
-                        <div class="form-group" data-handling="hotel" id="hotel">
-                            <label class="form-label">Hotel</label>
-
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Nama Hotel</label>
-                                    <input type="text" class="form-control" name="nama_hotel_handling">
-                                </div>
-                            </div>
-
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Tanggal</label>
-                                    <input type="date" class="form-control" name="tanggal_hotel_handling">
-                                </div>
-                            </div>
-
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Harga</label>
-                                    <input type="text" class="form-control" name="harga_hotel_handling">
-                                </div>
-                            </div>
-
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Pax</label>
-                                    <input type="text" class="form-control" name="pax_hotel_handling">
-                                </div>
-                            </div>
-
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Kode booking</label>
-                                    <input type="file" class="form-control" name="kode_booking_hotel_handling">
-                                </div>
-                            </div>
-
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Rumlis</label>
-                                    <input type="file" class="form-control" name="rumlis_hotel_handling">
-                                </div>
-                            </div>
-
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Identitas koper</label>
-                                    <input type="file" class="form-control" name="identitas_hotel_handling">
-                                </div>
-                            </div>
-                        </div> <!-- Tutup Form Hotel -->
-
-                        <!-- Form Bandara -->
-                        <div class="form-group" data-handling="bandara" id="bandara">
-                            <label class="form-label">Bandara</label>
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Nama Bandara</label>
-                                    <input type="text" class="form-control" name="nama_bandara_handling">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Jumlah Jamaah</label>
-                                    <input type="text" class="form-control" name="jumlah_jamaah_handling">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Harga</label>
-                                    <input type="text" class="form-control" name="harga_bandara_handling">
-                                </div>
-                                <div class="form-group"> <label class="form-label">Kedatangan Jamaah</label>
-                                    <input type="date" class="form-control" name="kedatangan_jamaah_handling">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Paket info</label>
-                                    <input type="file" class="form-control" name="paket_info">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Nama Sopir</label>
-                                    <input type="text" class="form-control" name="nama_supir">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Identitas koper</label>
-                                    <input type="file" class="form-control" name="identitas_koper_bandara_handling">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Pendamping -->
-                    <div class="detail-form" id="pendamping-details">
-                        <h6 class="detail-title">
-                            <i class="bi bi-briefcase"></i> Pendamping
-                        </h6>
-                        <div class="detail-section">
-                            <div class="service-grid">
-                                @foreach ($guides as $guide)
-                                    <div class="pendamping-wrapper">
-                                        <div class="pendamping-item" data-pendamping="guide-{{ $guide->id }}"
-                                            data-price="{{ $guide->harga }}">
-                                            <div class="service-name">{{ $guide->nama }}</div>
-                                            <div class="service-desc">Rp {{ number_format($guide->harga, 0, ',', '.') }}
+                            <div id="document-forms-container">
+                                @foreach ($documents as $document)
+                                    @if ($document->childrens->isNotEmpty())
+                                        <div class="form-group hidden document-child-form" data-parent-id="{{ $document->id }}">
+                                            <label class="form-label">{{ $document->name }}</label>
+                                            <div class="cars">
+                                                @foreach ($document->childrens as $child)
+                                                    <div class="child-item" data-child-id="{{ $child->id }}" data-price="{{ $child->price }}" data-name="{{ $child->name }}">
+                                                        <div class="child-name">{{ $child->name }}</div>
+                                                        <div class="child-name">Rp. {{ number_format($child->price) }}</div>
+                                                    </div>
+                                                @endforeach
                                             </div>
-                                            <input type="checkbox" name="pendamping[]" value="{{ $guide->id }}"
-                                                hidden>
                                         </div>
-                                        <div class="pendamping-form hidden" id="form-guide-{{ $guide->id }}">
-                                            <label class="form-label">Jumlah {{ $guide->nama }}</label>
-                                            <input type="number" class="form-control jumlah-pendamping"
-                                                data-name="{{ $guide->nama }}" data-price="{{ $guide->harga }}"
-                                                name="jumlah_{{ $guide->id }}" min="1">
-                                            <label class="form-label mt-2">Keterangan</label>
-                                            <textarea class="form-control" name="ket_{{ $guide->id }}"></textarea>
+                                    @else
+                                        <div class="form-group hidden document-base-form" id="doc-{{ $document->id }}-form" data-document-id="{{ $document->id }}" data-price="{{ $document->price }}" data-name="{{ $document->name }}">
+                                            <label class="form-label">Jumlah {{ $document->name }}</label>
+                                            <input type="number" class="form-control" name="jumlah_doc_{{ $document->id }}" min="1">
+                                            <label class="form-label">Keterangan {{ $document->name }}</label>
+                                            <input type="text" class="form-control" name="keterangan_doc_{{ $document->id }}">
                                         </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                            <div class="mb-3">
+                                <label for="paspor_dokumen" class="form-label">Paspor</label>
+                                <input type="file" class="form-control" id="paspor_dokumen" name="paspor_dokumen" accept="image/*">
+                                <small class="text-muted">Format: JPEG, PNG, JPG (Max: 2MB)</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="pas_foto_dokumen" class="form-label">Pas foto</label>
+                                <input type="file" class="form-control" id="pas_foto_dokumen" name="pas_foto_dokumen" accept="image/*">
+                                <small class="text-muted">Format: JPEG, PNG, JPG (Max: 2MB)</small>
+                            </div>
+                        </div>
+
+                        {{-- HANDLING FORM --}}
+                        <div class="detail-form hidden" id="handling-details">
+                            <h6 class="detail-title"><i class="bi bi-briefcase"></i> Handling</h6>
+                            <div class="detail-section">
+                                <div class="service-grid">
+                                    <div class="handling-item" data-handling="hotel" data-name="Hotel Handling">
+                                        <div class="service-name">Hotel</div>
+                                        <input type="checkbox" name="handlings[]" value="hotel" class="d-none">
+                                    </div>
+                                    <div class="handling-item" data-handling="bandara" data-name="Bandara Handling">
+                                        <div class="service-name">Bandara</div>
+                                        <input type="checkbox" name="handlings[]" value="bandara" class="d-none">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group hidden" id="hotel-handling-form">
+                                <div class="form-row">
+                                    <div class="form-col"><label class="form-label">Nama Hotel</label><input type="text" class="form-control" name="nama_hotel_handling"></div>
+                                    <div class="form-col"><label class="form-label">Tanggal</label><input type="date" class="form-control" name="tanggal_hotel_handling"></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-col"><label class="form-label">Harga</label><input type="text" class="form-control" name="harga_hotel_handling"></div>
+                                    <div class="form-col"><label class="form-label">Pax</label><input type="text" class="form-control" name="pax_hotel_handling"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Kode Booking</label><input type="file" class="form-control" name="kode_booking_hotel_handling">
+                                    <label class="form-label">Room List</label><input type="file" class="form-control" name="rumlis_hotel_handling">
+                                    <label class="form-label">Identitas Koper</label><input type="file" class="form-control" name="identitas_hotel_handling">
+                                </div>
+                            </div>
+                            <div class="form-group hidden" id="bandara-handling-form">
+                                <div class="form-row">
+                                    <div class="form-col"><label class="form-label">Nama Bandara</label><input type="text" class="form-control" name="nama_bandara_handling"></div>
+                                    <div class="form-col"><label class="form-label">Jumlah Jamaah</label><input type="text" class="form-control" name="jumlah_jamaah_handling"></div>
+                                    <div class="form-col"><label class="form-label">Harga</label><input type="text" class="form-control" name="harga_bandara_handling"></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-col"><label class="form-label">Kedatangan Jamaah</label><input type="date" class="form-control" name="kedatangan_jamaah_handling"></div>
+                                    <div class="form-col"><label class="form-label">Paket Info</label><input type="file" class="form-control" name="paket_info"></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-col"><label class="form-label">Nama Sopir</label><input type="text" class="form-control" name="nama_supir"></div>
+                                    <div class="form-col"><label class="form-label">Identitas Koper</label><input type="file" class="form-control" name="identitas_koper_bandara_handling"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- PENDAMPING FORM --}}
+                        <div class="detail-form hidden" id="pendamping-details">
+                            <h6 class="detail-title"><i class="bi bi-briefcase"></i> Pendamping</h6>
+                            <div class="detail-section">
+                                <div class="service-grid">
+                                    @foreach ($guides as $guide)
+                                        <div class="pendamping-item" data-id="{{ $guide->id }}" data-price="{{ $guide->harga }}" data-name="{{ $guide->nama }}" data-type="pendamping">
+                                            <div class="service-name">{{ $guide->nama }}</div>
+                                            <div class="service-desc">Rp {{ number_format($guide->harga) }}</div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                @foreach ($guides as $guide)
+                                    <div id="form-pendamping-{{ $guide->id }}" class="form-group hidden">
+                                        <label class="form-label">Jumlah {{ $guide->nama }}</label>
+                                        <input type="number" class="form-control jumlah-item" data-id="{{ $guide->id }}" data-name="{{ $guide->nama }}" data-price="{{ $guide->harga }}" data-type="pendamping" name="jumlah_pendamping[{{ $guide->id }}]" min="1">
                                     </div>
                                 @endforeach
                             </div>
                         </div>
-                    </div>
 
-                    <!-- content -->
-                    <div class="detail-form" id="konten-details">
-                        <h6 class="detail-title">
-                            <i class="bi bi-briefcase"></i> Content
-                        </h6>
-                        <div class="detail-section">
-                            <div class="service-grid">
-                                @foreach ($contents as $content)
-                                    <div class="content-wrapper">
-                                        <div class="content-item" data-content="{{ $content->id }}"
-                                            data-price="{{ $content->price }}">
+                        {{-- KONTEN FORM --}}
+                        <div class="detail-form hidden" id="konten-details">
+                            <h6 class="detail-title"><i class="bi bi-briefcase"></i> Content</h6>
+                            <div class="detail-section">
+                                <div class="service-grid">
+                                    @foreach ($contents as $content)
+                                        <div class="content-item" data-id="{{ $content->id }}" data-name="{{ $content->name }}" data-price="{{ $content->price }}" data-type="konten">
                                             <div class="service-name">{{ $content->name }}</div>
-                                            <div class="service-desc">Rp.
-                                                {{ number_format($content->price, 0, ',', '.') }}</div>
-                                            <input type="checkbox" name="content[]" value="{{ $content->id }}" hidden>
+                                            <div class="service-desc">Rp. {{ number_format($content->price) }}</div>
                                         </div>
-                                        <div class="content-form hidden" id="form-{{ $content->name }}">
-                                            <label class="form-label">Jumlah Umrah</label>
-                                            <input type="number" class="form-control" name="jumlah_{{ $content->id }}"
-                                                min="1">
-                                            <label class="form-label mt-2">Keterangan</label>
-                                            <textarea class="form-control" name="ket_{{ $content->id }}"></textarea>
-                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                @foreach ($contents as $content)
+                                    <div id="form-konten-{{ $content->id }}" class="form-group hidden">
+                                        <label class="form-label">Jumlah {{ $content->name }}</label>
+                                        <input type="number" class="form-control jumlah-item" data-id="{{ $content->id }}" data-name="{{ $content->name }}" data-price="{{ $content->price }}" data-type="konten" name="jumlah_konten[{{ $content->id }}]" min="1">
                                     </div>
                                 @endforeach
-                                <!-- UMRAH -->
-
-
-
                             </div>
                         </div>
-                    </div>
 
-
-                    <div class="detail-form" id="reyal-details">
-                        <h6 class="detail-title">
-                            <i class="bi bi-briefcase"></i> Penukaran mata uang
-                        </h6>
-                        <div class="row">
-                            <!-- Card Tamis -->
-                            <div class="col-md-6">
-                                <div class="card text-center p-3" id="card-tamis" style="cursor: pointer;">
-                                    <h5>Tamis</h5>
-                                    <p>Rupiah → Reyal</p>
-                                    <input type="radio" name="tipe" value="tamis" id="radio-tamis">
+                        {{-- REYAL FORM --}}
+                        <div class="detail-form hidden" id="reyal-details">
+                            <h6 class="detail-title"><i class="bi bi-briefcase"></i> Penukaran mata uang</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="card text-center p-3 card-reyal" data-reyal-type="tamis">
+                                        <h5>Tamis</h5>
+                                        <p>Rupiah → Reyal</p>
+                                        <input type="radio" name="tipe" value="tamis" class="d-none">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card text-center p-3 card-reyal" data-reyal-type="tumis">
+                                        <h5>Tumis</h5>
+                                        <p>Reyal → Rupiah</p>
+                                        <input type="radio" name="tipe" value="tumis" class="d-none">
+                                    </div>
                                 </div>
                             </div>
-
-                            <!-- Card Tumis -->
-                            <div class="col-md-6">
-                                <div class="card text-center p-3" id="card-tumis" style="cursor: pointer;">
-                                    <h5>Tumis</h5>
-                                    <p>Reyal → Rupiah</p>
-                                    <input type="radio" name="tipe" value="tumis" id="radio-tumis">
+                            <div class="detail-form mt-3 hidden" id="form-tamis">
+                                <h6><i class="bi bi-arrow-down-up"></i> Konversi Rupiah → Reyal</h6>
+                                <div class="form-group">
+                                    <label>Jumlah Rupiah</label>
+                                    <input type="number" class="form-control" id="rupiah-tamis" name="jumlah_rupiah">
+                                </div>
+                                <div class="form-group">
+                                    <label>Kurs (1 Reyal = ... Rupiah)</label>
+                                    <input type="number" class="form-control" id="kurs-tamis" name="kurs_tamis">
+                                </div>
+                                <div class="form-group mt-2">
+                                    <label>Hasil dalam Reyal</label>
+                                    <input type="text" class="form-control" id="hasil-tamis" name="hasil_tamis" readonly>
+                                </div>
+                            </div>
+                            <div class="detail-form mt-3 hidden" id="form-tumis">
+                                <h6><i class="bi bi-arrow-down-up"></i> Konversi Reyal → Rupiah</h6>
+                                <div class="form-group">
+                                    <label>Jumlah Reyal</label>
+                                    <input type="number" class="form-control" id="reyal-tumis" name="jumlah_reyal">
+                                </div>
+                                <div class="form-group">
+                                    <label>Kurs (1 Reyal = ... Rupiah)</label>
+                                    <input type="number" class="form-control" id="kurs-tumis" name="kurs_tumis">
+                                </div>
+                                <div class="form-group mt-2">
+                                    <label>Hasil dalam Rupiah</label>
+                                    <input type="text" class="form-control" id="hasil-tumis" name="hasil_tumis" readonly>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Form Tamis -->
-                        <div class="detail-form mt-3" id="form-tamis" style="display: none;">
-                            <h6><i class="bi bi-arrow-down-up"></i> Konversi Rupiah → Reyal</h6>
-                            <div class="form-group">
-                                <label>Jumlah Rupiah</label>
-                                <input type="number" class="form-control" id="rupiah-tamis" name="jumlah_rupiah">
-                            </div>
-                            <div class="form-group">
-                                <label>Kurs (1 Reyal = ... Rupiah)</label>
-                                <input type="number" class="form-control" id="kurs-tamis" name="kurs_tamis">
-                            </div>
-                            <div class="form-group mt-2">
-                                <label>Hasil dalam Reyal</label>
-                                <input type="text" class="form-control" id="hasil-tamis" name="hasil_tamis" readonly>
-                            </div>
-                        </div>
-
-                        <!-- Form Tumis -->
-                        <div class="detail-form mt-3" id="form-tumis" style="display: none;">
-                            <h6><i class="bi bi-arrow-down-up"></i> Konversi Reyal → Rupiah</h6>
-                            <div class="form-group">
-                                <label>Jumlah Reyal</label>
-                                <input type="number" class="form-control" id="reyal-tumis" name="jumlah_reyal">
-                            </div>
-                            <div class="form-group">
-                                <label>Kurs (1 Reyal = ... Rupiah)</label>
-                                <input type="number" class="form-control" id="kurs-tumis" name="kurs_tumis">
-                            </div>
-                            <div class="form-group mt-2">
-                                <label>Hasil dalam Rupiah</label>
-                                <input type="text" class="form-control" id="hasil-tumis" name="hasil_tumis" readonly>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="detail-form" id="tour-details">
-                        <h6 class="detail-title">
-                            <i class="bi bi-briefcase"></i> Tour
-                        </h6>
-                        <div class="detail-section">
-                            <div class="tours">
-                                @foreach ($tours as $tour)
-                                    <label class="service-tour"
-                                        data-tour="{{ strtolower(str_replace(' ', '-', $tour->name)) }}">
-                                        <div class="service-name">{{ $tour->name }}</div>
-                                        <input type="checkbox" name="tours[]" value="{{ $tour->id }}"
-                                            class="d-none">
-                                    </label>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- FORM TRANSPORTASI --}}
-                    @foreach ($tours as $tour)
-                        @php
-                            $slug = strtolower(str_replace(' ', '-', $tour->name));
-                        @endphp
-                        <div id="tour-{{ $slug }}-form" class="tour-form hidden">
-                            <h4>Transportasi {{ $tour->name }}</h4>
-                            <div class="transport-options">
-                                @foreach ($transportations as $trans)
-                                    <label class="transport-option">
-                                        <div class="service-name">{{ $trans->nama }}</div>
-                                        <div class="service-desc">Kapasitas: {{ $trans->kapasitas }}</div>
-                                        <div class="service-desc">Fasilitas: {{ $trans->fasilitas }}</div>
-                                        <div class="service-desc">Harga: {{ $trans->harga }}</div>
-                                        <input type="radio" name="select_car_{{ $slug }}"
-                                            value="{{ $trans->id }}" class="d-none">
-                                    </label>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endforeach
-
-
-                    <div class="detail-form" id="meals-details">
-                        <h6 class="detail-title">
-                            <i class="bi bi-briefcase"></i> Makanan
-                        </h6>
-                        <div class="">
-                            @foreach ($meals as $meal)
-                                <div class="meal-item" data-meal="{{ strtolower(str_replace(' ', '-', $meal->name)) }}"
-                                    data-price="{{ $meal->price }}" class="meal-item">
-                                    <div class="service-name">{{ $meal->name }}</div>
-                                    <div class="service-desc">{{ number_format($meal->price, 0, ',', '.') }}</div>
-                                    <input type="checkbox" name="meals[]" value="{{ $meal->id }}" hidden>
-
+                        {{-- TOUR FORM --}}
+                        <div class="detail-form hidden" id="tour-details">
+                            <h6 class="detail-title"><i class="bi bi-briefcase"></i> Tour</h6>
+                            <div class="detail-section">
+                                <div class="tours">
+                                    @foreach ($tours as $tour)
+                                        <div class="service-tour" data-id="{{ $tour->id }}" data-name="{{ $tour->name }}">
+                                            <div class="service-name">{{ $tour->name }}</div>
+                                        </div>
+                                    @endforeach
                                 </div>
-                                <!-- form jumlah hidden -->
-                                <div id="form-{{ strtolower(str_replace(' ', '-', $meal->name)) }}"
-                                    class="form-jumlah hidden mt-2">
-                                    <input type="number" class="jumlah-meal form-control" min="0" value="0"
-                                        name="jumlah_meals[{{ $meal->name }}]" data-name="{{ $meal->name }}"
-                                        data-price="{{ $meal->price }}">
+                            </div>
+                            @foreach ($tours as $tour)
+                                @php $slug = Str::slug($tour->name); @endphp
+                                <div id="tour-{{ $tour->id }}-form" class="tour-form hidden">
+                                    <h6>Transportasi {{ $tour->name }}</h6>
+                                    <div class="transport-options service-grid">
+                                        @foreach ($transportations as $trans)
+                                            <div class="transport-option" data-tour-id="{{ $tour->id }}" data-trans-id="{{ $trans->id }}" data-price="{{ $trans->harga }}" data-tour-name="{{ $tour->name }}" data-trans-name="{{ $trans->nama }}">
+                                                <div class="service-name">{{ $trans->nama }}</div>
+                                                <div class="service-desc">Kapasitas: {{ $trans->kapasitas }}</div>
+                                                <div class="service-desc">Fasilitas: {{ $trans->fasilitas }}</div>
+                                                <div class="service-desc">Harga: {{ number_format($trans->harga) }}</div>
+                                                <input type="radio" name="tour_transport[{{ $tour->id }}]" value="{{ $trans->id }}" class="d-none">
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             @endforeach
-
-
                         </div>
-                    </div>
 
+                        {{-- MEALS FORM --}}
+                        <div class="detail-form hidden" id="meals-details">
+                            <h6 class="detail-title"><i class="bi bi-briefcase"></i> Makanan</h6>
+                            <div class="service-grid">
+                                @foreach ($meals as $meal)
+                                    <div class="meal-item" data-id="{{ $meal->id }}" data-name="{{ $meal->name }}" data-price="{{ $meal->price }}" data-type="meal">
+                                        <div class="service-name">{{ $meal->name }}</div>
+                                        <div class="service-desc">Rp. {{ number_format($meal->price) }}</div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="detail-section">
+                                @foreach ($meals as $meal)
+                                    <div id="form-meal-{{ $meal->id }}" class="form-group hidden">
+                                        <label class="form-label">Jumlah {{ $meal->name }}</label>
+                                        <input type="number" class="form-control jumlah-item" data-id="{{ $meal->id }}" data-name="{{ $meal->name }}" data-price="{{ $meal->price }}" data-type="meal" name="jumlah_meals[{{ $meal->id }}]" min="1">
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
 
-                    <div class="detail-form" id="dorongan-details">
-                        <h6 class="detail-title">
-                            <i class="bi bi-briefcase"></i> Dorongan
-                        </h6>
-                        <div class="service-grid">
-                            @foreach ($dorongan as $item)
-                                @php $slug = Str::slug($item->name); @endphp
-                                <div class="dorongan-wrapper">
-                                    <div class="dorongan-item" data-dorongan="{{ $slug }}" data-price="{{ $item->price }}">
+                        {{-- DORONGAN FORM --}}
+                        <div class="detail-form hidden" id="dorongan-details">
+                            <h6 class="detail-title"><i class="bi bi-briefcase"></i> Dorongan</h6>
+                            <div class="service-grid">
+                                @foreach ($dorongan as $item)
+                                    <div class="dorongan-item" data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-price="{{ $item->price }}" data-type="dorongan">
                                         <div class="service-name">{{ $item->name }}</div>
-                                        <div class="service-desc">Rp. {{ $item->price }}</div>
-                                        <input type="checkbox" name="dorongan[]" value="{{ $item->id }}" hidden>
+                                        <div class="service-desc">Rp. {{ number_format($item->price) }}</div>
                                     </div>
-
-                                    <!-- form jumlah -->
-                                    <div class="dorongan-form hidden" id="form-{{ $slug }}">
+                                @endforeach
+                            </div>
+                            <div class="detail-section">
+                                @foreach ($dorongan as $item)
+                                    <div id="form-dorongan-{{ $item->id }}" class="form-group hidden">
                                         <label class="form-label">Jumlah {{ $item->name }}</label>
-                                        <input type="number"
-                                            class="form-control jumlah-dorongan"
-                                            name="jumlah_dorongan[{{ $item->id }}]"
-                                            min="1"
-                                            value="1"
-                                            data-name="{{ $item->name }}"
-                                            data-price="{{ $item->price }}">
+                                        <input type="number" class="form-control jumlah-item" data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-price="{{ $item->price }}" data-type="dorongan" name="jumlah_dorongan[{{ $item->id }}]" min="1">
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
 
-
-                    <!-- wadah form dinamis -->
-                    <div id="jumlah-dorongan-container" class="mt-3"></div>
-
-                    <!-- TEMPLATE form jumlah (hidden) -->
-                    <div id="jumlah-dorongan-form" class="form-group hidden">
-                        <label class="form-label">Jumlah</label>
-                        <input type="number" class="form-control" min="1" value="1">
-                        <input type="hidden" value="">
-                    </div>
-                    <div class="detail-form" id="waqaf-details">
-                        <h6 class="detail-title">
-                            <i class="bi bi-briefcase"></i> Wakaf
-                        </h6>
-                        <div class="service-grid">
-                            @foreach ($wakaf as $item)
-                                <div class="wakaf-item" data-target="form-{{ Str::slug($item->nama) }}">
-                                    <div class="service-name">{{ $item->nama }}</div>
-                                    <div class="service-desc">Rp. {{ $item->harga }}</div>
-                                    <input type="checkbox" name="wakaf[]" value="{{ $item->id }}" hidden>
-                                </div>
-                            @endforeach
+                        {{-- WAQAF FORM --}}
+                        <div class="detail-form hidden" id="waqaf-details">
+                            <h6 class="detail-title"><i class="bi bi-briefcase"></i> Waqaf</h6>
+                            <div class="service-grid">
+                                @foreach ($wakaf as $item)
+                                    <div class="wakaf-item" data-id="{{ $item->id }}" data-name="{{ $item->nama }}" data-price="{{ $item->harga }}" data-type="wakaf">
+                                        <div class="service-name">{{ $item->nama }}</div>
+                                        <div class="service-desc">Rp. {{ number_format($item->harga) }}</div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="detail-section">
+                                @foreach ($wakaf as $item)
+                                    <div id="form-wakaf-{{ $item->id }}" class="form-group hidden">
+                                        <label class="form-label">Jumlah {{ $item->nama }}</label>
+                                        <input type="number" class="form-control jumlah-item" data-id="{{ $item->id }}" data-name="{{ $item->nama }}" data-price="{{ $item->harga }}" data-type="wakaf" name="jumlah_wakaf[{{ $item->id }}]" min="1">
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
 
-                    {{-- form otomatis dari wakaf --}}
-                    @foreach ($wakaf as $item)
-                        <div id="form-{{ Str::slug($item->nama) }}" class="form-group hidden">
-                            <label class="form-label">Jumlah {{ $item->nama }}</label>
-                            <input type="text" class="form-control" name="jumlah_wakaf[{{ $item->id }}]">
-                        </div>
-                    @endforeach
-
-
-
-                    <div class="detail-form" id="badal-details">
-                        <h6 class="detail-title">
-                            <i class="bi bi-briefcase"></i> Badal
-                        </h6>
-                        <button type="button" class="btn btn-sm btn-primary mb-2" id="addBadal">Tambah
-                            Badal</button>
-
-                        <div id="badalWrapper">
-                            <!-- Form Badal Template -->
-                            <div class="badal-form bg-white p-3 border mb-3">
-                                <div class="form-group mb-2">
-                                    <label class="form-label">Nama yang dibadalkan</label>
-                                    <input type="text" class="form-control" name="nama_badal[]">
-                                </div>
-                                <div class="form-group mb-2">
-                                    <label class="form-label">Harga</label>
-                                    <input type="number" class="form-control" name="harga_badal[]">
-                                </div>
-
-                                <!-- Tombol hapus -->
-                                <div class="mt-2 text-end">
-                                    <button type="button" class="btn btn-danger btn-sm removeBadal">Hapus
-                                        Badal</button>
+                        {{-- BADAL UMRAH FORM --}}
+                        <div class="detail-form hidden" id="badal-details">
+                            <h6 class="detail-title"><i class="bi bi-briefcase"></i> Badal Umrah</h6>
+                            <button type="button" class="btn btn-sm btn-primary mb-2" id="addBadal">Tambah Badal</button>
+                            <div id="badalWrapper">
+                                <div class="badal-form bg-white p-3 border mb-3" data-index="0">
+                                    <div class="form-group mb-2">
+                                        <label class="form-label">Nama yang dibadalkan</label>
+                                        <input type="text" class="form-control nama_badal" name="nama_badal[0]">
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label class="form-label">Harga</label>
+                                        <input type="number" class="form-control harga_badal" name="harga_badal[0]" min="0">
+                                    </div>
+                                    <div class="mt-2 text-end">
+                                        <button type="button" class="btn btn-danger btn-sm removeBadal">Hapus Badal</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <div class="form-section p-3" id="cart-total-price" style="display: none;">
+                        <h6 class="form-section-title">
+                            <i class="bi bi-card-checklist"></i> Detail produk yang dipilih
+                        </h6>
+                        <ul id="cart-items" class="list-group mt-2"></ul>
+                        <div class="mt-3 text-end">
+                            <strong>Total:
+                                <input type="hidden" name="total_amount" id="cart-total" value="0">
+                                <span id="cart-total-text">Rp. 0</span>
+                            </strong>
+                        </div>
+                    </div>
 
-                    <!-- Tambahkan detail untuk divisi lainnya di sini -->
-
+                    <div class="form-actions">
+                        <button type="submit" name="action" value="save" class="btn btn-primary">
+                            Simpan
+                        </button>
+                        <button type="submit" name="action" value="nego" class="btn btn-warning">
+                            Nego
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-section p-3" id="cart-total-price" style="display: none;">
-                <h6 class="form-section-title">
-                    <i class="bi bi-card-checklist"></i> Detail product yang dipilih
-                </h6>
-                <ul id="cart-items" class="list-group mt-2"></ul>
-                <div class="mt-3 text-end">
-                    <strong>Total:
-                        <input type="hidden" name="total_amount" id="cart-total" value="0">
-                        <span id="cart-total-text">Rp. 0</span>
-                    </strong>
-                </div>
-            </div>
-
-
-            <!-- Form Actions -->
-            <div class="form-actions">
-                <button type="submit" name="action" value="save" class="btn btn-primary">
-                    Simpan
-                </button>
-
-                <button type="submit" name="action" value="nego" class="btn btn-warning">
-                    Nego
-                </button>
-            </div>
-            </form>
         </div>
     </div>
-    </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let cart = {};
+        const cartSection = document.getElementById("cart-total-price");
+        const cartItemsList = document.getElementById("cart-items");
+        const cartTotalInput = document.getElementById("cart-total");
+        const cartTotalText = document.getElementById("cart-total-text");
+        let hotelCounter = 0;
+        let badalCounter = 0;
+        let transportCounter = 0;
+        let ticketCounter = 0;
 
-    <script src="{{ asset('js/document.js') }}"></script>
-    <script src="{{ asset('js/dorongan.js') }}"></script>
-    <script src="{{ asset('js/reyal.js') }}"></script>
-    <script src="{{ asset('js/handling.js') }}"></script>
-    <script src="{{ asset('js/cart-total-price.js') }}"></script>
-    <script src="{{ asset('js/content.js') }}"></script>
-    <script src="{{ asset('js/wakaf.js') }}"></script>
-    <script src="{{ asset('js/badal.js') }}"></script>
-    <script src="{{ asset('js/pendamping.js') }}"></script>
-    <script src="{{ asset('js/tour.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function updateCartUI() {
+            cartItemsList.innerHTML = "";
+            let totalAll = 0;
+            const items = Object.values(cart).filter(item => item.total > 0);
 
-            // Toggle seleksi service item
-            const serviceItems = document.querySelectorAll('.service-item');
-            serviceItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    item.classList.toggle('selected');
-                    const checkbox = item.querySelector('input[type="checkbox"]');
-                    checkbox.checked = !checkbox.checked;
-
-                    // Toggle tampilan detail form
-                    const serviceType = item.getAttribute('data-service');
-                    const detailForm = document.getElementById(`${serviceType}-details`);
-                    if (detailForm) {
-                        detailForm.style.display = checkbox.checked ? 'block' : 'none';
-                    }
-
-                    console.log(serviceType);
-
-                });
+            items.forEach(item => {
+                totalAll += item.total;
+                const li = document.createElement("li");
+                li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+                li.innerHTML = `
+                    <div>
+                        <strong>${item.name}</strong>
+                        <small class="text-muted d-block">Rp ${item.price.toLocaleString('id-ID')} x ${item.qty}</small>
+                    </div>
+                    <span>Rp ${item.total.toLocaleString('id-ID')}</span>
+                `;
+                cartItemsList.appendChild(li);
             });
 
+            cartTotalInput.value = totalAll;
+            cartTotalText.textContent = `Rp ${totalAll.toLocaleString('id-ID')}`;
+            cartSection.style.display = items.length > 0 ? "block" : "none";
+        }
 
+        function updateItemInCart(key, name, qty, price) {
+            if (qty > 0 && price >= 0) {
+                cart[key] = { name: name, qty: qty, price: price, total: qty * price };
+            } else {
+                delete cart[key];
+            }
+            updateCartUI();
+        }
 
+        // --- Data Travel Section ---
+        document.getElementById('travel-select').addEventListener('change', function() {
+            const option = this.options[this.selectedIndex];
+            document.getElementById('penanggung').value = option.dataset.penanggung || '';
+            document.getElementById('email').value = option.dataset.email || '';
+            document.getElementById('phone').value = option.dataset.telepon || '';
+        });
 
+        // --- Master Service Selection ---
+        document.querySelectorAll('.service-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const serviceType = item.dataset.service;
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                const detailForm = document.getElementById(`${serviceType}-details`);
 
-            // Toggle seleksi transport item
-            const transportItems = document.querySelectorAll('.transport-item');
-            transportItems.forEach(item => {
-                // item.addEventListener('click', () => {
-                //     item.classList.toggle('selected');
-                //     const checkbox = item.querySelector('input[type="checkbox"]');
-                //     checkbox.checked = !checkbox.checked;
-                //     // Toggle tampilan detail form
-                //     const transportType = item.getAttribute('data-transportasi');
-                //     if (transportType === 'airplane') {
-                //         document.getElementById('pesawat').style.display = checkbox.checked ?
-                //             'block' : 'none';
-                //     } else if (transportType === 'bus') {
-                //         document.getElementById('bis').style.display = checkbox.checked ? 'block' :
-                //             'none';
-                //     }
-                // });
+                item.classList.toggle('selected');
+                checkbox.checked = item.classList.contains('selected');
 
-            });
-
-
-
-            const serviceTour = document.querySelectorAll(".service-tour");
-
-            serviceTour.forEach(tour => {
-                tour.addEventListener("click", (event) => {
-                    event.preventDefault(); // cegah toggle radio default
-                    const typeTour = tour.getAttribute('data-tour');
-                    const detailForm = document.getElementById(`tour-${typeTour}-form`);
-                    const radioTour = tour.querySelector('input[type="checkbox"]');
-
-                    // toggle class selected
-                    const isSelected = tour.classList.toggle('selected');
-
-                    // toggle radio checked sesuai selected
-                    radioTour.checked = isSelected;
-
-                    // tampilkan atau sembunyikan form sesuai toggle
-                    if (detailForm) {
-                        detailForm.style.display = isSelected ? 'block' : 'none';
-                    }
-                });
-            });
-
-
-
-
-            // Validasi form sebelum submit
-            const form = document.querySelector('form');
-            form.addEventListener('submit', function(e) {
-                let isValid = true;
-                const requiredFields = form.querySelectorAll('[required]');
-
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        isValid = false;
-                        field.style.borderColor = 'var(--danger-color)';
-                    } else {
-                        field.style.borderColor = '';
-                    }
-                });
-
-                if (!isValid) {
-                    e.preventDefault();
-                    alert('Harap isi semua field yang wajib diisi!');
+                if (detailForm) {
+                    detailForm.classList.toggle('hidden');
                 }
             });
         });
 
+        // --- Dynamic Form Handlers (Delegation) ---
+        document.body.addEventListener('click', function(e) {
+            // Transportasi Selection (Pesawat & Bus)
+            const transportItem = e.target.closest('.transport-item');
+            if (transportItem) {
+                const type = transportItem.dataset.transportasi;
+                const isSelected = transportItem.classList.toggle('selected');
+                transportItem.querySelector('input').checked = isSelected;
+                document.getElementById(type === 'airplane' ? 'pesawat' : 'bis').classList.toggle('hidden', !isSelected);
+            }
 
-        document.getElementById('travel-select').addEventListener('change', function() {
-            let option = this.options[this.selectedIndex];
+            // Document selection (parent & child)
+            const documentItem = e.target.closest('.document-item');
+            if (documentItem) {
+                const docId = documentItem.dataset.documentId;
+                const hasChildren = documentItem.dataset.hasChildren === 'true';
 
-            document.getElementById('penanggung').value = option.getAttribute('data-penanggung');
-            document.getElementById('email').value = option.getAttribute('data-email');
-            document.getElementById('phone').value = option.getAttribute('data-telepon');
+                // Deselect other main document items
+                document.querySelectorAll('.document-item.selected').forEach(item => {
+                    const id = item.dataset.documentId;
+                    if (id !== docId) {
+                        item.classList.remove('selected');
+                        const childForms = document.querySelector(`.document-child-form[data-parent-id="${id}"]`);
+                        const baseForm = document.querySelector(`.document-base-form[data-document-id="${id}"]`);
+                        if (childForms) childForms.classList.add('hidden');
+                        if (baseForm) baseForm.classList.add('hidden');
 
+                        Object.keys(cart).forEach(key => {
+                            if (key.includes(`doc-base-${id}`) || key.includes(`doc-child-${id}`)) {
+                                delete cart[key];
+                            }
+                        });
+                    }
+                });
 
-        });
+                documentItem.classList.toggle('selected');
+                const formElement = document.querySelector(`.document-child-form[data-parent-id="${docId}"]`) || document.querySelector(`.document-base-form[data-document-id="${docId}"]`);
 
-
-
-
-
-
-
-
-        document.addEventListener("DOMContentLoaded", function() {
-            // Tampilkan form transportasi sesuai klik
-            const transportItems = document.querySelectorAll(".transport-item");
-            transportItems.forEach(item => {
-                item.addEventListener("click", function() {
-                    const type = item.dataset.transportasi;
-
-                    // Hilangkan selected semua
-                    transportItems.forEach(i => i.classList.remove("selected"));
-                    item.classList.add("selected");
-
-                    // Tampilkan form yang sesuai
-                    const forms = document.querySelectorAll(
-                        "#transportasi-details .form-group[data-transportasi]");
-                    forms.forEach(f => {
-                        if (f.dataset.transportasi === type) {
-                            f.style.display = "block";
-                        } else {
-                            f.style.display = "none";
+                if (formElement) {
+                    formElement.classList.toggle('hidden');
+                    if (!formElement.classList.contains('hidden')) {
+                        if (!hasChildren) {
+                            const qtyInput = formElement.querySelector('input[type="number"]');
+                            if (qtyInput) qtyInput.value = 1;
+                            const name = documentItem.dataset.name;
+                            const price = parseInt(documentItem.dataset.price) || 0;
+                            updateItemInCart(`doc-base-${docId}`, `Dokumen - ${name}`, 1, price);
                         }
+                    } else {
+                        delete cart[`doc-base-${docId}`];
+                    }
+                }
+                updateCartUI();
+            }
+
+            const childItem = e.target.closest('.child-item');
+            if (childItem) {
+                const parentId = childItem.closest('.document-child-form').dataset.parentId;
+                const childId = childItem.dataset.childId;
+                const name = childItem.dataset.name;
+                const price = parseInt(childItem.dataset.price) || 0;
+                const cartId = `doc-child-${parentId}-${childId}`;
+
+                childItem.classList.toggle('selected');
+                const isSelected = childItem.classList.contains('selected');
+                
+                const formContainer = childItem.closest('.document-child-form');
+                const existingForm = formContainer.querySelector(`#doc-child-form-${childId}`);
+                
+                if (isSelected) {
+                    if (!existingForm) {
+                        const newForm = document.createElement('div');
+                        newForm.id = `doc-child-form-${childId}`;
+                        newForm.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border', 'rounded');
+                        newForm.innerHTML = `
+                            <label class="form-label">Jumlah ${name}</label>
+                            <input type="number" class="form-control jumlah-child-doc"
+                                data-parent-id="${parentId}" data-child-id="${childId}"
+                                data-name="${name}" data-price="${price}" min="1" value="1">
+                            <label class="form-label mt-2">Keterangan</label>
+                            <input type="text" class="form-control" name="keterangan_doc_child_${childId}">
+                        `;
+                        formContainer.appendChild(newForm);
+                    } else {
+                        existingForm.classList.remove('hidden');
+                    }
+                    updateItemInCart(cartId, `Dokumen - ${name}`, 1, price);
+                } else {
+                    if (existingForm) {
+                        existingForm.classList.add('hidden');
+                    }
+                    delete cart[cartId];
+                }
+                updateCartUI();
+            }
+
+            // Handling Selection
+            const handlingItem = e.target.closest('.handling-item');
+            if (handlingItem) {
+                const type = handlingItem.dataset.handling;
+                const isSelected = handlingItem.classList.toggle('selected');
+                handlingItem.querySelector('input').checked = isSelected;
+                document.getElementById(`${type}-handling-form`).classList.toggle('hidden', !isSelected);
+            }
+
+            // General Toggling items (Pendamping, Konten, Meals, Dorongan, Wakaf)
+            const toggleItem = e.target.closest('.pendamping-item, .content-item, .meal-item, .dorongan-item, .wakaf-item');
+            if(toggleItem) {
+                const isSelected = toggleItem.classList.toggle('selected');
+                const type = toggleItem.dataset.type || toggleItem.closest('.detail-form').id.replace('-details', '');
+                const id = toggleItem.dataset.id;
+                const form = document.getElementById(`form-${type}-${id}`);
+
+                if (form) {
+                    form.classList.toggle('hidden');
+                    const qtyInput = form.querySelector('input[type="number"]');
+                    const name = toggleItem.dataset.name;
+                    const price = parseInt(toggleItem.dataset.price) || 0;
+
+                    if (isSelected) {
+                        qtyInput.value = 1;
+                        updateItemInCart(`${type}-${id}`, `${name}`, 1, price);
+                    } else {
+                        qtyInput.value = 0;
+                        delete cart[`${type}-${id}`];
+                    }
+                }
+                updateCartUI();
+            }
+
+            // Reyal Selection
+            const reyalCard = e.target.closest('.card-reyal');
+            if (reyalCard) {
+                document.querySelectorAll('.card-reyal').forEach(c => c.classList.remove('selected'));
+                reyalCard.classList.add('selected');
+                const type = reyalCard.dataset.reyalType;
+                document.getElementById(`form-${type}`).classList.remove('hidden');
+                document.getElementById(`form-${type === 'tamis' ? 'tumis' : 'tamis'}`).classList.add('hidden');
+            }
+
+            // Tour Selection
+            const tourItem = e.target.closest('.service-tour');
+            if (tourItem) {
+                document.querySelectorAll('.service-tour').forEach(item => item.classList.remove('selected'));
+                document.querySelectorAll('.tour-form').forEach(form => {
+                    form.classList.add('hidden');
+                    const tourId = form.dataset.tourId;
+                    Object.keys(cart).forEach(key => {
+                        if(key.includes(`tour-${tourId}`)) delete cart[key];
                     });
                 });
-            });
 
-            // Inisialisasi default: sembunyikan semua form transportasi
-            const forms = document.querySelectorAll("#transportasi-details .form-group[data-transportasi]");
-            forms.forEach(f => f.style.display = "none");
-        });
+                tourItem.classList.add('selected');
+                const tourId = tourItem.dataset.id;
+                const form = document.getElementById(`tour-${tourId}-form`);
+                if (form) form.classList.remove('hidden');
 
+                updateCartUI();
+            }
 
+            // Tour Transportation Selection
+            const tourTransOption = e.target.closest('.transport-option');
+            if (tourTransOption) {
+                const tourId = tourTransOption.dataset.tourId;
+                const transId = tourTransOption.dataset.transId;
+                const tourName = tourTransOption.dataset.tourName;
+                const transName = tourTransOption.dataset.transName;
+                const price = parseInt(tourTransOption.dataset.price) || 0;
 
+                const parentForm = tourTransOption.closest('.tour-form');
+                parentForm.querySelectorAll('.transport-option').forEach(opt => opt.classList.remove('selected'));
+                tourTransOption.classList.add('selected');
 
-
-        // Hapus hotel
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('removeHotel')) {
-                e.target.closest('.hotel-form').remove();
+                const uniqueKey = `tour-${tourId}-${transId}`;
+                updateItemInCart(uniqueKey, `Tour ${tourName} - ${transName}`, 1, price);
             }
         });
 
-        // Toggle jumlah kamar saat checkbox dicentang
-        document.addEventListener('change', function(e) {
-            if (e.target.classList.contains('tipe-kamar')) {
-                let targetId = e.target.getAttribute('data-target');
-                let jumlahInput = document.getElementById(targetId);
-                if (jumlahInput) {
-                    jumlahInput.classList.toggle('d-none', !e.target.checked);
+        document.body.addEventListener('input', function(e) {
+            // Document Base Form (Visa/Vaksin) and Child Doc
+            const docBaseForm = e.target.closest('.document-base-form');
+            if(docBaseForm) {
+                const docId = docBaseForm.dataset.documentId;
+                const qty = parseInt(docBaseForm.querySelector('input[type="number"]').value) || 0;
+                const price = parseInt(docBaseForm.dataset.price) || 0;
+                const name = docBaseForm.dataset.name;
+                updateItemInCart(`doc-base-${docId}`, `Dokumen - ${name}`, qty, price);
+            }
+            const childDocQtyInput = e.target.closest('.jumlah-child-doc');
+            if(childDocQtyInput) {
+                const parentId = childDocQtyInput.dataset.parentId;
+                const childId = childDocQtyInput.dataset.childId;
+                const name = childDocQtyInput.dataset.name;
+                const price = parseInt(childDocQtyInput.dataset.price) || 0;
+                const qty = parseInt(childDocQtyInput.value) || 0;
+                updateItemInCart(`doc-child-${parentId}-${childId}`, `Dokumen - ${name}`, qty, price);
+            }
+
+            // General Qty Items (Pendamping, Konten, Meals, Dorongan, Wakaf)
+            const qtyInput = e.target.closest('.jumlah-item');
+            if (qtyInput) {
+                const id = qtyInput.dataset.id;
+                const name = qtyInput.dataset.name;
+                const price = parseInt(qtyInput.dataset.price) || 0;
+                const type = qtyInput.dataset.type;
+                const qty = parseInt(qtyInput.value) || 0;
+                updateItemInCart(`${type}-${id}`, `${name}`, qty, price);
+            }
+
+            // Hotel Name Update
+            const hotelNameInput = e.target.closest('input[data-field="nama_hotel"]');
+            if (hotelNameInput) {
+                const hotelForm = hotelNameInput.closest('.hotel-form');
+                const hotelIndex = hotelForm.dataset.index;
+                Object.keys(cart).forEach(key => {
+                    if (key.startsWith(`hotel-${hotelIndex}`)) {
+                        const typeName = cart[key].name.split(' - Tipe ')[1];
+                        cart[key].name = `Hotel ${hotelNameInput.value.trim() || `Hotel ${hotelIndex}`} - Tipe ${typeName}`;
+                    }
+                });
+                updateCartUI();
+            }
+            // Hotel Room Qty
+            const hotelQtyInput = e.target.closest('input[name^="jumlah_kamar"]');
+            if (hotelQtyInput) {
+                const hotelForm = hotelQtyInput.closest('.hotel-form');
+                const hotelIndex = hotelForm.dataset.index;
+                const typeId = hotelQtyInput.name.match(/\[(\d+)\]\[(\d+)\]/)[2];
+                const typeItem = hotelForm.querySelector(`.type-item[data-type-id="${typeId}"]`);
+                const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value.trim() || `Hotel ${hotelIndex}`;
+
+                if (typeItem) {
+                    updateItemInCart(
+                        `hotel-${hotelIndex}-type-${typeId}`,
+                        `Hotel ${hotelName} - Tipe ${typeItem.dataset.name}`,
+                        parseInt(hotelQtyInput.value) || 0,
+                        parseInt(typeItem.dataset.price)
+                    );
+                }
+            }
+
+            // Badal Umrah
+            const badalForm = e.target.closest('.badal-form');
+            if (badalForm) {
+                const namaInput = badalForm.querySelector('.nama_badal');
+                const hargaInput = badalForm.querySelector('.harga_badal');
+                const id = `badal-${badalForm.dataset.index}`;
+                const nama = namaInput.value.trim();
+                const harga = parseInt(hargaInput.value) || 0;
+
+                if (nama && harga > 0) {
+                    updateItemInCart(id, `Badal Umrah - ${nama}`, 1, harga);
+                } else {
+                    delete cart[id];
+                    updateCartUI();
+                }
+            }
+
+            // Reyal Calculator
+            const input = e.target;
+            if (input.id === 'rupiah-tamis' || input.id === 'kurs-tamis') {
+                const rupiah = parseFloat(document.getElementById('rupiah-tamis').value) || 0;
+                const kurs = parseFloat(document.getElementById('kurs-tamis').value) || 0;
+                const hasil = (rupiah && kurs) ? (rupiah / kurs).toFixed(2) : '0';
+                document.getElementById('hasil-tamis').value = hasil;
+            }
+            if (input.id === 'reyal-tumis' || input.id === 'kurs-tumis') {
+                const reyal = parseFloat(document.getElementById('reyal-tumis').value) || 0;
+                const kurs = parseFloat(document.getElementById('kurs-tumis').value) || 0;
+                const hasil = (reyal && kurs) ? (reyal * kurs).toFixed(2) : '0';
+                document.getElementById('hasil-tumis').value = hasil;
+            }
+        });
+
+        // --- Add/Remove Dynamic Forms ---
+        document.getElementById("addTicket").addEventListener("click", () => {
+            const ticketWrapper = document.getElementById("ticketWrapper");
+            const newIndex = ticketCounter;
+            ticketCounter++;
+            const newForm = document.createElement('div');
+            newForm.classList.add("ticket-form", "bg-white", "p-3", "border", "mb-3");
+            newForm.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Tanggal Keberangkatan</label>
+                        <input type="date" class="form-control" name="tanggal[]">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Rute</label>
+                        <input type="text" class="form-control" name="rute[]" placeholder="Contoh: CGK - JED">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Maskapai</label>
+                        <input type="text" class="form-control" name="maskapai[]" placeholder="Nama maskapai">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Keterangan</label>
+                        <input type="text" class="form-control" name="keterangan[]" placeholder="Keterangan">
+                    </div>
+                    <div class="col-12">
+                        <label for="paspor-tiket-" class="form-label">Jumlah (Jamaah)</label>
+                        <input type="number" class="form-control" id="paspor-tiket-" name="jumlah[]">
+                    </div>
+                </div>
+                <div class="mt-3 text-end">
+                    <button type="button" class="btn btn-danger btn-sm removeTicket">Hapus Tiket</button>
+                </div>
+            `;
+            ticketWrapper.appendChild(newForm);
+        });
+        document.getElementById("ticketWrapper").addEventListener("click", e => {
+            if (e.target.classList.contains("removeTicket") && document.querySelectorAll(".ticket-form").length > 1) {
+                e.target.closest(".ticket-form").remove();
+            }
+        });
+
+        function addTransportSet() {
+            transportCounter++;
+            const wrapper = document.getElementById("new-transport-forms");
+            const template = `
+                <div class="transport-set card p-3 mt-3" data-index="${transportCounter}">
+                    <div class="cars">
+                        @foreach ($transportations as $data)
+                            <div class="service-car" data-id="{{ $data->id }}" data-routes='@json($data->routes)' data-name="{{ $data->nama }}" data-price="{{ $data->harga }}">
+                                <div class="service-name">{{ $data->nama }}</div>
+                                <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
+                                <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
+                                <div class="service-desc">Harga: {{ number_format($data->harga) }}/hari</div>
+                                <input type="radio" name="transportation_id[${transportCounter}]" value="{{ $data->id }}" class="d-none">
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="route-select hidden">
+                        <label class="form-label mt-2">Pilih Rute:</label>
+                        <select name="rute_id[${transportCounter}]" class="form-control">
+                            <option value="">-- Pilih Rute --</option>
+                        </select>
+                    </div>
+                    <div class="mt-2 text-end">
+                        <button type="button" class="btn btn-danger btn-sm remove-transport">Hapus</button>
+                    </div>
+                </div>
+            `;
+            wrapper.insertAdjacentHTML('beforeend', template);
+        }
+        document.getElementById("add-transport-btn").addEventListener("click", addTransportSet);
+        document.getElementById("new-transport-forms").addEventListener("click", e => {
+            const removeBtn = e.target.closest(".remove-transport");
+            if (removeBtn && document.querySelectorAll(".transport-set").length > 1) {
+                const transportSet = removeBtn.closest('.transport-set');
+                const index = transportSet.dataset.index;
+                Object.keys(cart).forEach(key => {
+                    if (key.includes(`transport-bus-${index}`)) delete cart[key];
+                });
+                transportSet.remove();
+                updateCartUI();
+            }
+            const carItem = e.target.closest('.service-car');
+            if (carItem) {
+                const transportSet = carItem.closest('.transport-set');
+                transportSet.querySelectorAll('.service-car').forEach(car => car.classList.remove('selected'));
+                carItem.classList.add('selected');
+                const routes = JSON.parse(carItem.dataset.routes || '[]');
+                const select = transportSet.querySelector('select');
+                select.innerHTML = `<option value="">-- Pilih Rute --</option>`;
+                routes.forEach(route => {
+                    select.insertAdjacentHTML('beforeend', `<option value="${route.id}" data-price="${route.price}" data-car-name="${carItem.dataset.name}">${route.route} - Rp. ${parseInt(route.price).toLocaleString('id-ID')}</option>`);
+                });
+                select.closest('.route-select').classList.remove('hidden');
+            }
+        });
+        document.getElementById("new-transport-forms").addEventListener("change", e => {
+            const select = e.target.closest('select[name^="rute_id"]');
+            if(select) {
+                const selected = select.options[select.selectedIndex];
+                if(selected.value) {
+                    const carName = selected.dataset.carName;
+                    const price = parseInt(selected.dataset.price) || 0;
+                    const index = select.name.match(/\[(\d+)\]/)[1];
+                    const key = `tour-bus-${index}-${selected.value}`;
+                    updateItemInCart(key, `Transportasi Darat - ${carName} - ${selected.textContent.split(' - ')[0]}`, 1, price);
                 }
             }
         });
-        document.querySelectorAll('.visa-item').forEach(car => {
-            car.addEventListener('click', function() {
-                // hapus active di semua
-                document.querySelectorAll('.visa-item').forEach(el => el.classList.remove(
-                    'active'));
 
-                // kasih active ke yg diklik
-                this.classList.add('active');
-
-                // set radio checked
-                this.querySelector('input[type="radio"]').checked = true;
-
-                // ambil value
-                let val = this.querySelector('input[type="radio"]').value;
-                console.log(val)
+        // Hotel forms
+        document.getElementById('addHotel').addEventListener('click', () => {
+            hotelCounter++;
+            const hotelWrapper = document.getElementById('hotelWrapper');
+            const newForm = hotelWrapper.querySelector('.hotel-form').cloneNode(true);
+            newForm.dataset.index = hotelCounter;
+            newForm.querySelector('input[data-field="nama_hotel"]').value = '';
+            newForm.querySelectorAll('input:not([data-field="nama_hotel"])').forEach(input => {
+                input.value = '';
+                if(input.name) input.name = input.name.replace(/\[\d+\]/, `[${hotelCounter}]`);
             });
-        });
-        const items = document.querySelectorAll('.pendamping-item');
-        items.forEach(item => {
-            item.addEventListener('click', () => {
-                const form = item.nextElementSibling; // form berada tepat setelah item
-                const checkbox = item.querySelector('input[type="checkbox"]');
-
-                const isActive = item.classList.toggle('active');
-                checkbox.checked = isActive;
-                form.style.display = isActive ? 'block' : 'none';
-            });
-        });
-        const visaItems = document.querySelectorAll('.visa-item');
-        const formDetails = {
-            umrah: document.getElementById('umrah-detail'),
-            haji: document.getElementById('haji-detail'),
-            ziarah: document.getElementById('ziarah-detail')
-        };
-
-        // Tambahkan event listener untuk setiap item visa
-        visaItems.forEach(item => {
-            item.addEventListener('click', () => {
-                // Dapatkan jenis visa dari atribut data
-                const visaType = item.dataset.visa;
-                const checkbox = item.querySelector('input[type="checkbox"]');
-
-                // Toggle class 'active' untuk styling
-                item.classList.toggle('active');
-
-                // Toggle status 'checked' pada checkbox
-                checkbox.checked = !checkbox.checked;
-
-                // Tampilkan atau sembunyikan form yang sesuai berdasarkan status checkbox
-                if (checkbox.checked) {
-                    if (formDetails[visaType]) {
-                        formDetails[visaType].classList.remove('hidden');
-                    }
-                } else {
-                    if (formDetails[visaType]) {
-                        formDetails[visaType].classList.add('hidden');
-                    }
-                }
-            });
+            newForm.querySelectorAll('.type-item').forEach(item => item.classList.remove('selected'));
+            newForm.querySelector('.type-input-container').innerHTML = '';
+            newForm.querySelector('.type-input-container').classList.add('hidden');
+            hotelWrapper.appendChild(newForm);
         });
 
-
-        const vaksinItems = document.querySelectorAll('.vaksin-item');
-        const formDetailsVaksin = {
-            polio: document.getElementById('polio'),
-            meningtis: document.getElementById('meningtis')
-        };
-
-        // Tambahkan event listener untuk setiap item vaksin
-        vaksinItems.forEach(item => {
-            item.addEventListener('click', () => {
-                // Dapatkan jenis vaksin dari atribut data
-                const vaksinType = item.dataset.vaksin;
-                const checkbox = item.querySelector('input[type="checkbox"]');
-
-                // Toggle class 'active' untuk styling
-                item.classList.toggle('selected');
-
-                // Toggle status 'checked' pada checkbox
-                checkbox.checked = !checkbox.checked;
-
-                // Tampilkan atau sembunyikan form yang sesuai berdasarkan status checkbox
-                if (checkbox.checked) {
-                    if (formDetailsVaksin[vaksinType]) {
-                        formDetailsVaksin[vaksinType].classList.remove('hidden');
-                    }
-                } else {
-                    if (formDetailsVaksin[vaksinType]) {
-                        formDetailsVaksin[vaksinType].classList.add('hidden');
-                    }
-                }
-            });
-        });
-
-
-
-        const tourOptions = document.querySelectorAll('.service-car');
-        const tourForms = document.querySelectorAll('.tour-form');
-
-        tourOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                const tourType = option.dataset.tour;
-
-                // Sembunyikan semua form terlebih dahulu
-                tourForms.forEach(form => {
-                    form.classList.add('hidden');
+        document.getElementById('hotelWrapper').addEventListener('click', function(e) {
+            const removeBtn = e.target.closest('.removeHotel');
+            if(removeBtn && document.querySelectorAll('.hotel-form').length > 1) {
+                const hotelForm = removeBtn.closest('.hotel-form');
+                const formIndex = hotelForm.dataset.index;
+                Object.keys(cart).forEach(key => {
+                    if (key.startsWith(`hotel-${formIndex}`)) delete cart[key];
                 });
-
-                // Tampilkan form yang sesuai
-                const selectedForm = document.getElementById(`tour-${tourType}-form`);
-                if (selectedForm) {
-                    selectedForm.classList.remove('hidden');
-                }
-            });
-        });
-
-        // Dapatkan semua item makanan
-        const mealItems = document.querySelectorAll('.meal-item');
-        // Buat objek untuk memetakan jenis makanan ke ID form
-        const formDetailMeals = {
-            premium: document.getElementById('premium-form'),
-            standard: document.getElementById('standard-form'),
-            muthawifah: document.getElementById('muthawifah-form')
-        };
-
-        // Tambahkan event listener untuk setiap item makanan
-        mealItems.forEach(item => {
-            item.addEventListener('click', () => {
-                // Dapatkan jenis makanan dari atribut data
-                const mealType = item.dataset.content;
-                const checkbox = item.querySelector('input[type="checkbox"]');
-
-                // Toggle class 'active' untuk styling
-                item.classList.toggle('active');
-
-                // Toggle status 'checked' pada checkbox
-                checkbox.checked = !checkbox.checked;
-
-                // Tampilkan atau sembunyikan form yang sesuai berdasarkan status checkbox
-                if (checkbox.checked) {
-                    if (formDetailMeals[mealType]) {
-                        formDetailMeals[mealType].classList.remove('hidden');
+                hotelForm.remove();
+                updateCartUI();
+            }
+            const typeItem = e.target.closest('.type-item');
+            if (typeItem) {
+                const hotelForm = typeItem.closest('.hotel-form');
+                const dynamicContainer = hotelForm.querySelector('.type-input-container');
+                const isSelected = typeItem.classList.toggle('selected');
+                const typeId = typeItem.dataset.typeId;
+                const cartId = `hotel-${hotelForm.dataset.index}-type-${typeId}`;
+                const existingInputDiv = dynamicContainer.querySelector(`[data-type-id="${typeId}"]`);
+                
+                if (isSelected) {
+                    if (!existingInputDiv) {
+                        const inputDiv = document.createElement('div');
+                        inputDiv.classList.add('form-group', 'mt-2');
+                        inputDiv.dataset.typeId = typeId;
+                        inputDiv.innerHTML = `
+                            <label class="form-label">Jumlah Kamar (${typeItem.dataset.name})</label>
+                            <input type="number" class="form-control" name="jumlah_kamar[${hotelForm.dataset.index}][${typeId}]" min="1" value="1">
+                        `;
+                        dynamicContainer.appendChild(inputDiv);
+                        const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value.trim() || `Hotel ${hotelForm.dataset.index}`;
+                        updateItemInCart(cartId, `${hotelName} - Tipe ${typeItem.dataset.name}`, 1, parseInt(typeItem.dataset.price));
                     }
                 } else {
-                    if (formDetailMeals[mealType]) {
-                        formDetailMeals[mealType].classList.add('hidden');
+                    if (existingInputDiv) {
+                        existingInputDiv.remove();
+                        delete cart[cartId];
                     }
                 }
-            });
+                dynamicContainer.classList.toggle('hidden', dynamicContainer.children.length === 0);
+                updateCartUI();
+            }
         });
 
-        // Dapatkan semua item dorongan
-        const doronganItems = document.querySelectorAll('#dorongan-details .dorongan-item');
-        // Buat objek untuk memetakan jenis dorongan ke ID form
-        const formDetailDorongans = {
-            umrah: document.getElementById('umrah-form'),
-            makkah: document.getElementById('makkah-form'),
-            tawaf: document.getElementById('tawaf-form'),
-            'dorongan-sel': document.getElementById('dorongan-sel-form')
-        };
-
-        // Tambahkan event listener untuk setiap item dorongan
-        doronganItems.forEach(item => {
-            item.addEventListener('click', () => {
-                // Dapatkan jenis dorongan dari atribut data
-                const doronganType = item.dataset.content;
-                const checkbox = item.querySelector('input[type="checkbox"]');
-
-                // Toggle class 'active' untuk styling
-                item.classList.toggle('active');
-
-                // Toggle status 'checked' pada checkbox
-                checkbox.checked = !checkbox.checked;
-
-                // Tampilkan atau sembunyikan form yang sesuai berdasarkan status checkbox
-                if (checkbox.checked) {
-                    if (formDetailDorongans[doronganType]) {
-                        formDetailDorongans[doronganType].classList.remove('hidden');
-                    }
-                } else {
-                    if (formDetailDorongans[doronganType]) {
-                        formDetailDorongans[doronganType].classList.add('hidden');
-                    }
-                }
-            });
+        // Badal Umrah forms
+        document.getElementById("addBadal").addEventListener("click", () => {
+            badalCounter++;
+            const badalWrapper = document.getElementById("badalWrapper");
+            const newForm = document.createElement("div");
+            newForm.classList.add("badal-form", "bg-white", "p-3", "border", "mb-3");
+            newForm.dataset.index = badalCounter;
+            newForm.innerHTML = `
+                <div class="form-group mb-2">
+                    <label class="form-label">Nama yang dibadalkan</label>
+                    <input type="text" class="form-control nama_badal" name="nama_badal[${badalCounter}]">
+                </div>
+                <div class="form-group mb-2">
+                    <label class="form-label">Harga</label>
+                    <input type="number" class="form-control harga_badal" name="harga_badal[${badalCounter}]" min="0">
+                </div>
+                <div class="mt-2 text-end">
+                    <button type="button" class="btn btn-danger btn-sm removeBadal">Hapus Badal</button>
+                </div>
+            `;
+            badalWrapper.appendChild(newForm);
         });
-
-
-        // Dapatkan semua item wakaf
-        const waqafItems = document.querySelectorAll('#waqaf-details .wakaf-item');
-        // Buat objek untuk memetakan jenis wakaf ke ID form
-        const formDetailWakaf = {
-            'berbagi-air': document.getElementById('berbagi-air-form'),
-            'berbagi-nasi': document.getElementById('berbagi-nasi-form'),
-            'mushaf': document.getElementById('mushaf-form')
-        };
-
-        // Tambahkan event listener untuk setiap item wakaf
-        waqafItems.forEach(item => {
-            item.addEventListener('click', () => {
-                // Dapatkan jenis wakaf dari atribut data
-                const waqafType = item.dataset.content;
-                const checkbox = item.querySelector('input[type="checkbox"]');
-
-                // Toggle class 'active' untuk styling
-                item.classList.toggle('active');
-
-                // Toggle status 'checked' pada checkbox
-                checkbox.checked = !checkbox.checked;
-
-                // Tampilkan atau sembunyikan form yang sesuai berdasarkan status checkbox
-                if (checkbox.checked) {
-                    if (formDetailWakaf[waqafType]) {
-                        formDetailWakaf[waqafType].classList.remove('hidden');
-                    }
-                } else {
-                    if (formDetailWakaf[waqafType]) {
-                        formDetailWakaf[waqafType].classList.add('hidden');
-                    }
-                }
-            });
+        document.getElementById("badalWrapper").addEventListener("click", function(e) {
+            if (e.target.classList.contains("removeBadal")) {
+                const formEl = e.target.closest(".badal-form");
+                const id = `badal-${formEl.dataset.index}`;
+                delete cart[id];
+                updateCartUI();
+                formEl.remove();
+            }
         });
-
-
-        document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll(".tipe-kamar").forEach(function(checkbox) {
-                checkbox.addEventListener("change", function() {
-                    const targetId = this.getAttribute("data-target");
-                    const inputJumlah = document.getElementById(targetId);
-
-                    if (this.checked) {
-                        inputJumlah.classList.remove("d-none");
-                    } else {
-                        inputJumlah.classList.add("d-none");
-                        inputJumlah.value = ""; // reset biar ga terkirim angka kosong
-                    }
-                });
-            });
-        });
-
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     const cartSection = document.getElementById("cart-total-price");
-        //     const cartList = document.getElementById("cart-items");
-
-        //     function formatRupiah(angka) {
-        //         return "Rp. " + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        //     }
-
-        //     function hitungTotal() {
-        //         let total = 0;
-        //         cartList.querySelectorAll("li").forEach(li => {
-        //             total += parseInt(li.dataset.price || 0);
-        //         });
-
-        //         document.getElementById('cart-total').value = total;
-        //         document.getElementById('cart-total-text').innerText = formatRupiah(total);
-        //     }
-
-        //     function toggleCartItem(name, unitPrice, jumlah) {
-        //         const existingItem = cartList.querySelector(`[data-name="${name}"]`);
-        //         if (existingItem) existingItem.remove();
-
-        //         if (jumlah > 0) {
-        //             const totalHarga = unitPrice * jumlah;
-        //             const li = document.createElement("li");
-        //             li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
-        //             li.setAttribute("data-name", name);
-        //             li.setAttribute("data-price", totalHarga);
-        //             li.innerHTML = `
-    //         <span>${name} <small class="text-muted">x${jumlah}</small></span>
-    //         <span class="fw-bold">${formatRupiah(totalHarga)}</span>
-    //     `;
-        //             cartList.appendChild(li);
-        //         }
-
-        //         cartSection.style.display = cartList.children.length > 0 ? "block" : "none";
-        //         hitungTotal();
-        //     }
-
-        //     // toggle form ketika klik item pendamping
-        //     document.querySelectorAll(".pendamping-item").forEach(item => {
-        //         item.addEventListener("click", () => {
-        //             const key = item.dataset.pendamping;
-        //             const form = document.getElementById("form-" + key);
-        //             form.classList.toggle("hidden");
-
-        //             if (form.classList.contains("hidden")) {
-        //                 const jumlahInput = form.querySelector("input[type='number']");
-        //                 if (jumlahInput) {
-        //                     toggleCartItem(item.querySelector(".service-name").innerText, parseInt(
-        //                         item.dataset.price), 0);
-        //                     jumlahInput.value = "";
-        //                 }
-        //             }
-        //         });
-        //     });
-
-        // update cart ketika jumlah diubah
-        // document.querySelectorAll(".jumlah-pendamping").forEach(input => {
-        //     input.addEventListener("input", function() {
-        //         const qty = parseInt(this.value || 0);
-        //         const name = this.dataset.name;
-        //         const price = parseInt(this.dataset.price);
-        //         toggleCartItem(name, price, qty);
-        //     });
-        // });
-
-
-        // toggle cart ketika klik meal item
-        // document.querySelectorAll(".meal-item").forEach(item => {
-        //     item.addEventListener("click", () => {
-        //         const name = item.querySelector(".service-name").innerText;
-        //         const price = parseInt(item.querySelector(".service-desc").innerText);
-
-        //         // cek apakah sudah ada di cart
-        //         const existingItem = cartList.querySelector(`[data-name="${name}"]`);
-        //         if (existingItem) {
-        //             // kalau ada, hapus
-        //             existingItem.remove();
-        //         } else {
-        //             // kalau belum, tambahkan qty default = 1
-        //             toggleCartItem(name, price, 1);
-        //         }
-
-        //         cartSection.style.display = cartList.children.length > 0 ? "block" : "none";
-        //         hitungTotal();
-        //     });
-        // });
-        // toggle form ketika klik meal
-        // document.querySelectorAll(".meal-item").forEach(item => {
-        //     item.addEventListener("click", () => {
-        //         const key = item.dataset.meal;
-        //         const form = document.getElementById("form-" + key);
-
-        //         form.classList.toggle("hidden");
-
-        //         if (form.classList.contains("hidden")) {
-        //             // reset qty dan hapus dari cart
-        //             const jumlahInput = form.querySelector("input[type='number']");
-        //             if (jumlahInput) {
-        //                 toggleCartItem(item.querySelector(".service-name").innerText, parseInt(
-        //                     item.dataset.price), 0);
-        //                 jumlahInput.value = 0;
-        //             }
-        //         }
-        //     });
-        // });
-
-        // update cart ketika jumlah meal diubah
-        //     document.querySelectorAll(".jumlah-meal").forEach(input => {
-        //         input.addEventListener("input", function() {
-        //             const qty = parseInt(this.value || 0);
-        //             const name = this.dataset.name;
-        //             const price = parseInt(this.dataset.price);
-
-        //             toggleCartItem(name, price, qty);
-        //         });
-        //     });
-
-        // });
-        // document.querySelectorAll('.form-group').forEach(form => {
-        //     const input = form.querySelector('input');
-        //     if (form.classList.contains('hidden')) {
-        //         input.removeAttribute('required');
-        //     } else {
-        //         // kalau form ditampilkan, bisa tambahkan required sesuai kebutuhan
-        //         input.setAttribute('required', 'required');
-        //     }
-        // });
-        //     document.getElementById('my-form').addEventListener('submit', function(e) {
-        //         document.querySelectorAll('.form-group').forEach(form => {
-        //             const input = form.querySelector('input');
-        //             if (form.classList.contains('hidden')) {
-        //                 input.removeAttribute('required');
-        //             }
-        //         });
-        //     });
-        //     document.addEventListener("DOMContentLoaded", () => {
-        //         const tourItems = document.querySelectorAll(".service-tour");
-
-        //         tourItems.forEach(item => {
-        //             item.addEventListener("click", () => {
-        //                 const checkbox = item.querySelector("input[type='checkbox']");
-        //                 const tourSlug = item.getAttribute("data-tour");
-        //                 const form = document.getElementById(`tour-${tourSlug}-form`);
-
-        //                 // toggle aktif / nonaktif
-        //                 const isActive = item.classList.toggle("active");
-        //                 checkbox.checked = isActive;
-        //                 form.classList.toggle("hidden", !isActive);
-        //             });
-        //         });
-
-        //         // transportasi radio toggle
-        //         const transportOptions = document.querySelectorAll(".transport-option");
-        //         transportOptions.forEach(option => {
-        //             option.addEventListener("click", () => {
-        //                 const input = option.querySelector("input[type='radio']");
-        //                 const groupName = input.getAttribute("name");
-
-        //                 // reset semua dalam group
-        //                 document.querySelectorAll(`input[name='${groupName}']`).forEach(radio => {
-        //                     radio.checked = false;
-        //                     radio.closest(".transport-option").classList.remove("active");
-        //                 });
-
-        //                 // set aktif yg dipilih
-        //                 input.checked = true;
-        //                 option.classList.add("active");
-        //             });
-        //         });
-        //     });
-        //
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Select all elements with the class 'meal-item'
-            const mealItems = document.querySelectorAll('.meal-item');
-
-            // Loop through each meal item to add a click event listener
-            mealItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    // Get the data-meal attribute value, e.g., 'nasi-box'
-                    const mealData = this.getAttribute('data-meal');
-
-                    // Find the corresponding form using its ID, e.g., 'form-nasi-box'
-                    const targetForm = document.getElementById(`form-${mealData}`);
-
-                    // Check if the form exists
-                    if (targetForm) {
-                        // Toggle the 'hidden' class to show or hide the form
-                        targetForm.classList.toggle('hidden');
-
-                        // Toggle the 'selected' class for styling feedback
-                        this.classList.toggle('selected');
-
-                        // Uncheck the hidden checkbox when the item is unselected
-                        const checkbox = this.querySelector('input[type="checkbox"]');
-                        if (checkbox) {
-                            checkbox.checked = !targetForm.classList.contains('hidden');
-                        }
-
-                        // If the form is hidden, reset its input value to 0
-                        if (targetForm.classList.contains('hidden')) {
-                            const input = targetForm.querySelector('input[type="number"]');
-                            if (input) {
-                                input.value = 0;
-                            }
-                        }
-                    }
-                });
-            });
-        });
-    </script>
+    });
+</script>
 @endsection

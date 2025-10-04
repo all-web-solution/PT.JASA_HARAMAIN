@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DocumentChildren extends Model
 {
-    protected $fillable = ['document_id', 'name'];
+    protected $fillable = ['document_id', 'name','price'];
 
     public function document(){
         return $this->belongsTo(Document::class, 'document_id');

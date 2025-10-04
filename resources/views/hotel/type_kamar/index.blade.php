@@ -375,11 +375,11 @@
         <!-- Services List -->
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title" id="text-title">
-                    <i class="bi bi-list-check"></i>Daftar Permintaan Services
+                <h5 class="card-title">
+                    <i class="bi bi-list-check"></i>Daftar Type Hotel
                 </h5>
-                <a href="{{ route('services.create') }}" class="btn-add-new">
-                    <i class="bi bi-plus-circle"></i> Tambah Permintaan
+                <a href="{{ route('hotel.type.create') }}" class="btn-add-new">
+                    <i class="bi bi-plus-circle"></i> Tambah type Hotel
                 </a>
             </div>
 
@@ -389,29 +389,7 @@
                     <i class="bi bi-search"></i>
                     <input type="text" placeholder="Cari customer/kode service...">
                 </div>
-                <div class="filter-group">
 
-                   <form method="GET" action="{{ route('admin.services') }}">
-                        <select name="service" class="filter-select" onchange="this.form.submit()">
-                            <option value="">-- Semua Layanan --</option>
-                            <option value="transportasi" {{ request('service') == 'transportasi' ? 'selected' : '' }}>Transportasi</option>
-                            <option value="hotel" {{ request('service') == 'hotel' ? 'selected' : '' }}>Hotel</option>
-                            <option value="dokumen" {{ request('service') == 'dokumen' ? 'selected' : '' }}>Dokumen</option>
-                            <option value="handling" {{ request('service') == 'handling' ? 'selected' : '' }}>Handling</option>
-                            <option value="pendamping" {{ request('service') == 'pendamping' ? 'selected' : '' }}>Pendamping</option>
-                            <option value="konten" {{ request('service') == 'konten' ? 'selected' : '' }}>Konten</option>
-                            <option value="reyal" {{ request('service') == 'reyal' ? 'selected' : '' }}>Reyal</option>
-                            <option value="tour" {{ request('service') == 'tour' ? 'selected' : '' }}>Tour</option>
-                            <option value="meal" {{ request('service') == 'meal' ? 'selected' : '' }}>Meal</option>
-                            <option value="dorongan" {{ request('service') == 'dorongan' ? 'selected' : '' }}>Dorongan</option>
-                            <option value="wakaf" {{ request('service') == 'wakaf' ? 'selected' : '' }}>Wakaf</option>
-                            <option value="badal" {{ request('service') == 'badal' ? 'selected' : '' }}>Badal</option>
-                        </select>
-                    </form>
-
-
-
-                </div>
             </div>
 
             <!-- Services Table -->
@@ -419,53 +397,33 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Kode unik</th>
-                            <th>Customer/Travel</th>
-                            <th>Tgl keberangkatan</th>
-                            <th>Tgl kepulangan</th>
-                            <th>Jumlah jamaah</th>
-                            <th>Layanan yang di pilih</th>
-                            <th>Status</th>
+                            <th>No</th>
+                            <th>Nama type</th>
+                            <th>Harga</th>
                             <th>Aksi</th>
-
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($services as $service)
-                            <tr>
-                                <td>{{ $service->unique_code }}</td>
-                                <td>{{ $service->pelanggan->nama_travel }}</td>
-                                <td>{{ $service->tanggal_keberangkatan }}</td>
-                                <td>{{ $service->tanggal_kepulangan }}</td>
-                                <td>{{ $service->total_jamaah }}</td>
-                                <td>{{ implode(', ', (array) $service->services) }}</td>
-                                @if ($service->status === 'nego')
-                                    <td>
-                                        <a href="{{ route('admin.service.nego', $service->id) }}">
-                                            <button class="btn btn-warning">Lanjutkan pemesanan</button>
-                                        </a>
-                                    </td>
-                                @else
-                                    <td>Deal</td>
-                                @endif
-                                <td>
-                                    <a href="{{ route('invoice.show', $service->id) }}">
-                                        <button class="btn btn-primary">Cetak Invoice</button>
-                                    </a>
-                                    <a href="{{ route('services.edit', $service->id) }}">
-                                        <button class="btn btn-warning">Edit</button>
-                                    </a>
-                                    <form method="post" action="{{route('services.delete', $service->id)}}">
+                        @foreach ($types as $type)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $type->nama_tipe }}</td>
+                            <td>{{ $type->jumlah }}</td>
+                            <td>
+                                <a href="{{ route('hotel.type.edit', $type->id) }}" class="btn btn-warning">
+                                    Edit
+                                </a>
+                                <form action="{{ route('hotel.type.delete', $type->id) }}" method="post">
                                     @csrf
                                     @method('delete')
-                                        <button class="btn btn-danger">Delete</button>
-                                    </form>
-                                </td>
-
-                            </tr>
+                                    <button class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
                         @endforeach
                     </tbody>
                 </table>
+
             </div>
 
             <!-- Pagination -->
@@ -498,7 +456,7 @@
 
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    if (confirm('Apakah Anda yakin ingin menghapus permintaan service ini?')) {
+                    if (confirm('Apakah Anda yakin ingin menghapus permintaan hotel ini?')) {
                         // Here you would typically send a delete request to your backend
                         const row = this.closest('tr');
                         row.style.opacity = '0';

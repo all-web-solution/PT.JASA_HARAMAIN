@@ -19,9 +19,10 @@ return new class extends Migration
             $table->string('rute');
             $table->string('maskapai');
             $table->string('harga')->nullable();
-            $table->string('tiket_berangkat');
-            $table->string('tiket_pulang');
+            $table->string('tiket_berangkat')->nullable();
+            $table->string('tiket_pulang')->nullable();
             $table->string('keterangan');
+            $table->string('jumlah_jamaah');
 
             $table->timestamps();
         });

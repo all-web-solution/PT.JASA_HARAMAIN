@@ -393,7 +393,9 @@
                             <th>Nama Dokumen bawaan</th>
                             <th>jumlah</th>
                             <th>Harga</th>
-                            <th>Keterangan</th>
+                            <th>Pas foto</th>
+                            <th>Paspor</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -401,11 +403,12 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $doc->service->pelanggan->nama_travel }}</td>
-                                <td>{{ $doc->documents}}</td>
-                                <td>{{ $doc->DocumentChildren->name }}</td>
+                                <td>{{ $doc->documents->name}}</td>
+                                <td>{{ $doc->DocumentChildren->name}}</td>
                                 <td>{{ $doc->jumlah }}</td>
-                                <td>{{ $doc->harga }}</td>
-                                <td>{{ $doc->keterangan }}</td>
+                                <td>{{ $doc->DocumentChildren->price }}</td>
+                                <td><img src="{{url('storage/' . $doc->pas_foto)}}" width="100px" height="100px"/></td>
+                                <td><img src="{{url('storage/' . $doc->paspor)}}" width="100px" height="100px"/></td>
 
                             </tr>
                         @endforeach

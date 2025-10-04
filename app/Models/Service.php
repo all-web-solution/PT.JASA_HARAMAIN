@@ -52,14 +52,12 @@ public function planes()
     public function tours(){
         return $this->hasMany(Tour::class, 'service_id');
     }
-    public function documents(){
-        return $this->hasMany(Document::class, 'service_id');
-    }
+    public function documents()
+{
+    return $this->hasMany(CustomerDocument::class, 'service_id');
+}
     public function filess(){
         return $this->hasMany(File::class, 'service_id');
-    }
-    public function customers(){
-        return $this->hasMany(CustomerDocument::class);
     }
     public function reyals(){
         return $this->hasMany(Exchange::class, 'service_id');
@@ -76,5 +74,8 @@ public function planes()
     }
     public function badals(){
         return $this->hasMany(Badal::class, 'service_id');
+    }
+    public function orders(){
+        return $this->hasMany(Order::class, 'service_id');
     }
 }

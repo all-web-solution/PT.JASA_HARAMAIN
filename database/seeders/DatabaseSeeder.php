@@ -15,6 +15,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Wakaf;
 use Illuminate\Support\Facades\Hash;
+use App\Models\TypeHotel;
 
 class DatabaseSeeder extends Seeder
 {
@@ -216,13 +217,13 @@ class DatabaseSeeder extends Seeder
         }
 
         $documentChildren = [
-            ['document_id' => 1, 'name' => 'visa umrah'],
-            ['document_id' => 1, 'name' => 'visa haji'],
-            ['document_id' => 1, 'name' => 'visa ziarah'],
-            ['document_id' => 1, 'name' => 'visa personal'],
-            ['document_id' => 1, 'name' => 'visa group'],
-            ['document_id' => 2, 'name' => 'polio'],
-            ['document_id' => 2, 'name' => 'meningtis'],
+            ['document_id' => 1, 'name' => 'visa umrah', "price" => 12000],
+            ['document_id' => 1, 'name' => 'visa haji', "price" => 16000],
+            ['document_id' => 1, 'name' => 'visa ziarah', "price" => 20000],
+            ['document_id' => 1, 'name' => 'visa personal',"price" => 5000],
+            ['document_id' => 1, 'name' => 'visa group',"price" => 22000],
+            ['document_id' => 2, 'name' => 'polio', "price" => 31000],
+            ['document_id' => 2, 'name' => 'meningtis', "price" => 60000],
         ];
 
         foreach($documentChildren as $data){
@@ -255,6 +256,16 @@ class DatabaseSeeder extends Seeder
         ];
         foreach($contents as $content){
             ContentItem::create($content);
+        }
+
+         $types = [
+            ["nama_tipe" => 'Double', "jumlah" => 5000],
+            ["nama_tipe" => 'Triple', "jumlah" => 12000],
+            ["nama_tipe" => 'Kuint', "jumlah" => 3200],
+            ["nama_tipe" => 'Kuard', "jumlah" => 15000],
+        ];
+        foreach($types as $type){
+            TypeHotel::create($type);
         }
     }
 }

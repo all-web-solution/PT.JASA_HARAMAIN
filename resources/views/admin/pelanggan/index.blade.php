@@ -100,81 +100,56 @@
             </div>
         </div>
     </div>
+<form method="GET" class="mb-3">
+    <div class="row">
+        <div class="col-md-3">
+            <select name="bulan" class="form-select">
+                <option value="">-- Pilih Bulan --</option>
+                @for($i=1;$i<=12;$i++)
+                    <option value="{{ $i }}" {{ request('bulan')==$i?'selected':'' }}>
+                        {{ DateTime::createFromFormat('!m',$i)->format('F') }}
+                    </option>
+                @endfor
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="tahun" class="form-select">
+                <option value="">-- Pilih Tahun --</option>
+                @for($t=date('Y');$t>=2020;$t--)
+                    <option value="{{ $t }}" {{ request('tahun')==$t?'selected':'' }}>{{ $t }}</option>
+                @endfor
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-primary">Filter</button>
+        </div>
+    </div>
+</form>
 
-    <!-- Travel List Table -->
+    <!-- Travel List -->
     <div class="row mt-3">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0 pb-0">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold mb-2" style="color: var(--haramain-primary);">
+                        <h5 class="fw-bold mb-2 title-customer" style="color: var(--haramain-primary); ">
                             <i class="bi bi-building me-2"></i>Daftar Travel/Pelanggan
                         </h5>
                         <div>
                             <a href="{{ route('admin.pelanggan.create') }}" class="btn btn-sm me-2" style="background-color: var(--haramain-secondary); color: white;">
-    <i class="bi bi-plus"></i> Tambah Baru
-</a>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown"
-                                        style="background-color: var(--haramain-light); color: var(--haramain-primary);">
-                                    <i class="bi bi-download"></i> Ekspor
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-file-excel me-2"></i>Excel</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-file-pdf me-2"></i>PDF</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Filter Section -->
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <form action="{{ route('admin.pelanggan') }}" method="GET">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" style="background-color: var(--haramain-light); border-color: rgba(0, 0, 0, 0.08);">
-                                        <i class="bi bi-search" style="color: var(--haramain-primary);"></i>
-                                    </span>
-                                    <input type="text" name="search" class="form-control" placeholder="Cari travel/pelanggan..."
-                                           style="border-color: rgba(0, 0, 0, 0.08);" value="{{ request('search') }}">
-                                    <button class="btn" type="submit" style="background-color: var(--haramain-secondary); color: white;">
-                                        Cari
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="col-md-3">
-                            <form action="{{ route('admin.pelanggan') }}" method="GET">
-                                <select class="form-select" name="status" onchange="this.form.submit()" style="border-color: rgba(0, 0, 0, 0.08);">
-                                    <option value="">Semua Status</option>
-                                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
-                                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Non-Aktif</option>
-                                </select>
-                            </form>
-                        </div>
-                        <div class="col-md-3">
-                            <form action="{{ route('admin.pelanggan') }}" method="GET">
-                                <select class="form-select" name="sort" onchange="this.form.submit()" style="border-color: rgba(0, 0, 0, 0.08);">
-                                    <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru</option>
-                                    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
-                                    <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nama A-Z</option>
-                                    <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Nama Z-A</option>
-                                </select>
-                            </form>
+                                <i class="bi bi-plus"></i> Tambah Baru
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Table Section -->
-                <div class="card-body pt-2">
+                <!-- Table Desktop -->
+                <div class="card-body pt-2 d-none d-md-block">
                     @if($pelanggans->isEmpty())
                         <div class="text-center py-5">
                             <img src="{{ asset('assets/images/empty-state.svg') }}" alt="No data" style="height: 150px;">
                             <h5 class="mt-3" style="color: var(--haramain-primary);">Belum Ada Data Travel</h5>
                             <p class="text-muted">Mulai dengan menambahkan travel pertama Anda</p>
-                            <a href="" class="btn mt-2" style="background-color: var(--haramain-secondary); color: white;">
-                                <i class="bi bi-plus"></i> Tambah Travel
-                            </a>
                         </div>
                     @else
                         <div class="table-responsive">
@@ -187,116 +162,100 @@
                                         <th>Kontak</th>
                                         <th>Status</th>
                                         <th>Terdaftar</th>
+                                        <th>Total Transaksi</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @foreach($pelanggans as $pelanggan)
-                                    <tr>
-                                        <td class="fw-bold" style="color: var(--haramain-primary);">#TRV-{{ str_pad($pelanggan->id, 4, '0', STR_PAD_LEFT) }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                @if($pelanggan->foto)
-                                                    <img src="{{ asset('storage/'.$pelanggan->foto) }}" class="rounded-circle me-2" width="32" height="32" alt="{{ $pelanggan->nama_travel }}">
-                                                @else
-                                                    <div class="me-2" style="width: 32px; height: 32px; background-color: #e3f2fd; border-radius: 50%;
-                                                         display: flex; align-items: center; justify-content: center;">
-                                                        <i class="bi bi-building" style="color: var(--haramain-secondary); font-size: 0.875rem;"></i>
-                                                    </div>
-                                                @endif
-                                                <div>
-                                                    <div class="fw-semibold">{{ $pelanggan->nama_travel }}</div>
-                                                    <div class="text-muted small">{{ $pelanggan->email }}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div>{{ $pelanggan->penanggung_jawab }}</div>
-                                            <div class="text-muted small">KTP: {{ $pelanggan->no_ktp }}</div>
-                                        </td>
-                                        <td>
-                                            <div>{{ $pelanggan->phone ?? '-' }}</div>
-                                            <div class="text-muted small">{{ Str::limit($pelanggan->alamat, 20) }}</div>
-                                        </td>
-                                        <td>
-                                            <span class="badge {{ $pelanggan->status == 'active' ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger' }}">
-                                                {{ $pelanggan->status == 'active' ? 'Aktif' : 'Non-Aktif' }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div>{{ $pelanggan->created_at->format('d M Y') }}</div>
-                                            <div class="text-muted small">{{ $pelanggan->created_at->diffForHumans() }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex">
-                                                <a href="" class="btn btn-sm me-1"
-                                                   style="background-color: var(--haramain-light); color: var(--haramain-primary); padding: 0.25rem 0.5rem;"
-                                                   data-bs-toggle="tooltip" title="Edit">
-                                                    <i class="bi bi-pencil" style="font-size: 0.8125rem;"></i>
-                                                </a>
-                                                <form action="" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm"
-                                                            style="background-color: var(--haramain-light); color: #f44336; padding: 0.25rem 0.5rem;"
-                                                            data-bs-toggle="tooltip" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus travel ini?')">
-                                                        <i class="bi bi-trash" style="font-size: 0.8125rem;"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
+                         <tbody>
+    @foreach($pelanggans as $pelanggan)
+    <tr>
+        <td class="fw-bold" style="color: var(--haramain-primary);">
+            <a href="{{ route('admin.pelanggan.show', $pelanggan->id) }}" class="text-decoration-none">
+                #TRV-{{ str_pad($pelanggan->id, 4, '0', STR_PAD_LEFT) }}
+            </a>
+        </td>
+        <td>
+            <div class="d-flex align-items-center">
+                @if($pelanggan->foto)
+                    <img src="{{url('storage/' . $pelanggan->foto)}}" class="rounded-circle me-2" width="32" height="32">
+                @else
+                    <div class="me-2" style="width:32px; height:32px; background:#e3f2fd; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                        <i class="bi bi-building" style="color: var(--haramain-secondary); font-size:.875rem;"></i>
+                    </div>
+                @endif
+                <div>
+                    <a href="{{ route('admin.pelanggan.show', $pelanggan->id) }}" class="fw-semibold d-block text-decoration-none text-dark">
+                        {{ $pelanggan->nama_travel }}
+                    </a>
+                    <div class="text-muted small">{{ $pelanggan->email }}</div>
+                </div>
+            </div>
+        </td>
+        <td>{{ $pelanggan->penanggung_jawab }} <br> <small class="text-muted">KTP: {{ $pelanggan->no_ktp }}</small></td>
+        <td>{{ $pelanggan->phone ?? '-' }} <br> <small class="text-muted">{{ Str::limit($pelanggan->alamat, 20) }}</small></td>
+        <td>
+            <span class="badge {{ $pelanggan->status=='active'?'bg-success bg-opacity-10 text-success':'bg-danger bg-opacity-10 text-danger' }}">
+                {{ $pelanggan->status=='active'?'Aktif':'Non-Aktif' }}
+            </span>
+        </td>
+        <td>{{ $pelanggan->created_at->format('d M Y') }} <br> <small class="text-muted">{{ $pelanggan->created_at->diffForHumans() }}</small></td>
+        <td>{{ $pelanggan->services->flatMap->orders->count() }}</td>
+        <td>
+            <div class="d-flex">
+                <a href="{{ route('admin.pelanggan.edit', $pelanggan->id) }}" class="btn btn-sm me-1" style="background-color: var(--haramain-light); color: var(--haramain-primary);">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <form action="{{ route('admin.pelanggan.destroy', $pelanggan->id) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-sm" style="background-color: var(--haramain-light); color:#f44336;" onclick="return confirm('Hapus travel ini?')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+            </div>
+        </td>
+    </tr>
+    @endforeach
+</tbody>
+
                             </table>
                         </div>
-
-                        <!-- Pagination -->
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <div class="text-muted small">
-                                Menampilkan {{ $pelanggans->firstItem() }} sampai {{ $pelanggans->lastItem() }} dari {{ $pelanggans->total() }} entri
-                            </div>
-                            <nav>
-                                <ul class="pagination pagination-sm">
-                                    {{-- Previous Page Link --}}
-                                    @if ($pelanggans->onFirstPage())
-                                        <li class="page-item disabled">
-                                            <span class="page-link" style="color: var(--haramain-primary);">&laquo;</span>
-                                        </li>
-                                    @else
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ $pelanggans->previousPageUrl() }}" style="color: var(--haramain-primary);">&laquo;</a>
-                                        </li>
-                                    @endif
-
-                                    {{-- Pagination Elements --}}
-                                    @foreach ($pelanggans->getUrlRange(1, $pelanggans->lastPage()) as $page => $url)
-                                        @if ($page == $pelanggans->currentPage())
-                                            <li class="page-item active">
-                                                <span class="page-link" style="background-color: var(--haramain-primary); border-color: var(--haramain-primary);">{{ $page }}</span>
-                                            </li>
-                                        @else
-                                            <li class="page-item">
-                                                <a class="page-link" href="{{ $url }}" style="color: var(--haramain-primary);">{{ $page }}</a>
-                                            </li>
-                                        @endif
-                                    @endforeach
-
-                                    {{-- Next Page Link --}}
-                                    @if ($pelanggans->hasMorePages())
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ $pelanggans->nextPageUrl() }}" style="color: var(--haramain-primary);">&raquo;</a>
-                                        </li>
-                                    @else
-                                        <li class="page-item disabled">
-                                            <span class="page-link" style="color: var(--haramain-primary);">&raquo;</span>
-                                        </li>
-                                    @endif
-                                </ul>
-                            </nav>
-                        </div>
+                        {{ $pelanggans->links() }}
                     @endif
                 </div>
+
+                <!-- Card Mobile -->
+                <div class="d-block d-md-none ">
+                    @foreach($pelanggans as $pelanggan)
+                    <div class="card mb-2 shadow-sm mt-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="fw-bold">#TRV-{{ str_pad($pelanggan->id,4,'0',STR_PAD_LEFT) }}</div>
+                                <span class="badge {{ $pelanggan->status=='active'?'bg-success bg-opacity-10 text-success':'bg-danger bg-opacity-10 text-danger' }}">
+                                    {{ $pelanggan->status=='active'?'Aktif':'Non-Aktif' }}
+                                </span>
+                            </div>
+                            <div class="mb-1 fw-semibold">{{ $pelanggan->nama_travel }}</div>
+                            <div class="text-muted small mb-1">{{ $pelanggan->email }}</div>
+                            <div class="mb-1">Penanggung Jawab: {{ $pelanggan->penanggung_jawab }}</div>
+                            <div class="text-muted small mb-1">KTP: {{ $pelanggan->no_ktp }}</div>
+                            <div class="mb-1">Kontak: {{ $pelanggan->phone ?? '-' }}</div>
+                            <div class="text-muted small mb-1">Alamat: {{ Str::limit($pelanggan->alamat, 40) }}</div>
+                            <div class="text-muted small mb-1">Terdaftar: {{ $pelanggan->created_at->format('d M Y') }}</div>
+                            <div class="d-flex mt-2">
+                                <a href="" class="btn btn-sm me-1 flex-fill" style="background-color: var(--haramain-light); color: var(--haramain-primary);"><i class="bi bi-pencil"></i> Edit</a>
+                                <form action="" method="POST" class="flex-fill">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm w-100" style="background-color: var(--haramain-light); color:#f44336;" onclick="return confirm('Hapus travel ini?')"><i class="bi bi-trash"></i> Hapus</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                    {{ $pelanggans->links() }}
+                </div>
+
             </div>
         </div>
     </div>
@@ -306,7 +265,6 @@
 
 @push('scripts')
 <script>
-    // Inisialisasi tooltip
     document.addEventListener('DOMContentLoaded', function() {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

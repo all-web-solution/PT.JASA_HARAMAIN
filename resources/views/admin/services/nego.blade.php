@@ -642,12 +642,12 @@
                             <i class="bi bi-card-checklist"></i> Detail Permintaan per Divisi
                         </h6>
                         <!-- Transportasi -->
-                        <div class="detail-form" id="transportasi-details">
+                        <div class="detail-form {{ in_array('transportasi', $selectedServices) ? '' : 'hidden' }}" id="transportasi-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-airplane"></i> Transportasi
                             </h6>
 
-                            <div class="detail-section">
+                            <div class="detail-section ">
                                 <div class="service-grid">
                                     <div class="transport-item" data-transportasi="airplane">
                                         <div class="service-icon">
@@ -762,7 +762,7 @@
                         </div>
 
                         <!-- Hotel -->
-                        <div class="detail-form" id="hotel-details">
+                        <div class="detail-form {{ in_array('hotel', $selectedServices) ? '' : 'hidden' }}" id="hotel-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-building"></i> Hotel
                             </h6>
@@ -858,7 +858,7 @@
                         </div>
 
                         <!-- Dokumen -->
-                        <div class="detail-form" id="dokumen-details">
+                        <div class="detail-form {{ in_array('dokumen', $selectedServices) ? '' : 'hidden' }}" id="dokumen-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-file-text"></i> Dokumen
                             </h6>
@@ -1116,7 +1116,7 @@
 
 
                         <!-- Handling -->
-                        <div class="detail-form" id="handling-details">
+                        <div class="detail-form {{ in_array('handling', $selectedServices) ? '' : 'hidden' }}" id="handling-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Handling
                             </h6>
@@ -1199,7 +1199,7 @@
                             </div>
                         </div>
                         <!-- Pendamping -->
-                        <div class="detail-form" id="pendamping-details">
+                        <div class="detail-form {{ in_array('pendamping', $selectedServices) ? '' : 'hidden' }}" id="pendamping-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Pendamping
                             </h6>
@@ -1274,7 +1274,7 @@
                             </div>
                         </div>
                         <!-- content -->
-                        <div class="detail-form" id="konten-details">
+                        <div class="detail-form {{ in_array('konten', $selectedServices) ? '' : 'hidden' }}" id="konten-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Content
                             </h6>
@@ -1323,7 +1323,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="detail-form" id="reyal-details">
+                        <div class="detail-form {{ in_array('reyal', $selectedServices) ? '' : 'hidden' }}" id="reyal-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Penukaran mata uang
                             </h6>
@@ -1338,7 +1338,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="detail-form" id="tour-details">
+                        <div class="detail-form {{ in_array('tour', $selectedServices) ? '' : 'hidden' }}" id="tour-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Tour
                             </h6>
@@ -1448,7 +1448,7 @@
                             </div>
                         </div>
 
-                        <div class="detail-form" id="meals-details">
+                        <div class="detail-form {{ in_array('meals', $selectedServices) ? '' : 'hidden' }}" id="meals-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Makanan
                             </h6>
@@ -1501,7 +1501,7 @@
                             <label class="form-label">Jumlah Snack</label>
                             <input type="text" class="form-control" name="jumlah_snack">
                         </div>
-                        <div class="detail-form" id="dorongan-details">
+                        <div class="detail-form {{ in_array('dorongan', $selectedServices) ? '' : 'hidden' }}" id="dorongan-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Dorongan
                             </h6>
@@ -1568,7 +1568,7 @@
                             <label class="form-label">Jumlah Dorongan sel</label>
                             <input type="text" class="form-control" name="jumlah_dorongan_sel">
                         </div>
-                        <div class="detail-form" id="waqaf-details">
+                        <div class="detail-form {{ in_array('wakaf', $selectedServices) ? '' : 'hidden' }}" id="waqaf-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Wakaf
                             </h6>
@@ -1620,7 +1620,7 @@
                             <label class="form-label">Jumlah Mushaf al-Quran</label>
                             <input type="text" class="form-control" name="jumlah_mushaf">
                         </div>
-                        <div class="detail-form" id="badal-details">
+                        <div class="detail-form {{ in_array('badal', $selectedServices) ? '' : 'hidden' }}" id="badal-details">
                             <h6 class="detail-title">
                                 <i class="bi bi-briefcase"></i> Badal
                             </h6>

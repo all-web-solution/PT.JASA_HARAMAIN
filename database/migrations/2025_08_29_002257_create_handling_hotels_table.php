@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('handling_hotels', function (Blueprint $table) {
             $table->id();
             $table->foreignId('handling_id')->constrained('handlings')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('nama');
-            $table->date('tanggal');
-            $table->string('harga');
-            $table->string('pax');
+            $table->string('nama')->nullable();
+            $table->date('tanggal')->nullable();
+            $table->string('harga')->nullable();
+            $table->string('pax')->nullable();
             
             $table->timestamps();
         });

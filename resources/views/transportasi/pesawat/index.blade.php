@@ -416,8 +416,7 @@
                         <th>Maskapai</th>
                         <th>Harga</th>
                         <th>Keterangan</th>
-                        <th>Tiket berangkat</th>
-                        <th>Tiket pulang</th>
+                        <th>Jumlah jamaah</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -431,8 +430,7 @@
                         <td>{{$plane->maskapai}}</td>
                         <td>{{$plane->harga}}</td>
                         <td>{{$plane->keterangan}}</td>
-                        <td><img src="{{ url('storage/' . $plane->tiket_berangkat) }}" alt="" width="100px"></td>
-                        <td><img src="{{ url('storage/' . $plane->tiket_pulang) }}" alt="" width="100px"></td>
+                       <td>{{$plane->jumlah_jamaah}}</td>
                         <td>
                             <a href="{{ route('transportation.plane.edit', $plane->id) }}">
                                 <button class="btn btn-warning">Edit</button>

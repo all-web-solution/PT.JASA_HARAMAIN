@@ -407,8 +407,7 @@
                     <td>{{ $order->service->total_jamaah }}</td>
                     <td>
                         {{-- Tombol untuk menampilkan/menyembunyikan harga Transportasi & Hotel --}}
-                        <button class="btn btn-sm btn-primary mb-2" onclick="togglePrices()">Lihat Harga</button>
-
+                       
                         {{-- Tampilkan detail layanan --}}
 
                         @if ($order->service->meals->count() > 0)

@@ -82,4 +82,8 @@ class PendampingController extends Controller
         return redirect()->route('handling.pendamping.index');
 
     }
+        public function customer(){
+        $guides = Guide::all();
+        return view('handling.pendamping.customer', compact('guides'));
+    }
 }

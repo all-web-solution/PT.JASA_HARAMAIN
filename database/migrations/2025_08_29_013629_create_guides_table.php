@@ -29,7 +29,7 @@ return new class extends Migration
                 ->cascadeOnUpdate();
 
                 $table->string('jumlah');
-                $table->string('keterangan');
+                $table->string('keterangan')->nullable();
             $table->timestamps();
         });
     }

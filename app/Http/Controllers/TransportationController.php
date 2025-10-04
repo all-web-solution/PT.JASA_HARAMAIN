@@ -93,7 +93,11 @@ class TransportationController extends Controller
 public function update(Request $request, $id)
     {
        $plane = Plane::findOrFail($id);
-       $plane->update(['harga' => $request->harga]);
+       $plane->update([
+        'harga' => $request->harga,
+        'tiket_berangkat' => $request->tiket_berangkat,
+        'tiket_pulang' => $request->tiket_pulang
+        ]);
 
        if($plane->service){
             $pelangganId = $plane->service->pelanggan_id;
@@ -114,7 +118,9 @@ public function update(Request $request, $id)
                 $query->where('pelanggan_id', $pelangganId);
             })->update([
                 'total_amount' => $GrandTotal,
-                'sisa_hutang' => $GrandTotal
+                'sisa_hutang' => $GrandTotal,
+                'status_pembayaran' => 'belum_bayar'
+                
             ]);
        }
         return redirect()->route('transportation.plane.index')

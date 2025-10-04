@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('document_id')->constrained('documents')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
+            $table->string('price');
             $table->timestamps();
         });
     }

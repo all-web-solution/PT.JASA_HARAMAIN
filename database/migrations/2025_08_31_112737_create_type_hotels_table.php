@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('type_hotels', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hotel_id')->constrained('hotels')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('nama_tipe'); // Double, Triple, Kuard, Kuint
             $table->integer('jumlah')->default(0);
             $table->timestamps();

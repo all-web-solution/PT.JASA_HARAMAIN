@@ -308,7 +308,7 @@
                             <div class="form-group">
                                 <label class="form-label">Harga</label>
                                  <select class="form-control" name="harga" id="travel-select">
-                                        <option value="" disabled selected>Pilih Travel</option>
+                                        <option value="" disabled selected>Pilih Harga Tiket</option>
                                         @foreach ($listTickets as $item)
                                             <option value="{{ $item->harga }}" >
                                                 Tanggal : {{ $item->tanggal }} -
@@ -318,6 +318,14 @@
                                             </option>
                                         @endforeach
                                     </select>
+                            </div>
+                            <div class="form-group">
+                                    <label class="form-label">Link tiket pesawat berangkat</label>
+                                    <input type="text" class="form-control" name="tiket_berangkat" required>
+                            </div>
+                            <div class="form-group">
+                                    <label class="form-label">Link tiket pesawat pulang</label>
+                                    <input type="text" class="form-control" name="tiket_pulang" required>
                             </div>
                         </div>
 

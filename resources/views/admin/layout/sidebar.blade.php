@@ -53,6 +53,11 @@
                 <i class="bi bi-speedometer2"></i> Price List Hotel
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('hotel.type.index') }}">
+                <i class="bi bi-speedometer2"></i>Type Hotel
+            </a>
+        </li>
     </ul>
     @elseif (auth()->user()->role === 'handling')
     <ul class="nav flex-column mt-2">
@@ -82,7 +87,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" href="{{ route('handling.pendamping.index') }}">
+            <a class="nav-link active" href="{{ route('handling.pendamping.customer') }}">
                 <i class="bi bi-speedometer2"></i> Pendamping Customer
             </a>
         </li>

@@ -20,7 +20,17 @@ class PelangganController extends Controller
         $persenAktif = $totalPelanggan > 0 ? round(($pelangganAktif / $totalPelanggan) * 100) : 0;
         $persenNonAktif = $totalPelanggan > 0 ? round(($pelangganNonAktif / $totalPelanggan) * 100) : 0;
 
-        $pelanggans = Pelanggan::latest()->paginate(5);
+        $bulan = request()->get('bulan');
+        $tahun = request()->get('tahun');
+
+        $pelanggans = Pelanggan::with(['services.orders' => function($q) use ($bulan, $tahun) {
+            if ($bulan) {
+                $q->whereMonth('tanggal', $bulan);
+            }
+            if ($tahun) {
+                $q->whereYear('tanggal', $tahun);
+            }
+        }])->paginate(10);
 
         return view('admin.pelanggan.index', compact(
             'totalPelanggan',
@@ -39,24 +49,25 @@ class PelangganController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama_travel' => 'required|string|max:255',
-            'email' => 'required|email|unique:pelanggans,email',
-            'penanggung_jawab' => 'required|string|max:255',
-            'no_ktp' => 'required|string|max:20',
-            'phone' => 'nullable|string|max:20',
-            'alamat' => 'nullable|string',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'status' => 'required|in:active,inactive',
-        ]);
+        
 
         if ($request->hasFile('foto')) {
-            $validated['foto'] = $request->file('foto')->store('pelanggans', 'public');
+            $path = $request->file('foto')->store('/', 'public');
         }
 
-        Pelanggan::create($validated);
+        Pelanggan::create([
+            'nama_travel' => $request->nama_travel,
+            'email' => $request->email,
+            'penanggung_jawab' => $request->penanggung_jawab,
+            'no_ktp' => $request->no_ktp,
+            'phone' => $request->phone,
+            'alamat' =>$request->alamat,
+            'foto' => $path,
+            'status' => $request->status,
+        ]);
 
         return redirect()->route('admin.pelanggan')->with('success', 'Travel berhasil ditambahkan');
+    
     }
     public function show(Pelanggan $pelanggan)
     {
@@ -74,34 +85,29 @@ class PelangganController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Pelanggan $pelanggan)
-    {
-        $request->validate([
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'nama_travel' => 'required|string|max:255',
-            'alamat' => 'required|string',
-            'email' => 'required|email|unique:pelanggans,email,' . $pelanggan->id,
-            'penanggung_jawab' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            'no_ktp' => 'required|string|unique:pelanggans,no_ktp,' . $pelanggan->id,
-            'status' => 'required|in:active,inactive',
-        ]);
-
-        $data = $request->except('foto');
-
-        if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
-            if ($pelanggan->foto) {
-                Storage::disk('public')->delete($pelanggan->foto);
-            }
-            $data['foto'] = $request->file('foto')->store('pelanggans', 'public');
-        }
-
-        $pelanggan->update($data);
-
-        return redirect()->route('admin.pelanggans.index')
-            ->with('success', 'Pelanggan berhasil diperbarui');
+   public function update(Request $request, Pelanggan $pelanggan)
+{
+    if ($request->hasFile('foto')) {
+        $path = $request->file('foto')->store('/', 'public');
+    } else {
+        $path = $pelanggan->foto; // pakai foto lama kalau tidak upload baru
     }
+
+    $pelanggan->update([
+        'nama_travel' => $request->nama_travel,
+        'email' => $request->email,
+        'penanggung_jawab' => $request->penanggung_jawab,
+        'no_ktp' => $request->no_ktp,
+        'phone' => $request->phone,
+        'alamat' => $request->alamat,
+        'foto' => $path,
+        'status' => $request->status,
+    ]);
+
+    return redirect()->route('admin.pelanggan')
+        ->with('success', 'Pelanggan berhasil diperbarui');
+}
+
 
     /**
      * Remove the specified resource from storage.
@@ -114,7 +120,7 @@ class PelangganController extends Controller
 
         $pelanggan->delete();
 
-        return redirect()->route('admin.pelanggans.index')
+        return redirect()->route('admin.pelanggan')
             ->with('success', 'Pelanggan berhasil dihapus');
     }
 }

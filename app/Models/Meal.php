@@ -11,6 +11,6 @@ class Meal extends Model
         return $this->belongsTo(Service::class);
     }
     public function mealItem(){
-        return $this->belongsTo(MealItem::class, 'id');
+        return $this->belongsTo(MealItem::class,'id');
     }
 }

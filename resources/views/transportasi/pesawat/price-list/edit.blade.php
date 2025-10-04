@@ -324,7 +324,7 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Kelas</label>
-                                <input type="date" class="form-control" name="kelas" required id="email" value="{{ $list->kelas }}">
+                                <input type="text" class="form-control" name="kelas" required id="email" value="{{ $list->kelas }}">
                             </div>
                         </div>
                         <div class="form-col">

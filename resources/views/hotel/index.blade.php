@@ -378,9 +378,7 @@
                 <h5 class="card-title">
                     <i class="bi bi-list-check"></i>Daftar Hotel
                 </h5>
-                <a href="{{ route('hotel.create') }}" class="btn-add-new">
-                    <i class="bi bi-plus-circle"></i> Tambah Hotel
-                </a>
+                
             </div>
 
             <!-- Search and Filter -->
@@ -426,26 +424,23 @@
                     </thead>
                     <tbody>
                         @foreach ($hotels as $hotel)
-                            @foreach ($hotel->typeHotels as $tipe)
-                                <tr>
-                                    <td data-label="No">{{ $loop->parent->iteration }}</td>
-                                    <td>{{$hotel->service->pelanggan->nama_travel}}</td>
-                                    <td>{{ \Carbon\Carbon::parse($hotel->tanggal_checkin)->translatedFormat('l, d F Y') }}
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($hotel->tanggal_checkout)->translatedFormat('l, d F Y') }}
-                                    </td>
-                                    <td>{{ $hotel->nama_hotel }}</td>
-                                    <td>{{ $hotel->harga_perkamar }}</td>
-                                    <td>{{ $tipe->nama_tipe }}</td>
-                                    <td>{{ $tipe->jumlah }}</td>
-                                    <td>{{ $hotel->catatan }}</td>
-                                    <td>
-                                        <a href="{{ route('hotel.edit', $hotel->id) }}">
-                                            <button class="btn btn-warning">Tambah harga</button>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
+                            <tr>
+                                <td>{{$loop->iteration}}</td>
+                                <td>{{$hotel->service->pelanggan->nama_travel}}</td>
+                                <td>{{$hotel->tanggal_checkin}}</td>
+                                <td>{{$hotel->tanggal_checkout}}</td>
+                                <td>{{$hotel->nama_hotel}}</td>
+                                <td>{{$hotel->harga_perkamar}}</td>
+                                <td>{{$hotel->type}}</td>
+                                <td>{{$hotel->jumlah_type}}</td>
+                                <td>{{$hotel->catatan}}</td>
+                                <td>
+                                    <a href="{{route('hotel.edit', $hotel->id)}}">
+                                        <button class="btn btn-warning">Tambah Harga</button>
+                                    </a>
+                                </td>
+
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>

@@ -11,7 +11,8 @@ class Guide extends Model
      public function service(){
         return $this->belongsTo(Service::class);
     }
-    public function guide(){
-        return $this->belongsTo(Guide::class);
-    }
+    public function guideItem()
+{
+    return $this->belongsTo(GuideItems::class, 'guide_id');
+}
 }

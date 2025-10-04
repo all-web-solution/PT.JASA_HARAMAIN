@@ -24,7 +24,9 @@ return new class extends Migration
             $table->string('nama_hotel');
             $table->string('harga_perkamar')->nullable();
             $table->string('jumlah_kamar');
-            $table->string('catatan');
+            $table->string('catatan')->nullable();
+            $table->string('type');
+            $table->string('jumlah_type');
             $table->timestamps();
         });
     }

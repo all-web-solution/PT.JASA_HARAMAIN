@@ -417,7 +417,7 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Dokumen</th>
-
+                        <th>Harga Dokumen</th>
                         <th>Aksi</th>
 
                     </tr>
@@ -427,6 +427,8 @@
                     <tr>
                         <td>No</td>
                         <td>{{ $child->name }}</td>
+                        <td>{{$child->price}}</td>
+                        
 
                         <td>
                             <a href="{{ route('visa.document.show.edit', $child->id) }}">
