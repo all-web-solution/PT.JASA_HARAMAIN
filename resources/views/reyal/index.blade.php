@@ -371,7 +371,7 @@
         }
     </style>
 
-    <div class="service-list-container">
+    {{-- <div class="service-list-container">
         <!-- Services List -->
         <div class="card">
             <!-- Services Table -->
@@ -393,7 +393,7 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $item->service->pelanggan->nama_travel }}</td>
                             <td>{{ $item->tipe }}</td>
-                            <td>{{ $item->jumlah }}h</td>
+                            <td>{{ $item->jumlah_input }}</td>
                             <td>{{ $item->kurs }}</td>
                             <td>{{ $item->hasil }}</td>
                         </tr>
@@ -422,6 +422,50 @@
                     </ul>
                 </nav>
             </div>
+        </div>
+    </div> --}}
+    <div class="service-list-container">
+        <!-- Services List -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title" id="text-title">
+                    <i class="bi bi-list-check"></i>Daftar Permintaan mata uang
+                </h5>
+
+            </div>
+
+            <!-- Search and Filter -->
+
+
+            <!-- Services Table -->
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Kode unik</th>
+                            <th>Customer/Travel</th>
+                            <th>Tipe</th>
+                            <th>Jumlah</th>
+                            <th>Kurs</th>
+                            <th>Hasil</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($reyals as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->service->pelanggan->nama_travel }}</td>
+                            <td>{{ $item->tipe }}</td>
+                            <td>{{ $item->jumlah_input }}</td>
+                            <td>{{ $item->kurs }}</td>
+                            <td>{{ $item->hasil }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+
         </div>
     </div>
 @endsection

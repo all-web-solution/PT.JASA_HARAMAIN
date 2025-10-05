@@ -611,6 +611,7 @@ class ServicesController extends Controller
                 'hasil' => $request->input('hasil_tumis'),
             ]);
         }
+       
     }
 
     private function handleWakafItems(Request $request, Service $service)

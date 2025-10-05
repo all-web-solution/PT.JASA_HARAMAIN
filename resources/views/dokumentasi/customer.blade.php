@@ -392,26 +392,22 @@
                         <tr>
                             <th>No</th>
                             <th>Nama pelanggan</th>
-                            <th>Nama konten</th>
-                            <th>Jumlah</th>
-                            <th>Keterangan</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
 
 
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($customer as $item)
+                        @foreach ($customers as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->service->pelanggan->nama_travel }}</td>
-                                <td>{{ $item->content->name }}</td>
-                                <td>{{ $item->jumlah }}</td>
+                                <td>{{ $item->nama_travel }}</td>
+                                <td>{{ $item->all_statuses }}</td>
                                 <td>
-                                    @if ($item->keterangan)
-                                        {{ $item->keteangan }}
-                                    @else
-                                    Tidak ada
-                                    @endif
+                                    <a href="{{ route('customer.detail', $item->id) }}">
+                                        <button class="btn btn-primary">Detail</button>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

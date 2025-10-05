@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContentCustomer extends Model
 {
-    protected $fillable = ['service_id', 'content_id', 'jumlah', 'keterangan'];
+    protected $fillable = ['service_id', 'content_id', 'jumlah', 'keterangan', 'status'];
 
     public function service(){
         return $this->belongsTo(Service::class);

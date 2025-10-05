@@ -213,4 +213,9 @@ Route::middleware(['auth', 'content'])->group(function(){
     Route::put('/content/update/{id}', [ContentController::class, 'update'])->name('content.update');
     Route::delete('/content/delete/{id}', [ContentController::class, 'destroy'])->name('content.destroy');
     Route::get('/content/customer', [ContentController::class, 'customer'])->name('content.customer');
+    Route::get('/customer/detail/{id}', [ContentController::class, 'showCustomerDetail'])->name('customer.detail');
+    // TAMBAHKAN TIGA ROUTE BARU INI UNTUK MENGUBAH STATUS
+Route::post('/customer/{customer}/status/pending', [ContentController::class, 'setStatusPending'])->name('customer.status.pending');
+Route::post('/customer/{customer}/status/selesai', [ContentController::class, 'setStatusSelesai'])->name('customer.status.selesai');
+Route::post('/customer/{customer}/status/batalkan', [ContentController::class, 'setStatusBatal'])->name('customer.status.batal');
 });

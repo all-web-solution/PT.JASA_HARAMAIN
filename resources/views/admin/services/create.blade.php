@@ -734,14 +734,14 @@
                                 <div class="card text-center p-3 card-reyal" data-reyal-type="tamis">
                                     <h5>Tamis</h5>
                                     <p>Rupiah → Reyal</p>
-                                    <input type="radio" name="tipe" value="tamis" class="d-none">
+                                    <input type="radio" name="tipe" value="tamis">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="card text-center p-3 card-reyal" data-reyal-type="tumis">
                                     <h5>Tumis</h5>
                                     <p>Reyal → Rupiah</p>
-                                    <input type="radio" name="tipe" value="tumis" class="d-none">
+                                    <input type="radio" name="tipe" value="tumis">
                                 </div>
                             </div>
                         </div>
@@ -1117,17 +1117,7 @@
                 updateCartUI();
             }
 
-            // Reyal Selection
-            const reyalCard = e.target.closest('.card-reyal');
-            if (reyalCard) {
-                document.querySelectorAll('.card-reyal').forEach(c => c.classList.remove('selected'));
-                reyalCard.classList.add('selected');
-                const type = reyalCard.dataset.reyalType;
-                document.getElementById(`form-${type}`).classList.remove('hidden');
-                document.getElementById(`form-${type === 'tamis' ? 'tumis' : 'tamis'}`).classList.add('hidden');
-            }
 
-            // Tour Selection
             const tourItem = e.target.closest('.service-tour');
             if (tourItem) {
                 document.querySelectorAll('.service-tour').forEach(item => item.classList.remove('selected'));
@@ -1327,4 +1317,57 @@
         });
     });
 </script>
+<script>
+document.addEventListener('click', function(e) {
+    // --- Pilih jenis konversi (Tamis / Tumis)
+    const reyalCard = e.target.closest('.card-reyal');
+    if (reyalCard) {
+        document.querySelectorAll('.card-reyal').forEach(c => c.classList.remove('selected'));
+        reyalCard.classList.add('selected');
+
+        const type = reyalCard.dataset.reyalType;
+        const formTamis = document.getElementById('form-tamis');
+        const formTumis = document.getElementById('form-tumis');
+
+        if (type === 'tamis') {
+            formTamis.classList.remove('hidden');
+            formTumis.classList.add('hidden');
+        } else if (type === 'tumis') {
+            formTumis.classList.remove('hidden');
+            formTamis.classList.add('hidden');
+        }
+    }
+});
+
+document.addEventListener('input', function(e) {
+    const input = e.target;
+
+    // --- Konversi Rupiah → Reyal
+    if (input.id === 'rupiah-tamis' || input.id === 'kurs-tamis') {
+        const rupiah = parseFloat(document.getElementById('rupiah-tamis').value);
+        const kurs = parseFloat(document.getElementById('kurs-tamis').value);
+
+        if (!isNaN(rupiah) && !isNaN(kurs) && kurs > 0) {
+            const hasil = (rupiah / kurs).toFixed(2);
+            document.getElementById('hasil-tamis').value = hasil;
+        } else {
+            document.getElementById('hasil-tamis').value = '';
+        }
+    }
+
+    // --- Konversi Reyal → Rupiah
+    if (input.id === 'reyal-tumis' || input.id === 'kurs-tumis') {
+        const reyal = parseFloat(document.getElementById('reyal-tumis').value);
+        const kurs = parseFloat(document.getElementById('kurs-tumis').value);
+
+        if (!isNaN(reyal) && !isNaN(kurs) && kurs > 0) {
+            const hasil = (reyal * kurs).toFixed(2);
+            document.getElementById('hasil-tumis').value = hasil;
+        } else {
+            document.getElementById('hasil-tumis').value = '';
+        }
+    }
+});
+</script>
+
 @endsection
