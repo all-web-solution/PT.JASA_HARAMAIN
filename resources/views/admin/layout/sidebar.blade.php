@@ -98,28 +98,30 @@
         </li>
     </ul>
     @elseif (auth()->user()->role === 'transportasi & tiket')
-    <ul>
+        <ul class="nav flex-column mt-2">
         <li class="nav-item">
-            <a class="nav-link active" href="{{ route('transportation.plane.index') }}">
-                <i class="bi bi-speedometer2"></i> Pesawat
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" href="{{ route('transportation.car.index') }}">
-                <i class="bi bi-speedometer2"></i> Kendaraan
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" href="{{ route('transportation.customer') }}">
-                <i class="bi bi-speedometer2"></i> Customer
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" href="{{ route('price.list.ticket') }}">
-                <i class="bi bi-speedometer2"></i> Price list tiket
+            <a class="nav-link" href="{{route('transportation.plane.index')}}">
+                Pesawat
             </a>
         </li>
 
+        <!-- Enhanced Menu lainnya -->
+        <li class="nav-item">
+            <a class="nav-link" href="{{route('transportation.car.index')}}">
+               Kendaraan
+            </a>
+        </li>
+        <!-- Enhanced Menu lainnya -->
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('transportation.customer') }}">
+               Customer kendaraan
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('price.list.ticket') }}">
+                 Price list tiket
+            </a>
+        </li>
     </ul>
     @elseif (auth()->user()->role === 'visa dan acara')
         <ul class="nav flex-column mt-2">
