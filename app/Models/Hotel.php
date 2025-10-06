@@ -11,7 +11,6 @@ class Hotel extends Model
         'tanggal_checkin',
         'tanggal_checkout',
         'nama_hotel',
-        'tipe_kamar',
         'jumlah_kamar',
         'harga_perkamar',
         'catatan',
@@ -23,5 +22,5 @@ class Hotel extends Model
         return $this->belongsTo(Service::class);
     }
 
-    
+
 }

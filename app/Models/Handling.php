@@ -13,10 +13,10 @@ class Handling extends Model
     }
 
     public function handlingHotels(){
-        return $this->hasMany(HandlingHotel::class, 'handling_id');
+        return $this->hasOne(HandlingHotel::class);
     }
     public function handlingPlanes(){
-        return $this->hasMany(HandlingPlanes::class, 'handling_id');
+        return $this->hasOne(HandlingPlanes::class);
     }
-   
+
 }

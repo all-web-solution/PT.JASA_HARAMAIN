@@ -461,7 +461,7 @@
                                                 <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
                                                 <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
                                                 <div class="service-desc">Harga: {{ number_format($data->harga) }}/hari</div>
-                                                <input type="radio" name="transportation_id[0]" value="{{ $data->id }}" class="d-none">
+                                                <input type="radio" name="transportation_id[0]" value="{{ $data->id }}" >
                                             </div>
                                             @endforeach
                                         </div>
@@ -505,6 +505,7 @@
                                             @foreach ($types as $type)
                                             <div class="type-item" data-type-id="{{ $type->id }}" data-price="{{ $type->jumlah }}" data-name="{{ $type->nama_tipe }}">
                                                 <div class="service-name">{{ $type->nama_tipe }}</div>
+                                                <input type="checkbox" name="type[]" value="{{ $type->nama_tipe }}">
                                             </div>
                                             @endforeach
                                         </div>
@@ -512,8 +513,8 @@
                                     </div>
                                 </div>
                                 <div class="form-group mt-2">
-                                    <label class="form-label">Harga Total (untuk Divisi Hotel)</label>
-                                    <input type="number" class="form-control" name="harga_total_hotel[0]" min="0">
+                                    <label class="form-label">Jumlah kamar</label>
+                                    <input type="number" class="form-control" name="jumlah_kamar[0]" min="0">
                                 </div>
                                 <div class="mt-3 text-end">
                                     <button type="button" class="btn btn-danger btn-sm removeHotel">Hapus Hotel</button>
@@ -530,6 +531,7 @@
                                 @foreach ($documents as $document)
                                 <div class="document-item" data-document-id="{{ $document->id }}" data-has-children="{{ $document->childrens->isNotEmpty() ? 'true' : 'false' }}" data-name="{{ $document->name }}" data-price="{{ $document->price }}">
                                     <div class="service-name">{{ $document->name }}</div>
+                                    <input type="checkbox" name="dokumen_id[]" id="" value="{{ $document->id }}">
                                 </div>
                                 @endforeach
                             </div>
@@ -544,6 +546,7 @@
                                     <div class="child-item" data-child-id="{{ $child->id }}" data-price="{{ $child->price }}" data-name="{{ $child->name }}">
                                         <div class="child-name">{{ $child->name }}</div>
                                         <div class="child-name">Rp. {{ number_format($child->price) }}</div>
+                                        <input type="checkbox" name="child_documents[]" id="" value="{{ $child->id }}">
                                     </div>
                                     @endforeach
                                 </div>
@@ -722,6 +725,7 @@
                                 @foreach ($tours as $tour)
                                 <div class="service-tour" data-id="{{ $tour->id }}" data-name="{{ $tour->name }}">
                                     <div class="service-name">{{ $tour->name }}</div>
+                                    <input type="checkbox" name="tour_id" id="" value="{{ $tour->id }}">
                                 </div>
                                 @endforeach
                             </div>
@@ -737,7 +741,7 @@
                                     <div class="service-desc">Kapasitas: {{ $trans->kapasitas }}</div>
                                     <div class="service-desc">Fasilitas: {{ $trans->fasilitas }}</div>
                                     <div class="service-desc">Harga: {{ number_format($trans->harga) }}</div>
-                                    <input type="radio" name="tour_transport[{{ $tour->id }}]" value="{{ $trans->id }}" class="d-none">
+                                    <input type="radio" name="tour_transport[{{ $tour->id }}]" value="{{ $trans->id }}">
                                 </div>
                                 @endforeach
                             </div>
@@ -795,6 +799,7 @@
                             <div class="wakaf-item" data-id="{{ $item->id }}" data-name="{{ $item->nama }}" data-price="{{ $item->harga }}" data-type="wakaf">
                                 <div class="service-name">{{ $item->nama }}</div>
                                 <div class="service-desc">Rp. {{ number_format($item->harga) }}</div>
+                                <input type="checkbox" name="wakaf_id" value="{{ $item->id }}">
                             </div>
                             @endforeach
                         </div>
@@ -1568,7 +1573,7 @@
                     const inputDiv = document.createElement('div');
                     inputDiv.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border', 'rounded');
                     inputDiv.dataset.typeId = typeId;
-                    inputDiv.innerHTML = `<label class="form-label">Jumlah Kamar (${name})</label><input type="number" class="form-control" name="jumlah_kamar[${hotelForm.dataset.index}][${typeId}]" min="1" value="1" data-is-qty="true" data-type-id="${typeId}"><label class="form-label mt-2">Harga (${name})</label><input type="text" class="form-control" name="harga_kamar[${hotelForm.dataset.index}][${typeId}]" value="${price.toLocaleString('id-ID')}" readonly>`;
+                    inputDiv.innerHTML = `<label class="form-label">Jumlah Kamar (${name})</label><input type="number" class="form-control" name="jumlah_type[]" min="1" value="1" data-is-qty="true" data-type-id="${typeId}"><label class="form-label mt-2">Harga (${name})</label><input type="text" class="form-control" name="harga_kamar[${hotelForm.dataset.index}][${typeId}]" value="${price.toLocaleString('id-ID')}" readonly>`;
                     dynamicContainer.appendChild(inputDiv);
                     const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value.trim() || `Hotel ${hotelForm.dataset.index}`;
                     updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${name}`, 1, price);

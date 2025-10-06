@@ -269,42 +269,79 @@ class ServicesController extends Controller
     }
 
 
-    public function edit($id)
-    {
-        $service = Service::with([
-            'hotels.roomTypes', 'planes', 'transportationItem',
-            'handlings.handlingHotels', 'handlings.handlingPlanes',
-            'meals', 'guides', 'tours', 'documents', 'reyals',
-            'wakafs', 'dorongans', 'contents', 'badals'
-        ])->findOrFail($id);
+    // public function edit($id)
+    // {
+    //     $service = Service::with([
+    //         'hotels', 'planes', 'transportationItem',
+    //         'handlings.handlingHotels', 'handlings.handlingPlanes',
+    //         'meals', 'guides', 'tours', 'documents', 'reyals',
+    //         'wakafs', 'dorongans', 'contents', 'badals'
+    //     ])->findOrFail($id);
 
-        $allServices = Service::where('pelanggan_id', $service->pelanggan_id)
-            ->pluck('services')
-            ->toArray();
-        $selectedServices = collect($allServices)
-            ->map(fn($item) => is_array($item) ? $item : json_decode($item, true))
-            ->flatten()
-            ->unique()
-            ->toArray();
+    //     $allServices = Service::where('pelanggan_id', $service->pelanggan_id)
+    //         ->pluck('services')
+    //         ->toArray();
+    //     $selectedServices = collect($allServices)
+    //         ->map(fn($item) => is_array($item) ? $item : json_decode($item, true))
+    //         ->flatten()
+    //         ->unique()
+    //         ->toArray();
 
-        $data = [
-            'service' => $service,
-            'selectedServices' => $selectedServices,
-            'pelanggans' => Pelanggan::all(),
-            'transportations' => Transportation::all(),
-            'guides' => GuideItems::all(),
-            'tours' => TourItem::all(),
-            'meals' => MealItem::all(),
-            'documents' => DocumentModel::with('childrens')->get(),
-            'wakaf' => Wakaf::all(),
-            'dorongan' => Dorongan::all(),
-            'contents' => ContentItem::all(),
-            'types' => TypeHotel::all(),
-        ];
+    //     $data = [
+    //         'service' => $service,
+    //         'selectedServices' => $selectedServices,
+    //         'pelanggans' => Pelanggan::all(),
+    //         'transportations' => Transportation::all(),
+    //         'guides' => GuideItems::all(),
+    //         'tours' => TourItem::all(),
+    //         'meals' => MealItem::all(),
+    //         'documents' => DocumentModel::with('childrens')->get(),
+    //         'wakaf' => Wakaf::all(),
+    //         'dorongan' => Dorongan::all(),
+    //         'contents' => ContentItem::all(),
+    //         'types' => TypeHotel::all(),
+    //     ];
 
-        return view('admin.services.edit', $data);
-    }
+    //     return view('admin.services.edit', $data);
+    // }
+// IN YOUR ServicesController.php
+public function edit($id)
+{
+    $service = Service::with([
+        'pelanggan',
+        'hotels',
+        'planes',
+        'transportationItem.transportation.routes',
+        'transportationItem.route',
+        'handlings', // Simplified for clarity
+        'meals',
+        'guides',
+        'tours', // Eager load the tours and their selected transportation
+        'documents',
+        'wakafs',
+        'dorongans',
+        'contents',
+        'badals'
+    ])->findOrFail($id);
 
+    $data = [
+        'service' => $service,
+        // The selectedServices can be decoded directly from the service object
+        'selectedServices' => $service->services ?? [],
+        'pelanggans' => Pelanggan::all(),
+        'transportations' => Transportation::with('routes')->get(),
+        'guides' => GuideItems::all(),
+        'tours' => TourItem::all(),
+        'meals' => MealItem::all(),
+        'documents' => DocumentModel::with('childrens')->get(),
+        'wakaf' => Wakaf::all(),
+        'dorongan' => Dorongan::all(),
+        'contents' => ContentItem::all(),
+        'types' => TypeHotel::all(),
+    ];
+
+    return view('admin.services.edit', $data);
+}
 
     public function update(Request $request, $id)
     {
@@ -318,7 +355,7 @@ class ServicesController extends Controller
             'total_jamaah' => 'required|integer',
         ]);
 
-        $status = $request->input('action') === 'nego' ? 'nego' : 'deal';
+
 
         $service->update([
             'pelanggan_id' => $request->travel,
@@ -329,13 +366,39 @@ class ServicesController extends Controller
             'status' => $status,
         ]);
 
-        // Hapus relasi lama sebelum menyimpan relasi baru
-        $this->deleteServiceItems($service);
 
-        // Memproses ulang semua layanan
-        $this->processServiceItems($request, $service);
+       // ✅ Update / tambah pesawat
+        if ($request->has('rute')) {
+            foreach ($request->rute as $i => $rute) {
+                $planeId = $request->plane_id[$i] ?? null;
+                $plane = Plane::find($planeId);
 
-        return redirect()->route('service.uploadBerkas', [
+                if (!$plane) {
+                    $plane = new Plane();
+                    $plane->service_id = $service->id;
+                }
+
+                $plane->tanggal_keberangkatan = $request->tanggal[$i] ?? null;
+                $plane->rute = $rute;
+                $plane->maskapai = $request->maskapai[$i] ?? null;
+                $plane->harga = $request->harga_tiket[$i] ?? null;
+                $plane->keterangan = $request->keterangan[$i] ?? null;
+                $plane->jumlah_jamaah = $request->jumlah[$i] ?? 0;
+
+                if ($request->hasFile("tiket_berangkat.$i")) {
+                    $plane->tiket_berangkat = $this->storeFileIfExists($request->file("tiket_berangkat.$i"), $i, 'tiket');
+                }
+
+                if ($request->hasFile("tiket_pulang.$i")) {
+                    $plane->tiket_pulang = $this->storeFileIfExists($request->file("tiket_pulang.$i"), $i, 'tiket');
+                }
+
+                $plane->save();
+            }
+        }
+
+
+        return redirect()->route('admin.services', [
             'service_id' => $service->id,
             'total_jamaah' => $request->total_jamaah,
         ])->with('success', 'Data service berhasil diperbarui.');
@@ -386,7 +449,7 @@ class ServicesController extends Controller
                 case 'reyal':
                     $this->handleReyalItems($request, $service);
                     break;
-                case 'wakaf':
+                case 'waqaf':
                     $this->handleWakafItems($request, $service);
                     break;
                 case 'dorongan':
@@ -426,20 +489,26 @@ class ServicesController extends Controller
     {
         if ($request->filled('nama_hotel')) {
             foreach ($request->nama_hotel as $i => $namaHotel) {
-                if (empty($namaHotel)) continue;
-                $hotel = $service->hotels()->create([
-                    'nama_hotel' => $namaHotel,
-                    'tanggal_checkin' => $request->tanggal_checkin[$i] ?? null,
-                    'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
-                ]);
-                if (isset($request->jumlah_kamar[$i])) {
-                    foreach ($request->jumlah_kamar[$i] as $typeId => $jumlah) {
-                        if ($jumlah > 0) {
-                            $hotel->roomTypes()->create(['type_hotel_id' => $typeId, 'jumlah_kamar' => $jumlah]);
-                        }
-                    }
+                foreach($request->type as $t => $type){
+                    if (empty($namaHotel)) continue;
+                    $hotel = $service->hotels()->create([
+                        'nama_hotel' => $namaHotel,
+                        'tanggal_checkin' => $request->tanggal_checkin[$i] ?? null,
+                        'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
+                        'type' => $type,
+                        'jumlah_kamar' => $request->jumlah_kamar[$i],
+                        'harga_perkamar' =>  $request->jumlah_kamar[$i],
+                        'jumlah_type' =>  $request->jumlah_type[$i]
+
+                    ]);
+
                 }
+
             }
+
+
+
+
         }
     }
 
@@ -478,6 +547,7 @@ class ServicesController extends Controller
                     }
                 }
             }
+
         }
     }
 
@@ -553,46 +623,77 @@ class ServicesController extends Controller
                     'transportation_id' => $transportationId,
                 ]);
             }
+
+
         }
     }
+private function handleDocumentItems(Request $request, Service $service)
+{
+    if ($request->filled('dokumen_id')) {
+         if ($request->hasFile('paspor_dokumen')) {
+            $paspordokumen = $request->file('paspor_dokumen')->store('/', 'public');
+        }
+         if ($request->hasFile('pas_foto_dokumen')) {
+            $pasfotodokumen = $request->file('pas_foto_dokumen')->store('/', 'public');
+        }
+        foreach ($request->dokumen_id as $docId) {
+            $document = DocumentModel::findOrFail($docId);
 
-    private function handleDocumentItems(Request $request, Service $service)
-    {
-        if ($request->filled('dokumen_id')) {
-            foreach ($request->dokumen_id as $docId) {
-                $document = DocumentModel::find($docId);
-                if (!$document) continue;
+            // Jika dokumen memiliki anak (childrens)
+            if ($document->childrens && $document->childrens->count() > 0) {
 
-                if ($document->childrens->isNotEmpty()) {
-                    if (isset($request->child_documents[$docId])) {
-                        foreach ($request->child_documents[$docId] as $childId) {
-                            $child = $document->childrens->firstWhere('id', $childId);
-                            if ($child) {
-                                $jumlah = $request->input("jumlah_doc_child_{$childId}") ?? 1;
-                                if ($jumlah > 0) {
-                                    $service->documents()->create([
-                                        'document_id' => $docId,
-                                        'document_children_id' => $childId,
-                                        'jumlah' => $jumlah,
-                                        'harga' => $child->price,
-                                    ]);
-                                }
+                // Jika user memilih child document
+                if (isset($request->child_documents[$docId])) {
+                    foreach ($request->child_documents[$docId] as $childId) {
+                        $child = $document->childrens->firstWhere('id', $childId);
+                        if ($child) {
+                            $jumlah = $request->input("jumlah_doc_child_{$childId}", 1);
+
+                            if ($jumlah > 0) {
+                                $service->documents()->create([
+                                    'document_id' => $docId,
+                                    'document_children_id' => $childId,
+                                    'jumlah' => $jumlah,
+                                    'harga' => $child->price,
+                                    'paspor' => $paspordokumen,
+                                    'pas_foto' => $pasfotodokumen
+
+                                ]);
                             }
                         }
                     }
                 } else {
-                    $jumlah = $request->input("jumlah_doc_{$docId}") ?? 1;
+                    // Jika tidak ada child dipilih, simpan dokumen induk
+                    $jumlah = $request->input("jumlah_doc_{$docId}", 1);
+
                     if ($jumlah > 0) {
                         $service->documents()->create([
                             'document_id' => $docId,
                             'jumlah' => $jumlah,
-                            'harga' => $document->price,
+                            'harga' => 0,
+                             'paspor' => $paspordokumen,
+                              'pas_foto' => $pasfotodokumen
                         ]);
                     }
+                }
+            } else {
+                // Dokumen tanpa anak langsung disimpan
+                $jumlah = $request->input("jumlah_doc_{$docId}", 1);
+
+                if ($jumlah > 0) {
+                    $service->documents()->create([
+                        'document_id' => $docId,
+                        'jumlah' => $jumlah,
+                        'harga' => $document->price,
+                        'paspor' => $paspordokumen,
+                        'pas_foto' => $pasfotodokumen
+                    ]);
                 }
             }
         }
     }
+}
+
 
     private function handleReyalItems(Request $request, Service $service)
     {
@@ -611,7 +712,7 @@ class ServicesController extends Controller
                 'hasil' => $request->input('hasil_tumis'),
             ]);
         }
-       
+
     }
 
     private function handleWakafItems(Request $request, Service $service)
@@ -619,9 +720,13 @@ class ServicesController extends Controller
         if ($request->filled('jumlah_wakaf')) {
             foreach ($request->jumlah_wakaf as $wakafId => $jumlah) {
                 if ($jumlah > 0) {
-                    $service->wakafs()->create(['wakaf_id' => $wakafId, 'jumlah' => (int) $jumlah]);
+                    $service->wakafs()->create([
+                        'wakaf_id' => $wakafId,
+                        'jumlah' => $jumlah
+                    ]);
                 }
             }
+
         }
     }
 
