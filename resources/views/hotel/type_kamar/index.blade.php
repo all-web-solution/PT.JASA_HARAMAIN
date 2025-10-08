@@ -1,5 +1,6 @@
 @extends('admin.master')
-@section('content')
+@section('title', 'Daftar Type Hotel')
+@push('styles')
     <style>
         :root {
             --haramain-primary: #1a4b8c;
@@ -370,6 +371,8 @@
             }
         }
     </style>
+@endpush
+@section('content')
 
     <div class="service-list-container">
         <!-- Services List -->
@@ -383,14 +386,15 @@
                 </a>
             </div>
 
-            <!-- Search and Filter -->
-            <div class="search-filter-container">
-                <div class="search-box">
-                    <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Cari customer/kode service...">
+            <form method="GET" action="{{ route('hotel.type.index') }}" class="search-box">
+                <div class="search-filter-container">
+                    <div class="search-box">
+                        <i class="bi bi-search"></i>
+                        <input type="text" name="search" placeholder="Cari nama tipe..."
+                            value="{{ request('search') }}">
+                    </div>
                 </div>
-
-            </div>
+            </form>
 
             <!-- Services Table -->
             <div class="table-responsive">
@@ -399,52 +403,36 @@
                         <tr>
                             <th>No</th>
                             <th>Nama type</th>
-                            <th>Harga</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($types as $type)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $type->nama_tipe }}</td>
-                            <td>{{ $type->jumlah }}</td>
-                            <td>
-                                <a href="{{ route('hotel.type.edit', $type->id) }}" class="btn btn-warning">
-                                    Edit
-                                </a>
-                                <form action="{{ route('hotel.type.delete', $type->id) }}" method="post">
-                                    @csrf
-                                    @method('delete')
-                                    <button class="btn btn-danger">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                        @endforeach
+                        @forelse ($types as $type)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $type->nama_tipe }}</td>
+                                <td>
+                                    <a href="{{ route('hotel.type.edit', $type->id) }}"
+                                        class="btn btn-warning btn-action btn-edit" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <form action="{{ route('hotel.type.delete', $type->id) }}" method="post"
+                                        style="display:inline-block;">
+                                        @csrf
+                                        @method('delete')
+                                        <button type="submit" class="btn btn-danger btn-action btn-delete" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Belum ada data type hotel.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
-
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination-container">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
         </div>
     </div>
@@ -464,46 +452,8 @@
                             row.remove();
                             alert('Permintaan service berhasil dihapus!');
                         }, 300);
-
-                        /*
-                        fetch('/services/' + serviceId, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                row.remove();
-                                alert('Permintaan service berhasil dihapus!');
-                            }
-                        });
-                        */
                     }
                 });
-            });
-
-            // Search functionality
-            const searchInput = document.querySelector('.search-box input');
-            searchInput.addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') {
-                    const searchTerm = this.value.toLowerCase();
-                    const rows = document.querySelectorAll('tbody tr');
-
-                    rows.forEach(row => {
-                        const customerName = row.querySelector('td:first-child .customer-name')
-                            .textContent.toLowerCase();
-                        const serviceCode = row.querySelector('td:nth-child(2)').textContent
-                            .toLowerCase();
-
-                        if (customerName.includes(searchTerm) || serviceCode.includes(searchTerm)) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-                }
             });
         });
     </script>

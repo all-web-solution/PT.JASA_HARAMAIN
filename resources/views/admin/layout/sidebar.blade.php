@@ -46,19 +46,19 @@
     @elseif (auth()->user()->role === 'hotel')
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hotel.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('hotel.index') ? 'active' : '' }}"
                     href="{{ route('hotel.index') }}">
                     <i class="bi bi-building"></i> HOTEL
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hotel.price.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('hotel.price.*') ? 'active' : '' }}"
                     href="{{ route('hotel.price.index') }}">
                     <i class="bi bi-cash-stack"></i> Price List Hotel
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hotel.type.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('hotel.type.*') ? 'active' : '' }}"
                     href="{{ route('hotel.type.index') }}">
                     <i class="bi bi-tags"></i> Type Hotel
                 </a>

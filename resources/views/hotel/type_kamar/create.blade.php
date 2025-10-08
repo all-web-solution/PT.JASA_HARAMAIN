@@ -1,6 +1,6 @@
 @extends('admin.master')
-@section('title', 'Tambah Hotel')
-@section('content')
+@section('title', 'Tambah Type Hotel')
+@push('styles')
     <style>
         :root {
             --haramain-primary: #1a4b8c;
@@ -282,6 +282,8 @@
             }
         }
     </style>
+@endpush
+@section('content')
 
     <div class="service-create-container">
         <div class="card">
@@ -308,16 +310,11 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Nama type</label>
-                                    <input type="text" class="form-control" name="name" required id="email">
-                                </div>
-                            </div>
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Harga</label>
-                                    <input type="text" class="form-control" name="price" required id="penanggung">
+                                    <input type="text" class="form-control" name="name" required>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                     <button type="submit" class="btn btn-submit">
                         <i class="bi bi-check-circle"></i> Simpan data hotel

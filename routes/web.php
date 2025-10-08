@@ -72,25 +72,29 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'hotel'])->group(function () {
+    // Routes untuk hotel
     Route::get('/hotel', [HotelController::class, 'index'])->name('hotel.index');
     Route::get('/hotel/create', [HotelController::class, 'create'])->name('hotel.create');
     Route::post('/hotel', [HotelController::class, 'store'])->name('hotel.store');
     Route::get('hotel/{id}', [HotelController::class, 'edit'])->name('hotel.edit');
     Route::put('hotel/{id}/update', [HotelController::class, 'update'])->name('hotel.update');
     Route::delete('hotel/{id}/delete', [HotelController::class, 'destroy'])->name('hotel.destroy');
+    // Routes untuk Price List
     Route::get('/price', [PriceListHotelController::class, 'index'])->name('hotel.price.index');
     Route::get('/price/create', [PriceListHotelController::class, 'create'])->name('hotel.price.create');
-    Route::post('/price/store', [PriceListHotelController::class, 'store'])->name('hotel.price.post');
+    Route::post('/price/store', [PriceListHotelController::class, 'store'])->name('hotel.price.store');
     Route::get('/price/edit/{id}', [PriceListHotelController::class, 'edit'])->name('hotel.price.edit');
     Route::put('/price/update/{id}', [PriceListHotelController::class, 'update'])->name('hotel.price.update');
     Route::delete('/price/delete/{id}', [PriceListHotelController::class, 'destroy'])->name('hotel.price.delete');
-    Route::get('/price/type/', [TypeController::class, 'index'])->name('hotel.type.index');
+    // Routes untuk Type Hotel
+    Route::get('/price/type', [TypeController::class, 'index'])->name('hotel.type.index');
     Route::get('/price/type/create', [TypeController::class, 'create'])->name('hotel.type.create');
     Route::post('/price/type/create', [TypeController::class, 'store'])->name('hotel.type.store');
     Route::get('/price/type/edit/{id}', [TypeController::class, 'edit'])->name('hotel.type.edit');
     Route::put('/price/type/update/{id}', [TypeController::class, 'update'])->name('hotel.type.update');
     Route::delete('/price/type/delete/{id}', [TypeController::class, 'destroy'])->name('hotel.type.delete');
 });
+
 Route::middleware(['auth', 'handling'])->group(function () {
     Route::group(['prefix' => 'catering',], function () {
         Route::get('/', [App\Http\Controllers\Handling\CateringController::class, 'index'])->name('catering.index');
@@ -103,23 +107,23 @@ Route::middleware(['auth', 'handling'])->group(function () {
         Route::get('/customer', [App\Http\Controllers\Handling\CateringController::class, 'customer'])->name('catering.customer');
     });
     Route::group(['prefix' => 'handling'], function () {
-        Route::get('/',  [App\Http\Controllers\Handling\HandlingController::class, 'index'])->name('handling.handling.index');
-        Route::get('/hotel',  [App\Http\Controllers\Handling\HandlingController::class, 'hotel'])->name('handling.handling.hotel');
+        Route::get('/', [App\Http\Controllers\Handling\HandlingController::class, 'index'])->name('handling.handling.index');
+        Route::get('/hotel', [App\Http\Controllers\Handling\HandlingController::class, 'hotel'])->name('handling.handling.hotel');
     });
     Route::group(['prefix' => 'pendamping'], function () {
-        Route::get('/',  [App\Http\Controllers\Handling\PendampingController::class, 'index'])->name('handling.pendamping.index');
-        Route::get('/create',  [App\Http\Controllers\Handling\PendampingController::class, 'create'])->name('handling.pendamping.create');
-        Route::post('/create',  [App\Http\Controllers\Handling\PendampingController::class, 'store'])->name('handling.pendamping.store');
-        Route::get('/edit/{id}',  [App\Http\Controllers\Handling\PendampingController::class, 'edit'])->name('handling.pendamping.edit');
+        Route::get('/', [App\Http\Controllers\Handling\PendampingController::class, 'index'])->name('handling.pendamping.index');
+        Route::get('/create', [App\Http\Controllers\Handling\PendampingController::class, 'create'])->name('handling.pendamping.create');
+        Route::post('/create', [App\Http\Controllers\Handling\PendampingController::class, 'store'])->name('handling.pendamping.store');
+        Route::get('/edit/{id}', [App\Http\Controllers\Handling\PendampingController::class, 'edit'])->name('handling.pendamping.edit');
         Route::put('/update/{id}', [App\Http\Controllers\Handling\PendampingController::class, 'update'])->name('handling.pendamping.update');
         Route::delete('/delete/{id}', [App\Http\Controllers\Handling\PendampingController::class, 'destroy'])->name('handling.pendamping.destroy');
         Route::get('/customer', [App\Http\Controllers\Handling\PendampingController::class, 'customer'])->name('handling.pendamping.customer');
     });
     Route::group(['prefix' => 'tour'], function () {
-        Route::get('/',  [App\Http\Controllers\Handling\TourController::class, 'index'])->name('handling.tour.index');
-        Route::get('/create',  [App\Http\Controllers\Handling\TourController::class, 'create'])->name('handling.tour.create');
-        Route::post('/create',  [App\Http\Controllers\Handling\TourController::class, 'store'])->name('handling.tour.store');
-        Route::get('/edit/{id}',  [App\Http\Controllers\Handling\TourController::class, 'edit'])->name('handling.tour.edit');
+        Route::get('/', [App\Http\Controllers\Handling\TourController::class, 'index'])->name('handling.tour.index');
+        Route::get('/create', [App\Http\Controllers\Handling\TourController::class, 'create'])->name('handling.tour.create');
+        Route::post('/create', [App\Http\Controllers\Handling\TourController::class, 'store'])->name('handling.tour.store');
+        Route::get('/edit/{id}', [App\Http\Controllers\Handling\TourController::class, 'edit'])->name('handling.tour.edit');
         Route::put('/update/{id}', [App\Http\Controllers\Handling\TourController::class, 'update'])->name('handling.tour.update');
         Route::delete('/delete/{id}', [App\Http\Controllers\Handling\TourController::class, 'destroy'])->name('handling.tour.destroy');
     });
@@ -200,12 +204,12 @@ Route::middleware(['auth', 'palugada'])->group(function () {
     Route::delete('dorongan/delete/{id}', [DoronganController::class, 'destroy'])->name('dorongan.destroy');
     Route::get('dorongan/customer', [DoronganController::class, 'customer'])->name('dorongan.customer');
 
-    Route::get('/badal', function(){
+    Route::get('/badal', function () {
         $wakaf = \App\Models\Badal::all();
         return view('palugada.badal', compact('wakaf'));
     })->name('palugada.badal');
 });
-Route::middleware(['auth', 'content'])->group(function(){
+Route::middleware(['auth', 'content'])->group(function () {
     Route::get('/content', [ContentController::class, 'index'])->name('content.index');
     Route::get('/content/create', [ContentController::class, 'create'])->name('content.create');
     Route::post('/content/store', [ContentController::class, 'store'])->name('content.store');
@@ -215,7 +219,7 @@ Route::middleware(['auth', 'content'])->group(function(){
     Route::get('/content/customer', [ContentController::class, 'customer'])->name('content.customer');
     Route::get('/customer/detail/{id}', [ContentController::class, 'showCustomerDetail'])->name('customer.detail');
     // TAMBAHKAN TIGA ROUTE BARU INI UNTUK MENGUBAH STATUS
-Route::post('/customer/{customer}/status/pending', [ContentController::class, 'setStatusPending'])->name('customer.status.pending');
-Route::post('/customer/{customer}/status/selesai', [ContentController::class, 'setStatusSelesai'])->name('customer.status.selesai');
-Route::post('/customer/{customer}/status/batalkan', [ContentController::class, 'setStatusBatal'])->name('customer.status.batal');
+    Route::post('/customer/{customer}/status/pending', [ContentController::class, 'setStatusPending'])->name('customer.status.pending');
+    Route::post('/customer/{customer}/status/selesai', [ContentController::class, 'setStatusSelesai'])->name('customer.status.selesai');
+    Route::post('/customer/{customer}/status/batalkan', [ContentController::class, 'setStatusBatal'])->name('customer.status.batal');
 });

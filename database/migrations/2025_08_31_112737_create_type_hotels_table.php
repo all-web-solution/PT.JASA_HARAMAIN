@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('type_hotels', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_tipe'); // Double, Triple, Kuard, Kuint
+            $table->string('nama_tipe');
             $table->integer('jumlah')->default(0);
             $table->timestamps();
         });

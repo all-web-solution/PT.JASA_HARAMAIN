@@ -1,4 +1,5 @@
 @extends('admin.master')
+@section('title', 'Daftar Hotel')
 @section('content')
     <style>
         :root {
@@ -378,32 +379,29 @@
                 <h5 class="card-title">
                     <i class="bi bi-list-check"></i>Daftar Hotel
                 </h5>
-                
+
             </div>
 
             <!-- Search and Filter -->
-            <div class="search-filter-container">
-                <div class="search-box">
-                    <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Cari customer/kode service...">
+            <form action="{{ route('hotel.index') }}" method="GET">
+                <div class="search-filter-container">
+                    <div class="search-box">
+                        <i class="bi bi-search"></i>
+                        <input type="text" name="search" placeholder="Cari customer/kode service..."
+                            value="{{ request('search') }}">
+                    </div>
+                    {{-- <div class="filter-group">
+                        <select class="filter-select" name="status">
+                            <option value="Semua Status">Semua Status</option>
+                            <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="Diproses" {{ request('status') == 'Diproses' ? 'selected' : '' }}>Diproses
+                            </option>
+                            <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                            <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
+                        </select>
+                    </div> --}}
                 </div>
-                <div class="filter-group">
-                    <select class="filter-select">
-                        <option>Semua Status</option>
-                        <option>Pending</option>
-                        <option>Diproses</option>
-                        <option>Selesai</option>
-                        <option>Ditolak</option>
-                    </select>
-                    <select class="filter-select">
-                        <option>Semua Periode</option>
-                        <option>Hari Ini</option>
-                        <option>Minggu Ini</option>
-                        <option>Bulan Ini</option>
-                        <option>Custom</option>
-                    </select>
-                </div>
-            </div>
+            </form>
 
             <!-- Services Table -->
             <div class="table-responsive">
@@ -425,17 +423,17 @@
                     <tbody>
                         @foreach ($hotels as $hotel)
                             <tr>
-                                <td>{{$loop->iteration}}</td>
-                                <td>{{$hotel->service->pelanggan->nama_travel}}</td>
-                                <td>{{$hotel->tanggal_checkin}}</td>
-                                <td>{{$hotel->tanggal_checkout}}</td>
-                                <td>{{$hotel->nama_hotel}}</td>
-                                <td>{{$hotel->harga_perkamar}}</td>
-                                <td>{{$hotel->type}}</td>
-                                <td>{{$hotel->jumlah_type}}</td>
-                                <td>{{$hotel->catatan}}</td>
+                                <td>{{ ($hotels->currentPage() - 1) * $hotels->perPage() + $loop->iteration }}</td>
+                                <td>{{ $hotel->service->pelanggan->nama_travel }}</td>
+                                <td>{{ $hotel->tanggal_checkin }}</td>
+                                <td>{{ $hotel->tanggal_checkout }}</td>
+                                <td>{{ $hotel->nama_hotel }}</td>
+                                <td>{{ $hotel->harga_perkamar }}</td>
+                                <td>{{ $hotel->type }}</td>
+                                <td>{{ $hotel->jumlah_type }}</td>
+                                <td>{{ $hotel->catatan }}</td>
                                 <td>
-                                    <a href="{{route('hotel.edit', $hotel->id)}}">
+                                    <a href="{{ route('hotel.edit', $hotel->id) }}">
                                         <button class="btn btn-warning">Tambah Harga</button>
                                     </a>
                                 </td>
@@ -451,19 +449,28 @@
             <div class="pagination-container">
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
+
+                        {{-- Tombol Previous --}}
+                        <li class="page-item {{ $hotels->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $hotels->previousPageUrl() }}" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
+
+                        {{-- Tombol Nomor Halaman --}}
+                        @for ($i = 1; $i <= $hotels->lastPage(); $i++)
+                            <li class="page-item {{ $i == $hotels->currentPage() ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $hotels->url($i) }}">{{ $i }}</a>
+                            </li>
+                        @endfor
+
+                        {{-- Tombol Next --}}
+                        <li class="page-item {{ $hotels->hasMorePages() ? '' : 'disabled' }}">
+                            <a class="page-link" href="{{ $hotels->nextPageUrl() }}" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
+
                     </ul>
                 </nav>
             </div>

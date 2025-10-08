@@ -2,81 +2,68 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Hotel;
 use App\Models\PriceListHotel;
+use App\Models\TypeHotel;
 use Illuminate\Http\Request;
 
 class PriceListHotelController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $listHotel = PriceListHotel::all();
         return view('hotel.price_list.index', compact('listHotel'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('hotel.price_list.create');
+        $hotels = Hotel::pluck('nama_hotel');
+        $roomTypes = TypeHotel::pluck('nama_tipe');
+        return view('hotel.price_list.create', compact('hotels', 'roomTypes'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-       PriceListHotel::create([
-            'tanggal' => $request->tanggal,
-            'nama_hotel' => $request->nama_hotel,
-            'tipe_kamar' => $request->tipe_kamar,
-            'harga' => $request->harga
-       ]);
-       return redirect()->route('hotel.price.index');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $priceList = PriceListHotel::findOrFail($id);
-        return view('hotel.price_list.edit', compact('priceList'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $priceList = PriceListHotel::findOrFail($id);
-        $priceList->update([
-             'tanggal' => $request->tanggal,
-            'nama_hotel' => $request->nama_hotel,
-            'tipe_kamar' => $request->tipe_kamar,
-            'harga' => $request->harga
+        $request->validate([
+            'tanggal' => 'required|date',
+            'nama_hotel' => 'required|string|max:255',
+            'tipe_kamar' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
         ]);
-        return redirect()->route('hotel.price.index');
+
+        PriceListHotel::create($request->only('tanggal', 'nama_hotel', 'tipe_kamar', 'harga'));
+
+        return redirect()->route('hotel.price.index')->with('success', 'Harga hotel berhasil ditambahkan!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function edit($id)
+    {
+        $priceList = PriceListHotel::findOrFail($id);
+        $hotels = Hotel::pluck('nama_hotel');
+        $roomTypes = TypeHotel::pluck('nama_tipe');
+        return view('hotel.price_list.edit', compact('priceList', 'hotels', 'roomTypes'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'tanggal' => 'required|date',
+            'nama_hotel' => 'required|string|max:255',
+            'tipe_kamar' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
+        ]);
+
+        $priceList = PriceListHotel::findOrFail($id);
+        $priceList->update($request->only('tanggal', 'nama_hotel', 'tipe_kamar', 'harga'));
+
+        return redirect()->route('hotel.price.index')->with('success', 'Harga hotel berhasil diperbarui!');
+    }
+
     public function destroy(string $id)
     {
         $priceList = PriceListHotel::findOrFail($id);
         $priceList->delete();
-         return redirect()->route('hotel.price.index');
+        return redirect()->route('hotel.price.index');
     }
+
 }

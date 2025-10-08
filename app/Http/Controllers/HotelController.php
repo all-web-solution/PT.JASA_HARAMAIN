@@ -10,15 +10,27 @@ use App\Models\Service;
 
 class HotelController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $hotels = \App\Models\Hotel::all();
+        $query = Hotel::query();
+
+        if ($request->has('search') && $request->search) {
+            $query->where('nama_hotel', 'like', '%' . $request->search . '%')
+                ->orWhere('service_id', 'like', '%' . $request->search . '%');
+        }
+
+        // if ($request->has('status') && $request->status != 'Semua Status') {
+        //     $query->where('status', $request->status);
+        // }
+
+        $hotels = $query->paginate(10);
+
         return view('hotel.index', compact('hotels'));
     }
+
     public function create()
     {
-
-        return view('hotel.create',);
+        return view('hotel.create', );
     }
 
     public function store(Request $request)
@@ -32,7 +44,7 @@ class HotelController extends Controller
         ]);
 
         // Create a new hotel booking
-        \App\Models\Hotel::create([
+        Hotel::create([
             'checkin' => $request->checkin,
             'checkout' => $request->checkout,
             'room_type' => $request->room,
@@ -46,17 +58,17 @@ class HotelController extends Controller
     // Add other methods like show, edit, update, destroy as needed
     public function show($id)
     {
-        $hotel = \App\Models\Hotel::findOrFail($id);
+        $hotel = Hotel::findOrFail($id);
         return view('hotel.show', compact('hotel'));
     }
 
     public function edit($id)
     {
-        $hotel = \App\Models\Hotel::findOrFail($id);
+        $hotel = Hotel::findOrFail($id);
         return view('hotel.edit', compact('hotel'));
     }
 
-public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         // 1. Temukan hotel dan perbarui harganya
         $hotel = Hotel::findOrFail($id);
@@ -89,9 +101,9 @@ public function update(Request $request, $id)
             Order::whereHas('service', function ($query) use ($pelangganId) {
                 $query->where('pelanggan_id', $pelangganId);
             })->update([
-                'total_amount' => $grandTotal,
-                'sisa_hutang' => $grandTotal
-            ]);
+                        'total_amount' => $grandTotal,
+                        'sisa_hutang' => $grandTotal
+                    ]);
         }
 
         return redirect()->route('hotel.index')->with('success', 'Harga hotel & total order berhasil diperbarui!');
@@ -99,7 +111,7 @@ public function update(Request $request, $id)
 
     public function destroy($id)
     {
-        $hotel = \App\Models\Hotel::findOrFail($id);
+        $hotel = Hotel::findOrFail($id);
         $hotel->delete();
 
         return redirect()->route('hotel.index')->with('success', 'Hotel booking deleted successfully.');

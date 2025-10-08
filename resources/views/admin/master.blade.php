@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - PT JASA HARAMAIN</title>
+    <title>@yield('title', 'Dashboard') - PT JASA HARAMAIN</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
@@ -151,7 +152,7 @@
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 999;
         }
-        
+
         .sidebar-overlay.show {
             display: block;
         }
@@ -179,29 +180,30 @@
                 transform: translateX(-100%);
                 width: 260px;
             }
-            
+
             .sidebar.show {
                 transform: translateX(0);
                 box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
             }
-            
+
             .main-content {
                 margin-left: 0;
             }
-            
+
             .sidebar-toggle {
                 display: block;
             }
-            
+
             .card-stat .card-title {
                 font-size: 1.1rem;
             }
-            
+
             .topbar {
                 padding: 0.8rem 1rem;
             }
-            #text-title{
-                display:none;
+
+            #text-title {
+                display: none;
             }
         }
 
@@ -209,16 +211,16 @@
             .user-info {
                 display: none;
             }
-            
+
             .sidebar-header {
                 padding: 1.25rem 1rem;
             }
-            
+
             .sidebar .nav-link {
                 padding: 0.7rem 1.25rem;
                 font-size: 0.85rem;
             }
-            
+
             .sidebar .nav-link i {
                 font-size: 1rem;
                 margin-right: 10px;
@@ -229,19 +231,20 @@
             .container-fluid {
                 padding: 0.75rem;
             }
-            
+
             .card-stat .card-title {
                 font-size: 1rem;
             }
-            
-            .h4, h1.h4 {
+
+            .h4,
+            h1.h4 {
                 font-size: 1.1rem;
             }
-            
+
             .sidebar {
                 width: 240px;
             }
-            
+
             .user-avatar {
                 width: 70px;
                 height: 70px;
@@ -254,6 +257,7 @@
             from {
                 transform: translateX(-100%);
             }
+
             to {
                 transform: translateX(0);
             }
@@ -263,24 +267,26 @@
             animation: slideIn 0.3s ease forwards;
         }
     </style>
+    @stack('styles')
 </head>
+
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    
+
     <div class="d-flex">
         <!-- Enhanced Sidebar -->
         @include('admin.layout.sidebar')
 
         <!-- Main Content -->
         <div class="main-content">
-         @include('admin.layout.header')
-            
+            @include('admin.layout.header')
 
             @yield('content')
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
+
 </body>
+
 </html>

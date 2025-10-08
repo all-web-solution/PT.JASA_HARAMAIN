@@ -12,4 +12,15 @@ class PriceListHotel extends Model
         'tipe_kamar',
         'harga'
     ];
+
+    public function hotel()
+    {
+        return $this->belongsTo(Hotel::class, 'hotel_id');
+    }
+
+    public function details()
+    {
+        return $this->hasMany(PriceListDetail::class, 'price_list_id');
+    }
+
 }

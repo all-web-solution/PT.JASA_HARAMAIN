@@ -1,6 +1,7 @@
 @extends('admin.master')
 @section('title', 'Tambah Hotel')
-@section('content')
+
+@push('styles')
     <style>
         :root {
             --haramain-primary: #1a4b8c;
@@ -282,7 +283,9 @@
             }
         }
     </style>
+@endpush
 
+@section('content')
     <div class="service-create-container">
         <div class="card">
             <div class="card-header">
@@ -309,13 +312,15 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Nama type</label>
-                                    <input type="text" class="form-control" name="name" required id="email" value="{{ $type->nama_tipe }}">
+                                    <input type="text" class="form-control" name="name" required id="email"
+                                        value="{{ $type->nama_tipe }}">
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Harga</label>
-                                    <input type="text" class="form-control" name="price" required id="penanggung" value="{{ $type->jumlah }}">
+                                    <input type="text" class="form-control" name="price" required id="penanggung"
+                                        value="{{ $type->jumlah }}">
                                 </div>
                             </div>
                         </div>
@@ -327,6 +332,4 @@
             </div>
         </div>
     </div>
-
-
 @endsection
