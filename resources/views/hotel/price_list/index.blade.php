@@ -388,7 +388,7 @@
             @endif
 
             <div class="table-responsive">
-                {{-- <table class="table">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -424,8 +424,8 @@
                             </tr>
                         @endforeach
                     </tbody>
-                </table> --}}
-                <table class="table table-bordered">
+                </table>
+                {{-- <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Tanggal</th>
@@ -464,7 +464,7 @@
                             </tr>
                         @endforeach
                     </tbody>
-                </table>
+                </table> --}}
             </div>
         </div>
     </div>

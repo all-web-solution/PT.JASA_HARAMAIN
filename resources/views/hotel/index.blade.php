@@ -1,6 +1,6 @@
 @extends('admin.master')
 @section('title', 'Daftar Hotel')
-@section('content')
+@push('styles')
     <style>
         :root {
             --haramain-primary: #1a4b8c;
@@ -371,7 +371,8 @@
             }
         }
     </style>
-
+@endpush
+@section('content')
     <div class="service-list-container">
         <!-- Services List -->
         <div class="card">

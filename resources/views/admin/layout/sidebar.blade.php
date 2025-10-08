@@ -46,7 +46,7 @@
     @elseif (auth()->user()->role === 'hotel')
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hotel.index') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('hotel.index') || request()->routeIs('hotel.edit') ? 'active' : '' }}"
                     href="{{ route('hotel.index') }}">
                     <i class="bi bi-building"></i> HOTEL
                 </a>
