@@ -104,7 +104,7 @@
                             $grandTotal += $amount;
                         @endphp
                         <tr>
-                            <td>[H] Hotel: {{ $hotel->nama_hotel }} - {{ $hotel }}</td>
+                            <td>[H] Hotel: {{ $hotel->nama_hotel }} - {{ $hotel->type }}</td>
                             <td>{{ $hotel->durasi ?? 1 }}</td>
                             <td>Days</td>
                             <td>SAR {{ number_format($hotel->harga_perkamar ?? 0, 2, ',', '.') }}</td>
@@ -112,7 +112,7 @@
                         </tr>
 
                         {{-- Detail tipe kamar --}}
-                        @foreach ($hotel->typeHotels as $type)
+                        {{-- @foreach ($hotel->typeHotels as $type)
                             @php
                                 $typeAmount = ($type->jumlah ?? 1) * ($hotel->harga_perkamar ?? 0);
                                 $grandTotal += $typeAmount;
@@ -124,7 +124,7 @@
                                 <td>SAR {{ number_format($hotel->harga_perkamar ?? 0, 2, ',', '.') }}</td>
                                 <td>SAR {{ number_format($typeAmount, 2, ',', '.') }}</td>
                             </tr>
-                        @endforeach
+                        @endforeach --}}
                     @endforeach
                 @endforeach
 
@@ -144,7 +144,7 @@
                         <td>SAR {{ number_format($plane->harga, 2, ',', '.') }}</td>
                         <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
                     </tr>
-                @endforeach   
+                @endforeach
             @endforeach
 
             {{-- Transportasi --}}
@@ -180,7 +180,7 @@
                     </tr>
                 @endforeach
             @endforeach
-            
+
 
             {{-- Guides (Pendamping) --}}
            {{-- Guides (Pendamping) --}}
@@ -216,7 +216,7 @@
                 </tr>
             @endforeach
             @endforeach
-            
+
 
             {{-- Badal --}}
              @foreach($pelanggan->services as $service)
@@ -235,7 +235,7 @@
             @endforeach
 
             @endforeach
-            
+
            {{-- Documents --}}
            @foreach($pelanggan->services as $service)
             {{-- Documents --}}
@@ -258,7 +258,7 @@
             @endforeach
 
            @endforeach
-           
+
 
 
             {{-- Handling --}}
@@ -277,7 +277,7 @@
                 </tr>
             @endforeach
             @endforeach
-            
+
 
             {{-- Tours --}}
              @foreach($pelanggan->services as $service)
@@ -295,7 +295,7 @@
                 </tr>
             @endforeach
             @endforeach
-            
+
 
             {{-- Dorongan --}}
              @foreach($pelanggan->services as $service)
@@ -314,7 +314,7 @@
                 </tr>
             @endforeach
             @endforeach
-            
+
 
             {{-- Konten --}}
              @foreach($pelanggan->services as $service)
@@ -332,7 +332,7 @@
                 </tr>
             @endforeach
             @endforeach
-            
+
 
             {{-- Reyal (Currency Exchange) --}}
              @foreach($pelanggan->services as $service)
@@ -350,7 +350,7 @@
                 </tr>
             @endforeach
             @endforeach
-         
+
         </tbody>
 
     </table>

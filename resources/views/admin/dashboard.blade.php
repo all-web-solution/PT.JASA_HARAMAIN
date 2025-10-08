@@ -8,7 +8,9 @@
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <h6 class="card-subtitle mb-1">Total Request</h6>
-                                        <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">128</h3>
+                                        <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
+                                            {{ \App\Models\Service::count() }}
+                                        </h3>
                                         <p class="card-text text-success mb-0"><small>+5% dari bulan lalu</small></p>
                                     </div>
                                     <div class="bg-primary bg-opacity-10 p-3 rounded">
@@ -23,8 +25,10 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <h6 class="card-subtitle mb-1">Pending Payment</h6>
-                                        <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">24</h3>
+                                        <h6 class="card-subtitle mb-1">Total Payment</h6>
+                                        <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
+                                        {{ \App\Models\Order::count() }}
+                                        </h3>
                                         <p class="card-text text-danger mb-0"><small>3 overdue</small></p>
                                     </div>
                                     <div class="bg-warning bg-opacity-10 p-3 rounded">
@@ -40,7 +44,9 @@
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <h6 class="card-subtitle mb-1">Jamaah Bulan Ini</h6>
-                                        <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">156</h3>
+                                        <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
+                                            {{ \App\Models\Pelanggan::count() }}
+                                        </h3>
                                         <p class="card-text text-success mb-0"><small>+12% dari bulan lalu</small></p>
                                     </div>
                                     <div class="bg-success bg-opacity-10 p-3 rounded">
@@ -50,22 +56,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card card-stat h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="card-subtitle mb-1">Revenue</h6>
-                                        <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">Rp 1.2M</h3>
-                                        <p class="card-text text-success mb-0"><small>+8% dari bulan lalu</small></p>
-                                    </div>
-                                    <div class="bg-info bg-opacity-10 p-3 rounded">
-                                        <i class="bi bi-graph-up fs-4" style="color: #00acc1;"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
 
                 <!-- Charts and Recent Activity -->
@@ -77,7 +68,7 @@
                                     <i class="bi bi-bar-chart-line me-2"></i>Monthly Performance
                                 </h5>
                                 <div class="dropdown">
-                                    <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" 
+                                    <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
                                             style="background-color: var(--haramain-light); color: var(--haramain-primary); border: 1px solid rgba(0, 0, 0, 0.08);">
                                         This Year
                                     </button>
@@ -89,7 +80,7 @@
                                 </div>
                             </div>
                             <!-- Placeholder for Chart -->
-                            <div style="height: 300px; background: linear-gradient(45deg, #f5f7fa, #e8eff8); border-radius: 8px; 
+                            <div style="height: 300px; background: linear-gradient(45deg, #f5f7fa, #e8eff8); border-radius: 8px;
                                         display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
                                 <div class="text-center">
                                     <i class="bi bi-bar-chart fs-1 mb-2"></i>
@@ -98,14 +89,14 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-lg-4">
                         <div class="chart-container h-100">
                             <h5 class="fw-bold mb-3" style="color: var(--haramain-primary);">
                                 <i class="bi bi-pie-chart me-2"></i>Service Distribution
                             </h5>
                             <!-- Placeholder for Pie Chart -->
-                            <div style="height: 300px; background: linear-gradient(45deg, #f5f7fa, #e8eff8); border-radius: 8px; 
+                            <div style="height: 300px; background: linear-gradient(45deg, #f5f7fa, #e8eff8); border-radius: 8px;
                                         display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
                                 <div class="text-center">
                                     <i class="bi bi-pie-chart fs-1 mb-2"></i>
@@ -188,5 +179,5 @@
                     </div>
                 </div>
             </div>
-    
+
 @endsection

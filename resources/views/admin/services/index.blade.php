@@ -449,17 +449,19 @@
                                     <td>Deal</td>
                                 @endif
                                 <td>
-                                    <a href="{{ route('invoice.show', $service->id) }}">
-                                        <button class="btn btn-primary">Cetak Invoice</button>
-                                    </a>
-                                    <a href="{{ route('services.edit', $service->id) }}">
-                                        <button class="btn btn-warning">Edit</button>
-                                    </a>
-                                    <form method="post" action="{{route('services.delete', $service->id)}}">
-                                    @csrf
-                                    @method('delete')
-                                        <button class="btn btn-danger">Delete</button>
-                                    </form>
+                                    @if($service->status === 'deal')
+                                        <a href="{{ route('invoice.show', $service->id) }}">
+                                            <button class="btn btn-primary">Cetak Invoice</button>
+                                        </a>
+                                        <a href="{{ route('services.edit', $service->id) }}">
+                                            <button class="btn btn-warning">Edit</button>
+                                        </a>
+                                        <form method="post" action="{{route('services.delete', $service->id)}}">
+                                        @csrf
+                                        @method('delete')
+                                            <button class="btn btn-danger">Delete</button>
+                                        </form>
+                                    @endif
                                 </td>
 
                             </tr>

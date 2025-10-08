@@ -6,15 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class CustomerDocument extends Model
 {
-    protected $fillable = ['service_id','document_children_id','document_id', 'jumlah', 'harga', 'paspor', 'pas_foto'];
+    protected $fillable = [
+        'service_id',
+        'document_children_id',
+        'document_id',
+        'jumlah',
+        'harga',
+    ];
 
-    public function DocumentChildren(){
-        return $this->belongsTo(DocumentChildren::class, 'id');
+    public function documentChild()
+    {
+        return $this->belongsTo(Document::class, 'document_children_id');
     }
-    public function documents(){
-         return $this->belongsTo(Document::class, 'id');
+
+    public function document()
+    {
+        return $this->belongsTo(Document::class, 'document_id');
     }
-    public function service(){
-        return $this->belongsTo(Service::class);
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id');
     }
 }

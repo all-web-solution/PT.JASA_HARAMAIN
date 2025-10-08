@@ -52,18 +52,32 @@
                 transform: translateX(5px);
             }
         }
+        @media screen and (max-width: 320px) {
+            #title{
+                font-size: 20px;
+            }
+            #bg-login{
+                width: 300px;
+            }
+        }
+
     </style>
 </head>
 
 <body class="min-h-screen flex items-center justify-center gradient-bg">
-    <div class="w-full max-w-md px-6 py-8 bg-white rounded-lg shadow-xl">
+    <div class="w-full max-w-md px-6 py-8 bg-white rounded-lg shadow-xl" id="bg-login">
         <div class="flex justify-center mb-8">
             <div class="bg-indigo-100 p-4 rounded-full">
                 <i class="fas fa-user-shield text-indigo-600 text-4xl"></i>
             </div>
         </div>
+        @if (session('failed'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
 
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">PT JASA HARAMAIN</h1>
+                <span class="block sm:inline text-center">{{ session('failed') }}</span>
+            </div>
+        @endif
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-2" id="title">PT JASA HARAMAIN</h1>
         <p class="text-center text-gray-600 mb-8">Please sign in to continue</p>
 
         <form id="loginForm" class="space-y-6" method="post" action="{{ route('sign_in') }}">

@@ -38,11 +38,11 @@ class AuthController extends Controller
         }
 
         return redirect()->route('login')->withErrors(['email' => 'Role tidak dikenali.']);
+    }else{
+        return redirect()->back()->with('failed', "Username atau password salah");
     }
 
-    return back()->withErrors([
-        'email' => 'Email atau password salah.',
-    ]);
+
 }
 
 

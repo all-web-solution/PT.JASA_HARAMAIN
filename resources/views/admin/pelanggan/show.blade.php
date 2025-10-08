@@ -16,7 +16,7 @@
                 <div class="col-md-4"><strong>Travel:</strong> {{ $pelanggan->nama_travel }}</div>
                 <div class="col-md-4"><strong>Penanggung Jawab:</strong> {{ $pelanggan->penanggung_jawab }}</div>
                 <div class="col-md-4"><strong>Kontak:</strong> {{ $pelanggan->phone }}</div>
-                <div class="col-md-4"><strong>Status:</strong> 
+                <div class="col-md-4"><strong>Status:</strong>
                     <span class="badge {{ $pelanggan->status=='active'?'bg-success bg-opacity-10 text-success':'bg-danger bg-opacity-10 text-danger' }}">
                         {{ $pelanggan->status=='active'?'Aktif':'Non-Aktif' }}
                     </span>
@@ -44,7 +44,12 @@
                 <div class="card-body">
                     <h6 class="card-subtitle mb-1">Total Request</h6>
                     <h3 class="fw-bold text-primary">
-                        {{ $pelanggan->services->count() }} Request
+                        @foreach ($pelanggan->services as $service)
+                            <p>
+                                {{ count(json_decode($service->services, true)) }} Request
+                            </p>
+                        @endforeach
+
                     </h3>
                 </div>
             </div>

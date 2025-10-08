@@ -23,8 +23,7 @@ return new class extends Migration
              $table->foreignId('document_id')->constrained('documents')->cascadeOnDelete()->cascadeOnUpdate();
              $table->string('jumlah');
              $table->string('harga');
-             $table->string('paspor');
-             $table->string('pas_foto');
+
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CustomerDocument;
 
 class Service extends Model
 {
@@ -54,7 +55,7 @@ public function planes()
     }
     public function documents()
 {
-    return $this->hasMany(CustomerDocument::class, );
+    return $this->hasMany(CustomerDocument::class, 'service_id');
 }
     public function filess(){
         return $this->hasMany(File::class, );
@@ -78,4 +79,6 @@ public function planes()
     public function orders(){
         return $this->hasMany(Order::class, );
     }
+
+    
 }
