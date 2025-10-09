@@ -1,4 +1,4 @@
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="sidebar-header text-center">
         <div class="user-avatar rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2">JH</div>
         <h5 class="mb-1 fw-bold" style="font-size: 1rem;">PT JASA HARAMAIN</h5>

@@ -1,6 +1,52 @@
 @extends('admin.master') {{-- Sesuaikan dengan layout utama Anda --}}
 
 @section('content')
+<style>
+    /* Table responsive agar tidak geser ke kanan di HP */
+    @media (max-width: 768px) {
+        .table thead {
+            display: none;
+        }
+
+        .table,
+        .table tbody,
+        .table tr,
+        .table td {
+            display: block;
+            width: 100%;
+        }
+
+        .table tr {
+            margin-bottom: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 10px;
+        }
+
+        .table td {
+            text-align: right;
+            padding: 10px 15px;
+            border: none;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+
+        .table td::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 15px;
+            width: 50%;
+            text-align: left;
+            font-weight: 600;
+            color: #1a4b8c;
+        }
+
+        .table td:last-child {
+            border-bottom: none;
+        }
+    }
+</style>
 <div class="container">
     {{-- Tombol Kembali --}}
     <a href="{{ route('content.customer') }}" class="btn btn-secondary mb-3 mt-3">
@@ -44,14 +90,13 @@
                     </thead>
                     <tbody>
                         @php $no = 1; @endphp
-                        {{-- Loop bersarang untuk menampilkan setiap item konten --}}
                         @forelse ($customer->services as $service)
                             @foreach ($service->contents as $contentItem)
                                 <tr>
-                                    <td>{{ $no++ }}</td>
-                                    <td>{{ $contentItem->content->name ?? 'N/A' }}</td>
-                                    <td>{{ $contentItem->jumlah }}</td>
-                                    <td>{{ $contentItem->keterangan ?? 'Tidak ada' }}</td>
+                                    <td data-label="No">{{ $no++ }}</td>
+                                    <td data-label="Nama Konten">{{ $contentItem->content->name ?? 'N/A' }}</td>
+                                    <td data-label="Jumlah">{{ $contentItem->jumlah }}</td>
+                                    <td data-label="Keterangan">{{ $contentItem->keterangan ?? 'Tidak ada' }}</td>
                                 </tr>
                             @endforeach
                         @empty
@@ -60,6 +105,7 @@
                             </tr>
                         @endforelse
                     </tbody>
+
                 </table>
             </div>
         </div>

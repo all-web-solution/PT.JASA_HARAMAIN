@@ -261,25 +261,41 @@
     }
 
     /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .form-row {
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .service-grid {
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        }
-
-        .form-actions {
-            flex-direction: column;
-        }
-
-        .btn {
-            width: 100%;
-            justify-content: center;
-        }
+    /* Tambahan di bagian bawah CSS kamu */
+@media (max-width: 576px) {
+    .service-create-container {
+        padding: 1rem;
     }
+
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-col {
+        width: 100%;
+    }
+
+    input.form-control,
+    select.form-control {
+        font-size: 0.9rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 </style>
 
 <div class="service-create-container">

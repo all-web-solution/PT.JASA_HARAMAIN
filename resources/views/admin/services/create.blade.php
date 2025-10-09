@@ -279,6 +279,9 @@
             width: 100%;
             justify-content: center;
         }
+        .card-title{
+            display: none;
+        }
     }
 
     .hidden {

@@ -369,6 +369,105 @@
                 border-bottom-right-radius: 8px;
             }
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .service-list-container {
+                padding: 1rem;
+            }
+
+            .card-header, .search-filter-container {
+                flex-direction: column;
+                align-items: stretch; /* Ubah dari flex-start */
+                gap: 1rem;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+                text-align: center;
+                justify-content: center;
+            }
+
+            .btn-add-new {
+                width: 100%; /* Tombol memenuhi lebar */
+                justify-content: center;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .filter-group {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .filter-select {
+                width: 100%; /* Filter memenuhi lebar */
+            }
+
+            .table thead {
+                display: none;
+            }
+
+            .table tbody tr {
+                display: block;
+                margin-bottom: 1.5rem; /* Beri jarak lebih antar baris/kartu */
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                border: 1px solid var(--border-color);
+            }
+
+            .table tbody td {
+                display: flex;
+                flex-direction: column; /* Susun label di atas, nilai di bawah */
+                align-items: flex-start; /* Rata kiri */
+                justify-content: center;
+                text-align: left;
+                padding: 0.75rem 1rem;
+                border: none;
+                border-bottom: 1px solid var(--border-color); /* Garis pemisah antar field */
+            }
+
+            .table tbody tr td:last-child {
+                border-bottom: none; /* Hilangkan border untuk item terakhir */
+            }
+
+            .table tbody td:before {
+                content: attr(data-label);
+                font-weight: 700; /* Dibuat tebal agar jelas */
+                color: var(--haramain-primary);
+                margin-bottom: 0.5rem; /* Jarak antara label dan nilai */
+                font-size: 0.8rem;
+                text-transform: uppercase;
+            }
+
+            .table tbody td:first-child {
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+            }
+
+            .table tbody td:last-child {
+                border-bottom-left-radius: 8px;
+                border-bottom-right-radius: 8px;
+            }
+
+            /* Styling khusus untuk container tombol aksi */
+            .action-buttons-container {
+                display: flex;
+                flex-wrap: wrap; /* Tombol akan turun jika tidak muat */
+                gap: 0.5rem; /* Jarak antar tombol */
+                width: 100%;
+            }
+
+            .action-buttons-container .btn {
+                flex-grow: 1; /* Tombol akan membesar mengisi ruang */
+            }
+
+            .pagination-container {
+                justify-content: center; /* Paginasi di tengah */
+            }
+        }
     </style>
 
     <div class="service-list-container">
@@ -431,42 +530,47 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($services as $service)
-                            <tr>
-                                <td>{{ $service->unique_code }}</td>
-                                <td>{{ $service->pelanggan->nama_travel }}</td>
-                                <td>{{ $service->tanggal_keberangkatan }}</td>
-                                <td>{{ $service->tanggal_kepulangan }}</td>
-                                <td>{{ $service->total_jamaah }}</td>
-                                <td>{{ implode(', ', (array) $service->services) }}</td>
-                                @if ($service->status === 'nego')
-                                    <td>
-                                        <a href="{{ route('admin.service.nego', $service->id) }}">
-                                            <button class="btn btn-warning">Lanjutkan pemesanan</button>
-                                        </a>
-                                    </td>
-                                @else
-                                    <td>Deal</td>
-                                @endif
-                                <td>
-                                    @if($service->status === 'deal')
-                                        <a href="{{ route('invoice.show', $service->id) }}">
-                                            <button class="btn btn-primary">Cetak Invoice</button>
-                                        </a>
-                                        <a href="{{ route('services.edit', $service->id) }}">
-                                            <button class="btn btn-warning">Edit</button>
-                                        </a>
-                                        <form method="post" action="{{route('services.delete', $service->id)}}">
-                                        @csrf
-                                        @method('delete')
-                                            <button class="btn btn-danger">Delete</button>
-                                        </form>
-                                    @endif
-                                </td>
+    @foreach ($services as $service)
+        <tr>
+            <td data-label="Kode unik">{{ $service->unique_code }}</td>
+            <td data-label="Customer/Travel">{{ $service->pelanggan->nama_travel }}</td>
+            <td data-label="Tgl keberangkatan">{{ $service->tanggal_keberangkatan }}</td>
+            <td data-label="Tgl kepulangan">{{ $service->tanggal_kepulangan }}</td>
+            <td data-label="Jumlah jamaah">{{ $service->total_jamaah }}</td>
+            <td data-label="Layanan yang di pilih">{{ implode(', ', (array) $service->services) }}</td>
 
-                            </tr>
-                        @endforeach
-                    </tbody>
+            @if ($service->status === 'nego')
+                <td data-label="Status">
+                    <a href="{{ route('admin.service.nego', $service->id) }}">
+                        <button class="btn btn-warning" style="width: 100%; white-space: normal;">Lanjutkan pemesanan</button>
+                    </a>
+                </td>
+            @else
+                <td data-label="Status">Deal</td>
+            @endif
+
+            <td data-label="Aksi">
+                <div class="action-buttons-container">
+                    @if($service->status === 'deal')
+                        <a href="{{ route('invoice.show', $service->id) }}">
+                            <button class="btn btn-primary">Invoice</button>
+                        </a>
+                        <a href="{{ route('services.edit', $service->id) }}">
+                            <button class="btn btn-warning">Edit</button>
+                        </a>
+                        <form method="post" action="{{route('services.delete', $service->id)}}" style="display: inline-block;">
+                            @csrf
+                            @method('delete')
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    @else
+                        <span>-</span>
+                    @endif
+                </div>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
                 </table>
             </div>
 

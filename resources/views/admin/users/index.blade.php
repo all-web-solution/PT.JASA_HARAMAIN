@@ -10,7 +10,6 @@
         --text-secondary: #4a5568;
         --border-color: #d1e0f5;
         --hover-bg: #f0f7ff;
-        --checked-color: #2a6fdb;
         --success-color: #28a745;
         --warning-color: #ffc107;
         --danger-color: #dc3545;
@@ -29,12 +28,6 @@
         border: 1px solid var(--border-color);
         margin-bottom: 2rem;
         overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
     }
 
     .card-header {
@@ -44,6 +37,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        flex-wrap: wrap; /* Allows wrapping on small screens */
+        gap: 1rem;
     }
 
     .card-title {
@@ -63,7 +58,7 @@
 
     /* Table Styles */
     .table-responsive {
-        padding: 0 1.5rem;
+        padding: 0 1.5rem 1rem; /* Adjusted padding */
     }
 
     .table {
@@ -78,6 +73,7 @@
         font-weight: 600;
         padding: 1rem 1.25rem;
         border-bottom: 2px solid var(--border-color);
+        text-align: left;
     }
 
     .table tbody tr {
@@ -110,45 +106,11 @@
         border-bottom-right-radius: 8px;
     }
 
-    /* Status Badge */
-    .badge {
-        padding: 0.5rem 0.75rem;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.75rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .badge i {
-        font-size: 0.8rem;
-    }
-
-    .badge-primary {
-        background-color: var(--haramain-light);
-        color: var(--haramain-secondary);
-    }
-
-    .badge-success {
-        background-color: rgba(40, 167, 69, 0.1);
-        color: var(--success-color);
-    }
-
-    .badge-warning {
-        background-color: rgba(255, 193, 7, 0.1);
-        color: var(--warning-color);
-    }
-
-    .badge-danger {
-        background-color: rgba(220, 53, 69, 0.1);
-        color: var(--danger-color);
-    }
-
     /* Customer/Travel Info */
     .customer-info {
         display: flex;
         align-items: center;
+        gap: 1rem;
     }
 
     .customer-avatar {
@@ -159,13 +121,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 1rem;
         color: var(--haramain-secondary);
         font-size: 1.25rem;
-    }
-
-    .customer-details {
-        line-height: 1.4;
+        font-weight: bold;
+        flex-shrink: 0;
     }
 
     .customer-name {
@@ -174,63 +133,37 @@
     }
 
     .customer-type {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         color: var(--text-secondary);
-        background-color: var(--haramain-light);
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        display: inline-block;
-    }
-
-    /* Date Info */
-    .date-info {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .date-label {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-    }
-
-    .date-value {
-        font-weight: 600;
-        color: var(--haramain-primary);
+        display: block; /* Ensures it goes to the next line */
     }
 
     /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
     .btn-action {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border-radius: 8px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        margin: 0 0.25rem;
         transition: all 0.3s ease;
         border: none;
         background-color: transparent;
+        cursor: pointer;
     }
-
     .btn-action:hover {
         background-color: var(--haramain-light);
     }
-
     .btn-action i {
         font-size: 1rem;
     }
-
-    .btn-edit {
-        color: var(--haramain-secondary);
-    }
-
-    .btn-delete {
-        color: var(--danger-color);
-    }
-
-    .btn-view {
-        color: var(--text-secondary);
-    }
+    .btn-edit { color: var(--haramain-secondary); }
+    .btn-delete { color: var(--danger-color); }
 
     /* Search and Filter */
     .search-filter-container {
@@ -239,13 +172,15 @@
         padding: 1.5rem;
         align-items: center;
         border-bottom: 1px solid var(--border-color);
+        flex-wrap: wrap; /* Allows wrapping */
+        gap: 1rem;
     }
 
     .search-box {
         position: relative;
-        width: 300px;
+        flex-grow: 1; /* Allows it to take available space */
+        min-width: 250px;
     }
-
     .search-box input {
         padding-left: 2.5rem;
         border-radius: 8px;
@@ -253,7 +188,6 @@
         height: 40px;
         width: 100%;
     }
-
     .search-box i {
         position: absolute;
         left: 1rem;
@@ -265,14 +199,15 @@
     .filter-group {
         display: flex;
         gap: 1rem;
+        flex-wrap: wrap; /* Allows filters to wrap */
     }
-
     .filter-select {
         height: 40px;
         border-radius: 8px;
         border: 1px solid var(--border-color);
         padding: 0 1rem;
         min-width: 150px;
+        background-color: #fff;
     }
 
     /* Add New Button */
@@ -282,13 +217,13 @@
         border-radius: 8px;
         padding: 0.625rem 1.5rem;
         font-weight: 600;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 8px;
         transition: all 0.3s ease;
         border: none;
+        text-decoration: none; /* For <a> tag */
     }
-
     .btn-add-new:hover {
         background-color: var(--haramain-primary);
         transform: translateY(-2px);
@@ -303,72 +238,56 @@
         border-top: 1px solid var(--border-color);
     }
 
-    .pagination .page-item.active .page-link {
-        background-color: var(--haramain-secondary);
-        border-color: var(--haramain-secondary);
-    }
-
-    .pagination .page-link {
-        color: var(--haramain-primary);
-        border-radius: 8px;
-        margin: 0 0.25rem;
-        border: 1px solid var(--border-color);
-    }
-
     /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .search-filter-container {
-            flex-direction: column;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-
-        .search-box {
-            width: 100%;
-        }
-
-        .filter-group {
-            width: 100%;
-            flex-wrap: wrap;
-        }
-
-        .table thead {
-            display: none;
-        }
-
-        .table tbody tr {
-            display: block;
-            margin-bottom: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .table tbody td {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            border: none;
-            border-radius: 0;
-        }
-
-        .table tbody td:before {
-            content: attr(data-label);
-            font-weight: 600;
-            color: var(--haramain-primary);
-            margin-right: 1rem;
-        }
-
-        .table tbody td:first-child {
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-        }
-
-        .table tbody td:last-child {
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
-        }
+    /* Tambahan untuk HP kecil (320px - 400px) */
+@media (max-width: 400px) {
+    .card-header {
+        padding: 1rem;
     }
+
+    .card-title {
+        font-size: 1rem;
+        text-align: center;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-add-new {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .search-filter-container {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .filter-group {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .filter-select {
+        width: 100%;
+    }
+
+    .table tbody td {
+        font-size: 0.85rem;
+        padding: 0.6rem 0.8rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .table tbody td:before {
+        margin-bottom: 0.25rem;
+        font-size: 0.8rem;
+    }
+}
+
 </style>
 
 <div class="service-list-container">
@@ -376,10 +295,10 @@
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">
-                <i class="bi bi-list-check"></i>Daftar karyawan
+                <i class="bi bi-people-fill"></i>Daftar Karyawan
             </h5>
             <a href="{{ route('user.create') }}" class="btn-add-new">
-                <i class="bi bi-plus-circle"></i> Tambah karyawan
+                <i class="bi bi-plus-circle"></i> Tambah Karyawan
             </a>
         </div>
 
@@ -387,22 +306,13 @@
         <div class="search-filter-container">
             <div class="search-box">
                 <i class="bi bi-search"></i>
-                <input type="text" placeholder="Cari customer/kode service...">
+                <input type="text" id="searchInput" placeholder="Cari berdasarkan nama, email, dll...">
             </div>
             <div class="filter-group">
                 <select class="filter-select">
-                    <option>Semua Status</option>
-                    <option>Pending</option>
-                    <option>Diproses</option>
-                    <option>Selesai</option>
-                    <option>Ditolak</option>
-                </select>
-                <select class="filter-select">
-                    <option>Semua Periode</option>
-                    <option>Hari Ini</option>
-                    <option>Minggu Ini</option>
-                    <option>Bulan Ini</option>
-                    <option>Custom</option>
+                    <option>Semua Role</option>
+                    <option>Admin</option>
+                    <option>User</option>
                 </select>
             </div>
         </div>
@@ -412,44 +322,45 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Full name</th>
+                        <th>Karyawan</th>
+                        <th>Nama Lengkap</th>
                         <th>Email</th>
-                        <th>Phone</th>
-                        <th>Address</th>
-                        <th>Role</th>
+                        <th>Telepon</th>
+                        <th>Alamat</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="userTableBody">
                     @foreach($users as $user)
                     <tr>
-                        <td class="customer-info">
-                            <div class="customer-avatar">{{ substr($user->name, 0, 2) }}</div>
-                            <div class="customer-details">
-                                <span class="customer-name">{{ $user->name }}</span>
-                                <span class="customer-type">{{ $user->role }}</span>
+                        <td data-label="Karyawan">
+                            <div class="customer-info">
+                                <div class="customer-avatar">{{ strtoupper(substr($user->name, 0, 2)) }}</div>
+                                <div class="customer-details">
+                                    <span class="customer-name">{{ $user->name }}</span>
+                                    <span class="customer-type">{{ $user->role }}</span>
+                                </div>
                             </div>
                         </td>
-                        <td>{{ $user->full_name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>{{ $user->phone }}</td>
-                        <td>{{ $user->address }}</td>
-                        <td>{{ $user->role }}</td>
-                        <td>
-                            <a href="/user/{{ $user->id }}/edit">
-                                <button class="btn-action btn-edit" title="Edit">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            </a>
-                            <form action="{{ route('user.destroy', $user->id) }}" method="post">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn-action btn-delete" title="Hapus">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-
+                        <td data-label="Nama Lengkap">{{ $user->full_name }}</td>
+                        <td data-label="Email">{{ $user->email }}</td>
+                        <td data-label="Telepon">{{ $user->phone }}</td>
+                        <td data-label="Alamat">{{ $user->address }}</td>
+                        <td data-label="Aksi">
+                            <div class="action-buttons">
+                                <a href="/user/{{ $user->id }}/edit">
+                                    <button class="btn-action btn-edit" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </a>
+                                <form action="{{ route('user.destroy', $user->id) }}" method="post" onsubmit="return confirm('Apakah Anda yakin ingin menghapus karyawan ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-action btn-delete" title="Hapus">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @endforeach
@@ -459,21 +370,13 @@
 
         <!-- Pagination -->
         <div class="pagination-container">
+            {{-- This should be replaced with your actual pagination links like {{ $users->links() }} --}}
             <nav aria-label="Page navigation">
                 <ul class="pagination">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
+                    <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
                     <li class="page-item active"><a class="page-link" href="#">1</a></li>
                     <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
+                    <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
                 </ul>
             </nav>
         </div>
@@ -481,59 +384,30 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Delete confirmation
-        const deleteButtons = document.querySelectorAll('.btn-delete');
+document.addEventListener('DOMContentLoaded', function() {
+    // Improved Search Functionality
+    const searchInput = document.getElementById('searchInput');
+    const tableBody = document.getElementById('userTableBody');
+    const rows = tableBody.getElementsByTagName('tr');
 
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                if (confirm('Apakah Anda yakin ingin menghapus permintaan service ini?')) {
-                    // Here you would typically send a delete request to your backend
-                    const row = this.closest('tr');
-                    row.style.opacity = '0';
-                    setTimeout(() => {
-                        row.remove();
-                        alert('Permintaan service berhasil dihapus!');
-                    }, 300);
+    searchInput.addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
 
-                    /*
-                    fetch('/services/' + serviceId, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            row.remove();
-                            alert('Permintaan service berhasil dihapus!');
-                        }
-                    });
-                    */
-                }
-            });
-        });
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            // Get all text content from the row, not just specific cells
+            const rowText = row.textContent.toLowerCase();
 
-        // Search functionality
-        const searchInput = document.querySelector('.search-box input');
-        searchInput.addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') {
-                const searchTerm = this.value.toLowerCase();
-                const rows = document.querySelectorAll('tbody tr');
-
-                rows.forEach(row => {
-                    const customerName = row.querySelector('td:first-child .customer-name').textContent.toLowerCase();
-                    const serviceCode = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-
-                    if (customerName.includes(searchTerm) || serviceCode.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
+            if (rowText.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
             }
-        });
+        }
     });
+
+    // Note: The delete confirmation is now handled by the 'onsubmit' attribute
+    // in the HTML form for simplicity and reliability. No extra JS is needed for that.
+});
 </script>
 @endsection

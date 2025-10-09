@@ -1,8 +1,8 @@
 @extends('admin.master')
 @section('content')<div class="container-fluid p-4">
                 <!-- Stats Cards -->
-                <div class="row g-3 mb-4">
-                    <div class="col-xl-3 col-md-6">
+                <div class="row g-3 mb-4" id="cards-dashboard">
+                    <div class="col-xl-3 col-md-6" id="card-reponsive">
                         <div class="card card-stat h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start">
@@ -20,7 +20,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-md-6">
+                    <div class="col-xl-3 col-md-6" id="card-reponsive">
                         <div class="card card-stat h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start">
@@ -38,7 +38,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-md-6">
+                    <div class="col-xl-3 col-md-6" id="card-reponsive">
                         <div class="card card-stat h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start">
@@ -56,11 +56,11 @@
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
 
                 <!-- Charts and Recent Activity -->
-                <div class="row g-4">
+                <div class="row g-4" id="charts">
                     <div class="col-lg-8">
                         <div class="chart-container h-100">
                             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -110,7 +110,7 @@
                 <!-- Recent Activity Table -->
                 <div class="row mt-4">
                     <div class="col-12">
-                        <div class="card border-0 shadow-sm">
+                        <div class="card border-0 shadow-sm" id="recent">
                             <div class="card-header bg-white border-0 pb-0 pt-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="fw-bold mb-2" style="color: var(--haramain-primary);">
@@ -123,7 +123,7 @@
                             </div>
                             <div class="card-body pt-2">
                                 <div class="table-responsive">
-                                    <table class="table table-hover">
+                                    <table class="table table-hover" id="table-dashboard">
                                         <thead>
                                             <tr>
                                                 <th>ID</th>

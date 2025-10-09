@@ -62,15 +62,18 @@
     }
 
     /* Table Styles */
-    .table-responsive {
-        padding: 0 1.5rem;
-    }
+    /* Responsive table fix - scroll horizontal hanya dalam container */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
 
-    .table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 0.75rem;
-    }
+/* Pastikan table tidak meluber keluar */
+.table {
+    width: 100%;
+    min-width: 600px; /* biar struktur kolom tetap rapi */
+}
 
     .table thead th {
         background-color: var(--haramain-light);
@@ -317,58 +320,40 @@
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
-        .search-filter-container {
-            flex-direction: column;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-
-        .search-box {
-            width: 100%;
-        }
-
-        .filter-group {
-            width: 100%;
-            flex-wrap: wrap;
-        }
-
-        .table thead {
-            display: none;
-        }
-
-        .table tbody tr {
-            display: block;
-            margin-bottom: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .table tbody td {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            border: none;
-            border-radius: 0;
-        }
-
-        .table tbody td:before {
-            content: attr(data-label);
-            font-weight: 600;
-            color: var(--haramain-primary);
-            margin-right: 1rem;
-        }
-
-        .table tbody td:first-child {
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-        }
-
-        .table tbody td:last-child {
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
-        }
+    .table {
+        min-width: unset;
     }
+
+    .table thead {
+        display: none;
+    }
+
+    .table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        background: #fff;
+        overflow: hidden;
+    }
+
+    .table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        border: none;
+    }
+
+    .table tbody td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--haramain-primary);
+    }
+    .card-title{
+        display: none;
+    }
+}
 </style>
 
 <div class="service-list-container">

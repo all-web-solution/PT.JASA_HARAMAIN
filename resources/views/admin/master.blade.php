@@ -177,6 +177,24 @@
         /* Responsive adjustments */
         @media (max-width: 992px) {
             .sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .sidebar-toggle {
+        display: block;
+    }
+            .sidebar {
                 transform: translateX(-100%);
                 width: 260px;
             }
@@ -225,6 +243,9 @@
                 font-size: 1rem;
                 margin-right: 10px;
             }
+            .title-customer{
+                display: none;
+            }
         }
 
         @media (max-width: 576px) {
@@ -266,6 +287,21 @@
         .sidebar.show {
             animation: slideIn 0.3s ease forwards;
         }
+        @media (width:320px){
+            #card-reponsive{
+                width: 300px;
+
+            }
+            #cards-dashboard{
+                display: block;
+            }
+            #charts{
+                display: none;
+            }
+            #table-dashboard, #recent{
+                display: none;
+            }
+        }
     </style>
     @stack('styles')
 </head>
@@ -286,7 +322,21 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebar = document.querySelector('#sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const toggleBtn = document.getElementById('sidebarToggle');
 
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+            sidebarOverlay.classList.toggle('show');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('show');
+            sidebarOverlay.classList.remove('show');
+        });
+    </script>
 </body>
 
 </html>

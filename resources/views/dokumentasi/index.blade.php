@@ -316,59 +316,52 @@
         }
 
         /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .search-filter-container {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            .filter-group {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-
-            .table thead {
-                display: none;
-            }
-
-            .table tbody tr {
-                display: block;
-                margin-bottom: 1rem;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            }
-
-            .table tbody td {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0.75rem 1rem;
-                border: none;
-                border-radius: 0;
-            }
-
-            .table tbody td:before {
-                content: attr(data-label);
-                font-weight: 600;
-                color: var(--haramain-primary);
-                margin-right: 1rem;
-            }
-
-            .table tbody td:first-child {
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
-            }
-
-            .table tbody td:last-child {
-                border-bottom-left-radius: 8px;
-                border-bottom-right-radius: 8px;
-            }
+       @media (max-width: 768px) {
+        .card-title{
+            display: none;
         }
+    .table thead {
+        display: none;
+    }
+
+    .table,
+    .table tbody,
+    .table tr,
+    .table td {
+        display: block;
+        width: 100%;
+    }
+
+    .table tr {
+        margin-bottom: 1rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .table td {
+        text-align: right;
+        padding: 10px 15px;
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+    }
+
+    .table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 50%;
+        text-align: left;
+        font-weight: bold;
+        color: var(--haramain-primary);
+    }
+
+    .table td:last-child {
+        border-bottom: none;
+    }
+}
+
     </style>
 
     <div class="service-list-container">
@@ -397,25 +390,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($contents as $content)
-                            <tr>
-                                <td>{{ $content->name }}</td>
-                                <td>{{ $content->price }}</td>
-                                <td>
-                                    <a href="{{ route('content.edit', $content->id) }}">
-                                        <button class="btn btn-warning">Edit</button>
-                                    </a>
-                                    <form action="{{ route('content.destroy', $content->id) }}" method="post">
-                                        @csrf
-                                        @method('delete')
-                                        <button class="btn btn-danger">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
+@foreach ($contents as $content)
+    <tr>
+        <td data-label="No">{{ $loop->iteration }}</td>
+        <td data-label="Nama">{{ $content->name }}</td>
+        <td data-label="Aksi">
+            <a href="{{ route('content.edit', $content->id) }}">
+                <button class="btn btn-warning">Edit</button>
+            </a>
+            <form action="{{ route('content.destroy', $content->id) }}" method="post" style="display:inline;">
+                @csrf
+                @method('delete')
+                <button class="btn btn-danger">Delete</button>
+            </form>
+        </td>
+    </tr>
+@endforeach
+</tbody>
+
                 </table>
             </div>
 

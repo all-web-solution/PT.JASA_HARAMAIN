@@ -11,16 +11,14 @@
         --text-secondary: #4a5568;
         --border-color: #d1e0f5;
         --hover-bg: #f0f7ff;
-        --checked-color: #2a6fdb;
         --success-color: #28a745;
-        --warning-color: #ffc107;
         --danger-color: #dc3545;
     }
 
     .service-create-container {
-        max-width: 100vw;
+        max-width: 100%;
         margin: 0 auto;
-        padding: 2rem;
+        padding: 1.5rem;
         background-color: #f8fafd;
     }
 
@@ -28,49 +26,37 @@
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         border: 1px solid var(--border-color);
-        margin-bottom: 2rem;
         overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
     }
 
     .card-header {
         background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
         border-bottom: 1px solid var(--border-color);
-        padding: 1.5rem;
+        padding: 1rem 1.5rem;
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
+        gap: 1rem;
     }
 
     .card-title {
         font-weight: 700;
         color: var(--haramain-primary);
-        margin: 0;
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         display: flex;
         align-items: center;
-        gap: 12px;
-    }
-
-    .card-title i {
-        font-size: 1.5rem;
-        color: var(--haramain-secondary);
+        gap: 10px;
+        margin: 0;
     }
 
     .card-body {
         padding: 1.5rem;
     }
 
-    /* Form Styles */
     .form-section {
         margin-bottom: 2rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid var(--border-color);
     }
 
     .form-section-title {
@@ -82,8 +68,15 @@
         gap: 8px;
     }
 
-    .form-section-title i {
-        color: var(--haramain-secondary);
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .form-col {
+        flex: 1;
+        min-width: 250px;
     }
 
     .form-group {
@@ -103,142 +96,40 @@
         border: 1px solid var(--border-color);
         border-radius: 8px;
         font-size: 1rem;
-        transition: border-color 0.3s ease;
+        transition: 0.3s;
     }
 
     .form-control:focus {
-        outline: none;
         border-color: var(--haramain-secondary);
         box-shadow: 0 0 0 3px rgba(42, 111, 219, 0.1);
     }
 
-    .form-text {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-        margin-top: 0.25rem;
-    }
-
-    .form-row {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .form-col {
-        flex: 1;
-    }
-
-    /* Service Selection */
-    .service-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .service-item {
-        border: 2px solid var(--border-color);
-        border-radius: 8px;
-        padding: 1.25rem;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        background-color: white;
-    }
-
-    .service-item:hover {
-        border-color: var(--haramain-secondary);
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .service-item.selected {
-        border-color: var(--haramain-secondary);
-        background-color: var(--haramain-light);
-    }
-
-    .service-icon {
-        font-size: 2rem;
-        color: var(--haramain-secondary);
-        margin-bottom: 0.75rem;
-    }
-
-    .service-name {
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.25rem;
-    }
-
-    .service-desc {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-    }
-
-    /* Detail Form */
-    .detail-form {
-        background-color: var(--haramain-light);
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-top: 1.5rem;
-    }
-
-    .detail-section {
-        margin-bottom: 1.5rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .detail-section:last-child {
-        margin-bottom: 0;
-        padding-bottom: 0;
-        border-bottom: none;
-    }
-
-    .detail-title {
-        font-weight: 600;
-        color: var(--haramain-primary);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .detail-title i {
-        color: var(--haramain-secondary);
-    }
-
-    /* Buttons */
     .btn {
         padding: 0.75rem 1.5rem;
         border-radius: 8px;
         font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s ease;
         border: none;
         cursor: pointer;
+        transition: 0.3s;
     }
 
     .btn-primary {
         background-color: var(--haramain-secondary);
-        color: white;
+        color: #fff;
     }
 
     .btn-primary:hover {
         background-color: var(--haramain-primary);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
     }
 
     .btn-secondary {
-        background-color: white;
+        background-color: #fff;
         color: var(--text-secondary);
         border: 1px solid var(--border-color);
     }
 
     .btn-secondary:hover {
-        background-color: #f8f9fa;
+        background-color: var(--haramain-light);
     }
 
     .btn-submit {
@@ -248,32 +139,22 @@
 
     .btn-submit:hover {
         background-color: #218838;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
     }
 
-    .form-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--border-color);
-    }
-
-    /* Responsive adjustments */
+    /* ✅ RESPONSIVE FIX */
     @media (max-width: 768px) {
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
         .form-row {
             flex-direction: column;
             gap: 0;
         }
 
-        .service-grid {
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        }
-
-        .form-actions {
-            flex-direction: column;
+        .form-col {
+            min-width: 100%;
         }
 
         .btn {
@@ -281,14 +162,35 @@
             justify-content: center;
         }
     }
+
+    @media (max-width: 480px) {
+        .service-create-container {
+            padding: 1rem;
+        }
+
+        .card-header {
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+        }
+
+        .form-control {
+            font-size: 0.9rem;
+            padding: 0.6rem 0.9rem;
+        }
+
+        button, .btn {
+            font-size: 0.9rem;
+        }
+    }
 </style>
 
 <div class="service-create-container">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">
-                <i class="bi bi-plus-circle"></i>Tambah Hotel
-            </h5>
+            <h5 class="card-title"><i class="bi bi-plus-circle"></i> Tambah Hotel</h5>
             <a href="{{ route('transportation.car.index') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
@@ -297,8 +199,6 @@
         <div class="card-body">
             <form action="{{ route('transportation.car.store') }}" method="POST">
                 @csrf
-
-                <!-- Data Travel Section -->
                 <div class="form-section">
                     <h6 class="form-section-title">
                         <i class="bi bi-building"></i> Data Kendaraan
@@ -306,45 +206,35 @@
 
                     <div class="form-row">
                         <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Nama</label>
-                                <input type="text" class="form-control" name="nama" required id="email">
-                            </div>
+                            <label class="form-label">Nama</label>
+                            <input type="text" class="form-control" name="nama" required>
                         </div>
                         <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Kapasitas</label>
-                                <input type="text" class="form-control" name="kapasitas"
-                                       required  id="penanggung">
-                            </div>
+                            <label class="form-label">Kapasitas</label>
+                            <input type="text" class="form-control" name="kapasitas" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Fasilitas</label>
-                                <input type="text" class="form-control" name="fasilitas" required id="email">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">Harga</label>
-                                <input type="text" class="form-control" name="harga" required id="email">
-                            </div>
+                            <label class="form-label">Fasilitas</label>
+                            <input type="text" class="form-control" name="fasilitas" required>
                         </div>
                     </div>
 
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label class="form-label">Harga</label>
+                            <input type="text" class="form-control" name="harga" required>
+                        </div>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-submit">
-                    <i class="bi bi-check-circle"></i> Simpan data kendaraan
+
+                <button type="submit" class="btn btn-submit w-100">
+                    <i class="bi bi-check-circle"></i> Simpan Data Kendaraan
                 </button>
             </form>
         </div>
     </div>
 </div>
-
-
 @endsection

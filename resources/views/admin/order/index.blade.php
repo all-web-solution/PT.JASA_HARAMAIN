@@ -33,11 +33,6 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-        }
-
         .card-header {
             background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
             border-bottom: 1px solid var(--border-color);
@@ -62,7 +57,6 @@
             color: var(--haramain-secondary);
         }
 
-        /* Table Styles */
         .table-responsive {
             padding: 0 1.5rem;
         }
@@ -89,194 +83,22 @@
 
         .table tbody tr:hover {
             background-color: var(--hover-bg);
-            box-shadow: 0 4px 12px rgba(42, 111, 219, 0.1);
         }
 
         .table tbody td {
-            padding: 1.25rem;
+            padding: 1rem;
             vertical-align: middle;
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
 
-        .table tbody td:first-child {
-            border-left: 1px solid var(--border-color);
-            border-top-left-radius: 8px;
-            border-bottom-left-radius: 8px;
-        }
-
-        .table tbody td:last-child {
-            border-right: 1px solid var(--border-color);
-            border-top-right-radius: 8px;
-            border-bottom-right-radius: 8px;
-        }
-
-        /* Status Badge */
         .badge {
             padding: 0.5rem 0.75rem;
             border-radius: 6px;
             font-weight: 600;
             font-size: 0.75rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .badge i {
-            font-size: 0.8rem;
-        }
-
-        .badge-primary {
-            background-color: var(--haramain-light);
-            color: var(--haramain-secondary);
-        }
-
-        .badge-success {
-            background-color: rgba(40, 167, 69, 0.1);
-            color: var(--success-color);
-        }
-
-        .badge-warning {
-            background-color: rgba(255, 193, 7, 0.1);
-            color: var(--warning-color);
-        }
-
-        .badge-danger {
-            background-color: rgba(220, 53, 69, 0.1);
-            color: var(--danger-color);
-        }
-
-        /* Customer/Travel Info */
-        .customer-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .customer-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--haramain-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            color: var(--haramain-secondary);
-            font-size: 1.25rem;
-        }
-
-        .customer-details {
-            line-height: 1.4;
-        }
-
-        .customer-name {
-            font-weight: 600;
-            color: var(--haramain-primary);
-        }
-
-        .customer-type {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            background-color: var(--haramain-light);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        /* Date Info */
-        .date-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .date-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .date-value {
-            font-weight: 600;
-            color: var(--haramain-primary);
-        }
-
-        /* Action Buttons */
-        .btn-action {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 0.25rem;
-            transition: all 0.3s ease;
-            border: none;
-            background-color: transparent;
-        }
-
-        .btn-action:hover {
-            background-color: var(--haramain-light);
-        }
-
-        .btn-action i {
-            font-size: 1rem;
-        }
-
-        .btn-edit {
-            color: var(--haramain-secondary);
-        }
-
-        .btn-delete {
-            color: var(--danger-color);
-        }
-
-        .btn-view {
-            color: var(--text-secondary);
-        }
-
-        /* Search and Filter */
-        .search-filter-container {
-            display: flex;
-            justify-content: space-between;
-            padding: 1.5rem;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .search-box {
-            position: relative;
-            width: 300px;
-        }
-
-        .search-box input {
-            padding-left: 2.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            height: 40px;
-            width: 100%;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .filter-select {
-            height: 40px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 0 1rem;
-            min-width: 150px;
-        }
-
-        /* Add New Button */
         .btn-add-new {
             background-color: var(--haramain-secondary);
             color: white;
@@ -290,33 +112,7 @@
             border: none;
         }
 
-        .btn-add-new:hover {
-            background-color: var(--haramain-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
-        }
-
-        /* Pagination */
-        .pagination-container {
-            display: flex;
-            justify-content: flex-end;
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--haramain-secondary);
-            border-color: var(--haramain-secondary);
-        }
-
-        .pagination .page-link {
-            color: var(--haramain-primary);
-            border-radius: 8px;
-            margin: 0 0.25rem;
-            border: 1px solid var(--border-color);
-        }
-
-        /* Responsive adjustments */
+        /* ✅ Responsive Umum (Tablet) */
         @media (max-width: 768px) {
             .search-filter-container {
                 flex-direction: column;
@@ -342,15 +138,15 @@
                 margin-bottom: 1rem;
                 border-radius: 8px;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                padding: 0.5rem;
             }
 
             .table tbody td {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 0.75rem 1rem;
+                padding: 0.5rem 1rem;
                 border: none;
-                border-radius: 0;
             }
 
             .table tbody td:before {
@@ -359,30 +155,97 @@
                 color: var(--haramain-primary);
                 margin-right: 1rem;
             }
+        }
 
-            .table tbody td:first-child {
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
+        /* ✅ Responsive untuk layar kecil (≤ 320px) */
+        @media (max-width: 320px) {
+            #filter{
+                display: none;
+            }
+            .service-list-container {
+                padding: 1rem;
             }
 
-            .table tbody td:last-child {
-                border-bottom-left-radius: 8px;
-                border-bottom-right-radius: 8px;
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+            }
+
+            .card-title {
+                font-size: 1rem;
+                gap: 6px;
+            }
+
+            .search-filter-container {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .search-box input {
+                height: 36px;
+                font-size: 0.85rem;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .filter-select {
+                width: 100%;
+                font-size: 0.8rem;
+                height: 36px;
+            }
+
+            .table-responsive {
+                padding: 0.5rem;
+                overflow-x: auto;
+            }
+
+            .table tbody tr {
+                margin-bottom: 0.75rem;
+            }
+
+            .table tbody td {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .table tbody td:before {
+                font-size: 0.75rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .btn {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.75rem;
+            }
+
+            .pagination-container {
+                justify-content: center;
+                padding: 0.75rem;
+            }
+
+            .pagination .page-link {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.6rem;
             }
         }
     </style>
 
     <div class="service-list-container">
-        <!-- Services List -->
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-list-check"></i>Daftar pesanan
+                    <i class="bi bi-list-check"></i> Daftar Pesanan
                 </h5>
             </div>
 
-            <!-- Search and Filter -->
-            <div class="search-filter-container">
+            <div class="search-filter-container" id="filter">
                 <div class="search-box">
                     <i class="bi bi-search"></i>
                     <input type="text" placeholder="Cari customer/kode service...">
@@ -400,153 +263,64 @@
                         <option>Hari Ini</option>
                         <option>Minggu Ini</option>
                         <option>Bulan Ini</option>
-                        <option>Custom</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Services Table -->
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Invoice</th>
-                            <th>Nama pelanggan</th>
-                            <th>Total harga keeseluruhan</th>
-                            <th>Jumlah yang di bayarkan</th>
-                            <th>Sisa hutang</th>
+                            <th>Nama Pelanggan</th>
+                            <th>Total</th>
+                            <th>Dibayar</th>
+                            <th>Sisa</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach ($orders as $order)
-                    <a href="{{ route('orders.bayar', $order->id) }}">
-                        <tr>
-                            <td>{{ $order->invoice }}</td>
-                            <td data-label="Nama pelanggan">
-                                <div class="customer-info">
-                                    <div class="customer-details">
-                                        <div class="customer-name">{{ $order->service?->pelanggan?->nama_travel ?? '-' }}</div>
-                                        <div class="customer-type">Travel</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td data-label="Total harga keseluruhan">
-                                {{ number_format($order->total_amount, 0, ',', '.') }}
-                            </td>
-                            <td data-label="Total yang dibayarkan">
-                                {{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}
-                            </td>
-                            <td data-label="Sisa hutang">
-                                {{ number_format($order->sisa_hutang, 0, ',', '.') }}
-                            </td>
-                            <td data-label="Status pembayaran">
-                                @if($order->status_pembayaran === 'belum_bayar')
+                        @foreach ($orders as $order)
+                            <tr>
+                                <td data-label="Invoice">{{ $order->invoice }}</td>
+                                <td data-label="Nama Pelanggan">{{ $order->service?->pelanggan?->nama_travel ?? '-' }}</td>
+                                <td data-label="Total">{{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                                <td data-label="Dibayar">{{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}</td>
+                                <td data-label="Sisa">{{ number_format($order->sisa_hutang, 0, ',', '.') }}</td>
+                                <td data-label="Aksi">
+                                    @if ($order->status_pembayaran === 'belum_bayar')
+                                        <a href="{{ route('orders.bayar', $order->id) }}">
+                                            <button class="btn btn-primary btn-sm w-100">Bayar</button>
+                                        </a>
+                                    @elseif ($order->status_pembayaran === 'sudah_bayar')
+                                        <span class="bg-warning p-1 rounded text-dark d-block text-center">Sudah Bayar</span>
+                                    @else
                                     <a href="{{ route('orders.bayar', $order->id) }}">
-                                        <button class="btn btn-primary">Bayar sekarang</button>
+                                        <span class="bg-success p-1 rounded text-white d-block text-center">Lunas</span>
                                     </a>
-                                @elseif($order->status_pembayaran === 'sudah_bayar')
-                                    <span class="bg-warning p-2 rounded text-black">Sudah bayar</span>
-                                @else
-                                <a href="{{ route('orders.bayar', $order->id) }}">
-                                    <span class="bg-success p-2 rounded text-white">Lunas</span>
-                                </a>
-                                @endif
-                            </td>
-                        </tr>
-                    </a>
-                    @endforeach
-
-
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
-
-
-
-
-
-
                 </table>
             </div>
 
-            <!-- Pagination -->
             <div class="pagination-container">
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                         <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
+                            <a class="page-link" href="#" aria-label="Previous">&laquo;</a>
                         </li>
                         <li class="page-item active"><a class="page-link" href="#">1</a></li>
                         <li class="page-item"><a class="page-link" href="#">2</a></li>
                         <li class="page-item"><a class="page-link" href="#">3</a></li>
                         <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
+                            <a class="page-link" href="#" aria-label="Next">&raquo;</a>
                         </li>
                     </ul>
                 </nav>
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Delete confirmation
-            const deleteButtons = document.querySelectorAll('.btn-delete');
-
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    if (confirm('Apakah Anda yakin ingin menghapus order ini?')) {
-                        // Here you would typically send a delete request to your backend
-                        const row = this.closest('tr');
-                        row.style.opacity = '0';
-                        setTimeout(() => {
-                            row.remove();
-                            alert('Permintaan service berhasil dihapus!');
-                        }, 300);
-
-                        /*
-                        fetch('/services/' + serviceId, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                row.remove();
-                                alert('Permintaan service berhasil dihapus!');
-                            }
-                        });
-                        */
-                    }
-                });
-            });
-
-            // Search functionality
-            const searchInput = document.querySelector('.search-box input');
-            searchInput.addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') {
-                    const searchTerm = this.value.toLowerCase();
-                    const rows = document.querySelectorAll('tbody tr');
-
-                    rows.forEach(row => {
-                        const customerName = row.querySelector('td:first-child .customer-name')
-                            .textContent.toLowerCase();
-                        const serviceCode = row.querySelector('td:nth-child(2)').textContent
-                            .toLowerCase();
-
-                        if (customerName.includes(searchTerm) || serviceCode.includes(searchTerm)) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-                }
-            });
-        });
-    </script>
 @endsection

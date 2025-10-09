@@ -10,37 +10,30 @@
             --text-secondary: #4a5568;
             --border-color: #d1e0f5;
             --hover-bg: #f0f7ff;
-            --checked-color: #2a6fdb;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
+            --success-color: #198754;
         }
 
-        .service-list-container {
+        .payment-container {
             max-width: 100vw;
             margin: 0 auto;
             padding: 2rem;
             background-color: #f8fafd;
         }
 
+        /* ===== Card Styling ===== */
         .card {
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
             margin-bottom: 2rem;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            overflow: hidden; /* Ensures child elements respect border radius */
         }
 
         .card-header {
             background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
             border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem;
+            padding: 1.25rem 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -50,20 +43,20 @@
             font-weight: 700;
             color: var(--haramain-primary);
             margin: 0;
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .card-title i {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: var(--haramain-secondary);
         }
 
-        /* Table Styles */
+        /* ===== Table Styling ===== */
         .table-responsive {
-            padding: 0 1.5rem;
+            padding: 1rem 1.5rem 1.5rem;
         }
 
         .table {
@@ -76,24 +69,25 @@
             background-color: var(--haramain-light);
             color: var(--haramain-primary);
             font-weight: 600;
-            padding: 1rem 1.25rem;
+            padding: 1rem;
             border-bottom: 2px solid var(--border-color);
+            text-align: left;
+            font-size: 0.85rem;
         }
 
         .table tbody tr {
-            background-color: white;
-            transition: all 0.3s ease;
+            background-color: #fff;
+            transition: background-color 0.3s ease;
             border-radius: 8px;
         }
 
         .table tbody tr:hover {
             background-color: var(--hover-bg);
-            box-shadow: 0 4px 12px rgba(42, 111, 219, 0.1);
         }
 
         .table tbody td {
-            padding: 1.25rem;
-            vertical-align: middle;
+            padding: 1.1rem;
+            vertical-align: top; /* Changed to top for better alignment of long content */
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -110,500 +104,227 @@
             border-bottom-right-radius: 8px;
         }
 
-        /* Status Badge */
-        .badge {
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .badge i {
-            font-size: 0.8rem;
-        }
-
-        .badge-primary {
-            background-color: var(--haramain-light);
-            color: var(--haramain-secondary);
-        }
-
-        .badge-success {
-            background-color: rgba(40, 167, 69, 0.1);
-            color: var(--success-color);
-        }
-
-        .badge-warning {
-            background-color: rgba(255, 193, 7, 0.1);
-            color: var(--warning-color);
-        }
-
-        .badge-danger {
-            background-color: rgba(220, 53, 69, 0.1);
-            color: var(--danger-color);
-        }
-
-        /* Customer/Travel Info */
-        .customer-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .customer-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--haramain-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            color: var(--haramain-secondary);
-            font-size: 1.25rem;
-        }
-
-        .customer-details {
-            line-height: 1.4;
-        }
-
-        .customer-name {
-            font-weight: 600;
+        .service-details strong {
             color: var(--haramain-primary);
-        }
-
-        .customer-type {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            background-color: var(--haramain-light);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
             display: inline-block;
+            margin-top: 0.5rem;
+        }
+        .service-details strong:first-child {
+            margin-top: 0;
         }
 
-        /* Date Info */
-        .date-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .date-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .date-value {
-            font-weight: 600;
-            color: var(--haramain-primary);
-        }
-
-        /* Action Buttons */
-        .btn-action {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 0.25rem;
-            transition: all 0.3s ease;
-            border: none;
-            background-color: transparent;
-        }
-
-        .btn-action:hover {
-            background-color: var(--haramain-light);
-        }
-
-        .btn-action i {
-            font-size: 1rem;
-        }
-
-        .btn-edit {
-            color: var(--haramain-secondary);
-        }
-
-        .btn-delete {
-            color: var(--danger-color);
-        }
-
-        .btn-view {
-            color: var(--text-secondary);
-        }
-
-        /* Search and Filter */
-        .search-filter-container {
-            display: flex;
-            justify-content: space-between;
+        /* ===== Payment Form Styling ===== */
+        .payment-form-container {
             padding: 1.5rem;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
         }
-
-        .search-box {
-            position: relative;
-            width: 300px;
+        .form-group {
+            margin-bottom: 1.25rem;
         }
-
-        .search-box input {
-            padding-left: 2.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            height: 40px;
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .form-control {
             width: 100%;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .filter-select {
-            height: 40px;
-            border-radius: 8px;
+            padding: 0.75rem 1rem;
             border: 1px solid var(--border-color);
-            padding: 0 1rem;
-            min-width: 150px;
-        }
-
-        /* Add New Button */
-        .btn-add-new {
-            background-color: var(--haramain-secondary);
-            color: white;
             border-radius: 8px;
-            padding: 0.625rem 1.5rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            border: none;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
-
-        .btn-add-new:hover {
-            background-color: var(--haramain-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
-        }
-
-        /* Pagination */
-        .pagination-container {
-            display: flex;
-            justify-content: flex-end;
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--haramain-secondary);
+        .form-control:focus {
+            outline: none;
             border-color: var(--haramain-secondary);
+            box-shadow: 0 0 0 3px rgba(42, 111, 219, 0.15);
         }
-
-        .pagination .page-link {
-            color: var(--haramain-primary);
+        .btn-submit {
+            background-color: var(--success-color);
+            color: #fff;
+            border: none;
+            padding: 0.8rem 2rem;
             border-radius: 8px;
-            margin: 0 0.25rem;
-            border: 1px solid var(--border-color);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-submit:hover {
+            background-color: #157347;
+            transform: translateY(-2px);
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .search-filter-container {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
+
+        /* ===== Responsiveness ===== */
+        @media (max-width: 992px) {
+            .payment-container {
+                padding: 1rem;
             }
 
-            .search-box {
-                width: 100%;
+            .card-title .full-text {
+                display: none;
             }
-
-            .filter-group {
-                width: 100%;
-                flex-wrap: wrap;
+            .card-title .short-text {
+                display: inline;
             }
 
             .table thead {
                 display: none;
             }
 
-            .table tbody tr {
+            .table tbody, .table tr, .table td {
                 display: block;
-                margin-bottom: 1rem;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                width: 100%;
             }
 
-            .table tbody td {
+            .table tr {
+                margin-bottom: 1.5rem;
+                border: 1px solid var(--border-color);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+            .table td {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 0.75rem 1rem;
+                text-align: right;
+                padding: 0.8rem 1rem;
                 border: none;
-                border-radius: 0;
+                border-bottom: 1px solid #e9ecef;
             }
 
-            .table tbody td:before {
+            .table tr td:last-child {
+                border-bottom: none;
+            }
+
+            .table td:before {
                 content: attr(data-label);
                 font-weight: 600;
                 color: var(--haramain-primary);
+                text-align: left;
                 margin-right: 1rem;
             }
 
-            .table tbody td:first-child {
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
+            /* Special handling for the long service details column */
+            .table td.service-details {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
             }
 
-            .table tbody td:last-child {
-                border-bottom-left-radius: 8px;
-                border-bottom-right-radius: 8px;
+            .table td.service-details:before {
+                margin-bottom: 0.75rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid var(--border-color);
+                width: 100%;
             }
         }
-        <style>
-    .hidden-price {
-        display: none;
-    }
-</style>
     </style>
 
-    <div class="service-list-container">
-        <!-- Services List -->
+    <div class="payment-container">
+        <!-- Order Details Card -->
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-list-check"></i>Pembayaran Order: {{ $order->invoice }}
+                    <i class="bi bi-receipt-cutoff"></i>
+                    <span class="full-text">Detail Order: {{ $order->invoice }}</span>
+                    <span class="short-text" style="display: none;">#{{ $order->invoice }}</span>
                 </h5>
-
             </div>
+
             <div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Kode unik</th>
-                <th>Customer/Travel</th>
-                <th>Tgl keberangkatan</th>
-                <th>Tgl kepulangan</th>
-                <th>Jumlah jamaah</th>
-                <th>Layanan yang dipilih</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if ($order->service)
-                <tr>
-                    <td>{{ $order->service->unique_code }}</td>
-                    <td>{{ $order->service->pelanggan->nama_travel }}</td>
-                    <td>{{ $order->service->tanggal_keberangkatan }}</td>
-                    <td>{{ $order->service->tanggal_kepulangan }}</td>
-                    <td>{{ $order->service->total_jamaah }}</td>
-                    <td>
-                        {{-- Tombol untuk menampilkan/menyembunyikan harga Transportasi & Hotel --}}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Kode Unik</th>
+                            <th>Customer/Travel</th>
+                            <th>Keberangkatan</th>
+                            <th>Kepulangan</th>
+                            <th>Jamaah</th>
+                            <th>Layanan Dipilih</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if ($order->service)
+                            <tr>
+                                <td data-label="Kode Unik">{{ $order->service->unique_code }}</td>
+                                <td data-label="Customer">{{ $order->service->pelanggan->nama_travel }}</td>
+                                <td data-label="Berangkat">{{ $order->service->tanggal_keberangkatan }}</td>
+                                <td data-label="Pulang">{{ $order->service->tanggal_kepulangan }}</td>
+                                <td data-label="Jamaah">{{ $order->service->total_jamaah }}</td>
 
-                        {{-- Tampilkan detail layanan --}}
+                                <td data-label="Layanan Dipilih" class="service-details">
+                                    @php $hasContent = false; @endphp
 
-                        @if ($order->service->meals->count() > 0)
-                            <strong>Meals:</strong><br>
-                            @foreach ($order->service->meals as $meal)
-                                {{ $meal->mealItem->name }} - Rp. {{ number_format($meal->mealItem->price, 0, ',', '.') }}<br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                        @if ($order->service->planes->count() > 0)
-                            <strong>Transportasi:</strong><br>
-                            @foreach ($order->service->planes as $plane)
-                                {{ $plane->maskapai }} ({{ $plane->kode_keberangkatan }} - {{ $plane->kode_kepulangan }})
-                                <span class="hidden-price">
-                                    - Rp. {{ number_format($plane->harga, 0, ',', '.') }}
-                                </span>
-                                <br>
-                            @endforeach
-                            <strong>Transportasi Darat</strong><br>
-                            @foreach ($order->service->transportationItem as $item)
-                                <span class="hidden-price">
-                                    {{ $item->transportation->nama }} - {{ $item->route->route }}
-                                </span>
-                            @endforeach
-                            <br>
-                        @endif
-
-                        @if ($order->service->hotels->count() > 0)
-                            <strong>Hotel:</strong><br>
-                            @foreach ($order->service->hotels as $hotel)
-                                {{ $hotel->nama_hotel }}
-                                <span class="hidden-price">
-                                    - Rp. {{ number_format($hotel->harga_perkamar, 0, ',', '.') }}
-                                </span>
-                                <br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                        @if ($order->service->handlings->count() > 0)
-                            <strong>Handling:</strong><br>
-                            @foreach ($order->service->handlings as $handling)
-                                {{ $handling->name }} - Rp. {{ number_format($handling->price, 0, ',', '.') }}<br>
-                            @endforeach
-                            <br>
-                        @endif
-
-                        @if ($order->service->guides->count() > 0)
-                            <strong>Guide:</strong><br>
-                            @foreach ($order->service->guides as $guide)
-                                {{ $guide->guideItem->nama }} - Rp. {{ number_format($guide->guideItem->harga, 0, ',', '.') }}<br>
-                            @endforeach
-                            <br>
-                        @endif
-                        @if ($order->service->tours->count() > 0)
-                            <strong>Tour:</strong><br>
-                            @foreach ($order->service->tours as $guide)
-                                {{ $guide->transportation->nama }} - {{ $guide->tourItem->name }} <br>
-                            @endforeach
-                            <br>
-                        @endif
-                        @if ($order->service->contents->count() > 0)
-                            <strong>Content : </strong> <br>
-                            @foreach ($order->service->contents as $content)
-                                <p>{{ $content->content->name }} - jumlah {{ $content->jumlah }}</p>
-                            @endforeach
-                        @endif
-                        @if ($order->service->documents->count() > 0)
-                            <strong>Permit : </strong> <br>
-                            @foreach ($order->service->documents as $content)
-                                <p>
-                                    {{ $content->document->name }}
-                                    @if ($content->documentChild)
-                                        - {{ $content->documentChild->name }}
+                                    {{-- Loop through each service type and display if available --}}
+                                    @if ($order->service->meals->count() > 0)
+                                        @php $hasContent = true; @endphp
+                                        <strong>Makanan:</strong><br>
+                                        @foreach ($order->service->meals as $meal)
+                                            - {{ $meal->mealItem->name }} (Rp. {{ number_format($meal->mealItem->price, 0, ',', '.') }})<br>
+                                        @endforeach
                                     @endif
-                                     -
-                                    jumlah {{ $content->jumlah }}</p>
-                            @endforeach
-                        @endif
-                        @if ($order->service->wakafs->count() > 0)
-                            <strong>Wakaf : </strong> <br>
-                            @foreach ($order->service->wakafs as $content)
-                               <p> {{ $content->wakaf->nama }} - {{ $content->jumlah }}</p>
-                            @endforeach
-                        @endif
-                        @if ($order->service->dorongans->count() > 0)
-                            <strong>Dorongan : </strong> <br>
-                            @foreach ($order->service->dorongans as $content)
-                               <p> {{ $content->dorongan->name }} - {{ $content->jumlah }}</p>
-                            @endforeach
-                        @endif
-                        @if ($order->service->badals->count() > 0)
-                            <strong>Badal : </strong> <br>
-                            @foreach ($order->service->badals as $content)
-                               <p> {{ $content->name }} - {{ $content->price }}</p>
-                            @endforeach
-                        @endif
 
+                                    @if ($order->service->planes->count() > 0)
+                                        @php $hasContent = true; @endphp
+                                        <strong>Transportasi:</strong><br>
+                                        @foreach ($order->service->planes as $plane)
+                                            - (Udara) {{ $plane->maskapai }} [{{ $plane->rute }}]<br>
+                                        @endforeach
+                                        @foreach ($order->service->transportationItem as $item)
+                                            - (Darat) {{ $item->transportation->nama }} [{{ $item->route->route }}]<br>
+                                        @endforeach
+                                    @endif
 
-                    </td>
+                                    {{-- Add other services similarly --}}
+                                    @if ($order->service->hotels->count() > 0)
+                                        @php $hasContent = true; @endphp
+                                        <strong>Hotel:</strong><br>
+                                        @foreach ($order->service->hotels as $hotel)
+                                            - {{ $hotel->nama_hotel }}<br>
+                                        @endforeach
+                                    @endif
 
-                </tr>
-            @else
-                <tr>
-                    <td colspan="6" class="text-center">Tidak ada layanan yang tersedia.</td>
-                </tr>
-            @endif
-        </tbody>
-    </table>
-</div>
+                                    @if (!$hasContent)
+                                        <span>Tidak ada detail layanan.</span>
+                                    @endif
+                                    {{-- You can continue this pattern for all other services --}}
+                                </td>
+                            </tr>
+                        @else
+                            <tr>
+                                <td colspan="6" class="text-center" style="text-align: center;">Tidak ada layanan yang terkait dengan order ini.</td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
         </div>
-         @if($order->status_pembayaran === 'belum_bayar')
-            <form action="{{ route('orders.payment', $order->id) }}" method="POST">
-                @csrf
-                <div class="mb-3">
-                    <label for="nama_travel" class="form-label">Jumlah yang di bayarkan</label>
-                    <input type="number" class="form-control" id="nama_travel" name="jumlah_dibayarkan"
-                        placeholder="Jumlah yang dibayarkan" required>
+
+        <!-- Payment Form Card -->
+        @if ($order->status_pembayaran === 'belum_bayar')
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="bi bi-credit-card"></i>
+                        <span>Input Pembayaran</span>
+                    </h5>
                 </div>
-                <button type="submit" name="action" value="save" class="btn btn-primary">
-                    Simpan
-                </button>
-            </form>
+                <div class="payment-form-container">
+                    <form action="{{ route('orders.payment', $order->id) }}" method="POST">
+                        @csrf
+                        <div class="form-group">
+                            <label for="jumlah_dibayarkan" class="form-label">Jumlah yang Dibayarkan (SAR)</label>
+                            <input type="number" step="any" class="form-control" id="jumlah_dibayarkan" name="jumlah_dibayarkan"
+                                placeholder="Contoh: 1500.50" required>
+                        </div>
+                        <button type="submit" class="btn-submit">
+                            <i class="bi bi-check-circle"></i> Simpan Pembayaran
+                        </button>
+                    </form>
+                </div>
+            </div>
         @endif
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Delete confirmation
-            const deleteButtons = document.querySelectorAll('.btn-delete');
-
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    if (confirm('Apakah Anda yakin ingin menghapus permintaan service ini?')) {
-                        // Here you would typically send a delete request to your backend
-                        const row = this.closest('tr');
-                        row.style.opacity = '0';
-                        setTimeout(() => {
-                            row.remove();
-                            alert('Permintaan service berhasil dihapus!');
-                        }, 300);
-
-                        /*
-                        fetch('/services/' + serviceId, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                row.remove();
-                                alert('Permintaan service berhasil dihapus!');
-                            }
-                        });
-                        */
-                    }
-                });
-            });
-
-            // Search functionality
-            const searchInput = document.querySelector('.search-box input');
-            searchInput.addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') {
-                    const searchTerm = this.value.toLowerCase();
-                    const rows = document.querySelectorAll('tbody tr');
-
-                    rows.forEach(row => {
-                        const customerName = row.querySelector('td:first-child .customer-name')
-                            .textContent.toLowerCase();
-                        const serviceCode = row.querySelector('td:nth-child(2)').textContent
-                            .toLowerCase();
-
-                        if (customerName.includes(searchTerm) || serviceCode.includes(searchTerm)) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-                }
-            });
-        });
-
-
-    function togglePrices() {
-        const prices = document.querySelectorAll('.hidden-price');
-
-        prices.forEach(function(price) {
-            if (price.style.display === "none" || price.style.display === "") {
-                price.style.display = "inline";
-            } else {
-                price.style.display = "none";
-            }
-        });
-    }
-    </script>
 @endsection
