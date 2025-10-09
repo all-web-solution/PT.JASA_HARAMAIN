@@ -8,14 +8,17 @@ class Handling extends Model
 {
     protected $fillable = ['name', 'service_id'];
 
-    public function service(){
+    public function service()
+    {
         return $this->belongsTo(Service::class);
     }
 
-    public function handlingHotels(){
+    public function handlingHotels()
+    {
         return $this->hasOne(HandlingHotel::class);
     }
-    public function handlingPlanes(){
+    public function handlingPlanes()
+    {
         return $this->hasOne(HandlingPlanes::class);
     }
 

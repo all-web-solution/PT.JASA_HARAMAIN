@@ -112,6 +112,7 @@ Route::middleware(['auth', 'handling'])->group(function () {
     Route::group(['prefix' => 'handling'], function () {
         Route::get('/', [HandlingController::class, 'index'])->name('handling.handling.index');
         Route::get('/hotel', [HandlingController::class, 'hotel'])->name('handling.handling.hotel');
+        Route::get('/hotel/{id}', [HandlingController::class, 'show'])->name('handling.handling.hotel.show');
     });
     Route::group(['prefix' => 'pendamping'], function () {
         Route::get('/', [PendampingController::class, 'index'])->name('handling.pendamping.index');
