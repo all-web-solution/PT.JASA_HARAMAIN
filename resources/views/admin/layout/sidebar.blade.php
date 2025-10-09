@@ -67,7 +67,7 @@
     @elseif (auth()->user()->role === 'handling')
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('catering.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('catering.index*') || request()->routeIs('catering.edit') || request()->routeIs('catering.create') || request()->routeIs('catering.show') ? 'active' : '' }}"
                     href="{{ route('catering.index') }}">
                     <i class="bi bi-egg-fried"></i> Catering
                 </a>

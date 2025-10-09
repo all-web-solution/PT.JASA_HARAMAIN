@@ -337,6 +337,7 @@
             sidebarOverlay.classList.remove('show');
         });
     </script>
+    @stack('scripts')
 </body>
 
 </html>

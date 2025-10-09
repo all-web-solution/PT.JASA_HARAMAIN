@@ -10,7 +10,6 @@ use App\Http\Controllers\HotelController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WakafController;
-use App\Models\Hotel;
 use Illuminate\Routing\RouteGroup;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -20,6 +19,10 @@ use App\Http\Controllers\Content\SiskopaturController;
 use App\Http\Controllers\Content\VisaController;
 use App\Http\Controllers\Content\VaccineController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\Handling\CateringController;
+use App\Http\Controllers\Handling\HandlingController;
+use App\Http\Controllers\Handling\PendampingController;
+use App\Http\Controllers\Handling\TourController;
 use App\Http\Controllers\PriceListHotelController;
 use App\Http\Controllers\PriceListTicket;
 use App\Http\Controllers\ReyalController;
@@ -97,35 +100,35 @@ Route::middleware(['auth', 'hotel'])->group(function () {
 
 Route::middleware(['auth', 'handling'])->group(function () {
     Route::group(['prefix' => 'catering',], function () {
-        Route::get('/', [App\Http\Controllers\Handling\CateringController::class, 'index'])->name('catering.index');
-        Route::get('/create', [App\Http\Controllers\Handling\CateringController::class, 'create'])->name('catering.create');
-        Route::post('/', [App\Http\Controllers\Handling\CateringController::class, 'store'])->name('catering.store');
-        Route::get('/{id}', [App\Http\Controllers\Handling\CateringController::class, 'show'])->name('catering.show');
-        Route::get('/{id}/edit', [App\Http\Controllers\Handling\CateringController::class, 'edit'])->name('catering.edit');
-        Route::put('update/{id}', [App\Http\Controllers\Handling\CateringController::class, 'update'])->name('catering.update');
-        Route::delete('/delete/{id}', [App\Http\Controllers\Handling\CateringController::class, 'destroy'])->name('catering.delete');
-        Route::get('/customer', [App\Http\Controllers\Handling\CateringController::class, 'customer'])->name('catering.customer');
+        Route::get('/', [CateringController::class, 'index'])->name('catering.index');
+        Route::get('/create', [CateringController::class, 'create'])->name('catering.create');
+        Route::post('/', [CateringController::class, 'store'])->name('catering.store');
+        Route::get('/{meal}/show', [CateringController::class, 'show'])->name('catering.show');
+        Route::get('/{id}/edit', [CateringController::class, 'edit'])->name('catering.edit');
+        Route::put('update/{id}', [CateringController::class, 'update'])->name('catering.update');
+        Route::delete('/delete/{id}', [CateringController::class, 'destroy'])->name('catering.delete');
+        Route::get('/customer', [CateringController::class, 'customer'])->name('catering.customer');
     });
     Route::group(['prefix' => 'handling'], function () {
-        Route::get('/', [App\Http\Controllers\Handling\HandlingController::class, 'index'])->name('handling.handling.index');
-        Route::get('/hotel', [App\Http\Controllers\Handling\HandlingController::class, 'hotel'])->name('handling.handling.hotel');
+        Route::get('/', [HandlingController::class, 'index'])->name('handling.handling.index');
+        Route::get('/hotel', [HandlingController::class, 'hotel'])->name('handling.handling.hotel');
     });
     Route::group(['prefix' => 'pendamping'], function () {
-        Route::get('/', [App\Http\Controllers\Handling\PendampingController::class, 'index'])->name('handling.pendamping.index');
-        Route::get('/create', [App\Http\Controllers\Handling\PendampingController::class, 'create'])->name('handling.pendamping.create');
-        Route::post('/create', [App\Http\Controllers\Handling\PendampingController::class, 'store'])->name('handling.pendamping.store');
-        Route::get('/edit/{id}', [App\Http\Controllers\Handling\PendampingController::class, 'edit'])->name('handling.pendamping.edit');
-        Route::put('/update/{id}', [App\Http\Controllers\Handling\PendampingController::class, 'update'])->name('handling.pendamping.update');
-        Route::delete('/delete/{id}', [App\Http\Controllers\Handling\PendampingController::class, 'destroy'])->name('handling.pendamping.destroy');
-        Route::get('/customer', [App\Http\Controllers\Handling\PendampingController::class, 'customer'])->name('handling.pendamping.customer');
+        Route::get('/', [PendampingController::class, 'index'])->name('handling.pendamping.index');
+        Route::get('/create', [PendampingController::class, 'create'])->name('handling.pendamping.create');
+        Route::post('/create', [PendampingController::class, 'store'])->name('handling.pendamping.store');
+        Route::get('/edit/{id}', [PendampingController::class, 'edit'])->name('handling.pendamping.edit');
+        Route::put('/update/{id}', [PendampingController::class, 'update'])->name('handling.pendamping.update');
+        Route::delete('/delete/{id}', [PendampingController::class, 'destroy'])->name('handling.pendamping.destroy');
+        Route::get('/customer', [PendampingController::class, 'customer'])->name('handling.pendamping.customer');
     });
     Route::group(['prefix' => 'tour'], function () {
-        Route::get('/', [App\Http\Controllers\Handling\TourController::class, 'index'])->name('handling.tour.index');
-        Route::get('/create', [App\Http\Controllers\Handling\TourController::class, 'create'])->name('handling.tour.create');
-        Route::post('/create', [App\Http\Controllers\Handling\TourController::class, 'store'])->name('handling.tour.store');
-        Route::get('/edit/{id}', [App\Http\Controllers\Handling\TourController::class, 'edit'])->name('handling.tour.edit');
-        Route::put('/update/{id}', [App\Http\Controllers\Handling\TourController::class, 'update'])->name('handling.tour.update');
-        Route::delete('/delete/{id}', [App\Http\Controllers\Handling\TourController::class, 'destroy'])->name('handling.tour.destroy');
+        Route::get('/', [TourController::class, 'index'])->name('handling.tour.index');
+        Route::get('/create', [TourController::class, 'create'])->name('handling.tour.create');
+        Route::post('/create', [TourController::class, 'store'])->name('handling.tour.store');
+        Route::get('/edit/{id}', [TourController::class, 'edit'])->name('handling.tour.edit');
+        Route::put('/update/{id}', [TourController::class, 'update'])->name('handling.tour.update');
+        Route::delete('/delete/{id}', [TourController::class, 'destroy'])->name('handling.tour.destroy');
     });
 });
 
