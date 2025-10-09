@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     {{-- Tombol Kembali --}}
-    <a href="{{ route('content.customer') }}" class="btn btn-secondary mb-3">
+    <a href="{{ route('content.customer') }}" class="btn btn-secondary mb-3 mt-3">
         <i class="bi bi-arrow-left"></i> Kembali ke Daftar Customer
     </a>
 

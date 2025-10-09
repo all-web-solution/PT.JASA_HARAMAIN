@@ -49,7 +49,7 @@ class ServicesController extends Controller
 
         // Tentukan prefix kode unik berdasarkan filter service
         $codePrefix = match ($serviceFilter) {
-            'transportasi' => 'T',
+            'transportasi' => 'TRX',
             'hotel' => 'H',
             'dokumen' => 'D',
             'handling' => 'G',
@@ -1203,8 +1203,6 @@ class ServicesController extends Controller
                                 'document_children_id' => $itemChild->id,
                                 'jumlah' => $jumlah,
                                 'harga' => $itemChild->price,
-                                'paspor' => $paspordokumen,
-                                'pas_foto' => $pasfotodokumen
 
                             ]);
                         }
@@ -1215,9 +1213,8 @@ class ServicesController extends Controller
                                 'document_id' => $docId,
                                 'document_children_id' => null,
                                 'jumlah' => $jumlah,
-                                'harga' => null,
-                                'paspor' => $paspordokumen,
-                                'pas_foto' => $pasfotodokumen
+                                'harga' => '0',
+
 
                             ]);
                         }

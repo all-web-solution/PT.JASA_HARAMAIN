@@ -376,11 +376,8 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-list-check"></i>Daftar Konten
+                    <i class="bi bi-list-check"></i>Daftar order konten
                 </h5>
-                <a href="{{ route('content.create') }}" class="btn-add-new">
-                    <i class="bi bi-plus-circle"></i> Tambah Konten
-                </a>
             </div>
 
 

@@ -407,7 +407,7 @@
                     <td>{{ $order->service->total_jamaah }}</td>
                     <td>
                         {{-- Tombol untuk menampilkan/menyembunyikan harga Transportasi & Hotel --}}
-                       
+
                         {{-- Tampilkan detail layanan --}}
 
                         @if ($order->service->meals->count() > 0)
@@ -426,6 +426,12 @@
                                     - Rp. {{ number_format($plane->harga, 0, ',', '.') }}
                                 </span>
                                 <br>
+                            @endforeach
+                            <strong>Transportasi Darat</strong><br>
+                            @foreach ($order->service->transportationItem as $item)
+                                <span class="hidden-price">
+                                    {{ $item->transportation->nama }} - {{ $item->route->route }}
+                                </span>
                             @endforeach
                             <br>
                         @endif
@@ -453,12 +459,57 @@
                         @if ($order->service->guides->count() > 0)
                             <strong>Guide:</strong><br>
                             @foreach ($order->service->guides as $guide)
-                                {{ $guide->name }} - Rp. {{ number_format($guide->price, 0, ',', '.') }}<br>
+                                {{ $guide->guideItem->nama }} - Rp. {{ number_format($guide->guideItem->harga, 0, ',', '.') }}<br>
                             @endforeach
                             <br>
                         @endif
+                        @if ($order->service->tours->count() > 0)
+                            <strong>Tour:</strong><br>
+                            @foreach ($order->service->tours as $guide)
+                                {{ $guide->transportation->nama }} - {{ $guide->tourItem->name }} <br>
+                            @endforeach
+                            <br>
+                        @endif
+                        @if ($order->service->contents->count() > 0)
+                            <strong>Content : </strong> <br>
+                            @foreach ($order->service->contents as $content)
+                                <p>{{ $content->content->name }} - jumlah {{ $content->jumlah }}</p>
+                            @endforeach
+                        @endif
+                        @if ($order->service->documents->count() > 0)
+                            <strong>Permit : </strong> <br>
+                            @foreach ($order->service->documents as $content)
+                                <p>
+                                    {{ $content->document->name }}
+                                    @if ($content->documentChild)
+                                        - {{ $content->documentChild->name }}
+                                    @endif
+                                     -
+                                    jumlah {{ $content->jumlah }}</p>
+                            @endforeach
+                        @endif
+                        @if ($order->service->wakafs->count() > 0)
+                            <strong>Wakaf : </strong> <br>
+                            @foreach ($order->service->wakafs as $content)
+                               <p> {{ $content->wakaf->nama }} - {{ $content->jumlah }}</p>
+                            @endforeach
+                        @endif
+                        @if ($order->service->dorongans->count() > 0)
+                            <strong>Dorongan : </strong> <br>
+                            @foreach ($order->service->dorongans as $content)
+                               <p> {{ $content->dorongan->name }} - {{ $content->jumlah }}</p>
+                            @endforeach
+                        @endif
+                        @if ($order->service->badals->count() > 0)
+                            <strong>Badal : </strong> <br>
+                            @foreach ($order->service->badals as $content)
+                               <p> {{ $content->name }} - {{ $content->price }}</p>
+                            @endforeach
+                        @endif
+
 
                     </td>
+
                 </tr>
             @else
                 <tr>
@@ -469,17 +520,19 @@
     </table>
 </div>
         </div>
-        <form action="{{ route('orders.payment', $order->id) }}" method="POST">
-            @csrf
-            <div class="mb-3">
-                <label for="nama_travel" class="form-label">Jumlah yang di bayarkan</label>
-                <input type="number" class="form-control" id="nama_travel" name="jumlah_dibayarkan"
-                    placeholder="Jumlah yang dibayarkan" required>
-            </div>
-            <button type="submit" name="action" value="save" class="btn btn-primary">
-                Simpan
-            </button>
-        </form>
+         @if($order->status_pembayaran === 'belum_bayar')
+            <form action="{{ route('orders.payment', $order->id) }}" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <label for="nama_travel" class="form-label">Jumlah yang di bayarkan</label>
+                    <input type="number" class="form-control" id="nama_travel" name="jumlah_dibayarkan"
+                        placeholder="Jumlah yang dibayarkan" required>
+                </div>
+                <button type="submit" name="action" value="save" class="btn btn-primary">
+                    Simpan
+                </button>
+            </form>
+        @endif
     </div>
 
     <script>

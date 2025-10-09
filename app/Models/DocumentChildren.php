@@ -12,7 +12,7 @@ class DocumentChildren extends Model
         return $this->belongsTo(Document::class, 'document_id');
     }
     public function CustomerDocuments(){
-        return $this->hasMany(CustomerDocument::class, 'document_children_id');
+        return $this->hasMany(CustomerDocument::class);
 
     }
 }
