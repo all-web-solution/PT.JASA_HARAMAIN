@@ -13,7 +13,7 @@
                     <!-- Notifikasi & User -->
                     <div class="d-flex align-items-center">
                         <!-- Bell Notification -->
-                        <div class="dropdown me-3 position-relative">
+                        {{-- <div class="dropdown me-3 position-relative">
                             <a href="#" class="text-decoration-none" style="color: var(--haramain-primary);" data-bs-toggle="dropdown">
                                 <i class="bi bi-bell fs-5"></i>
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -28,7 +28,7 @@
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-center" href="#">Lihat semua</a></li>
                             </ul>
-                        </div>
+                        </div> --}}
 
                         <!-- User Dropdown -->
                         <div class="dropdown">
