@@ -5,70 +5,47 @@ namespace App\Http\Controllers\Handling;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TourItem;
+use Illuminate\Support\Facades\Session;
 
 class TourController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $tours = TourItem::all();
         return view('handling.tour.index', compact('tours'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('handling.tour.create');
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        TourItem::create(['name' => $request->name]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        TourItem::create($request->only('name'));
+
+        Session::flash('success', 'Tour berhasil ditambahkan.');
         return redirect()->route('handling.tour.index');
-
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(TourItem $tour)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $tour = TourItem::findOrFail($id);
         return view('handling.tour.edit', compact('tour'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, TourItem $tour)
     {
-        $tour = TourItem::findOrFail($id);
-        $tour->update(['name' => $request->name]);
-         return redirect()->route('handling.tour.index');
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+        $tour->update($request->only('name'));
+        Session::flash('success', 'Tour berhasil diperbarui.');
+        return redirect()->route('handling.tour.index');
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(TourItem $tour)
     {
-        $tour = TourItem::findOrFail($id);
         $tour->delete();
-         return redirect()->route('handling.tour.index');
+        Session::flash('success', 'Tour berhasil dihapus.');
+        return redirect()->route('handling.tour.index');
     }
 }

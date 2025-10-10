@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tour extends Model
 {
-    protected $fillable = ['service_id', 'transportation_id','tour_id'];
+    protected $fillable = ['service_id', 'transportation_id', 'tour_id'];
     public function service()
     {
         return $this->belongsTo(Service::class);
