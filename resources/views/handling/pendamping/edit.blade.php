@@ -310,21 +310,21 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Nama pendamping</label>
-                                    <input type="text" class="form-control" name="nama" required id="email"
+                                    <input type="text" class="form-control" name="nama" required
                                         value="{{ $guide->nama }}">
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Harga</label>
-                                    <input type="text" class="form-control" name="harga" required id="penanggung"
+                                    <input type="number" class="form-control" name="harga" required
                                         value="{{ $guide->harga }}">
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Keterangan</label>
-                                    <input type="text" class="form-control" name="keterangan" required id="penanggung"
+                                    <input type="text" class="form-control" name="keterangan" required
                                         value="{{ $guide->keterangan }}">
                                 </div>
                             </div>

@@ -75,13 +75,13 @@ class Pelanggan extends Model
 
 
     public function getTotalTransaksiAttribute()
-{
-    return $this->services->flatMap->orders->sum('total');
-}
+    {
+        return $this->services->flatMap->orders->sum('total');
+    }
 
-public function getTotalHutangAttribute()
-{
-    return $this->services->flatMap->orders->where('status', 'hutang')->sum('total');
-}
+    public function getTotalHutangAttribute()
+    {
+        return $this->services->flatMap->orders->where('status', 'hutang')->sum('total');
+    }
 
 }

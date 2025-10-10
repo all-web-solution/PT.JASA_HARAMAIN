@@ -286,7 +286,6 @@
 @endpush
 
 @section('content')
-
     <div class="service-create-container">
         <div class="card">
             <div class="card-header">
@@ -312,19 +311,19 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Nama</label>
-                                    <input type="text" class="form-control" name="nama" required id="email">
+                                    <input type="text" class="form-control" name="nama" required>
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Harga</label>
-                                    <input type="text" class="form-control" name="harga" required id="penanggung">
+                                    <input type="number" class="form-control" name="harga" required>
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Keterangan</label>
-                                    <input type="text" class="form-control" name="keterangan" required id="penanggung">
+                                    <input type="text" class="form-control" name="keterangan" required>
                                 </div>
                             </div>
 
