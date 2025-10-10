@@ -1,5 +1,6 @@
 @extends('admin.master')
-@section('content')
+@section('title', 'Daftar Customer Wakaf')
+@push('styles')
     <style>
         :root {
             --haramain-primary: #1a4b8c;
@@ -370,19 +371,15 @@
             }
         }
     </style>
-
+@endpush
+@section('content')
     <div class="service-list-container">
-        <!-- Services List -->
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-list-check"></i>Daftar Wakaf
+                    <i class="bi bi-list-check"></i>Daftar Customer Wakaf
                 </h5>
-                <a href="{{ route('wakaf.create') }}" class="btn-add-new">
-                    <i class="bi bi-plus-circle"></i> Tambah Permintaan
-                </a>
             </div>
-            <!-- Services Table -->
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -391,42 +388,23 @@
                             <th>Nama Customer / Travel</th>
                             <th>Wakaf yang pilih</th>
                             <th>Jumlah</th>
-
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $item)
+                        @forelse ($data as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->service->pelanggan->nama_travel }}</td>
-                                <td>{{ $item->wakaf->nama}}</td>
+                                <td>{{ $item->wakaf->nama }}</td>
                                 <td>{{ $item->jumlah }}</td>
                             </tr>
-                        @endforeach
-
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">Tidak ada data tersedia</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination-container">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
         </div>
     </div>

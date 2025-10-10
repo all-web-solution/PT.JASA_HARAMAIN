@@ -1,6 +1,6 @@
 @extends('admin.master')
-@section('content')
-  <style>
+@push('styles')
+    <style>
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;
@@ -474,34 +474,45 @@
 
         }
     </style>
-        <div class="service-create-container">
+@endpush
+@section('content')
+    <div class="service-create-container">
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-plus-circle"></i>Tambah Wakaf
+                    <i class="bi bi-plus-circle"></i>Ubah Data Wakaf
                 </h5>
                 <a href="{{ route('wakaf.index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
-
             <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <form method="POST" action="{{ route('wakaf.update', $wakaf->id) }}">
                     @csrf
                     @method('put')
-                    <!-- Data Travel Section -->
                     <div class="form-section">
                         <div class="form-row">
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Nama</label>
-                                    <input type="text" class="form-control" name="nama" required id="email" value="{{ $wakaf->nama }}">
+                                    <input type="text" class="form-control" name="nama" required
+                                        value="{{ $wakaf->nama }}">
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Harga</label>
-                                    <input type="text" class="form-control" name="harga" required id="penanggung" value="{{ $wakaf->harga }}">
+                                    <input type="number" class="form-control" name="harga" required
+                                        value="{{ $wakaf->harga }}">
                                 </div>
                             </div>
                         </div>

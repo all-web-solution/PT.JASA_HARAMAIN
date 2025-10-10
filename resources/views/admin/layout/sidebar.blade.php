@@ -154,7 +154,7 @@
     @elseif (auth()->user()->role === 'palugada')
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('wakaf.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('wakaf.*') && !request()->routeIs('wakaf.customer') ? 'active' : '' }}"
                     href="{{ route('wakaf.index') }}">
                     <i class="bi bi-gem"></i> Wakaf
                 </a>

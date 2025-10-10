@@ -5,77 +5,82 @@ namespace App\Http\Controllers;
 use App\Models\Wakaf;
 use App\Models\WakafCustomer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class WakafController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $wakaf = Wakaf::all();
+
         return view('palugada.wakaf.index', compact('wakaf'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('palugada.wakaf.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
+        ]);
+
+
         Wakaf::create([
             'nama' => $request->nama,
             'harga' => $request->harga
         ]);
-        return redirect()->route('wakaf.index');
-;    }
 
-    /**
-     * Display the specified resource.
-     */
+
+        Session::flash('success', 'Wakaf created successfully!');
+
+        return redirect()->route('wakaf.index');
+    }
+
     public function customer()
     {
-        $data = WakafCustomer::all();
+
+        $data = WakafCustomer::with('wakaf')->get();
+
         return view('palugada.wakaf.customer', compact('data'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $wakaf = Wakaf::findOrFail($id);
         return view('palugada.wakaf.edit', compact('wakaf'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
 
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
+        ]);
+
         $wakaf = Wakaf::findOrFail($id);
         $wakaf->update([
-              'nama' => $request->nama,
+            'nama' => $request->nama,
             'harga' => $request->harga
         ]);
+
+
+        Session::flash('success', 'Wakaf updated successfully!');
+
         return redirect()->route('wakaf.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $wakaf = Wakaf::findOrFail($id);
         $wakaf->delete();
-         return redirect()->route('wakaf.index');
+        Session::flash('success', 'Wakaf deleted successfully!');
+
+        return redirect()->route('wakaf.index');
     }
 }
