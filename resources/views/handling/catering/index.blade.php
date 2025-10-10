@@ -47,6 +47,10 @@
             justify-content: space-between;
         }
 
+        .card-body {
+            padding: 2rem;
+        }
+
         .card-title {
             font-weight: 700;
             color: var(--haramain-primary);
@@ -169,69 +173,73 @@
                 </a>
             </div>
 
-            @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
+            <div class="card-body">
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
 
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Menu</th>
-                            <th>Harga</th>
-                            <th>PJ</th>
-                            <th>Nama Travel</th>
-                            <th>Kebutuhan</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($meals->count())
-                            @foreach ($meals as $meal)
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Menu</th>
+                                <th>Harga</th>
+                                <th>PJ</th>
+                                <th>Nama Travel</th>
+                                <th>Kebutuhan</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if ($meals->count())
+                                @foreach ($meals as $meal)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $meal->mealItem->name ?? '-' }}</td>
+                                        <td>{{ $meal->mealItem->price ?? '-' }}</td>
+                                        <td>{{ $meal->pj ?? '-' }}</td>
+                                        <td>{{ $meal->service->pelanggan->nama_travel ?? '-' }}</td>
+                                        <td>{{ $meal->kebutuhan ?? '-' }}</td>
+                                        <td>{{ $meal->status ?? '-' }}</td>
+                                        <td>
+                                            <a href="{{ route('catering.show', $meal->id) }}" title="Lihat Detail">
+                                                <button class="btn btn-info">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </a>
+                                            <a href="{{ route('catering.edit', $meal->id) }}" title="Edit">
+                                                <button class="btn btn-warning">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                            </a>
+                                            <form id="delete-form-{{ $meal->id }}"
+                                                action="{{ route('catering.delete', $meal->id) }}" method="post"
+                                                style="display:inline-block">
+                                                @csrf
+                                                @method('delete')
+                                                <button type="button" class="btn btn-danger delete-confirm"
+                                                    data-id="{{ $meal->id }}"
+                                                    data-nama-menu="{{ $meal->mealItem->name ?? 'Menu Ini' }}"
+                                                    title="Hapus">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $meal->mealItem->name ?? '-' }}</td>
-                                    <td>{{ $meal->mealItem->price ?? '-' }}</td>
-                                    <td>{{ $meal->pj ?? '-' }}</td>
-                                    <td>{{ $meal->service->pelanggan->nama_travel ?? '-' }}</td>
-                                    <td>{{ $meal->kebutuhan ?? '-' }}</td>
-                                    <td>{{ $meal->status ?? '-' }}</td>
-                                    <td>
-                                        <a href="{{ route('catering.show', $meal->id) }}" title="Lihat Detail">
-                                            <button class="btn btn-info">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                        </a>
-                                        <a href="{{ route('catering.edit', $meal->id) }}" title="Edit">
-                                            <button class="btn btn-warning">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                        </a>
-                                        <form id="delete-form-{{ $meal->id }}"
-                                            action="{{ route('catering.delete', $meal->id) }}" method="post"
-                                            style="display:inline-block">
-                                            @csrf
-                                            @method('delete')
-                                            <button type="button" class="btn btn-danger delete-confirm"
-                                                data-id="{{ $meal->id }}"
-                                                data-nama-menu="{{ $meal->mealItem->name ?? 'Menu Ini' }}" title="Hapus">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
+                                    <td colspan="8" style="text-align:center">Belum ada data catering yang ditambahkan.
                                     </td>
                                 </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="8" style="text-align:center">Belum ada data catering yang ditambahkan.</td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
