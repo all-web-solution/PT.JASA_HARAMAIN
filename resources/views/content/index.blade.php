@@ -1,5 +1,6 @@
 @extends('admin.master')
-@section('content')
+@section('title', 'Daftar Dokumen')
+@push('styles')
     <style>
         :root {
             --haramain-primary: #1a4b8c;
@@ -10,17 +11,14 @@
             --text-secondary: #4a5568;
             --border-color: #d1e0f5;
             --hover-bg: #f0f7ff;
-            --checked-color: #2a6fdb;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
+            --background-light: #f8fafd;
         }
 
         .service-list-container {
             max-width: 100vw;
             margin: 0 auto;
             padding: 2rem;
-            background-color: #f8fafd;
+            background-color: var(--background-light);
         }
 
         .card {
@@ -29,12 +27,6 @@
             border: 1px solid var(--border-color);
             margin-bottom: 2rem;
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
         }
 
         .card-header {
@@ -61,9 +53,27 @@
             color: var(--haramain-secondary);
         }
 
+        .btn-add-new {
+            background-color: var(--haramain-primary);
+            color: #fff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-add-new:hover {
+            background-color: var(--haramain-secondary);
+            box-shadow: 0 4px 12px rgba(42, 111, 219, 0.2);
+        }
+
         /* Table Styles */
         .table-responsive {
-            padding: 0 1.5rem;
+            padding: 0 1rem 1rem 1rem;
         }
 
         .table {
@@ -78,6 +88,8 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
+            text-align: left;
+            white-space: nowrap;
         }
 
         .table tbody tr {
@@ -89,303 +101,48 @@
         .table tbody tr:hover {
             background-color: var(--hover-bg);
             box-shadow: 0 4px 12px rgba(42, 111, 219, 0.1);
+            transform: translateY(-2px);
         }
 
         .table tbody td {
             padding: 1.25rem;
             vertical-align: middle;
+            border: 1px solid transparent;
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
 
-        .table tbody td:first-child {
+        .table tbody tr td:first-child {
             border-left: 1px solid var(--border-color);
             border-top-left-radius: 8px;
             border-bottom-left-radius: 8px;
         }
 
-        .table tbody td:last-child {
+        .table tbody tr td:last-child {
             border-right: 1px solid var(--border-color);
             border-top-right-radius: 8px;
             border-bottom-right-radius: 8px;
         }
 
-        /* Status Badge */
-        .badge {
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            display: inline-flex;
-            align-items: center;
+        /* Actions Button Styling */
+        .actions-container {
+            display: flex;
             gap: 0.5rem;
-        }
-
-        .badge i {
-            font-size: 0.8rem;
-        }
-
-        .badge-primary {
-            background-color: var(--haramain-light);
-            color: var(--haramain-secondary);
-        }
-
-        .badge-success {
-            background-color: rgba(40, 167, 69, 0.1);
-            color: var(--success-color);
-        }
-
-        .badge-warning {
-            background-color: rgba(255, 193, 7, 0.1);
-            color: var(--warning-color);
-        }
-
-        .badge-danger {
-            background-color: rgba(220, 53, 69, 0.1);
-            color: var(--danger-color);
-        }
-
-        /* Customer/Travel Info */
-        .customer-info {
-            display: flex;
             align-items: center;
-        }
-
-        .customer-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--haramain-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            color: var(--haramain-secondary);
-            font-size: 1.25rem;
-        }
-
-        .customer-details {
-            line-height: 1.4;
-        }
-
-        .customer-name {
-            font-weight: 600;
-            color: var(--haramain-primary);
-        }
-
-        .customer-type {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            background-color: var(--haramain-light);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        /* Date Info */
-        .date-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .date-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .date-value {
-            font-weight: 600;
-            color: var(--haramain-primary);
-        }
-
-        /* Action Buttons */
-        .btn-action {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 0.25rem;
-            transition: all 0.3s ease;
-            border: none;
-            background-color: transparent;
-        }
-
-        .btn-action:hover {
-            background-color: var(--haramain-light);
-        }
-
-        .btn-action i {
-            font-size: 1rem;
-        }
-
-        .btn-edit {
-            color: var(--haramain-secondary);
-        }
-
-        .btn-delete {
-            color: var(--danger-color);
-        }
-
-        .btn-view {
-            color: var(--text-secondary);
-        }
-
-        /* Search and Filter */
-        .search-filter-container {
-            display: flex;
-            justify-content: space-between;
-            padding: 1.5rem;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .search-box {
-            position: relative;
-            width: 300px;
-        }
-
-        .search-box input {
-            padding-left: 2.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            height: 40px;
-            width: 100%;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .filter-select {
-            height: 40px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 0 1rem;
-            min-width: 150px;
-        }
-
-        /* Add New Button */
-        .btn-add-new {
-            background-color: var(--haramain-secondary);
-            color: white;
-            border-radius: 8px;
-            padding: 0.625rem 1.5rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        .btn-add-new:hover {
-            background-color: var(--haramain-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
-        }
-
-        /* Pagination */
-        .pagination-container {
-            display: flex;
-            justify-content: flex-end;
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--haramain-secondary);
-            border-color: var(--haramain-secondary);
-        }
-
-        .pagination .page-link {
-            color: var(--haramain-primary);
-            border-radius: 8px;
-            margin: 0 0.25rem;
-            border: 1px solid var(--border-color);
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .search-filter-container {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            .filter-group {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-
-            .table thead {
-                display: none;
-            }
-
-            .table tbody tr {
-                display: block;
-                margin-bottom: 1rem;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            }
-
-            .table tbody td {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0.75rem 1rem;
-                border: none;
-                border-radius: 0;
-            }
-
-            .table tbody td:before {
-                content: attr(data-label);
-                font-weight: 600;
-                color: var(--haramain-primary);
-                margin-right: 1rem;
-            }
-
-            .table tbody td:first-child {
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
-            }
-
-            .table tbody td:last-child {
-                border-bottom-left-radius: 8px;
-                border-bottom-right-radius: 8px;
-            }
         }
     </style>
-
+@endpush
+@section('content')
     <div class="service-list-container">
-        <!-- Services List -->
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-list-check"></i>Daftar Dokumen
+                    <i class="bi bi-file-earmark-text-fill"></i>Daftar Dokumen
                 </h5>
                 <a href="{{ route('visa.document.create') }}" class="btn-add-new">
                     <i class="bi bi-plus-circle"></i> Tambah Dokumen
                 </a>
             </div>
-
-
-
-            <!-- Services Table -->
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -393,112 +150,89 @@
                             <th>No</th>
                             <th>Nama</th>
                             <th>Aksi</th>
-
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($documents as $doc)
+                        @forelse ($documents as $doc)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $doc->name }}</td>
-                                <td class="d-flex">
-                                    <a href="{{ route('visa.document.show', $doc->id) }}">
-                                        <button class="btn btn-primary">Detail</button>
-                                    </a>
-                                    <a href="{{ route('visa.document.edit', $doc->id) }}" class="mx-4">
-                                        <button class="btn btn-warning">Edit</button>
-                                    </a>
-                                    <form action="{{ route('visa.document.delete', $doc->id) }}" method="post">
-                                        @csrf
-                                        @method('delete')
-                                        <button class="btn btn-danger">Hapus</button>
-                                    </form>
+                                <td>
+                                    <div class="actions-container">
+                                        <a href="{{ route('visa.document.show', $doc->id) }}" class="btn btn-info btn-sm"
+                                            title="Detail">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                        <a href="{{ route('visa.document.edit', $doc->id) }}" class="btn btn-warning btn-sm"
+                                            title="Edit">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                        <form id="delete-form-{{ $doc->id }}"
+                                            action="{{ route('visa.document.delete', $doc->id) }}" method="post">
+                                            @csrf
+                                            @method('delete')
+                                            <button type="button" class="btn btn-danger btn-sm delete-confirm"
+                                                data-id="{{ $doc->id }}" data-nama="{{ $doc->name }}"
+                                                title="Hapus">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="3" style="text-align:center; padding: 2rem;">
+                                    Belum ada data dokumen yang ditambahkan.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination -->
-            <div class="pagination-container">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
         </div>
     </div>
-
+@endsection
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Delete confirmation
-            const deleteButtons = document.querySelectorAll('.btn-delete');
+            const deleteButtons = document.querySelectorAll('.delete-confirm');
 
             deleteButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    if (confirm('Apakah Anda yakin ingin menghapus permintaan service ini?')) {
-                        // Here you would typically send a delete request to your backend
-                        const row = this.closest('tr');
-                        row.style.opacity = '0';
-                        setTimeout(() => {
-                            row.remove();
-                            alert('Permintaan service berhasil dihapus!');
-                        }, 300);
+                button.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent default form submission
 
-                        /*
-                        fetch('/services/' + serviceId, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                row.remove();
-                                alert('Permintaan service berhasil dihapus!');
-                            }
-                        });
-                        */
-                    }
+                    const docId = this.getAttribute('data-id');
+                    const docName = this.getAttribute('data-nama');
+                    const formId = 'delete-form-' + docId;
+
+                    Swal.fire({
+                        title: 'Anda Yakin?',
+                        html: `Anda akan menghapus dokumen: <strong>${docName}</strong>. Aksi ini tidak bisa dibatalkan!`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById(formId).submit();
+                        }
+                    });
                 });
             });
 
-            // Search functionality
-            const searchInput = document.querySelector('.search-box input');
-            searchInput.addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') {
-                    const searchTerm = this.value.toLowerCase();
-                    const rows = document.querySelectorAll('tbody tr');
-
-                    rows.forEach(row => {
-                        const customerName = row.querySelector('td:first-child .customer-name')
-                            .textContent.toLowerCase();
-                        const serviceCode = row.querySelector('td:nth-child(2)').textContent
-                            .toLowerCase();
-
-                        if (customerName.includes(searchTerm) || serviceCode.includes(searchTerm)) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-                }
-            });
+            @if (session('success'))
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            @endif
         });
     </script>
-@endsection
+@endpush

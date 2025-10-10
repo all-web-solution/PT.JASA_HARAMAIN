@@ -2,43 +2,37 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\CustomerDocument;
 use Illuminate\Http\Request;
 use App\Models\Document as DocumentModel;
 use App\Models\DocumentChildren;
+use Illuminate\Support\Facades\Session;
 
 class DocumentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $documents = DocumentModel::all();
         return view('content.index', compact('documents'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('content.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+        ]);
+
         DocumentModel::create(['name' => $request->nama]);
+
+        Session::flash('success', 'Document created successfully!');
         return redirect()->route('visa.document.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $document = DocumentModel::findOrFail($id);
@@ -46,34 +40,32 @@ class DocumentController extends Controller
         return view('content.detail', compact('document', 'childrens'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-         $document = DocumentModel::findOrFail($id);
-         return view('content.edit', compact('document'));
+        $document = DocumentModel::findOrFail($id);
+        return view('content.edit', compact('document'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-         $document = DocumentModel::findOrFail($id);
-         $document->update(['name' => $request->nama]);
-         return redirect()->route('visa.document.index');
+        $request->validate([
+            'nama' => 'required|string|max:255',
+        ]);
+
+        $document = DocumentModel::findOrFail($id);
+        $document->update(['name' => $request->nama]);
+
+        Session::flash('success', 'Document updated successfully!');
+        return redirect()->route('visa.document.index');
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $document = DocumentModel::findOrFail($id);
         $document->delete();
-         return redirect()->route('visa.document.index');
+
+        Session::flash('success', 'Document deleted successfully!');
+        return redirect()->route('visa.document.index');
     }
 
     public function createDocument($id)
@@ -81,13 +73,22 @@ class DocumentController extends Controller
         $document = DocumentModel::findOrFail($id);
         return view('content.create_detail', compact('document'));
     }
+
     public function createDocumentStore(Request $request, $id)
     {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'price' => 'required|string'
+        ]);
+
         $document = DocumentModel::findOrFail($id);
         $document->childrens()->create([
             'document_id' => $document->id,
-            'name' => $request->nama
+            'name' => $request->nama,
+            'price' => $request->price
         ]);
+
+        Session::flash('success', 'Document child created successfully!');
         return redirect()->route('visa.document.show', $document->id);
     }
 
@@ -96,23 +97,35 @@ class DocumentController extends Controller
         $children = DocumentChildren::findOrFail($id);
         return view('content.edit_detail', compact('children'));
     }
+
     public function createDocumentUpdate($id, Request $request)
     {
-        $children = DocumentChildren::findOrFail($id);
-        $document = DocumentModel::findOrFail($id);
-        $children->update([
-            'name' => $request->nama
+        $request->validate([
+            'nama' => 'required|string|max:255',
         ]);
+
+        $children = DocumentChildren::findOrFail($id);
+        $document = DocumentModel::findOrFail($children->document_id);
+
+        $children->update(['name' => $request->nama]);
+
+        Session::flash('success', 'Document child updated successfully!');
         return redirect()->route('visa.document.show', $document->id);
     }
+
     public function createDocumentDelete($id)
     {
         $children = DocumentChildren::findOrFail($id);
-        $document = DocumentModel::findOrFail($id);
+        $document = DocumentModel::findOrFail($children->document_id);
+
         $children->delete();
+
+        Session::flash('success', 'Document child deleted successfully!');
         return redirect()->route('visa.document.show', $document->id);
     }
-    public function customer(){
+
+    public function customer()
+    {
         $customers = CustomerDocument::all();
         return view('content.customer', compact('customers'));
     }
