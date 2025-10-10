@@ -1,6 +1,6 @@
 @extends('admin.master')
-@section('content')
-  <style>
+@push('styles')
+    <style>
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;
@@ -474,10 +474,12 @@
 
         }
     </style>
-        <div class="service-create-container">
+@endpush
+@section('content')
+    <div class="service-create-container">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title"
+                <h5 class="card-title">
                     <i class="bi bi-plus-circle"></i>Tambah Dorongan
                 </h5>
                 <a href="{{ route('dorongan.index') }}" class="btn btn-secondary">
@@ -486,22 +488,29 @@
             </div>
 
             <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <form method="POST" action="{{ route('dorongan.store') }}">
                     @csrf
-
-                    <!-- Data Travel Section -->
                     <div class="form-section">
                         <div class="form-row">
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Nama</label>
-                                    <input type="text" class="form-control" name="name" required id="email">
+                                    <input type="text" class="form-control" name="name" required>
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Harga</label>
-                                    <input type="text" class="form-control" name="price" required id="penanggung">
+                                    <input type="text" class="form-control" name="price" required>
                                 </div>
                             </div>
                         </div>

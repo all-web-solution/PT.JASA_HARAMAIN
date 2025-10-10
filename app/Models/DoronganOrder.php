@@ -8,10 +8,12 @@ class DoronganOrder extends Model
 {
     protected $fillable = ['service_id', 'dorongan_id', 'jumlah'];
 
-    public function service(){
+    public function service()
+    {
         return $this->belongsTo(Service::class);
     }
-    public function dorongan(){
+    public function dorongan()
+    {
         return $this->belongsTo(Dorongan::class);
     }
 }

@@ -166,7 +166,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('dorongan.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('dorongan.*') && !request()->routeIs('dorongan.customer*') ? 'active' : '' }}"
                     href="{{ route('dorongan.index') }}">
                     <i class="bi bi-cart3"></i> Dorongan
                 </a>
