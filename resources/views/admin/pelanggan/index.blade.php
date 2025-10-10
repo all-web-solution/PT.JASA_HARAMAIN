@@ -270,10 +270,10 @@
                                     <div class="text-muted small mb-1">Terdaftar:
                                         {{ $pelanggan->created_at->format('d M Y') }}</div>
                                     <div class="d-flex mt-2">
-                                        <a href="" class="btn btn-sm me-1 flex-fill"
+                                        <a href="{{ route('admin.pelanggan.edit', $pelanggan->id) }}" class="btn btn-sm me-1 flex-fill"
                                             style="background-color: var(--haramain-light); color: var(--haramain-primary);"><i
                                                 class="bi bi-pencil"></i> Edit</a>
-                                        <form action="" method="POST" class="flex-fill">
+                                        <form action="{{ route('admin.pelanggan.destroy', $pelanggan->id) }}" method="POST" class="flex-fill">
                                             @csrf
                                             @method('DELETE')
                                             <button class="btn btn-sm w-100"

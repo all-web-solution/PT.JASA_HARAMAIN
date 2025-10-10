@@ -553,15 +553,21 @@
                 <div class="action-buttons-container">
                     @if($service->status === 'deal')
                         <a href="{{ route('invoice.show', $service->id) }}">
-                            <button class="btn btn-primary">Invoice</button>
+                            <button class="btn btn-primary">
+                                <i class="bi bi-printer"></i>
+                            </button>
                         </a>
                         <a href="{{ route('services.edit', $service->id) }}">
-                            <button class="btn btn-warning">Edit</button>
+                            <button class="btn btn-warning">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
                         </a>
                         <form method="post" action="{{route('services.delete', $service->id)}}" style="display: inline-block;">
                             @csrf
                             @method('delete')
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
                         </form>
                     @else
                         <span>-</span>

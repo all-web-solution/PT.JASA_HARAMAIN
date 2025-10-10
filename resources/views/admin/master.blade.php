@@ -298,9 +298,7 @@
             #charts{
                 display: none;
             }
-            #table-dashboard, #recent{
-                display: none;
-            }
+           
         }
     </style>
     @stack('styles')
