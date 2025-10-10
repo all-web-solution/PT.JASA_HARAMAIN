@@ -20,7 +20,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->service->pelanggan->nama_travel }}</td>
-                        <td>{{ $item->guideItem->nama}}</td>
+                        <td>{{ $item->guideItem->nama }}</td>
                         <td>{{ $item->jumlah }}</td>
                     </tr>
                 @endforeach
