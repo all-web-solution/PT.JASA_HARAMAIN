@@ -15,11 +15,11 @@ class Handling extends Model
 
     public function handlingHotels()
     {
-        return $this->hasOne(HandlingHotel::class);
+        return $this->hasOne(HandlingHotel::class, 'handling_id');
     }
     public function handlingPlanes()
     {
-        return $this->hasOne(HandlingPlanes::class);
+        return $this->hasOne(HandlingPlanes::class, 'handling_id');
     }
 
 }

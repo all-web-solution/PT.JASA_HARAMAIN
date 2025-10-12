@@ -344,7 +344,7 @@
                         </h6>
 
                         <div class="form-group">
-                            <label>Masukan Harga</label>
+                            <label>Masukan Harga Hotel</label>
                             <select name="harga" class="form-control" required>
                                 <option value="">=== Pilih harga ===</option>
                                 @foreach (\App\Models\PriceListHotel::all() as $list)
@@ -355,6 +355,12 @@
                                 @endforeach
                             </select>
                         </div>
+                         <div class="form-col">
+                                <div class="form-group">
+                                    <label for="harga" class="form-label">Harga type custom special room</label>
+                                    <input type="number" class="form-control" name="harga_type_custom_special_room" id="harga" required>
+                                </div>
+                            </div>
                     </div>
 
                     <button type="submit" class="btn btn-submit mt-3">

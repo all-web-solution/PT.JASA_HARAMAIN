@@ -25,15 +25,9 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.service.file*') ? 'active' : '' }}"
-                    href="{{ route('admin.service.file') }}">
-                    <i class="bi bi-file-earmark-text"></i> BERKAS
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.order*') ? 'active' : '' }}"
                     href="{{ route('admin.order') }}">
-                    <i class="bi bi-credit-card-2-back"></i> ORDER
+                    <i class="bi bi-credit-card-2-back"></i> PAYMENT
                 </a>
             </li>
             <li class="nav-item">
@@ -106,6 +100,12 @@
                 <a class="nav-link {{ request()->routeIs('handling.tour.index*') ? 'active' : '' }}"
                     href="{{ route('handling.tour.index') }}">
                     <i class="bi bi-map"></i> Tour
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('handling.tour.index*') ? 'active' : '' }}"
+                    href="{{ route('handling.tour.customer') }}">
+                    <i class="bi bi-map"></i> Tour Customer
                 </a>
             </li>
         </ul>

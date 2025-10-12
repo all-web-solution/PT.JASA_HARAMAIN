@@ -15,7 +15,10 @@ class Hotel extends Model
         'harga_perkamar',
         'catatan',
         'type',
-        'jumlah_type'
+        'jumlah_type',
+        'type_custom_special_room',
+        'jumlah_kasur',
+        'harga_type_custom_special_room'
         ];
 
     public function service(){

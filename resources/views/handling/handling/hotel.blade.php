@@ -173,7 +173,7 @@
                                     <td>{{ $hotel->handling->service->pelanggan->nama_travel ?? '-' }}</td>
                                     <td>{{ $hotel->nama }}</td>
                                     <td>{{ \Carbon\Carbon::parse($hotel->tanggal)->translatedFormat('l, d F Y') }}</td>
-                                    <td>Rp {{ number_format($hotel->harga, 0, ',', '.') }}</td>
+                                    <td><strong>Harga:</strong> Rp {{ $hotel->harga }}</td>
                                     <td>{{ $hotel->pax }}</td>
                                 </tr>
                             @empty

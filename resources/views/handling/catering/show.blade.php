@@ -186,7 +186,7 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label class="form-label">Penanggung Jawab (PJ)</label>
-                                <p class="form-control">{{ $meal->pj }}</p>
+                                <p class="form-control">{{ $meal->service->pelanggan->penanggung_jawab }}</p>
                             </div>
                         </div>
                         <div class="form-col">

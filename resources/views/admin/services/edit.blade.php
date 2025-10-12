@@ -821,7 +821,7 @@
                             <h6 class="detail-title"><i class="bi bi-briefcase"></i> Handling</h6>
                             <div class="detail-section">
                             <div class="service-grid">
-                                <div class="handling-item" data-handling="hotel" data-name="Hotel Handling">
+                                <div class="handling-item {{ in_array('handling', $selectedHandlings) ? '' : 'selected' }}" data-handling="hotel" data-name="Hotel Handling">
                                     <div class="service-name">Hotel</div>
                                     <input type="checkbox" name="handlings[]" value="hotel" class="d-none">
                                 </div>
@@ -846,7 +846,7 @@
                                 <label class="form-label">Identitas Koper</label><input type="file" class="form-control" name="identitas_hotel_handling">
                             </div>
                         </div>
-                        <div class="form-group hidden" id="bandara-handling-form">
+                        <div class="form-group {{ in_array('handling', $selectedHandlings) ? '' : 'selected' }}" id="bandara-handling-form">
                             <div class="form-row">
                                 <div class="form-col"><label class="form-label">Nama Bandara</label><input type="text" class="form-control" name="nama_bandara_handling"></div>
                                 <div class="form-col"><label class="form-label">Jumlah Jamaah</label><input type="text" class="form-control" name="jumlah_jamaah_handling"></div>

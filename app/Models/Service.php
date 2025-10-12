@@ -62,7 +62,7 @@ class Service extends Model
     }
     public function filess()
     {
-        return $this->hasMany(File::class, );
+        return $this->hasMany(File::class, 'service_id');
     }
     public function reyals()
     {

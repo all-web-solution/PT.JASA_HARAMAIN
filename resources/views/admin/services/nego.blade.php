@@ -589,7 +589,7 @@
                                                                 name="transportation_id[{{ $index }}]"
                                                                 value="{{ $data->id }}"
                                                                 {{ $data->id == $transport->transportation_id ? 'checked' : '' }}
-                                                                class="d-none">
+                                                                >
                                                         </div>
                                                     @endforeach
                                                 </div>

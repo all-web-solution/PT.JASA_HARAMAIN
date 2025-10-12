@@ -164,9 +164,9 @@ class ServicesController extends Controller
                 'service_id' => $service->id,
                 'total_jamaah' => $request->total_jamaah,
             ])->with('success', 'Data service berhasil disimpan.');
-        } {
-            return redirect()->route('admin.services')->with('success', 'Data nego berhasil diperbarui.');
         }
+        return redirect()->route('admin.services')->with('success', 'Data nego berhasil diperbarui.');
+
     }
 
 
@@ -224,44 +224,59 @@ class ServicesController extends Controller
     {
         $service = Service::findOrFail($service_id);
         return view('admin.services.upload_berkas', [
-            'service_id' => $service->id,
-            'total_jamaah' => $service->total_jamaah,
+            'service' => $service
         ]);
     }
 
 
-    public function storeBerkas(Request $request)
-    {
-        $request->validate(['service_id' => 'required|exists:services,id']);
-        $service = Service::findOrFail($request->service_id);
-        $pasFotoFiles = $request->file('pas_foto', []);
-        $pasporFiles = $request->file('paspor', []);
-        $ktpFiles = $request->file('ktp', []);
-        $visaFiles = $request->file('visa', []);
+public function storeBerkas(Request $request, $id)
+{
+    $service = Service::findOrFail($id);
 
-        $totalJamaah = max(count($pasFotoFiles), count($pasporFiles), count($ktpFiles), count($visaFiles));
+    // Default null biar gak error kalau file gak diupload
+    $path = $pathPaspor = $pathktp = $pathvisa = null;
 
-        for ($i = 0; $i < $totalJamaah; $i++) {
-            $service->filess()->create([
-                'pas_foto' => $this->storeFileIfExists($pasFotoFiles, $i, 'documents/pas_foto'),
-                'paspor' => $this->storeFileIfExists($pasporFiles, $i, 'documents/paspor'),
-                'ktp' => $this->storeFileIfExists($ktpFiles, $i, 'documents/ktp'),
-                'visa' => $this->storeFileIfExists($visaFiles, $i, 'documents/visa'),
-            ]);
-        }
-
-        return redirect()->route('admin.services')->with('success', 'Berkas berhasil diupload.');
+    // Simpan file jika ada
+    if ($request->hasFile('pas_foto')) {
+        $path = $request->file('pas_foto')->store('/', 'public');
     }
+    if ($request->hasFile('paspor')) {
+        $pathPaspor = $request->file('paspor')->store('/', 'public');
+    }
+    if ($request->hasFile('ktp')) {
+        $pathktp = $request->file('ktp')->store('/', 'public');
+    }
+    if ($request->hasFile('visa')) {
+        $pathvisa = $request->file('visa')->store('/', 'public');
+    }
+
+    // Simpan ke tabel files
+    File::create([
+        'service_id' => $service->id,
+        'pas_foto'   => $path,
+        'paspor'     => $pathPaspor,
+        'ktp'        => $pathktp,
+        'visa'       => $pathvisa,
+    ]);
+
+    return redirect()->route('admin.services')->with('success', 'Berkas berhasil diupload.');
+
+
+}
+
+
 
     /**
      * Tampilkan daftar berkas.
      *
      * @return \Illuminate\View\View
      */
-    public function showFile()
+    public function showFile($id)
     {
-        $files = File::all();
-        return view('admin.services.show_file', compact('files'));
+
+        $service = Service::findOrFail($id);
+        $files = File::where('service_id', $service->id)->get();
+        return view('admin.services.show_file', compact('files', 'service'));
     }
 
 
@@ -613,6 +628,7 @@ class ServicesController extends Controller
                         'service_id'        => $service->id,
                         'tour_id'           => $tourItemId,
                         'transportation_id' => $transportId,
+
                     ]);
                 }
             }
@@ -1063,8 +1079,9 @@ class ServicesController extends Controller
                         'type' => $type,
                         'jumlah_kamar' => $request->jumlah_kamar[$i],
                         'harga_perkamar' =>  $request->jumlah_kamar[$i],
-                        'jumlah_type' =>  $request->jumlah_type[$i]
-
+                        'jumlah_type' =>  $request->jumlah_type[$i],
+                        'type_custom_special_room' => $request->type_custom_special_room[$i],
+                        'jumlah_kasur' => $request->jumlah_kasur[$i],
                     ]);
                 }
             }
@@ -1172,17 +1189,23 @@ class ServicesController extends Controller
         }
     }
 
-    private function handleTourItems(Request $request, Service $service)
-    {
-        if ($request->filled('tour_transport')) {
-            foreach ($request->tour_transport as $tourId => $transportationId) {
+private function handleTourItems(Request $request, Service $service)
+{
+    if ($request->filled('tour_transport')) {
+        foreach ($request->tour_transport as $tourId => $transportationId) {
+            $tanggal = $request->tanggal_tour[$tourId] ?? null;
+
+            if ($tanggal) {
                 $service->tours()->create([
                     'tour_id' => $tourId,
                     'transportation_id' => $transportationId,
+                    'tanggal_keberangkatan' => $tanggal,
                 ]);
             }
         }
     }
+}
+
     private function handleDocumentItems(Request $request, Service $service)
     {
         if ($request->filled('dokumen_id')) {

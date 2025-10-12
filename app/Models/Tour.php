@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tour extends Model
 {
-    protected $fillable = ['service_id', 'transportation_id', 'tour_id'];
+    protected $fillable = ['service_id', 'transportation_id', 'tour_id', 'tanggal_keberangkatan'];
+
     public function service()
     {
         return $this->belongsTo(Service::class);
@@ -16,6 +17,7 @@ class Tour extends Model
     {
         return $this->belongsTo(Transportation::class);
     }
+
     public function tourItem()
     {
         return $this->belongsTo(TourItem::class, 'id');

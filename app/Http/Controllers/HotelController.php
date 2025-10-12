@@ -72,7 +72,10 @@ class HotelController extends Controller
     {
         // 1. Temukan hotel dan perbarui harganya
         $hotel = Hotel::findOrFail($id);
-        $hotel->update(['harga_perkamar' => $request->harga]);
+        $hotel->update([
+            'harga_perkamar' => $request->harga,
+            'harga_type_custom_special_room' => $request->harga_type_custom_special_room
+        ]);
 
         // 2. Jika hotel terhubung ke layanan (service)
         if ($hotel->service) {

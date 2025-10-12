@@ -9,7 +9,7 @@ class File extends Model
     protected $fillable = ['service_id','paspor', 'pas_foto', 'ktp', 'visa'];
 
     public function service(){
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(Service::class, 'service_id');
     }
 
 

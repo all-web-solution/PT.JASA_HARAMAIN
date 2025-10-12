@@ -369,6 +369,9 @@
                 border-bottom-left-radius: 8px;
                 border-bottom-right-radius: 8px;
             }
+             .card-title{
+                display: none;
+            }
         }
     </style>
 @endpush

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Handling;
 
 use App\Http\Controllers\Controller;
+use App\Models\Tour;
 use Illuminate\Http\Request;
 use App\Models\TourItem;
 use Illuminate\Support\Facades\Session;
@@ -47,5 +48,11 @@ class TourController extends Controller
         $tour->delete();
         Session::flash('success', 'Tour berhasil dihapus.');
         return redirect()->route('handling.tour.index');
+    }
+    public function customer()
+    {
+        
+        $tours = Tour::all();
+         return view('handling.tour.customer', compact('tours'));
     }
 }

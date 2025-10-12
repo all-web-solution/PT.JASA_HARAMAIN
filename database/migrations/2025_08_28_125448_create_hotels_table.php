@@ -27,6 +27,9 @@ return new class extends Migration
             $table->string('catatan')->nullable();
             $table->string('type');
             $table->string('jumlah_type');
+            $table->string('type_custom_special_room');
+            $table->string('jumlah_kasur');
+            $table->string('harga_type_custom_special_room')->nullable();
             $table->timestamps();
         });
     }

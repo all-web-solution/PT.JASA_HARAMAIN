@@ -167,7 +167,7 @@
 
                     <p><strong>Nama Hotel:</strong> {{ $hotel->nama }}</p>
                     <p><strong>Tanggal Check-in:</strong> {{ \Carbon\Carbon::parse($hotel->tanggal)->format('d F Y') }}</p>
-                    <p><strong>Harga:</strong> Rp {{ number_format($hotel->harga, 0, ',', '.') }}</p>
+                    <p><strong>Harga:</strong> Rp {{ $hotel->harga }}</p>
                     <p><strong>Pax:</strong> {{ $hotel->pax }}</p>
 
                     <div class="form-row" style="margin-top: 2rem;">
@@ -210,8 +210,8 @@
                     <h6 class="form-section-title">
                         <i class="bi bi-person-check"></i> Detail Handling
                     </h6>
-                    <p><strong>Nama Supir:</strong> {{ $hotel->nama_supir ?? 'Tidak ada data' }}</p>
-                    <p><strong>Paket Info:</strong> {{ $hotel->paket_info ?? 'Tidak ada data' }}</p>
+                    <p><strong>Nama Supir:</strong> {{ $hotel}}</p>
+                    <p><strong>Paket Info:</strong> {{ $hotel->paket_info }}</p>
                 </div>
 
             </div>

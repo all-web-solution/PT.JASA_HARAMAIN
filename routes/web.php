@@ -64,9 +64,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/payment/store', [PaymentController::class, 'store'])->name('admin.payment.stor');
     Route::get('/nego/{id}', [ServicesController::class, 'nego'])->name('admin.service.nego');
     Route::put('/update/{id}/nego', [ServicesController::class, 'updateNego'])->name('update.nego.admin');
-    Route::get('/services/{service_id}/upload-berkas', [ServicesController::class, 'uploadBerkas'])->name('service.uploadBerkas');
-    Route::post('/services/store-berkas', [ServicesController::class, 'storeBerkas'])->name('service.storeBerkas');
-    Route::get('/service/files', [ServicesController::class, 'showFile'])->name('admin.service.file');
+    Route::get('/services/{id}/upload-berkas', [ServicesController::class, 'uploadBerkas'])->name('service.uploadBerkas');
+    Route::post('/services/store-berkas/{id}', [ServicesController::class, 'storeBerkas'])->name('service.storeBerkas');
+    Route::get('/service/files/{id}', [ServicesController::class, 'showFile'])->name('admin.service.file');
     Route::post('{order}/payment', [ServicesController::class, 'payment'])->name('orders.payment');
     Route::get('{order}/bayar', [ServicesController::class, 'bayar'])->name('orders.bayar');
     Route::get('/invoice/{service}', [InvoiceController::class, 'show'])->name('invoice.show');
@@ -130,6 +130,7 @@ Route::middleware(['auth', 'handling'])->group(function () {
         Route::get('/edit/{id}', [TourController::class, 'edit'])->name('handling.tour.edit');
         Route::put('/update/{id}', [TourController::class, 'update'])->name('handling.tour.update');
         Route::delete('/delete/{id}', [TourController::class, 'destroy'])->name('handling.tour.destroy');
+        Route::get('/customer', [TourController::class, 'customer'])->name('handling.tour.customer');
     });
 });
 

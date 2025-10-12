@@ -551,27 +551,14 @@
 
             <td data-label="Aksi">
                 <div class="action-buttons-container">
-                    @if($service->status === 'deal')
-                        <a href="{{ route('invoice.show', $service->id) }}">
-                            <button class="btn btn-primary">
-                                <i class="bi bi-printer"></i>
-                            </button>
-                        </a>
-                        <a href="{{ route('services.edit', $service->id) }}">
-                            <button class="btn btn-warning">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                        </a>
-                        <form method="post" action="{{route('services.delete', $service->id)}}" style="display: inline-block;">
-                            @csrf
-                            @method('delete')
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-trash3-fill"></i>
-                            </button>
-                        </form>
-                    @else
-                        <span>-</span>
-                    @endif
+                    <a href="{{ route('admin.service.file', $service->id) }}">
+                        <button class="btn btn-primary" title="Upload berkas yang di perlukan">
+                            <i class="bi bi-cloud-arrow-up-fill"></i>
+                        </button>
+                    </a>
+                    <button class="btn btn-success">
+                        <i class="bi bi-eye-fill"></i>
+                    </button>
                 </div>
             </td>
         </tr>

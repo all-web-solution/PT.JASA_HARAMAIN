@@ -152,7 +152,7 @@
                                     <td>{{ $plane->handling->service->pelanggan->nama_travel ?? '-' }}</td>
                                     <td>{{ $plane->nama_bandara }}</td>
                                     <td>{{ $plane->jumlah_jamaah }}</td>
-                                    <td>Rp {{ number_format($plane->harga, 0, ',', '.') }}</td>
+                                    <td>Rp {{ $plane->harga }}</td>
                                     <td>{{ \Carbon\Carbon::parse($plane->kedatangan_jamaah)->translatedFormat('l, d F Y') }}
                                     </td>
                                 </tr>

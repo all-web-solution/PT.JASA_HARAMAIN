@@ -22,8 +22,9 @@ return new class extends Migration
             // ubah jadi nullable
             $table->foreignId('transportation_id')->nullable()->constrained('transportations')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('tour_id')->nullable()->constrained('tour_items')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->date("tanggal_keberangkatan");
             $table->timestamps();
-           
+
         });
     }
 

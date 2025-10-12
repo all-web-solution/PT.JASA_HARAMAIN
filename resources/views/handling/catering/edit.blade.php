@@ -307,7 +307,7 @@
                         </ul>
                     </div>
                 @endif
-                
+
                 <form action="{{ route('catering.update', $meal->id) }}" method="POST">
                     @csrf
                     @method('PUT')
@@ -370,8 +370,7 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Penanggung Jawab (PJ)</label>
-                                    <input type="text" class="form-control" name="pj" value="{{ $meal->pj }}"
-                                        required>
+                                    <p class="form-control">{{ $meal->service->pelanggan->penanggung_jawab }}</p>
                                 </div>
                             </div>
                             <div class="form-col">
