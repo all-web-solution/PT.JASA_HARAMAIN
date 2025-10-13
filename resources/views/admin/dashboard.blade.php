@@ -46,7 +46,7 @@
                 padding: 4px 8px !important;
             }
 
-            /* === TABEL RESPONSIVE MOBILE (Teks di Tengah) === */
+            /* === TABEL RESPONSIVE MOBILE === */
             .table-responsive {
                 overflow-x: auto;
             }
@@ -69,38 +69,27 @@
                 border-radius: 8px;
                 box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
                 padding: 10px;
-                text-align: center;
-                /* pastikan teks dalam tr rata tengah */
             }
 
             tbody td {
                 display: flex;
-                justify-content: center;
-                /* posisikan horizontal ke tengah */
-                align-items: center;
-                /* posisikan vertikal ke tengah */
-                flex-direction: column;
-                /* label dan isi ditumpuk vertikal */
-                padding: 8px 0;
+                justify-content: space-between;
+                padding: 5px 10px;
                 border: none;
-                text-align: center;
-                /* teks di tengah */
+                text-align: center
             }
 
             tbody td::before {
                 content: attr(data-label);
                 font-weight: bold;
                 color: #444;
-                display: block;
-                margin-bottom: 3px;
-                /* beri jarak kecil antara label dan nilai */
+                flex: 1;
                 text-align: center;
             }
 
             tbody td:last-child {
                 border-bottom: none;
             }
-
 
             /* Teks judul tabel & tombol tambah order */
             #recent .card-header h5 {
