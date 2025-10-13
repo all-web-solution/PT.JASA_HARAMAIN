@@ -538,8 +538,8 @@
                                                         <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
                                                         <div class="service-desc">Harga:
                                                             {{ number_format($data->harga) }}/hari</div>
-                                                        <input type="radio" name="transportation_id[0]"
-                                                            value="{{ $data->id }}">
+                                                        {{-- <input type="radio" name="transportation_id[0]"
+                                                            value="{{ $data->id }}"> --}}
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -797,14 +797,14 @@
                                     <div class="card text-center p-3 card-reyal" data-reyal-type="tamis">
                                         <h5>Tamis</h5>
                                         <p>Rupiah → Reyal</p>
-                                        <input type="radio" name="tipe" value="tamis">
+                                        {{-- <input type="radio" name="tipe" value="tamis"> --}}
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="card text-center p-3 card-reyal" data-reyal-type="tumis">
                                         <h5>Tumis</h5>
                                         <p>Reyal → Rupiah</p>
-                                        <input type="radio" name="tipe" value="tumis">
+                                        {{-- <input type="radio" name="tipe" value="tumis"> --}}
                                     </div>
                                 </div>
                             </div>
