@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('content_id')->constrained('content_items')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('jumlah');
             $table->string('keterangan')->nullable();
-            $table->enum("status", ['pending', 'success', 'cancled'])->default('pending');
+            $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
             $table->timestamps();
         });
     }

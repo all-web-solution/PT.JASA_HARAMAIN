@@ -23,6 +23,7 @@ return new class extends Migration
             $table->decimal('jumlah_input', 15, 2);   // jumlah rupiah atau reyal
             $table->decimal('kurs', 15, 2);           // kurs input admin
             $table->decimal('hasil', 15, 2);          // hasil konversi
+            $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
             $table->timestamps();                     // created_at & updated_at
         });
     }

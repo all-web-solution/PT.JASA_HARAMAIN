@@ -23,7 +23,7 @@ return new class extends Migration
              $table->foreignId('document_id')->constrained('documents')->cascadeOnDelete()->cascadeOnUpdate();
              $table->string('jumlah');
              $table->string('harga');
-
+            $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
             $table->timestamps();
         });
     }

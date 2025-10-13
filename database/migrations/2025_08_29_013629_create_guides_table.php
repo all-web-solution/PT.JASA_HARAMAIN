@@ -30,6 +30,7 @@ return new class extends Migration
 
                 $table->string('jumlah');
                 $table->string('keterangan')->nullable();
+                $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
             $table->timestamps();
         });
     }

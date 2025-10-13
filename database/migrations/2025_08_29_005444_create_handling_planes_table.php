@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('jumlah_jamaah');
             $table->string('harga');
             $table->date('kedatangan_jamaah');
+            $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
             $table->timestamps();
         });
     }

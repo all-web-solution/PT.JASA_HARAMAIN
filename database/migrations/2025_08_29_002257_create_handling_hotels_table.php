@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('tanggal')->nullable();
             $table->string('harga')->nullable();
             $table->string('pax')->nullable();
+            $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
 
             $table->timestamps();
         });

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('tiket_pulang')->nullable();
             $table->string('keterangan');
             $table->string('jumlah_jamaah');
+            $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done']);
 
             $table->timestamps();
         });

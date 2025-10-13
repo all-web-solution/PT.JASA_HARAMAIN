@@ -200,6 +200,78 @@
                     </div>
                 </div>
             </div>
+            <div class="col-xl-3 col-md-6" id="card-reponsive">
+                <div class="card card-stat h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-subtitle mb-1">Total Negosiasi</h6>
+                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
+                                    {{ \App\Models\Service::count() }}
+                                </h3>
+                                <p class="card-text text-success mb-0"><small>+12% dari bulan lalu</small></p>
+                            </div>
+                            <div class="bg-success bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-people fs-4" style="color: #4caf50;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6" id="card-reponsive">
+                <div class="card card-stat h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-subtitle mb-1">Tahap persiapan</h6>
+                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
+                                    {{ \App\Models\Service::count() }}
+                                </h3>
+                                <p class="card-text text-success mb-0"><small>+12% dari bulan lalu</small></p>
+                            </div>
+                            <div class="bg-success bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-people fs-4" style="color: #4caf50;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6" id="card-reponsive">
+                <div class="card card-stat h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-subtitle mb-1">Tahap produksi</h6>
+                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
+                                    {{ \App\Models\Service::count() }}
+                                </h3>
+                                <p class="card-text text-success mb-0"><small>+12% dari bulan lalu</small></p>
+                            </div>
+                            <div class="bg-success bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-people fs-4" style="color: #4caf50;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6" id="card-reponsive">
+                <div class="card card-stat h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-subtitle mb-1">Tahap penyelesaian</h6>
+                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
+                                    {{ \App\Models\Service::count() }}
+                                </h3>
+                                <p class="card-text text-success mb-0"><small>+12% dari bulan lalu</small></p>
+                            </div>
+                            <div class="bg-success bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-people fs-4" style="color: #4caf50;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Charts -->

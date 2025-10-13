@@ -21,6 +21,7 @@ return new class extends Migration
                 ->cascadeOnUpdate();
             $table->string('name');
             $table->string('price');
+            $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
             $table->timestamps();
         });
     }

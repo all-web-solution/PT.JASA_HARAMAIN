@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('type_custom_special_room');
             $table->string('jumlah_kasur');
             $table->string('harga_type_custom_special_room')->nullable();
+            $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
             $table->timestamps();
         });
     }
