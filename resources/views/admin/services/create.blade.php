@@ -842,14 +842,15 @@
                             </div>
                         </div>
 
-                       
- {{-- TOUR FORM --}}
+
+                        {{-- TOUR FORM --}}
                         <div class="detail-form hidden" id="tour-details">
                             <h6 class="detail-title"><i class="bi bi-geo-alt"></i> Tour</h6>
                             <div class="detail-section">
                                 <div class="service-grid">
                                     @foreach ($tours as $tour)
-                                        <div class="service-tour selectable-item" data-id="{{ $tour->id }}" data-name="{{ $tour->name }}">
+                                        <div class="service-tour selectable-item" data-id="{{ $tour->id }}"
+                                            data-name="{{ $tour->name }}">
                                             <div class="service-name">{{ $tour->name }}</div>
                                             <input type="checkbox" name="tour_ids[]" value="{{ $tour->id }}">
                                         </div>
@@ -861,14 +862,20 @@
                                     <h6 class="detail-title">Transportasi untuk Tour {{ $tour->name }}</h6>
                                     <div class="form-group">
                                         <label class="form-label">Tanggal Tour</label>
-                                        <input type="date" class="form-control" name="tanggal_tour[{{ $tour->id }}]">
+                                        <input type="date" class="form-control"
+                                            name="tanggal_tour[{{ $tour->id }}]">
                                     </div>
                                     <div class="service-grid">
                                         @foreach ($transportations as $trans)
-                                            <div class="transport-option selectable-item" data-tour-id="{{ $tour->id }}" data-trans-id="{{ $trans->id }}" data-price="{{ $trans->harga }}" data-tour-name="{{ $tour->name }}" data-trans-name="{{ $trans->nama }}">
+                                            <div class="transport-option selectable-item"
+                                                data-tour-id="{{ $tour->id }}" data-trans-id="{{ $trans->id }}"
+                                                data-price="{{ $trans->harga }}" data-tour-name="{{ $tour->name }}"
+                                                data-trans-name="{{ $trans->nama }}">
                                                 <div class="service-name">{{ $trans->nama }}</div>
-                                                <div class="service-desc">Harga: Rp {{ number_format($trans->harga) }}</div>
-                                                <input type="radio" name="tour_transport[{{ $tour->id }}]" value="{{ $trans->id }}">
+                                                <div class="service-desc">Harga: Rp {{ number_format($trans->harga) }}
+                                                </div>
+                                                {{-- <input type="checkbox" name="tour_transport[{{ $tour->id }}]"
+                                                    value="{{ $trans->id }}"> --}}
                                             </div>
                                         @endforeach
                                     </div>
@@ -1198,7 +1205,7 @@
                         typeItem.classList.add('selected');
                         const inputDiv = document.createElement('div');
                         inputDiv.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border',
-                        'rounded');
+                            'rounded');
                         inputDiv.dataset.typeId = typeId;
                         inputDiv.innerHTML =
                             `<label class="form-label">Jumlah Kamar (${name})</label><input type="number" class="form-control" name="jumlah_type[]" min="1" value="1" data-is-qty="true" data-type-id="${typeId}"><label class="form-label mt-2">Harga (${name})</label><input type="text" class="form-control" name="harga_kamar[${hotelForm.dataset.index}][${typeId}]" value="${price.toLocaleString('id-ID')}" readonly>`;
@@ -1352,7 +1359,7 @@
                     const isSelected = handlingItem.classList.toggle('selected');
                     handlingItem.querySelector('input').checked = isSelected;
                     document.getElementById(`${type}-handling-form`).classList.toggle('hidden', !
-                    isSelected);
+                        isSelected);
                 }
 
                 // Tour Selection
@@ -1437,7 +1444,7 @@
                     const typeId = hotelQtyInput.dataset.typeId;
                     const typeItem = hotelForm.querySelector(`.type-item[data-type-id="${typeId}"]`);
                     const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value
-                    .trim() || `Hotel ${hotelIndex}`;
+                        .trim() || `Hotel ${hotelIndex}`;
                     if (typeItem) {
                         const price = parseInt(typeItem.dataset.price) || 0;
                         updateItemInCart(`hotel-${hotelIndex}-type-${typeId}`,
@@ -1488,29 +1495,28 @@
                 }
             });
         });
+
+        // Logic untuk dinamisasi checkbox
+        function toggleCheckboxOnClick(selector) {
+            const items = document.querySelectorAll(selector);
+            items.forEach(function(item) {
+                item.addEventListener("click", function(e) {
+                    // Biar kalau yang diklik itu input-nya sendiri, gak dobel toggle
+                    if (e.target.tagName.toLowerCase() === 'input') return;
+
+                    const checkbox = item.querySelector('input[type="checkbox"]');
+                    if (checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                    }
+                });
+            });
+        }
+
+        // --- panggil di mana pun ---
+        toggleCheckboxOnClick(".document-item");
+        toggleCheckboxOnClick(".type-item");
+        toggleCheckboxOnClick(".child-item");
+        toggleCheckboxOnClick(".service-tour")
+        toggleCheckboxOnClick(".wakaf-item")
     </script>
-
-
-<script>
-   function toggleCheckboxOnClick(selector) {
-    const items = document.querySelectorAll(selector);
-    items.forEach(function(item) {
-        item.addEventListener("click", function(e) {
-            // Biar kalau yang diklik itu input-nya sendiri, gak dobel toggle
-            if (e.target.tagName.toLowerCase() === 'input') return;
-
-            const checkbox = item.querySelector('input[type="checkbox"]');
-            if (checkbox) {
-                checkbox.checked = !checkbox.checked;
-            }
-        });
-    });
-}
-
-// --- panggil di mana pun ---
-toggleCheckboxOnClick(".document-item");
-toggleCheckboxOnClick(".child-item");
-toggleCheckboxOnClick(".service-tour")
-toggleCheckboxOnClick(".wakaf-item")
-</script>
 @endsection
