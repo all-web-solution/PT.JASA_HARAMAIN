@@ -1387,18 +1387,22 @@
                     const tourName = tourTransOption.dataset.tourName;
                     const transName = tourTransOption.dataset.transName;
                     const price = parseInt(tourTransOption.dataset.price) || 0;
-                    const parentForm = tourTransOption.closest('.tour-form');
-                    Object.keys(cart).forEach(key => {
-                        if (key.startsWith(`tour-${tourId}-`)) {
-                            delete cart[key];
-                        }
-                    });
-                    parentForm.querySelectorAll('.transport-option').forEach(opt => opt.classList.remove(
-                        'selected'));
-                    tourTransOption.classList.add('selected');
+
                     const uniqueKey = `tour-${tourId}-${transId}`;
-                    updateItemInCart(uniqueKey, `Tour ${tourName} - ${transName}`, 1, price);
+
+                    // Toggle selected class
+                    const isSelected = tourTransOption.classList.toggle('selected');
+
+                    if (isSelected) {
+                        // Jika baru dipilih, tambahkan ke cart
+                        updateItemInCart(uniqueKey, `Tour ${tourName} - ${transName}`, 1, price);
+                    } else {
+                        // Jika di-unselect, hapus dari cart
+                        delete cart[uniqueKey];
+                        updateCartUI();
+                    }
                 }
+
 
                 // Reyal Card Selection
                 const reyalCard = e.target.closest('.card-reyal');
