@@ -257,9 +257,9 @@
                             <h5 class="fw-bold mb-2" style="color: var(--haramain-primary);">
                                 <i class="bi bi-clock-history me-2"></i>Recent Activity
                             </h5>
-                            <a href="#" class="btn btn-haramain btn-sm">
+                            {{-- <a href="#" class="btn btn-haramain btn-sm">
                                 <i class="bi bi-plus-circle me-1"></i>New Order
-                            </a>
+                            </a> --}}
                         </div>
                     </div>
                     <div class="card-body pt-2">
