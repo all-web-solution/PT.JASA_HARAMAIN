@@ -3,6 +3,7 @@
     <style>
         /* === Responsiveness for 320px screens === */
         @media screen and (max-width: 320px) {
+
             /* Container padding */
             .container-fluid {
                 padding: 10px !important;
@@ -45,7 +46,7 @@
                 padding: 4px 8px !important;
             }
 
-            /* === TABEL RESPONSIVE MOBILE === */
+            /* === TABEL RESPONSIVE MOBILE (Teks di Tengah) === */
             .table-responsive {
                 overflow-x: auto;
             }
@@ -57,7 +58,8 @@
             }
 
             thead {
-                display: none; /* sembunyikan header tabel */
+                display: none;
+                /* sembunyikan header tabel */
             }
 
             tbody tr {
@@ -67,26 +69,38 @@
                 border-radius: 8px;
                 box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
                 padding: 10px;
+                text-align: center;
+                /* pastikan teks dalam tr rata tengah */
             }
 
             tbody td {
                 display: flex;
-                justify-content: space-between;
-                padding: 5px 10px;
+                justify-content: center;
+                /* posisikan horizontal ke tengah */
+                align-items: center;
+                /* posisikan vertikal ke tengah */
+                flex-direction: column;
+                /* label dan isi ditumpuk vertikal */
+                padding: 8px 0;
                 border: none;
+                text-align: center;
+                /* teks di tengah */
             }
 
             tbody td::before {
                 content: attr(data-label);
                 font-weight: bold;
                 color: #444;
-                flex: 1;
-                text-align: left;
+                display: block;
+                margin-bottom: 3px;
+                /* beri jarak kecil antara label dan nilai */
+                text-align: center;
             }
 
             tbody td:last-child {
                 border-bottom: none;
             }
+
 
             /* Teks judul tabel & tombol tambah order */
             #recent .card-header h5 {
@@ -264,12 +278,12 @@
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Kode unik</th>
-                                        <th>Customer/Travel</th>
-                                        <th>Tgl keberangkatan</th>
-                                        <th>Tgl kepulangan</th>
-                                        <th>Jumlah jamaah</th>
-                                        <th>Layanan yang di pilih</th>
+                                        <th>No.</th>
+                                        <th>Customer</th>
+                                        <th>Tanggal Keberangkatan</th>
+                                        <th>Tanggal Kepulangan</th>
+                                        <th>Jumlah</th>
+                                        <th>Layanan</th>
                                     </tr>
                                 </thead>
                                 <tbody>

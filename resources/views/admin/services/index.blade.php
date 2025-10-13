@@ -78,6 +78,7 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
+            text-align: center;
         }
 
         .table tbody tr {
@@ -93,7 +94,7 @@
 
         .table tbody td {
             padding: 1.25rem;
-            vertical-align: middle;
+            text-align: center;
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -376,9 +377,11 @@
                 padding: 1rem;
             }
 
-            .card-header, .search-filter-container {
+            .card-header,
+            .search-filter-container {
                 flex-direction: column;
-                align-items: stretch; /* Ubah dari flex-start */
+                align-items: stretch;
+                /* Ubah dari flex-start */
                 gap: 1rem;
             }
 
@@ -389,7 +392,8 @@
             }
 
             .btn-add-new {
-                width: 100%; /* Tombol memenuhi lebar */
+                width: 100%;
+                /* Tombol memenuhi lebar */
                 justify-content: center;
             }
 
@@ -403,7 +407,8 @@
             }
 
             .filter-select {
-                width: 100%; /* Filter memenuhi lebar */
+                width: 100%;
+                /* Filter memenuhi lebar */
             }
 
             .table thead {
@@ -412,7 +417,8 @@
 
             .table tbody tr {
                 display: block;
-                margin-bottom: 1.5rem; /* Beri jarak lebih antar baris/kartu */
+                margin-bottom: 1.5rem;
+                /* Beri jarak lebih antar baris/kartu */
                 border-radius: 8px;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 border: 1px solid var(--border-color);
@@ -420,24 +426,30 @@
 
             .table tbody td {
                 display: flex;
-                flex-direction: column; /* Susun label di atas, nilai di bawah */
-                align-items: flex-start; /* Rata kiri */
+                flex-direction: column;
+                /* Susun label di atas, nilai di bawah */
+                align-items: flex-start;
+                /* Rata kiri */
                 justify-content: center;
                 text-align: left;
                 padding: 0.75rem 1rem;
                 border: none;
-                border-bottom: 1px solid var(--border-color); /* Garis pemisah antar field */
+                border-bottom: 1px solid var(--border-color);
+                /* Garis pemisah antar field */
             }
 
             .table tbody tr td:last-child {
-                border-bottom: none; /* Hilangkan border untuk item terakhir */
+                border-bottom: none;
+                /* Hilangkan border untuk item terakhir */
             }
 
             .table tbody td:before {
                 content: attr(data-label);
-                font-weight: 700; /* Dibuat tebal agar jelas */
+                font-weight: 700;
+                /* Dibuat tebal agar jelas */
                 color: var(--haramain-primary);
-                margin-bottom: 0.5rem; /* Jarak antara label dan nilai */
+                margin-bottom: 0.5rem;
+                /* Jarak antara label dan nilai */
                 font-size: 0.8rem;
                 text-transform: uppercase;
             }
@@ -455,17 +467,21 @@
             /* Styling khusus untuk container tombol aksi */
             .action-buttons-container {
                 display: flex;
-                flex-wrap: wrap; /* Tombol akan turun jika tidak muat */
-                gap: 0.5rem; /* Jarak antar tombol */
+                flex-wrap: wrap;
+                /* Tombol akan turun jika tidak muat */
+                gap: 0.5rem;
+                /* Jarak antar tombol */
                 width: 100%;
             }
 
             .action-buttons-container .btn {
-                flex-grow: 1; /* Tombol akan membesar mengisi ruang */
+                flex-grow: 1;
+                /* Tombol akan membesar mengisi ruang */
             }
 
             .pagination-container {
-                justify-content: center; /* Paginasi di tengah */
+                justify-content: center;
+                /* Paginasi di tengah */
             }
         }
     </style>
@@ -490,19 +506,23 @@
                 </div>
                 <div class="filter-group">
 
-                   <form method="GET" action="{{ route('admin.services') }}">
+                    <form method="GET" action="{{ route('admin.services') }}">
                         <select name="service" class="filter-select" onchange="this.form.submit()">
                             <option value="">-- Semua Layanan --</option>
-                            <option value="transportasi" {{ request('service') == 'transportasi' ? 'selected' : '' }}>Transportasi</option>
+                            <option value="transportasi" {{ request('service') == 'transportasi' ? 'selected' : '' }}>
+                                Transportasi</option>
                             <option value="hotel" {{ request('service') == 'hotel' ? 'selected' : '' }}>Hotel</option>
                             <option value="dokumen" {{ request('service') == 'dokumen' ? 'selected' : '' }}>Dokumen</option>
-                            <option value="handling" {{ request('service') == 'handling' ? 'selected' : '' }}>Handling</option>
-                            <option value="pendamping" {{ request('service') == 'pendamping' ? 'selected' : '' }}>Pendamping</option>
+                            <option value="handling" {{ request('service') == 'handling' ? 'selected' : '' }}>Handling
+                            </option>
+                            <option value="pendamping" {{ request('service') == 'pendamping' ? 'selected' : '' }}>Pendamping
+                            </option>
                             <option value="konten" {{ request('service') == 'konten' ? 'selected' : '' }}>Konten</option>
                             <option value="reyal" {{ request('service') == 'reyal' ? 'selected' : '' }}>Reyal</option>
                             <option value="tour" {{ request('service') == 'tour' ? 'selected' : '' }}>Tour</option>
                             <option value="meal" {{ request('service') == 'meal' ? 'selected' : '' }}>Meal</option>
-                            <option value="dorongan" {{ request('service') == 'dorongan' ? 'selected' : '' }}>Dorongan</option>
+                            <option value="dorongan" {{ request('service') == 'dorongan' ? 'selected' : '' }}>Dorongan
+                            </option>
                             <option value="wakaf" {{ request('service') == 'wakaf' ? 'selected' : '' }}>Wakaf</option>
                             <option value="badal" {{ request('service') == 'badal' ? 'selected' : '' }}>Badal</option>
                         </select>
@@ -518,52 +538,52 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Kode unik</th>
-                            <th>Customer/Travel</th>
-                            <th>Tgl keberangkatan</th>
-                            <th>Tgl kepulangan</th>
-                            <th>Jumlah jamaah</th>
-                            <th>Layanan yang di pilih</th>
+                            <th>No.</th>
+                            <th>Customer</th>
+                            <th>Tanggal Keberangkatan</th>
+                            <th>Tanggal Kepulangan</th>
+                            <th>Jumlah</th>
+                            <th>Layanan</th>
                             <th>Status</th>
-                            <th>Aksi</th>
-
+                            <th> </th>
                         </tr>
                     </thead>
                     <tbody>
-    @foreach ($services as $service)
-        <tr>
-            <td data-label="Kode unik">{{ $service->unique_code }}</td>
-            <td data-label="Customer/Travel">{{ $service->pelanggan->nama_travel }}</td>
-            <td data-label="Tgl keberangkatan">{{ $service->tanggal_keberangkatan }}</td>
-            <td data-label="Tgl kepulangan">{{ $service->tanggal_kepulangan }}</td>
-            <td data-label="Jumlah jamaah">{{ $service->total_jamaah }}</td>
-            <td data-label="Layanan yang di pilih">{{ implode(', ', (array) $service->services) }}</td>
+                        @foreach ($services as $service)
+                            <tr>
+                                <td data-label="Kode unik">{{ $service->unique_code }}</td>
+                                <td data-label="Customer/Travel">{{ $service->pelanggan->nama_travel }}</td>
+                                <td data-label="Tgl keberangkatan">{{ $service->tanggal_keberangkatan }}</td>
+                                <td data-label="Tgl kepulangan">{{ $service->tanggal_kepulangan }}</td>
+                                <td data-label="Jumlah jamaah">{{ $service->total_jamaah }}</td>
+                                <td data-label="Layanan yang di pilih">{{ $service->services }}</td>
 
-            @if ($service->status === 'nego')
-                <td data-label="Status">
-                    <a href="{{ route('admin.service.nego', $service->id) }}">
-                        <button class="btn btn-warning" style="width: 100%; white-space: normal;">Lanjutkan pemesanan</button>
-                    </a>
-                </td>
-            @else
-                <td data-label="Status">Deal</td>
-            @endif
+                                @if ($service->status === 'nego')
+                                    <td data-label="Status">
+                                        <a href="{{ route('admin.service.nego', $service->id) }}">
+                                            <button class="btn btn-warning"
+                                                style="width: 100%; white-space: normal;">Lanjutkan pemesanan</button>
+                                        </a>
+                                    </td>
+                                @else
+                                    <td data-label="Status">Deal</td>
+                                @endif
 
-            <td data-label="Aksi">
-                <div class="action-buttons-container">
-                    <a href="{{ route('admin.service.file', $service->id) }}">
-                        <button class="btn btn-primary" title="Upload berkas yang di perlukan">
-                            <i class="bi bi-cloud-arrow-up-fill"></i>
-                        </button>
-                    </a>
-                    <button class="btn btn-success">
-                        <i class="bi bi-eye-fill"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>
-    @endforeach
-</tbody>
+                                <td data-label="Aksi">
+                                    <div class="action-buttons-container">
+                                        <a href="{{ route('admin.service.file', $service->id) }}">
+                                            <button class="btn btn-primary" title="Upload berkas yang di perlukan">
+                                                <i class="bi bi-cloud-arrow-up-fill"></i>
+                                            </button>
+                                        </a>
+                                        <button class="btn btn-success">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
 
