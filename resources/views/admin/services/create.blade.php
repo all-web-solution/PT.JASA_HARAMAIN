@@ -297,6 +297,7 @@
 
         .btn-secondary:hover {
             background-color: #f8f9fa;
+            color: var(--text-secondary);
         }
 
         .btn-submit {
