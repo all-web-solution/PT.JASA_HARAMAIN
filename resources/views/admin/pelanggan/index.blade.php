@@ -1,108 +1,28 @@
 @extends('admin.master')
 @section('content')
 
-    <div class="container-fluid p-3">
+    <div class="container-fluid p-4">
         <!-- Stats Cards -->
-        <div class="row g-3 mb-3">
+        <div class="row g-3 mb-4" id="cards-dashboard">
             <!-- Total Travel -->
-            <div class="col-xl-3 col-md-6">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Total Travel</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">{{ $totalPelanggan }}
-                                </h3>
-                            </div>
-                            <div class="bg-primary bg-opacity-10 p-2 rounded">
-                                <i class="bi bi-building" style="color: var(--haramain-secondary);"></i>
-                            </div>
-                        </div>
-                        <p class="card-text text-muted mt-1"><small>Semua travel terdaftar</small></p>
-                    </div>
-                </div>
-            </div>
+            <x-card-component title="Total Travel" :count="\App\Models\Pelanggan::count()" icon="bi bi-building" iconColor="var(--haramain-primary)"
+                textColor="var(--text-muted)" desc="Semua travel terdaftar" />
 
             <!-- Travel Aktif -->
-            <div class="col-xl-3 col-md-6">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Travel Aktif</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">{{ $pelangganAktif }}
-                                </h3>
-                            </div>
-                            <div class="bg-success bg-opacity-10 p-2 rounded">
-                                <i class="bi bi-check-circle" style="color: #4caf50;"></i>
-                            </div>
-                        </div>
-                        <p class="card-text {{ $totalPelanggan > 0 ? 'text-success' : 'text-muted' }} mt-1">
-                            <small>
-                                @if ($totalPelanggan > 0)
-                                    {{ round(($pelangganAktif / $totalPelanggan) * 100) }}% dari total
-                                @else
-                                    Tidak ada data
-                                @endif
-                            </small>
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <x-card-component title="Travel Aktif" :count="$pelangganAktif" icon="bi bi-check-circle"
+                iconColor="var(--haramain-primary)" textColor="{{ $totalPelanggan > 0 ? 'text-success' : 'text-muted' }}"
+                desc="{{ round(($pelangganAktif / $totalPelanggan) * 100) }}% dari total" />
 
             <!-- Travel Non-Aktif -->
-            <div class="col-xl-3 col-md-6">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Travel Non-Aktif</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                    {{ $pelangganNonAktif }}</h3>
-                            </div>
-                            <div class="bg-danger bg-opacity-10 p-2 rounded">
-                                <i class="bi bi-x-circle" style="color: #f44336;"></i>
-                            </div>
-                        </div>
-                        <p class="card-text {{ $totalPelanggan > 0 ? 'text-danger' : 'text-muted' }} mt-1">
-                            <small>
-                                @if ($totalPelanggan > 0)
-                                    {{ round(($pelangganNonAktif / $totalPelanggan) * 100) }}% dari total
-                                @else
-                                    Tidak ada data
-                                @endif
-                            </small>
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <x-card-component title="Travel Non-Aktif" :count="$pelangganNonAktif" icon="bi bi-x-circle"
+                iconColor="var(--haramain-primary)" textColor="{{ $totalPelanggan > 0 ? 'text-success' : 'text-muted' }}"
+                desc="{{ round(($pelangganNonAktif / $totalPelanggan) * 100) }}% dari total" />
 
             <!-- Penambahan Bulan Ini -->
-            <div class="col-xl-3 col-md-6">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Penambahan Bulan Ini</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                    {{ $pelangganBulanIni }}</h3>
-                            </div>
-                            <div class="bg-info bg-opacity-10 p-2 rounded">
-                                <i class="bi bi-graph-up" style="color: #00acc1;"></i>
-                            </div>
-                        </div>
-                        <p class="card-text text-success mt-1">
-                            <small>
-                                @if ($pelangganBulanIni > 0)
-                                    {{ $pelangganBulanIni }} travel baru
-                                @else
-                                    Belum ada penambahan
-                                @endif
-                            </small>
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <x-card-component title="Kenaikan Bulan ini" :count="$pelangganBulanIni" icon="bi bi-graph-up"
+                iconColor="var(--haramain-primary)" textColor="{{ $totalPelanggan > 0 ? 'text-success' : 'text-muted' }}"
+                desc="{{ $pelangganBulanIni }} travel baru" />
+
         </div>
         <form method="GET" class="mb-3">
             <div class="row">
@@ -254,7 +174,8 @@
                             <div class="card mb-2 shadow-sm mt-3">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <div class="fw-bold">#TRV-{{ str_pad($pelanggan->id, 4, '0', STR_PAD_LEFT) }}</div>
+                                        <div class="fw-bold">#TRV-{{ str_pad($pelanggan->id, 4, '0', STR_PAD_LEFT) }}
+                                        </div>
                                         <span
                                             class="badge {{ $pelanggan->status == 'active' ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger' }}">
                                             {{ $pelanggan->status == 'active' ? 'Aktif' : 'Non-Aktif' }}
@@ -270,10 +191,12 @@
                                     <div class="text-muted small mb-1">Terdaftar:
                                         {{ $pelanggan->created_at->format('d M Y') }}</div>
                                     <div class="d-flex mt-2">
-                                        <a href="{{ route('admin.pelanggan.edit', $pelanggan->id) }}" class="btn btn-sm me-1 flex-fill"
+                                        <a href="{{ route('admin.pelanggan.edit', $pelanggan->id) }}"
+                                            class="btn btn-sm me-1 flex-fill"
                                             style="background-color: var(--haramain-light); color: var(--haramain-primary);"><i
                                                 class="bi bi-pencil"></i> Edit</a>
-                                        <form action="{{ route('admin.pelanggan.destroy', $pelanggan->id) }}" method="POST" class="flex-fill">
+                                        <form action="{{ route('admin.pelanggan.destroy', $pelanggan->id) }}"
+                                            method="POST" class="flex-fill">
                                             @csrf
                                             @method('DELETE')
                                             <button class="btn btn-sm w-100"
