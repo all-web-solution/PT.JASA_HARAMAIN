@@ -79,6 +79,7 @@
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
             text-align: center;
+            align-content: center;
         }
 
         .table tbody tr {
@@ -95,6 +96,7 @@
         .table tbody td {
             padding: 1.25rem;
             text-align: center;
+            align-content: center;
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -201,8 +203,8 @@
 
         /* Action Buttons */
         .btn-action {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 8px;
             display: inline-flex;
             align-items: center;
@@ -211,6 +213,7 @@
             transition: all 0.3s ease;
             border: none;
             background-color: transparent;
+            cursor: pointer;
         }
 
         .btn-action:hover {
@@ -221,12 +224,12 @@
             font-size: 1rem;
         }
 
-        .btn-edit {
+        .btn-upload {
             color: var(--haramain-secondary);
         }
 
-        .btn-delete {
-            color: var(--danger-color);
+        .btn-view {
+            color: var(--text-primary);
         }
 
         .btn-view {
@@ -556,7 +559,7 @@
                                 <td data-label="Tgl keberangkatan">{{ $service->tanggal_keberangkatan }}</td>
                                 <td data-label="Tgl kepulangan">{{ $service->tanggal_kepulangan }}</td>
                                 <td data-label="Jumlah jamaah">{{ $service->total_jamaah }}</td>
-                                <td data-label="Layanan yang di pilih">{{ $service->services }}</td>
+                                <td data-label="Layanan yang di pilih">{{ implode(', ', (array) $service->services) }}</td>
 
                                 @if ($service->status === 'nego')
                                     <td data-label="Status">
@@ -570,13 +573,13 @@
                                 @endif
 
                                 <td data-label="Aksi">
-                                    <div class="action-buttons-container">
+                                    <div class="action-buttons">
                                         <a href="{{ route('admin.service.file', $service->id) }}">
-                                            <button class="btn btn-primary" title="Upload berkas yang di perlukan">
-                                                <i class="bi bi-cloud-arrow-up-fill"></i>
+                                            <button class="btn-action btn-upload" title="Upload berkas yang di perlukan">
+                                                <i class="bi bi-cloud-arrow-up"></i>
                                             </button>
                                         </a>
-                                        <button class="btn btn-success">
+                                        <button class="btn-action btn-view" title="view">
                                             <i class="bi bi-eye-fill"></i>
                                         </button>
                                     </div>
