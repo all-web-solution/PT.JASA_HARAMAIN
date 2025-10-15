@@ -5,7 +5,7 @@
                 <i class="bi bi-list"></i>
             </button>
             <h1 class="h4 mb-0 fw-bold" style="color: var(--haramain-primary);" id="text-title">
-                <i class="bi bi-speedometer2 me-2"></i>Dashboard Overview
+                PT JASA HARAMAIN
             </h1>
         </div>
 
