@@ -2,7 +2,7 @@
     <div class="card card-stat h-100">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
-                <div>
+                <div class="justify-content-evenly">
                     <h6 class="card-title mb-3">{{ $title }}</h6>
                     <h3 class="card-subtitle fw-bold mb-2" style="color: var(--haramain-primary);">
                         {{ $count }}
