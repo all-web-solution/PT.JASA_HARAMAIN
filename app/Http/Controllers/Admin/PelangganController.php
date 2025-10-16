@@ -9,8 +9,25 @@ use Illuminate\Support\Facades\Storage;
 
 class PelangganController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = Pelanggan::query();
+
+    // Filter berdasarkan bulan
+    if ($request->filled('bulan')) {
+        $query->whereMonth('created_at', $request->bulan);
+    }
+
+    // Filter berdasarkan tahun
+    if ($request->filled('tahun')) {
+        $query->whereYear('created_at', $request->tahun);
+    }
+
+    // Filter berdasarkan tanggal spesifik
+    if ($request->filled('tanggal')) {
+        $query->whereDate('created_at', $request->tanggal);
+    }
+
         $totalPelanggan = Pelanggan::count();
         $pelangganAktif = Pelanggan::where('status', 'active')->count();
         $pelangganNonAktif = Pelanggan::where('status', 'inactive')->count();
@@ -23,14 +40,16 @@ class PelangganController extends Controller
         $bulan = request()->get('bulan');
         $tahun = request()->get('tahun');
 
-        $pelanggans = Pelanggan::with(['services.orders' => function($q) use ($bulan, $tahun) {
-            if ($bulan) {
-                $q->whereMonth('tanggal', $bulan);
-            }
-            if ($tahun) {
-                $q->whereYear('tanggal', $tahun);
-            }
-        }])->paginate(10);
+        // $pelanggans = Pelanggan::with(['services.orders' => function($q) use ($bulan, $tahun) {
+        //     if ($bulan) {
+        //         $q->whereMonth('tanggal', $bulan);
+        //     }
+        //     if ($tahun) {
+        //         $q->whereYear('tanggal', $tahun);
+        //     }
+        // }])->paginate(10);
+
+        $pelanggans = $query->latest()->paginate(10);
 
         return view('admin.pelanggan.index', compact(
             'totalPelanggan',
@@ -49,7 +68,7 @@ class PelangganController extends Controller
 
     public function store(Request $request)
     {
-        
+
 
         if ($request->hasFile('foto')) {
             $path = $request->file('foto')->store('/', 'public');
@@ -67,7 +86,7 @@ class PelangganController extends Controller
         ]);
 
         return redirect()->route('admin.pelanggan')->with('success', 'Travel berhasil ditambahkan');
-    
+
     }
     public function show(Pelanggan $pelanggan)
     {
