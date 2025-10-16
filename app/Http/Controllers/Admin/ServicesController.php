@@ -129,7 +129,7 @@ class ServicesController extends Controller
             'total_jamaah' => 'required|integer',
         ]);
 
-        $masterPrefix = 'TRX';
+        $masterPrefix = 'ID';
         $lastService = Service::where('unique_code', 'like', $masterPrefix . '-%')
             ->orderByDesc('id')
             ->first();
