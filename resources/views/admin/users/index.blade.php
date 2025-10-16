@@ -208,11 +208,6 @@
             color: var(--text-secondary);
         }
 
-        .filter-group {
-            display: flex;
-            gap: 1rem;
-        }
-
         .filter-select {
             height: 40px;
             border-radius: 8px;
@@ -291,11 +286,6 @@
                 width: 100%;
             }
 
-            .filter-group {
-                width: 100%;
-                flex-direction: column;
-            }
-
             .filter-select {
                 width: 100%;
             }
@@ -331,13 +321,6 @@
                 <div class="search-box">
                     <i class="bi bi-search"></i>
                     <input type="text" id="searchInput" placeholder="Cari berdasarkan nama, email, dll...">
-                </div>
-                <div class="filter-group">
-                    <select class="filter-select">
-                        <option>Semua Role</option>
-                        <option>Admin</option>
-                        <option>User</option>
-                    </select>
                 </div>
             </div>
 
