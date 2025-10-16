@@ -11,7 +11,9 @@ class Exchange extends Model
         'tipe',         // tamis atau tumis
         'jumlah_input', // rupiah atau reyal
         'kurs',         // kurs
-        'hasil'         // hasil konversi
+        'hasil',
+        'tanggal_penyerahan'         // hasil konversi
+
     ];
 
     public function service(){

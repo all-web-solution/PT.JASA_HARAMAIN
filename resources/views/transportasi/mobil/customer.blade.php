@@ -413,6 +413,8 @@
                         <th>Nama Travel</th>
                         <th>Nama kendaraan</th>
                         <th>Route</th>
+                        <th>Dari tanggal</th>
+                        <th>Sampai tanggal</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -422,6 +424,9 @@
                         <td>{{$customer->service->pelanggan->nama_travel}}</td>
                         <td>{{$customer->transportation->nama}}</td>
                         <td>{{ $customer->route->route }}</td>
+                        <td>{{ $customer->dari_tanggal }}</td>
+                        <td>{{ $customer->sampai_tanggal }}</td>
+                        
                     </tr>
                     @endforeach
                     {{-- @foreach ($planes as $plane)

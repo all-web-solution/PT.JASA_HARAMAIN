@@ -10,9 +10,10 @@ class Meal extends Model
         'service_id',
         'meal_id',
         'jumlah',
-        'pj',
-        'kebutuhan',
         'status',
+        'dari_tanggal',
+        'sampai_tanggal',
+        'status'
     ];
 
     public function service()

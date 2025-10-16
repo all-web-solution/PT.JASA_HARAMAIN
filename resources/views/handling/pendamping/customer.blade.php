@@ -131,6 +131,8 @@
                                 <th>Nama Customer</th>
                                 <th>Nama Pendamping</th>
                                 <th>Jumlah</th>
+                                <th>Dari tanggal</th>
+                                <th>Sampai tanggal</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -138,8 +140,10 @@
                                 <tr>
                                     <td>{{ $loop->iteration ?? '-' }}</td>
                                     <td>{{ $item->service->pelanggan->nama_travel ?? '-' }}</td>
-                                    <td>{{ $item->nama ?? '-' }}</td>
+                                    <td>{{ $item->guideItem->nama}}</td>
                                     <td>{{ $item->jumlah ?? '-' }}</td>
+                                    <td>{{ $item->muthowif_dari ?? '-' }}</td>
+                                    <td>{{ $item->muthowif_sampai ?? '-' }}</td>
                                 </tr>
                             @empty
                                 <tr>

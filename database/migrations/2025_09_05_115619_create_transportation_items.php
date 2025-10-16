@@ -22,6 +22,8 @@ return new class extends Migration
             $table->foreignId('transportation_id')->constrained('transportations')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('route_id')->constrained('routes')->cascadeOnDelete()->cascadeOnUpdate();
             $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
+            $table->date("dari_tanggal");
+            $table->date("sampai_tanggal");
             $table->timestamps();
         });
     }

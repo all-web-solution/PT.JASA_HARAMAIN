@@ -160,10 +160,7 @@ class ServicesController extends Controller
             'status_pembayaran' => $totalAmount == 0 ? 'lunas' : 'belum_bayar',
         ]);
         if ($status === 'deal') {
-            return redirect()->route('service.uploadBerkas', [
-                'service_id' => $service->id,
-                'total_jamaah' => $request->total_jamaah,
-            ])->with('success', 'Data service berhasil disimpan.');
+            return redirect()->route('admin.services')->with('success', 'Data service berhasil disimpan.');
         }
         return redirect()->route('admin.services')->with('success', 'Data nego berhasil diperbarui.');
 
@@ -1078,53 +1075,62 @@ public function storeBerkas(Request $request, $id)
                         'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
                         'type' => $type,
                         'jumlah_kamar' => $request->jumlah_kamar[$i],
-                        'harga_perkamar' =>  $request->jumlah_kamar[$i],
+                        'harga_perkamar' =>  "0",
                         'jumlah_type' =>  $request->jumlah_type[$i],
-                        'type_custom_special_room' => $request->type_custom_special_room[$i],
-                        'jumlah_kasur' => $request->jumlah_kasur[$i],
+                        'catatan' => $request->keterangan[$i]
                     ]);
                 }
             }
         }
     }
 
-    private function handleTransportationItems(Request $request, Service $service)
-    {
-        // Tiket Pesawat
-        if ($request->filled('transportation') && in_array('airplane', $request->transportation)) {
-            foreach ($request->tanggal as $j => $tgl) {
-                if ($tgl) {
-                    $service->planes()->create([
-                        'tanggal_keberangkatan' => $tgl,
-                        'rute' => $request->rute[$j] ?? null,
-                        'maskapai' => $request->maskapai[$j] ?? null,
-                        'harga' => $request->harga_tiket[$j] ?? null,
-                        'keterangan' => $request->keterangan[$j] ?? null,
-                        'jumlah_jamaah' => $request->jumlah[$j] ?? 0,
-                        'tiket_berangkat' => $this->storeFileIfExists($request->file('tiket_berangkat', []), $j, 'tiket'),
-                        'tiket_pulang' => $this->storeFileIfExists($request->file('tiket_pulang', []), $j, 'tiket'),
+private function handleTransportationItems(Request $request, Service $service)
+{
+    // ✈️ Tiket Pesawat
+    if ($request->filled('transportation') && in_array('airplane', $request->transportation)) {
+        foreach ($request->tanggal as $j => $tgl) {
+            if ($tgl) {
+                $service->planes()->create([
+                    'tanggal_keberangkatan' => $tgl,
+                    'rute' => $request->rute[$j] ?? null,
+                    'maskapai' => $request->maskapai[$j] ?? null,
+                    'harga' => $request->harga_tiket[$j] ?? null,
+                    'keterangan' => $request->keterangan[$j] ?? null,
+                    'jumlah_jamaah' => $request->jumlah[$j] ?? 0,
+                    'tiket_berangkat' => $this->storeFileIfExists($request->file('tiket_berangkat', []), $j, 'tiket'),
+                    'tiket_pulang' => $this->storeFileIfExists($request->file('tiket_pulang', []), $j, 'tiket'),
+                ]);
+            }
+        }
+    }
+
+    // 🚌 Transportasi Darat (Bus)
+    if ($request->filled('transportation') && in_array('bus', $request->transportation)) {
+        $transportationIds = $request->input('transportation_id', []);
+        $ruteIds = $request->input('rute_id', []);
+        $tanggalTransport = $request->input('tanggal_transport', []);
+
+        if (is_array($transportationIds)) {
+            foreach ($transportationIds as $index => $transportId) {
+                $ruteId = $ruteIds[$index] ?? null;
+                $tanggal = $tanggalTransport[$index] ?? [];
+
+                $dariTanggal = $tanggal['dari'] ?? null;
+                $sampaiTanggal = $tanggal['sampai'] ?? null;
+
+                if ($transportId && $ruteId && $dariTanggal && $sampaiTanggal) {
+                    $service->transportationItem()->create([
+                        'transportation_id' => $transportId,
+                        'route_id' => $ruteId,
+                        'dari_tanggal' => $dariTanggal,
+                        'sampai_tanggal' => $sampaiTanggal,
                     ]);
                 }
             }
         }
-
-        // Transportasi Darat (Bus)
-        if ($request->filled('transportation') && in_array('bus', $request->transportation)) {
-            $transportationIds = $request->input('transportation_id');
-            $ruteIds = $request->input('rute_id');
-            if (is_array($transportationIds)) {
-                foreach ($transportationIds as $index => $transportId) {
-                    $ruteId = $ruteIds[$index] ?? null;
-                    if ($transportId && $ruteId) {
-                        $service->transportationItem()->create([
-                            'transportation_id' => $transportId,
-                            'route_id' => $ruteId,
-                        ]);
-                    }
-                }
-            }
-        }
     }
+}
+
 
     private function handleHandlingItems(Request $request, Service $service)
     {
@@ -1164,30 +1170,46 @@ public function storeBerkas(Request $request, $id)
     }
 
     private function handleMealItems(Request $request, Service $service)
-    {
-        if ($request->filled('jumlah_meals')) {
-            foreach ($request->jumlah_meals as $mealId => $jumlah) {
-                if ($jumlah > 0) {
-                    $service->meals()->create(['meal_id' => $mealId, 'jumlah' => $jumlah]);
-                }
+{
+    if ($request->filled('jumlah_meals')) {
+        foreach ($request->jumlah_meals as $mealId => $jumlah) {
+            if ($jumlah > 0) {
+                $dariTanggal = $request->input("dari_tanggal_makanan.$mealId.dari");
+                $sampaiTanggal = $request->input("sampai_tanggal_makanan.$mealId.sampai");
+
+                $service->meals()->create([
+                    'meal_id' => $mealId,
+                    'jumlah' => $jumlah,
+                    'dari_tanggal' => $dariTanggal,
+                    'sampai_tanggal' => $sampaiTanggal,
+                ]);
             }
         }
     }
+}
+
 
     private function handleGuideItems(Request $request, Service $service)
-    {
+{
+    if ($request->filled('jumlah_pendamping')) {
         if ($request->filled('jumlah_pendamping')) {
-            foreach ($request->jumlah_pendamping as $guideId => $jumlah) {
-                if ($jumlah > 0) {
-                    $service->guides()->create([
-                        'guide_id' => $guideId,
-                        'jumlah' => $jumlah,
-                        'keterangan' => $request->input("keterangan_pendamping.$guideId") ?? null,
-                    ]);
-                }
+        foreach ($request->jumlah_pendamping as $guideId => $jumlah) {
+            if ($jumlah > 0) {
+                $tanggal = $request->input("tanggal_pendamping.$guideId");
+
+                $service->guides()->create([
+                    'guide_id'       => $guideId,
+                    'jumlah'         => $jumlah,
+                    'keterangan'     => $request->input("keterangan_pendamping.$guideId") ?? null,
+                    'muthowif_dari'   => $tanggal['dari'] ?? null,
+                    'muthowif_sampai' => $tanggal['sampai'] ?? null,
+                ]);
             }
         }
     }
+    }
+}
+
 
 private function handleTourItems(Request $request, Service $service)
 {
@@ -1248,25 +1270,33 @@ private function handleTourItems(Request $request, Service $service)
     }
 
 
-    private function handleReyalItems(Request $request, Service $service)
-    {
-        if ($request->input('tipe') === 'tamis') {
+private function handleReyalItems(Request $request, Service $service)
+{
+    $tipe = $request->input('tipe');
+    $tanggalPenyerahan = $request->input('tanggal_penyerahan');
+    if ($tanggalPenyerahan) {
+        if ($tipe === 'tamis') {
             $service->reyals()->create([
                 'tipe' => 'tamis',
                 'jumlah_input' => $request->input('jumlah_rupiah'),
                 'kurs' => $request->input('kurs_tamis'),
                 'hasil' => $request->input('hasil_tamis'),
+                'tanggal_penyerahan' => $tanggalPenyerahan,
             ]);
         }
-        if ($request->input('tipe') === 'tumis') {
+
+        if ($tipe === 'tumis') {
             $service->reyals()->create([
                 'tipe' => 'tumis',
                 'jumlah_input' => $request->input('jumlah_reyal'),
                 'kurs' => $request->input('kurs_tumis'),
                 'hasil' => $request->input('hasil_tumis'),
+                'tanggal_penyerahan' => $tanggalPenyerahan,
             ]);
         }
     }
+}
+
 
     private function handleWakafItems(Request $request, Service $service)
     {
@@ -1283,35 +1313,40 @@ private function handleTourItems(Request $request, Service $service)
     }
 
     private function handleDoronganItems(Request $request, Service $service)
-    {
-        if ($request->filled('jumlah_dorongan')) {
-            foreach ($request->jumlah_dorongan as $doronganId => $jumlah) {
-                if ($jumlah > 0) {
-                    DoronganOrder::create([
-                        'service_id' => $service->id,
-                        'dorongan_id' => $doronganId,
-                        'jumlah' => $jumlah,
-                    ]);
-                }
-            }
-        }
-    }
+{
+    if ($request->filled('jumlah_dorongan')) {
+        foreach ($request->jumlah_dorongan as $doronganId => $jumlah) {
+            if ($jumlah > 0) {
+                $tanggal = $request->input("tanggal_dorongan.$doronganId");
 
-    private function handleContentItems(Request $request, Service $service)
-    {
-        if ($request->filled('jumlah_konten')) {
-            foreach ($request->jumlah_konten as $contentId => $jumlah) {
-                if ($jumlah > 0) {
-                    ContentCustomer::create([
-                        'service_id' => $service->id,
-                        'content_id' => $contentId,
-                        'jumlah' => $jumlah,
-                        'keterangan' => $request->input("keterangan_konten.{$contentId}"),
-                    ]);
-                }
+                DoronganOrder::create([
+                    'service_id' => $service->id,
+                    'dorongan_id' => $doronganId,
+                    'jumlah' => $jumlah,
+                    'tanggal_pelaksanaan' => $tanggal,
+                ]);
             }
         }
     }
+}
+
+
+   private function handleContentItems(Request $request, Service $service)
+{
+    if ($request->filled('jumlah_konten')) {
+        foreach ($request->jumlah_konten as $contentId => $jumlah) {
+            if ($jumlah > 0) {
+                ContentCustomer::create([
+                    'service_id' => $service->id,
+                    'content_id' => $contentId,
+                    'jumlah' => $jumlah,
+                    'tanggal_pelaksanaaan' => $request->input("tanggal_konten.$contentId") ?? null,
+                ]);
+            }
+        }
+    }
+}
+
 
     private function handleBadalItems(Request $request, Service $service)
     {
@@ -1322,6 +1357,7 @@ private function handleTourItems(Request $request, Service $service)
                         'service_id' => $service->id,
                         'name' => $nama,
                         'price' => $request->harga_badal[$index] ?? 0,
+                        'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan_badal[$index] ?? ''
                     ]);
                 }
             }

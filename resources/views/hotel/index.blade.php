@@ -417,9 +417,7 @@
                             <th>Harga perkamar</th>
                             <th>Type kamar</th>
                             <th>Total type kamar</th>
-                            <th>Jumlah type custom special room</th>
-                            <th>Harga type custom special room</th>
-                            <th>Jumlah kasur</th>
+
                             <th>Catatan</th>
                             <th>Aksi</th>
                         </tr>
@@ -435,13 +433,6 @@
                                 <td>{{ $hotel->harga_perkamar }}</td>
                                 <td>{{ $hotel->type }}</td>
                                 <td>{{ $hotel->jumlah_type }}</td>
-                                <td>{{ $hotel->type_custom_special_room }}</td>
-                                @if ($hotel->harga_type_custom_special_room)
-                                <td>{{ $hotel->harga_type_custom_special_room }}</td>
-                                @else
-                                <td>Belum ada harga</td>
-                                @endif
-                                <td>{{ $hotel->jumlah_kasur }}</td>
                                 <td>{{ $hotel->catatan }}</td>
                                 <td>
                                     <a href="{{ route('hotel.edit', $hotel->id) }}">

@@ -20,6 +20,7 @@
                             <th>No</th>
                             <th>Customer/Travel</th>
                             <th>Nama yang di badalkan</th>
+                            <th>Tanggal pelaksanaan</th>
                             <th>Harga</th>
                         </tr>
                     </thead>
@@ -29,6 +30,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->service->pelanggan->nama_travel }}</td>
                                 <td>{{ $item->name }}</td>
+                                <td>{{ $item->tanggal_pelaksanaan }}</td>
                                 <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
                             </tr>
                         @empty

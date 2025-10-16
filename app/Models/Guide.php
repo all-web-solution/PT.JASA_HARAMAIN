@@ -6,10 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Guide extends Model
 {
-    protected $fillable = ['service_id', 'guide_id', 'jumlah', 'keterangan'];
+    protected $fillable = [
+        'service_id',
+        'guide_id',
+        'jumlah',
+        'keterangan',
+        'muthowif_dari',
+        'muthowif_sampai'
+    ];
 
      public function service(){
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(Service::class, 'id');
     }
     public function guideItem()
 {

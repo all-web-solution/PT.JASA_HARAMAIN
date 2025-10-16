@@ -27,10 +27,11 @@ return new class extends Migration
                 ->on('guide_items')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-
                 $table->string('jumlah');
                 $table->string('keterangan')->nullable();
                 $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
+                $table->date('muthowif_dari');
+                $table->date('muthowif_sampai');
             $table->timestamps();
         });
     }

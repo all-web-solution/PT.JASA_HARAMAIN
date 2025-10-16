@@ -85,6 +85,7 @@
                             <th>No</th>
                             <th>Nama Konten</th>
                             <th>Jumlah</th>
+                            <th>Tanggal pelanksanaan</th>
                             <th>Keterangan</th>
                         </tr>
                     </thead>
@@ -96,7 +97,9 @@
                                     <td data-label="No">{{ $no++ }}</td>
                                     <td data-label="Nama Konten">{{ $contentItem->content->name ?? 'N/A' }}</td>
                                     <td data-label="Jumlah">{{ $contentItem->jumlah }}</td>
+                                    <td data-label="Jumlah">{{ $contentItem->tanggal_pelaksanaaan }}</td>
                                     <td data-label="Keterangan">{{ $contentItem->keterangan ?? 'Tidak ada' }}</td>
+
                                 </tr>
                             @endforeach
                         @empty

@@ -525,6 +525,7 @@
                                     <label class="form-label">Transportasi darat</label>
                                     <button type="button" class="btn btn-submit" id="add-transport-btn">Tambah
                                         Transportasi</button>
+
                                     <div id="new-transport-forms">
                                         <div class="transport-set card p-3 mt-3" data-index="0">
                                             <div class="cars">
@@ -538,17 +539,31 @@
                                                         <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
                                                         <div class="service-desc">Harga:
                                                             {{ number_format($data->harga) }}/hari</div>
-                                                        {{-- <input type="radio" name="transportation_id[0]"
-                                                            value="{{ $data->id }}"> --}}
+                                                        <input type="radio" name="transportation_id[0]"
+                                                            value="{{ $data->id }}">
                                                     </div>
                                                 @endforeach
                                             </div>
+
                                             <div class="route-select hidden">
                                                 <label class="form-label mt-2">Pilih Rute:</label>
                                                 <select name="rute_id[0]" class="form-control">
                                                     <option value="">-- Pilih Rute --</option>
                                                 </select>
                                             </div>
+
+                                            <div class="route-select">
+                                                <label class="form-label mt-2">Dari tanggal:</label>
+                                                <input type="date" name="tanggal_transport[0][dari]"
+                                                    class="form-control">
+                                            </div>
+
+                                            <div class="route-select">
+                                                <label class="form-label mt-2">Sampai tanggal:</label>
+                                                <input type="date" name="tanggal_transport[0][sampai]"
+                                                    class="form-control">
+                                            </div>
+
                                             <div class="mt-2 text-end">
                                                 <button type="button"
                                                     class="btn btn-danger btn-sm remove-transport">Hapus</button>
@@ -556,6 +571,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
 
@@ -602,15 +618,11 @@
                                             min="0">
                                     </div>
                                     <div class="form-group mt-2">
-                                        <label class="form-label">Type custom special room</label>
-                                        <input type="number" class="form-control" name="type_custom_special_room[0]"
+                                        <label class="form-label">Keterangan</label>
+                                        <input type="text" class="form-control" name="keterangan[0]"
                                             min="0">
                                     </div>
-                                    <div class="form-group mt-2">
-                                        <label class="form-label">Jumlah kasur</label>
-                                        <input type="number" class="form-control" name="jumlah_kasur[0]"
-                                            min="0">
-                                    </div>
+
                                     <div class="mt-3 text-end">
                                         <button type="button" class="btn btn-danger btn-sm removeHotel">Hapus
                                             Hotel</button>
@@ -756,9 +768,24 @@
                                             data-id="{{ $guide->id }}" data-name="{{ $guide->nama }}"
                                             data-price="{{ $guide->harga }}" data-type="pendamping"
                                             name="jumlah_pendamping[{{ $guide->id }}]" min="1">
+
+                                        <div class="form-row d-flex gap-3 mt-2">
+                                            <div class="form-col">
+                                                <label class="form-label">Tanggal Dari</label>
+                                                <input type="date" class="form-control"
+                                                    name="tanggal_pendamping[{{ $guide->id }}][dari]">
+                                            </div>
+
+                                            <div class="form-col">
+                                                <label class="form-label">Tanggal Sampai</label>
+                                                <input type="date" class="form-control"
+                                                    name="tanggal_pendamping[{{ $guide->id }}][sampai]">
+                                            </div>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
+
                         </div>
 
                         {{-- KONTEN FORM --}}
@@ -784,9 +811,14 @@
                                             data-id="{{ $content->id }}" data-name="{{ $content->name }}"
                                             data-price="{{ $content->price }}" data-type="konten"
                                             name="jumlah_konten[{{ $content->id }}]" min="1">
+
+                                        <label class="form-label mt-2">Tanggal {{ $content->name }} Dilaksanakan</label>
+                                        <input type="date" class="form-control"
+                                            name="tanggal_konten[{{ $content->id }}]">
                                     </div>
                                 @endforeach
                             </div>
+
                         </div>
 
                         {{-- REYAL FORM --}}
@@ -797,14 +829,14 @@
                                     <div class="card text-center p-3 card-reyal" data-reyal-type="tamis">
                                         <h5>Tamis</h5>
                                         <p>Rupiah → Reyal</p>
-                                        {{-- <input type="radio" name="tipe" value="tamis"> --}}
+                                        <input type="radio" name="tipe" value="tamis">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="card text-center p-3 card-reyal" data-reyal-type="tumis">
                                         <h5>Tumis</h5>
                                         <p>Reyal → Rupiah</p>
-                                        {{-- <input type="radio" name="tipe" value="tumis"> --}}
+                                        <input type="radio" name="tipe" value="tumis">
                                     </div>
                                 </div>
                             </div>
@@ -840,6 +872,9 @@
                                         readonly>
                                 </div>
                             </div>
+                            <label class="form-label mt-2">Tanggal penyerahan</label>
+                            <input type="date" class="form-control" name="tanggal_penyerahan">
+
                         </div>
 
 
@@ -904,6 +939,19 @@
                                             data-id="{{ $meal->id }}" data-name="{{ $meal->name }}"
                                             data-price="{{ $meal->price }}" data-type="meal"
                                             name="jumlah_meals[{{ $meal->id }}]" min="1">
+                                        <div class="form-row d-flex gap-3 mt-2">
+                                            <div class="form-col">
+                                                <label class="form-label">Tanggal Dari</label>
+                                                <input type="date" class="form-control"
+                                                    name="dari_tanggal_makanan[{{ $meal->id }}][dari]">
+                                            </div>
+
+                                            <div class="form-col">
+                                                <label class="form-label">Tanggal Sampai</label>
+                                                <input type="date" class="form-control"
+                                                    name="sampai_tanggal_makanan[{{ $meal->id }}][sampai]">
+                                            </div>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
@@ -930,6 +978,10 @@
                                             data-id="{{ $item->id }}" data-name="{{ $item->name }}"
                                             data-price="{{ $item->price }}" data-type="dorongan"
                                             name="jumlah_dorongan[{{ $item->id }}]" min="1">
+                                        <label class="form-label">Tanggal Pelaksanaan Dorongan
+                                            {{ $item->name }}</label>
+                                        <input type="date" class="form-control"
+                                            name="tanggal_dorongan[{{ $item->id }}]">
                                     </div>
                                 @endforeach
                             </div>
@@ -977,6 +1029,11 @@
                                         <label class="form-label">Harga</label>
                                         <input type="number" class="form-control harga_badal" name="harga_badal[0]"
                                             min="0">
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label class="form-label">Tanggal pelaksanaan</label>
+                                        <input type="date" class="form-control harga_badal"
+                                            name="tanggal_pelaksanaan_badal[0]" min="0">
                                     </div>
                                     <div class="mt-2 text-end">
                                         <button type="button" class="btn btn-danger btn-sm removeBadal">Hapus
@@ -1120,6 +1177,15 @@
                         @endforeach
                     </div>
                     <div class="route-select hidden"><label class="form-label mt-2">Pilih Rute:</label><select name="rute_id[${transportCounter}]" class="form-control"><option value="">-- Pilih Rute --</option></select></div>
+                    <div class="route-select">
+                <label class="form-label mt-2">Dari tanggal:</label>
+                <input type="date" name="tanggal_transport[0][dari]" class="form-control">
+            </div>
+
+            <div class="route-select">
+                <label class="form-label mt-2">Sampai tanggal:</label>
+                <input type="date" name="tanggal_transport[0][sampai]" class="form-control">
+            </div>
                     <div class="mt-2 text-end"><button type="button" class="btn btn-danger btn-sm remove-transport">Hapus</button></div>
                 </div>
             `;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Handling;
 
 use App\Http\Controllers\Controller;
 use App\Models\GuideItems;
+use App\Models\Guide;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -69,7 +70,7 @@ class PendampingController extends Controller
 
     public function customer()
     {
-        $guides = GuideItems::with('service.pelanggan')->get();
+        $guides = Guide::with('service.pelanggan')->get();
         return view('handling.pendamping.customer', compact('guides'));
     }
 }

@@ -448,6 +448,7 @@
                             <th>Jumlah</th>
                             <th>Kurs</th>
                             <th>Hasil</th>
+                            <th>Tanggal penyerahan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -459,6 +460,7 @@
                             <td>{{ $item->jumlah_input }}</td>
                             <td>{{ $item->kurs }}</td>
                             <td>{{ $item->hasil }}</td>
+                            <td>{{ $item->tanggal_penyerahan }}</td>
                         </tr>
                         @endforeach
                     </tbody>

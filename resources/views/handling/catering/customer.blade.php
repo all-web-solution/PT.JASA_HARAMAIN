@@ -197,9 +197,10 @@
                                 {{-- <th>Harga</th> --}}
                                 <th>Jumlah</th>
                                 {{-- <th>Total Harga</th> --}}
-                                <th>PJ</th>
+                                {{-- <th>PJ</th> --}}
+                                <th>Dari tanggal</th>
+                                <th>Sampai tanggal</th>
                                 <th>Status</th>
-                                <th>Tanggal Pesan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -212,13 +213,10 @@
                                     {{-- <td>Rp {{ number_format($item->mealItem->price, 0, ',', '.') }}</td> --}}
                                     <td>{{ $item->jumlah }}</td>
                                     {{-- <td>Rp {{ number_format($item->total_price, 0, ',', '.') }}</td> --}}
-                                    <td>{{ $item->pj }}</td>
-                                    <td>
-                                        <span class="status-badge status-{{ strtolower($item->status) }}">
-                                            {{ ucfirst($item->status) }}
-                                        </span>
-                                    </td>
-                                    <td>{{ $item->created_at->format('d-m-Y H:i') }}</td>
+                                    <td>{{ $item->dari_tanggal }}</td>
+                                    <td>{{ $item->sampai_tanggal }}</td>
+                                    <td>{{ $item->status }}</td>
+
                                     <td>
                                         <a href="{{ route('catering.show', $item->id) }}" class="btn btn-info btn-sm">
                                             <i class="bi bi-eye"></i> Detail

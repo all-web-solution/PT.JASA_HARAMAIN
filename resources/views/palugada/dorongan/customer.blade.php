@@ -135,6 +135,7 @@
                             <th>No</th>
                             <th>Nama Customer</th>
                             <th>Dorongan yang Dipilih</th>
+                            <th>Tanggal pelaksanaan</th>
                             <th>Jumlah</th>
                         </tr>
                     </thead>
@@ -144,6 +145,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->service->pelanggan->nama_travel }}</td>
                                 <td>{{ $item->dorongan->name }}</td>
+                                <td>{{ $item->tanggal_pelaksanaan }}</td>
                                 <td>{{ $item->jumlah }}</td>
                             </tr>
                         @empty

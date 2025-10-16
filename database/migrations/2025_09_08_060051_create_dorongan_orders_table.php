@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreignId('dorongan_id')->constrained('dorongans')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('jumlah');
             $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
+            $table->date('tanggal_pelaksanaan');
             $table->timestamps();
         });
     }

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('price');
             $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
+            $table->date('tanggal_pelaksanaan');
             $table->timestamps();
         });
     }
