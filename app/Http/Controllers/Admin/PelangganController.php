@@ -40,15 +40,6 @@ class PelangganController extends Controller
         $bulan = request()->get('bulan');
         $tahun = request()->get('tahun');
 
-        // $pelanggans = Pelanggan::with(['services.orders' => function($q) use ($bulan, $tahun) {
-        //     if ($bulan) {
-        //         $q->whereMonth('tanggal', $bulan);
-        //     }
-        //     if ($tahun) {
-        //         $q->whereYear('tanggal', $tahun);
-        //     }
-        // }])->paginate(10);
-
         $pelanggans = $query->latest()->paginate(10);
 
         return view('admin.pelanggan.index', compact(
