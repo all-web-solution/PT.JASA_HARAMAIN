@@ -291,6 +291,7 @@
             gap: 8px;
             transition: all 0.3s ease;
             border: none;
+            text-decoration: none;
         }
 
         .btn-add-new:hover {
