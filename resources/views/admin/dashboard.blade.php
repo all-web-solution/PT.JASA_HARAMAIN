@@ -112,7 +112,7 @@
             <x-card-component title="Total Travel" :count="\App\Models\Pelanggan::count()" icon="bi bi-currency-dollar"
                 iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
 
-            <x-card-component title="Total Service" :count="\App\Models\Service::count()" icon="bi bi-currency-dollar"
+            <x-card-component title="Total Service" :count="12" icon="bi bi-currency-dollar"
                 iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
 
             <x-card-component title="Total Request" :count="\App\Models\Service::count()" icon="bi bi-currency-dollar"
