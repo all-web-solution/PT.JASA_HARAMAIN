@@ -19,7 +19,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.services*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('admin.services*') || request()->routeIs('admin.service*') || request()->routeIs('services*') || request()->routeIs('service*') ? 'active' : '' }}"
                     href="{{ route('admin.services') }}">
                     <i class="bi bi-box-seam"></i> SERVICES
                 </a>
@@ -31,7 +31,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('user.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('user.index*') || request()->routeIs('user*') ? 'active' : '' }}"
                     href="{{ route('user.index') }}">
                     <i class="bi bi-people-fill"></i> USERS
                 </a>
