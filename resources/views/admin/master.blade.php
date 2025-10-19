@@ -7,6 +7,9 @@
     <title>@yield('title', 'Dashboard') - PT JASA HARAMAIN</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="shortcut icon"
+        href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpt_szUHH8I0_9l7WQogvfUeAdmF66ZHl42Q&s"
+        type="image/x-icon">
     <style>
         :root {
             --haramain-primary: #0d47a1;
@@ -177,23 +180,24 @@
         /* Responsive adjustments */
         @media (max-width: 992px) {
             .sidebar {
-        transform: translateX(-100%);
-        width: 260px;
-        transition: transform 0.3s ease;
-    }
+                transform: translateX(-100%);
+                width: 260px;
+                transition: transform 0.3s ease;
+            }
 
-    .sidebar.show {
-        transform: translateX(0);
-        box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
-    }
+            .sidebar.show {
+                transform: translateX(0);
+                box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+            }
 
-    .main-content {
-        margin-left: 0;
-    }
+            .main-content {
+                margin-left: 0;
+            }
 
-    .sidebar-toggle {
-        display: block;
-    }
+            .sidebar-toggle {
+                display: block;
+            }
+
             .sidebar {
                 transform: translateX(-100%);
                 width: 260px;
@@ -243,7 +247,8 @@
                 font-size: 1rem;
                 margin-right: 10px;
             }
-            .title-customer{
+
+            .title-customer {
                 display: none;
             }
         }
@@ -287,18 +292,21 @@
         .sidebar.show {
             animation: slideIn 0.3s ease forwards;
         }
-        @media (width:320px){
-            #card-reponsive{
+
+        @media (width:320px) {
+            #card-reponsive {
                 width: 300px;
 
             }
-            #cards-dashboard{
+
+            #cards-dashboard {
                 display: block;
             }
-            #charts{
+
+            #charts {
                 display: none;
             }
-           
+
         }
     </style>
     @stack('styles')
