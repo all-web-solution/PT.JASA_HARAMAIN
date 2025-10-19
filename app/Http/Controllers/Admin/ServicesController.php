@@ -95,6 +95,8 @@ class ServicesController extends Controller
         $deal = $dealQuery->get();
 
         $services = $nego->merge($deal);
+        $query = Service::query();
+        $services = $query->latest()->paginate(10);
 
         return view('admin.services.index', compact('services'));
     }
