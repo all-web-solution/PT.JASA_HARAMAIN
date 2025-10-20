@@ -29,11 +29,13 @@ use App\Models\DoronganOrder;
 use App\Models\TypeHotel;
 use Illuminate\Support\Facades\DB;
 use App\Models\Badal;
+use App\Models\Document;
 use App\Models\DocumentChildren;
 use App\Models\HandlingHotel;
 use App\Models\HandlingPlanes;
 use App\Models\WakafCustomer;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ServicesController extends Controller
 {
@@ -161,12 +163,12 @@ class ServicesController extends Controller
             'sisa_hutang' => $totalAmount,
             'status_pembayaran' => $totalAmount == 0 ? 'lunas' : 'belum_bayar',
         ]);
-        if ($status === 'deal') {
-            return redirect()->route('service.uploadBerkas', [
-                'service_id' => $service->id,
-                'total_jamaah' => $request->total_jamaah,
-            ])->with('success', 'Data service berhasil disimpan.');
-        }
+        // if ($status === 'deal') {
+        //     return redirect()->route('service.uploadBerkas', [
+        //         'service_id' => $service->id,
+        //         'total_jamaah' => $request->total_jamaah,
+        //     ])->with('success', 'Data service berhasil disimpan.');
+        // }
         return redirect()->route('admin.services')->with('success', 'Data nego berhasil diperbarui.');
 
     }
@@ -559,6 +561,7 @@ public function storeBerkas(Request $request, $id)
                             'service_id' => $service->id,
                             'content_id' => $contentId,
                             'jumlah' => $jumlah,
+                            'keterangan' => $request->keterangan,
                         ]);
                     }
                 }
@@ -1208,46 +1211,100 @@ private function handleTourItems(Request $request, Service $service)
     }
 }
 
-    private function handleDocumentItems(Request $request, Service $service)
-    {
-        if ($request->filled('dokumen_id')) {
-            if ($request->hasFile('paspor_dokumen')) {
-                $paspordokumen = $request->file('paspor_dokumen')->store('/', 'public');
+   private function handleDocumentItems(Request $request, Service $service)
+{
+    // 1. TANGANI UPLOAD FILE (DAN SIMPAN KE SERVICE)
+    // Asumsi: Kolom 'paspor_dokumen' & 'pas_foto_dokumen' ada di tabel 'services'
+    $fileData = [];
+    if ($request->hasFile('paspor_dokumen')) {
+        // Opsional: Hapus file lama jika ada sebelum menyimpan yang baru
+        if ($service->paspor_dokumen) {
+             Storage::disk('public')->delete($service->paspor_dokumen);
+        }
+        $fileData['paspor_dokumen'] = $request->file('paspor_dokumen')->store('service-docs', 'public'); // Simpan ke folder service-docs
+    }
+    if ($request->hasFile('pas_foto_dokumen')) {
+        // Opsional: Hapus file lama
+         if ($service->pas_foto_dokumen) {
+             Storage::disk('public')->delete($service->pas_foto_dokumen);
+         }
+        $fileData['pas_foto_dokumen'] = $request->file('pas_foto_dokumen')->store('service-docs', 'public'); // Simpan ke folder service-docs
+    }
+
+    // Update service HANYA jika ada file baru yang diupload
+    if (!empty($fileData)) {
+        $service->update($fileData); // Pastikan kolom ada di $fillable model Service
+    }
+
+    // Ini akan menampung semua ID item CustomerDocument yang valid untuk service ini
+    $validCustomerDocIds = [];
+
+    // ---------------------------------------------------------------------
+    // 2. PROSES DOKUMEN INDUK (YANG TIDAK PUNYA ANAK)
+    // Memindai semua input request untuk mencari key 'jumlah_doc_{id}'
+    // ---------------------------------------------------------------------
+    foreach ($request->all() as $key => $jumlah) {
+        // Cek jika nama input adalah 'jumlah_doc_' dan nilainya (jumlah) valid
+        if (strpos($key, 'jumlah_doc_') === 0 && $jumlah > 0) {
+            // Ambil ID dari nama input (misal: 'jumlah_doc_12' -> '12')
+            $documentId = substr($key, 11);
+            $document = Document::find($documentId); // Cari dokumen induk
+
+            if ($document) {
+                // Simpan (atau update jika sudah ada)
+                $customerDoc = $service->documents()->updateOrCreate(
+                    [
+                        'document_id' => $documentId,
+                        'document_children_id' => null // Tandai sebagai item induk
+                    ],
+                    [
+                        'jumlah' => $jumlah,
+                        'harga'  => $document->price ?? 0, // Ambil harga dari induk, default 0 jika null
+                    ]
+                );
+                // Simpan ID yang baru dibuat/diupdate
+                $validCustomerDocIds[] = $customerDoc->id;
             }
-            if ($request->hasFile('pas_foto_dokumen')) {
-                $pasfotodokumen = $request->file('pas_foto_dokumen')->store('/', 'public');
-            }
-            foreach ($request->dokumen_id as $docId) {
-                foreach ($request->child_documents as $child) {
-                    if ($child) {
-                        $itemChild = DocumentChildren::find($child);
-                        $jumlah = $request->input("jumlah_doc_child_{$itemChild->id}", 1);
-                        if ($jumlah > 0) {
-                            $service->documents()->create([
-                                'document_id' => $docId,
-                                'document_children_id' => $itemChild->id,
-                                'jumlah' => $jumlah,
-                                'harga' => $itemChild->price,
+        }
+    }
 
-                            ]);
-                        }
-                    } {
-                        $jumlah = $request->input("jumlah_doc_{$docId}", 1);
-                        if ($jumlah > 0) {
-                            $service->documents()->create([
-                                'document_id' => $docId,
-                                'document_children_id' => null,
-                                'jumlah' => $jumlah,
-                                'harga' => '0',
-
-
-                            ]);
-                        }
-                    }
+    // ---------------------------------------------------------------------
+    // 3. PROSES DOKUMEN ANAK (YANG DICENTANG DAN ADA JUMLAHNYA)
+    // ---------------------------------------------------------------------
+    // Cek apakah ada input jumlah_child_doc (array) yang dikirim
+    if ($request->has('jumlah_child_doc') && is_array($request->jumlah_child_doc)) {
+        // Loop melalui array jumlah_child_doc[CHILD_ID] => JUMLAH
+        foreach ($request->jumlah_child_doc as $childId => $jumlah) {
+            // Pastikan jumlah valid dan anak dokumennya ada
+            if ($jumlah > 0) {
+                $itemChild = DocumentChildren::find($childId);
+                if ($itemChild) {
+                    // Simpan (atau update jika sudah ada)
+                    $customerDoc = $service->documents()->updateOrCreate(
+                        [
+                            // Cari berdasarkan ID anak
+                            'document_children_id' => $itemChild->id
+                        ],
+                        [
+                            'document_id' => $itemChild->document_id, // Simpan ID induknya dari relasi
+                            'jumlah'      => $jumlah, // <-- AMBIL JUMLAH DARI INPUT BARU
+                            'harga'       => $itemChild->price ?? 0, // Ambil harga dari anak, default 0 jika null
+                        ]
+                    );
+                    // Simpan ID yang baru dibuat/diupdate
+                    $validCustomerDocIds[] = $customerDoc->id;
                 }
             }
         }
     }
+
+    // ---------------------------------------------------------------------
+    // 4. PEMBERSIHAN (Hapus item yang tidak dipilih lagi)
+    // ---------------------------------------------------------------------
+    $service->documents()
+            ->whereNotIn('id', $validCustomerDocIds)
+            ->delete();
+}
 
 
     private function handleReyalItems(Request $request, Service $service)
