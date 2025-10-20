@@ -546,7 +546,7 @@
                             <th>Customer</th>
                             <th>Tanggal Keberangkatan</th>
                             <th>Tanggal Kepulangan</th>
-                            <th>Jumlah</th>
+                            <th>Jumlah Jamaah</th>
                             <th>Layanan</th>
                             <th>Status</th>
                             <th> </th>
