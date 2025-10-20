@@ -663,9 +663,8 @@
                                             <label class="form-label">Jumlah {{ $document->name }}</label>
                                             <input type="number" class="form-control"
                                                 name="jumlah_doc_{{ $document->id }}" min="1">
-                                            <label class="form-label">Keterangan {{ $document->name }}</label>
-                                            <input type="text" class="form-control"
-                                                name="keterangan_doc_{{ $document->id }}">
+
+                                                
                                         </div>
                                     @endif
                                 @endforeach
@@ -785,6 +784,9 @@
                                             data-id="{{ $content->id }}" data-name="{{ $content->name }}"
                                             data-price="{{ $content->price }}" data-type="konten"
                                             name="jumlah_konten[{{ $content->id }}]" min="1">
+                                        <label for="keterangan_konten" class="form-label mt-3">Keterangan</label>
+                                        <input type="text" class="form-control"
+                                            name="keterangan_konten[{{ $content->id }}]">
                                     </div>
                                 @endforeach
                             </div>
@@ -1270,10 +1272,23 @@
                             newForm.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border',
                                 'rounded');
                             newForm.innerHTML =
-                                `<label class="form-label">Jumlah ${name}</label><input type="number" class="form-control jumlah-child-doc" data-parent-id="${parentId}" data-child-id="${childId}" data-name="${name}" data-price="${price}" min="1" value="1"><label class="form-label mt-2">Keterangan</label><input type="text" class="form-control" name="keterangan_doc_child_${childId}">`;
+                                `<label class="form-label">Jumlah ${name}</label>
+             <input type="number"
+                    class="form-control jumlah-child-doc"
+                    data-parent-id="${parentId}"
+                    data-child-id="${childId}"
+                    data-name="${name}"
+                    data-price="${price}"
+                    min="1"
+                    value="1"
+                    name="jumlah_child_doc[${childId}]">`; // <-- TAMBAHKAN NAME ATTRIBUTE INI
                             formContainer.appendChild(newForm);
                         } else {
                             existingForm.classList.remove('hidden');
+                            const inputNumber = existingForm.querySelector('input[type="number"]');
+                            if (inputNumber && !inputNumber.hasAttribute('name')) {
+                                inputNumber.setAttribute('name', `jumlah_child_doc[${childId}]`);
+                            }
                         }
                         updateItemInCart(cartId, `Dokumen - ${name}`, 1, price);
                     } else {
@@ -1500,27 +1515,27 @@
             });
         });
 
-        // Logic untuk dinamisasi checkbox
-        function toggleCheckboxOnClick(selector) {
-            const items = document.querySelectorAll(selector);
-            items.forEach(function(item) {
-                item.addEventListener("click", function(e) {
-                    // Biar kalau yang diklik itu input-nya sendiri, gak dobel toggle
-                    if (e.target.tagName.toLowerCase() === 'input') return;
+                    // Logic untuk dinamisasi checkbox
+                    function toggleCheckboxOnClick(selector) {
+                        const items = document.querySelectorAll(selector);
+                        items.forEach(function(item) {
+                            item.addEventListener("click", function(e) {
+                                // Biar kalau yang diklik itu input-nya sendiri, gak dobel toggle
+                                if (e.target.tagName.toLowerCase() === 'input') return;
 
-                    const checkbox = item.querySelector('input[type="checkbox"]');
-                    if (checkbox) {
-                        checkbox.checked = !checkbox.checked;
+                                const checkbox = item.querySelector('input[type="checkbox"]');
+                                if (checkbox) {
+                                    checkbox.checked = !checkbox.checked;
+                                }
+                            });
+                        });
                     }
-                });
-            });
-        }
 
-        // --- panggil di mana pun ---
-        toggleCheckboxOnClick(".document-item");
-        toggleCheckboxOnClick(".type-item");
-        toggleCheckboxOnClick(".child-item");
-        toggleCheckboxOnClick(".service-tour")
-        toggleCheckboxOnClick(".wakaf-item")
+                    // --- panggil di mana pun ---
+                    toggleCheckboxOnClick(".document-item");
+                    toggleCheckboxOnClick(".type-item");
+                    toggleCheckboxOnClick(".child-item");
+                    toggleCheckboxOnClick(".service-tour")
+                    toggleCheckboxOnClick(".wakaf-item")
     </script>
 @endsection
