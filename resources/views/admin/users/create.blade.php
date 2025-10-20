@@ -377,6 +377,7 @@
                             <option value="reyal" class="form-control">Reyal</option>
                             <option value="palugada" class="form-control">Palugada</option>
                             <option value="konten dan dokumentasi" class="form-control">Konten dan dokumentasi</option>
+                            <option value="keuangan" class="form-control">Keuangan</option>
                         </select>
                     </div>
                 </div>

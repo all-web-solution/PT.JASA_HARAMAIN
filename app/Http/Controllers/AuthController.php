@@ -35,6 +35,8 @@ class AuthController extends Controller
             return redirect()->route('wakaf.index');
         }elseif($user->role === 'konten dan dokumentasi'){
              return redirect()->route('content.index');
+        }elseif($user->role === 'keuangan'){
+             return redirect()->route('content.index');
         }
 
         return redirect()->route('login')->withErrors(['email' => 'Role tidak dikenali.']);

@@ -139,6 +139,30 @@
         </div>
     </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("password");
+        const icon = togglePassword.querySelector("i");
+
+        togglePassword.addEventListener("click", function () {
+            const isPassword = passwordInput.type === "password";
+            passwordInput.type = isPassword ? "text" : "password";
+
+            // Ganti ikon
+            icon.classList.toggle("fa-eye");
+            icon.classList.toggle("fa-eye-slash");
+
+            // Opsional: ubah warna saat aktif
+            if (!isPassword) {
+                icon.classList.remove("text-indigo-600");
+            } else {
+                icon.classList.add("text-indigo-600");
+            }
+        });
+    });
+</script>
+
 
 </body>
 
