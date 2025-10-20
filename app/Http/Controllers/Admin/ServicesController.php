@@ -1095,7 +1095,7 @@ private function handleTransportationItems(Request $request, Service $service)
                     'rute' => $request->rute[$j] ?? null,
                     'maskapai' => $request->maskapai[$j] ?? null,
                     'harga' => $request->harga_tiket[$j] ?? null,
-                    'keterangan' => $request->keterangan[$j] ?? null,
+                    'keterangan' => $request->keterangan_tiket[$j] ?? null,
                     'jumlah_jamaah' => $request->jumlah[$j] ?? 0,
                     'tiket_berangkat' => $this->storeFileIfExists($request->file('tiket_berangkat', []), $j, 'tiket'),
                     'tiket_pulang' => $this->storeFileIfExists($request->file('tiket_pulang', []), $j, 'tiket'),

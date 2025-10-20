@@ -505,7 +505,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label fw-semibold">Keterangan</label>
-                                                    <input type="text" class="form-control" name="keterangan[]"
+                                                    <input type="text" class="form-control" name="keterangan_tiket[]"
                                                         placeholder="Keterangan">
                                                 </div>
                                                 <div class="col-12">
@@ -613,9 +613,9 @@
                                         </div>
                                     </div>
                                     <div class="form-group mt-2">
-                                        <label class="form-label">Jumlah kamar</label>
+                                        <label class="form-label">Total kamar</label>
                                         <input type="number" class="form-control" name="jumlah_kamar[0]"
-                                            min="0">
+                                            min="0" readonly>
                                     </div>
                                     <div class="form-group mt-2">
                                         <label class="form-label">Keterangan</label>
@@ -1252,37 +1252,112 @@
                     routeSelectDiv.classList.remove('hidden');
                 }
 
-                // Hotel Type Click
-                const typeItem = e.target.closest('.type-item');
-                if (typeItem) {
-                    const hotelForm = typeItem.closest('.hotel-form');
-                    const dynamicContainer = hotelForm.querySelector('.type-input-container');
-                    const typeId = typeItem.dataset.typeId;
-                    const name = typeItem.dataset.name;
-                    const price = parseInt(typeItem.dataset.price) || 0;
-                    const cartId = `hotel-${hotelForm.dataset.index}-type-${typeId}`;
-                    const existingInputDiv = dynamicContainer.querySelector(`[data-type-id="${typeId}"]`);
+               // Asumsi 'e' adalah event object dari click event
+// Asumsi 'cart' adalah objek keranjang global
 
-                    if (existingInputDiv) {
-                        existingInputDiv.remove();
-                        typeItem.classList.remove('selected');
-                        delete cart[cartId];
-                    } else {
-                        typeItem.classList.add('selected');
-                        const inputDiv = document.createElement('div');
-                        inputDiv.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border',
-                            'rounded');
-                        inputDiv.dataset.typeId = typeId;
-                        inputDiv.innerHTML =
-                            `<label class="form-label">Jumlah Kamar (${name})</label><input type="number" class="form-control" name="jumlah_type[]" min="1" value="1" data-is-qty="true" data-type-id="${typeId}"><label class="form-label mt-2">Harga (${name})</label><input type="text" class="form-control" name="harga_kamar[${hotelForm.dataset.index}][${typeId}]" value="${price.toLocaleString('id-ID')}" readonly>`;
-                        dynamicContainer.appendChild(inputDiv);
-                        const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value
-                            .trim() || `Hotel ${hotelForm.dataset.index}`;
-                        updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${name}`, 1, price);
-                    }
-                    updateCartUI();
-                }
+// --- Fungsi Baru: Menghitung dan Memperbarui Total Kamar ---
+function updateJumlahKamarTotal(hotelForm) {
+    let totalKamar = 0;
+    // Cari semua input kuantitas (jumlah) tipe kamar di dalam container dinamis
+    const qtyInputs = hotelForm.querySelectorAll('.type-input-container input[data-is-qty="true"]');
 
+    qtyInputs.forEach(input => {
+        // Pastikan nilai adalah angka dan minimal 0
+        totalKamar += parseInt(input.value) || 0;
+    });
+
+    // Cari input 'Jumlah kamar' utama (yang ingin Anda perbarui)
+    // Asumsi: name-nya adalah 'jumlah_kamar[index]'
+    const jumlahKamarInput = hotelForm.querySelector('input[name^="jumlah_kamar["]');
+
+    if (jumlahKamarInput) {
+        jumlahKamarInput.value = totalKamar;
+    }
+}
+
+// --- Fungsi untuk menambahkan event listener ke input kuantitas yang baru ---
+function addQtyChangeListener(inputElement, hotelForm) {
+    inputElement.addEventListener('input', function() {
+        // Saat kuantitas berubah, perbarui cart dan total kamar
+        const typeId = this.dataset.typeId;
+        const newQty = parseInt(this.value) || 0;
+
+        // Cari elemen 'type-item' yang terkait untuk mendapatkan nama dan harga
+        const typeItem = hotelForm.querySelector(`.type-item[data-type-id="${typeId}"]`);
+
+        if (typeItem) {
+            const price = parseInt(typeItem.dataset.price) || 0;
+            const name = typeItem.dataset.name;
+            const cartId = `hotel-${hotelForm.dataset.index}-type-${typeId}`;
+            const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value.trim() || `Hotel ${hotelForm.dataset.index}`;
+
+            // Perbarui Cart
+            if (newQty > 0) {
+                 updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${name}`, newQty, price);
+            } else {
+                 // Jika quantity 0, hapus dari cart dan DOM jika perlu
+                 // Namun, karena min="1" pada input, ini jarang terjadi, tapi baik untuk antisipasi
+                 delete cart[cartId];
+            }
+        }
+
+        // Perbarui Total Jumlah Kamar
+        updateJumlahKamarTotal(hotelForm);
+
+        // Perbarui UI Cart (Total Harga, dll.)
+        updateCartUI();
+    });
+}
+
+
+// --- Kode Hotel Type Click yang dimodifikasi ---
+
+// Hotel Type Click
+const typeItem = e.target.closest('.type-item');
+if (typeItem) {
+    const hotelForm = typeItem.closest('.hotel-form');
+    const dynamicContainer = hotelForm.querySelector('.type-input-container');
+    const typeId = typeItem.dataset.typeId;
+    const name = typeItem.dataset.name;
+    const price = parseInt(typeItem.dataset.price) || 0;
+    const cartId = `hotel-${hotelForm.dataset.index}-type-${typeId}`;
+    const existingInputDiv = dynamicContainer.querySelector(`[data-type-id="${typeId}"]`);
+
+    if (existingInputDiv) {
+        // --- LOGIKA PENGHAPUSAN ---
+        existingInputDiv.remove();
+        typeItem.classList.remove('selected');
+        delete cart[cartId];
+    } else {
+        // --- LOGIKA PENAMBAHAN ---
+        typeItem.classList.add('selected');
+        const inputDiv = document.createElement('div');
+        inputDiv.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border',
+            'rounded');
+        inputDiv.dataset.typeId = typeId;
+        inputDiv.innerHTML =
+            `<label class="form-label">Jumlah Kamar (${name})</label><input type="number" class="form-control qty-input-hotel" name="jumlah_type[]" min="1" value="1" data-is-qty="true" data-type-id="${typeId}"><label class="form-label mt-2">Harga (${name})</label><input type="text" class="form-control" name="harga_kamar[${hotelForm.dataset.index}][${typeId}]" value="${price.toLocaleString('id-ID')}" readonly>`;
+        dynamicContainer.appendChild(inputDiv);
+
+        // Cari input kuantitas yang baru dibuat
+        const newQtyInput = inputDiv.querySelector('input[data-is-qty="true"]');
+
+        // Tambahkan event listener ke input kuantitas yang baru
+        addQtyChangeListener(newQtyInput, hotelForm);
+
+        const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value
+            .trim() || `Hotel ${hotelForm.dataset.index}`;
+
+        // Tambahkan ke Cart (dengan qty=1)
+        updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${name}`, 1, price);
+    }
+
+    // --- Panggil updateJumlahKamarTotal setelah penambahan/penghapusan ---
+    updateJumlahKamarTotal(hotelForm);
+
+    // Perbarui UI Cart (Total Harga, dll.)
+    updateCartUI();
+}
                 // === REVISI: Document Click (Multi-Choice) ===
                 const documentItem = e.target.closest('.document-item');
                 if (documentItem) {
