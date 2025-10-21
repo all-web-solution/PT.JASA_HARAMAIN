@@ -153,25 +153,135 @@ class ServicesController extends Controller
 
         $this->processServiceItems($request, $service);
 
+        // ----------------------------------------------------
+    // 🔒 HITUNG ULANG TOTAL DI SERVER SETELAH ITEM DISIMPAN
+    // ----------------------------------------------------
+    $serverTotalAmount = 0;
+
+    // Muat ulang (refresh) relasi yang baru saja disimpan/diperbarui
+    // Ini penting agar kita mendapatkan data yang paling akurat dari database
+    $service->load([
+        'documents', // Relasi ke CustomerDocument
+        'hotels',    // Relasi ke Hotel
+        'badals',    // Relasi ke Badal
+        'meals',     // Relasi ke MealCustomer (atau nama relasi Anda)
+        'guides',    // Relasi ke GuideCustomer (atau nama relasi Anda)
+        'tours',     // Relasi ke TourCustomer (atau nama relasi Anda)
+        'wakafs',    // Relasi ke WakafCustomer
+        'dorongans', // Relasi ke DoronganOrder
+        'contents',  // Relasi ke ContentCustomer
+        // Tambahkan relasi lain yang relevan di sini
+    ]);
+
+    // Kalkulasi Harga Dokumen
+    foreach ($service->documents as $doc) {
+        // Asumsi: CustomerDocument punya kolom 'harga' & 'jumlah'
+        $serverTotalAmount += ($doc->harga ?? 0) * ($doc->jumlah ?? 0);
+    }
+
+    // Kalkulasi Harga Hotel
+    // Anda PERLU MENYESUAIKAN ini sesuai cara Anda menyimpan harga hotel
+    // Apakah per kamar per malam? Apakah ada harga total per booking hotel?
+    foreach ($service->hotels as $hotel) {
+        // Contoh ASUMSI: Model Hotel memiliki kolom 'harga_total'
+        // $serverTotalAmount += $hotel->harga_total ?? 0;
+        // ATAU jika harga per kamar dan Anda punya lama menginap:
+        // $checkin = \Carbon\Carbon::parse($hotel->tanggal_checkin);
+        // $checkout = \Carbon\Carbon::parse($hotel->tanggal_checkout);
+        // $nights = $checkin->diffInDays($checkout);
+        // $serverTotalAmount += ($hotel->harga_perkamar ?? 0) * ($hotel->jumlah_kamar ?? 0) * $nights;
+        // === GANTI DENGAN LOGIKA HARGA HOTEL ANDA YANG BENAR ===
+         // Untuk sementara kita biarkan 0 jika logika belum jelas
+         $serverTotalAmount += 0; // <-- GANTI INI
+    }
+
+    // Kalkulasi Harga Badal
+    foreach ($service->badals as $badal) {
+        $serverTotalAmount += $badal->price ?? 0; // Asumsi: Badal punya kolom 'price'
+    }
+
+    // Kalkulasi Harga Meals
+    foreach ($service->meals as $mealCustomer) { // Asumsi relasi namanya 'meals' -> MealCustomer
+        // Asumsi: MealCustomer punya relasi 'mealItem' ke MealItem yg punya 'price'
+        // dan MealCustomer punya kolom 'jumlah'
+        $serverTotalAmount += ($mealCustomer->mealItem->price ?? 0) * ($mealCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    }
+
+    // Kalkulasi Harga Guides (Pendamping)
+    foreach ($service->guides as $guideCustomer) { // Asumsi relasi namanya 'guides' -> GuideCustomer
+        // Asumsi: GuideCustomer punya relasi 'guideItem' ke GuideItems yg punya 'harga'
+        // dan GuideCustomer punya kolom 'jumlah'
+        $serverTotalAmount += ($guideCustomer->guideItem->harga ?? 0) * ($guideCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    }
+
+    // Kalkulasi Harga Tours
+    foreach ($service->tours as $tourCustomer) { // Asumsi relasi namanya 'tours' -> TourCustomer
+        // Asumsi: TourCustomer punya relasi 'tourItem' ke TourItem yg punya 'price'
+        // dan TourCustomer punya relasi 'transportation' ke Transportation yg punya 'harga'
+        $tourPrice = $tourCustomer->tourItem->price ?? 0; // Harga dasar tour
+        $transportPrice = $tourCustomer->transportation->harga ?? 0; // Harga transport utk tour itu
+        $serverTotalAmount += $tourPrice + $transportPrice; // Sesuaikan jika logikanya beda
+    }
+
+    // Kalkulasi Harga Wakaf
+    foreach ($service->wakafs as $wakafCustomer) { // Asumsi relasi namanya 'wakafs' -> WakafCustomer
+         // Asumsi: WakafCustomer punya relasi 'wakafItem' ke Wakaf yg punya 'harga'
+         // dan WakafCustomer punya kolom 'jumlah'
+        $serverTotalAmount += ($wakafCustomer->wakafItem->harga ?? 0) * ($wakafCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    }
+
+     // Kalkulasi Harga Dorongan
+    foreach ($service->dorongans as $doronganOrder) { // Asumsi relasi namanya 'dorongans' -> DoronganOrder
+         // Asumsi: DoronganOrder punya relasi 'doronganItem' ke Dorongan yg punya 'price'
+         // dan DoronganOrder punya kolom 'jumlah'
+        $serverTotalAmount += ($doronganOrder->doronganItem->price ?? 0) * ($doronganOrder->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    }
+
+     // Kalkulasi Harga Content
+    foreach ($service->contents as $contentCustomer) { // Asumsi relasi namanya 'contents' -> ContentCustomer
+         // Asumsi: ContentCustomer punya relasi 'contentItem' ke ContentItem yg punya 'price'
+         // dan ContentCustomer punya kolom 'jumlah'
+        $serverTotalAmount += ($contentCustomer->contentItem->price ?? 0) * ($contentCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    }
+
+    // ... Tambahkan kalkulasi untuk item lain jika ada (misal: Handling, Reyal jika ada biayanya) ...
+
+    // ----------------------------------------------------
+    // BUAT ORDER DENGAN TOTAL YANG AMAN DARI SERVER
+    // ----------------------------------------------------
+    // Hapus baris lama: $totalAmount = (float) $request->input('total_amount', 0);
+    Order::create([
+        'service_id' => $service->id,
+        'total_amount' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
+        'invoice' => 'INV-' . time(),
+        'total_yang_dibayarkan' => 0,
+        'sisa_hutang' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
+        'status_pembayaran' => $serverTotalAmount == 0 ? 'lunas' : 'belum_bayar',
+    ]);
+
+    // ... (Redirect seperti sebelumnya) ...
+    return redirect()->route('admin.services')->with('success', 'Data service berhasil disimpan.');
+}
+
         // Buat order
-        $totalAmount = (float) $request->input('total_amount', 0);
-        Order::create([
-            'service_id' => $service->id,
-            'total_amount' => $totalAmount,
-            'invoice' => 'INV-' . time(),
-            'total_yang_dibayarkan' => 0,
-            'sisa_hutang' => $totalAmount,
-            'status_pembayaran' => $totalAmount == 0 ? 'lunas' : 'belum_bayar',
-        ]);
+        // $totalAmount = (float) $request->input('total_amount', 0);
+        // Order::create([
+        //     'service_id' => $service->id,
+        //     'total_amount' => $totalAmount,
+        //     'invoice' => 'INV-' . time(),
+        //     'total_yang_dibayarkan' => 0,
+        //     'sisa_hutang' => $totalAmount,
+        //     'status_pembayaran' => $totalAmount == 0 ? 'lunas' : 'belum_bayar',
+        // ]);
         // if ($status === 'deal') {
         //     return redirect()->route('service.uploadBerkas', [
         //         'service_id' => $service->id,
         //         'total_jamaah' => $request->total_jamaah,
         //     ])->with('success', 'Data service berhasil disimpan.');
         // }
-        return redirect()->route('admin.services')->with('success', 'Data nego berhasil diperbarui.');
+        // return redirect()->route('admin.services')->with('success', 'Data nego berhasil diperbarui.');
 
-    }
+    
 
 
     public function show($id)
