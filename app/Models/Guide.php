@@ -15,9 +15,10 @@ class Guide extends Model
         'muthowif_sampai'
     ];
 
-     public function service(){
-        return $this->belongsTo(Service::class, 'id');
-    }
+   public function service()
+{
+    return $this->belongsTo(Service::class, 'service_id', 'id');
+}
     public function guideItem()
 {
     return $this->belongsTo(GuideItems::class, 'guide_id');

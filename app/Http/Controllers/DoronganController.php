@@ -11,6 +11,7 @@ class DoronganController extends Controller
 {
     public function index()
     {
+
         $items = Dorongan::with('dorongans')->get();
 
         return view('palugada.dorongan.index', compact('items'));
@@ -40,9 +41,15 @@ class DoronganController extends Controller
 
     public function customer()
     {
-        $data = DoronganOrder::with('dorongan')->get();
+        $AllData = DoronganOrder::with('dorongan')->get();
+        $data = $AllData->unique('service_id');
 
         return view('palugada.dorongan.customer', compact('data'));
+    }
+    public function customer_detail($id)
+    {
+       $doronganOrders = DoronganOrder::with('dorongan', 'service.pelanggan')->findOrFail($id);
+       return view('palugada.dorongan.customer_detail', compact('doronganOrders'));
     }
 
     public function edit(string $id)
@@ -77,5 +84,26 @@ class DoronganController extends Controller
         Session::flash('success', 'Dorongan deleted successfully!');
 
         return redirect()->route('dorongan.index');
+    }
+
+    public function showSupplier($id)
+    {
+        $content = Dorongan::findOrFail($id);
+        return view('palugada.dorongan.supplier', compact('content'));
+    }
+    public function createSupplier($id)
+    {
+        $content = Dorongan::findOrFail($id);
+        return view('palugada.dorongan.supplier_create', compact('content'));
+    }
+
+    public function storeSupplier(Request $request, $id)
+    {
+
+        $content = Dorongan::findOrFail($id);
+        $content->supplier = $request->input('name');
+        $content->harga_dasar = $request->input('price');
+        $content->save();
+        return redirect()->route('dorongan.supplier.show', $id);
     }
 }

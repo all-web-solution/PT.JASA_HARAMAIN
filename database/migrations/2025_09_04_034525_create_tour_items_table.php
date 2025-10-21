@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('tour_items', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('supplier')->nullable();
+            $table->string('harga_dasar')->nullable();
             $table->timestamps();
         });
     }

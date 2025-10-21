@@ -10,23 +10,18 @@ use App\Models\Service;
 
 class HotelController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = Hotel::query();
+ public function index()
+{
+    $hotels = Hotel::with('service')
+        ->select('id', 'service_id', 'tanggal_checkin', 'tanggal_checkout', 'nama_hotel', 'jumlah_kamar', 'harga_perkamar')
+        ->orderBy('service_id', 'asc')
+        ->get()
+        ->unique('service_id'); // hanya satu hotel per service
 
-        if ($request->has('search') && $request->search) {
-            $query->where('nama_hotel', 'like', '%' . $request->search . '%')
-                ->orWhere('service_id', 'like', '%' . $request->search . '%');
-        }
+    return view('hotel.index', compact('hotels'));
+}
 
-        // if ($request->has('status') && $request->status != 'Semua Status') {
-        //     $query->where('status', $request->status);
-        // }
 
-        $hotels = $query->paginate(10);
-
-        return view('hotel.index', compact('hotels'));
-    }
 
     public function create()
     {
@@ -58,8 +53,10 @@ class HotelController extends Controller
     // Add other methods like show, edit, update, destroy as needed
     public function show($id)
     {
-        $hotel = Hotel::findOrFail($id);
-        return view('hotel.show', compact('hotel'));
+       // Ambil service beserta seluruh hotelnya
+    $service = Service::with('hotels')->findOrFail($id);
+
+    return view('hotel.show', compact('service'));
     }
 
     public function edit($id)
@@ -74,7 +71,6 @@ class HotelController extends Controller
         $hotel = Hotel::findOrFail($id);
         $hotel->update([
             'harga_perkamar' => $request->harga,
-            'harga_type_custom_special_room' => $request->harga_type_custom_special_room
         ]);
 
         // 2. Jika hotel terhubung ke layanan (service)

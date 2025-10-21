@@ -323,93 +323,22 @@
                                 <div class="form-group">
                                     <label class="form-label">Nama Menu</label>
                                     <input type="text" class="form-control" name="name"
-                                        value="{{ $meal->mealItem->name }}" required>
+                                        value="{{ $meal->name }}" required>
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Harga</label>
                                     <input type="text" class="form-control" name="price"
-                                        value="{{ $meal->mealItem->price }}" required>
+                                        value="{{ $meal->price }}" required>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Data Service Section -->
-                    <div class="form-section">
-                        <h6 class="form-section-title">
-                            <i class="bi bi-building"></i> Data Layanan
-                        </h6>
 
-                        <div class="form-row">
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Pilih Travel (Service)</label>
-                                    <select name="service_id" class="form-control" required>
-                                        <option value="">-- Pilih Travel --</option>
-                                        @foreach ($services as $service)
-                                            <option value="{{ $service->id }}"
-                                                {{ $service->id == $meal->service_id ? 'selected' : '' }}>
-                                                {{ $service->unique_code }} - {{ $service->pelanggan->nama_travel }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Data Makanan Tambahan -->
-                    <div class="form-section">
-                        <h6 class="form-section-title">
-                            <i class="bi bi-person"></i> Data Tambahan
-                        </h6>
-
-                        <div class="form-row">
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Penanggung Jawab (PJ)</label>
-                                    <p class="form-control">{{ $meal->service->pelanggan->penanggung_jawab }}</p>
-                                </div>
-                            </div>
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Jumlah Kebutuhan</label>
-                                    <input type="number" class="form-control" name="jumlah" value="{{ $meal->jumlah }}"
-                                        required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Kebutuhan sebagai Catatan Pelanggan -->
-                        <div class="form-row">
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Catatan Kebutuhan</label>
-                                    <textarea class="form-control" name="kebutuhan" id="kebutuhan" rows="3">{{ $meal->kebutuhan }}</textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Status -->
-                        <div class="form-row">
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Status</label>
-                                    <select name="status" class="form-control" required>
-                                        <option value="proses" {{ $meal->status == 'proses' ? 'selected' : '' }}>Proses
-                                        </option>
-                                        <option value="cancel" {{ $meal->status == 'cancel' ? 'selected' : '' }}>Cancel
-                                        </option>
-                                        <option value="selesai" {{ $meal->status == 'selesai' ? 'selected' : '' }}>Selesai
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                    
                     <button type="submit" class="btn btn-submit">
                         <i class="bi bi-check-circle"></i> Simpan Perubahan
                     </button>

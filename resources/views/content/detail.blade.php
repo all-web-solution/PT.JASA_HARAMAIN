@@ -188,6 +188,11 @@
                                                     <i class="bi bi-trash-fill"></i>
                                                 </button>
                                             </form>
+
+                                             <a href="{{ route('visa.document.customer.detail.supplier', $child->id) }}" class="btn btn-primary btn-sm"
+                                            title="Supplier">
+                                            <i class="bi bi-file-earmark-plus"></i>
+                                        </a>
                                         </div>
                                     </td>
                                 </tr>

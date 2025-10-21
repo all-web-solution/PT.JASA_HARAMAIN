@@ -909,8 +909,8 @@
                                                 <div class="service-name">{{ $trans->nama }}</div>
                                                 <div class="service-desc">Harga: Rp {{ number_format($trans->harga) }}
                                                 </div>
-                                                {{-- <input type="checkbox" name="tour_transport[{{ $tour->id }}]"
-                                                    value="{{ $trans->id }}"> --}}
+                                                <input type="checkbox" name="tour_transport[{{ $tour->id }}]"
+                                                    value="{{ $trans->id }}">
                                             </div>
                                         @endforeach
                                     </div>
@@ -1158,7 +1158,7 @@
                     <div class="col-md-6"><label class="form-label fw-semibold">Tanggal Keberangkatan</label><input type="date" class="form-control" name="tanggal[]"></div>
                     <div class="col-md-6"><label class="form-label fw-semibold">Rute</label><input type="text" class="form-control" name="rute[]" placeholder="Contoh: CGK - JED"></div>
                     <div class="col-md-6"><label class="form-label fw-semibold">Maskapai</label><input type="text" class="form-control" name="maskapai[]" placeholder="Nama maskapai"></div>
-                    <div class="col-md-6"><label class="form-label fw-semibold">Keterangan</label><input type="text" class="form-control" name="keterangan[]" placeholder="Keterangan"></div>
+                    <div class="col-md-6"><label class="form-label fw-semibold">Keterangan</label><input type="text" class="form-control" name="keterangan_tiket[]" placeholder="Keterangan"></div>
                     <div class="col-12"><label class="form-label">Jumlah (Jamaah)</label><input type="number" class="form-control" name="jumlah[]"></div>
                 </div>
                 <div class="mt-3 text-end"><button type="button" class="btn btn-danger btn-sm removeTicket">Hapus Tiket</button></div>

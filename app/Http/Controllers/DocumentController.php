@@ -126,7 +126,34 @@ class DocumentController extends Controller
 
     public function customer()
     {
-        $customers = CustomerDocument::all();
+        $AllCustomers = CustomerDocument::all();
+        $customers = $AllCustomers->unique('service_id');
         return view('content.customer', compact('customers'));
+    }
+    public function detail($id)
+    {
+        $customerDocument = CustomerDocument::with('service.pelanggan', 'document', 'documentChild')->findOrFail($id);
+        return view('content.customer_detail', compact('customerDocument'));
+    }
+
+    public function supplier($id)
+    {
+        $documentChildren = DocumentChildren::findOrFail($id);
+        return view('content.supplier', compact('documentChildren'));
+    }
+    public function supplier_create($id)
+    {
+        $documentChildren = DocumentChildren::findOrFail($id);
+        return view('content.supplier_create', compact('documentChildren'));
+    }
+    public function supplier_store($id)
+    {
+        $children = DocumentChildren::findOrFail($id);
+        $children->update([
+            'supplier' => request()->input('name'),
+            'harga_dasar' => request()->input('price'),
+        ]);
+        return redirect()->route('visa.document.customer.detail.supplier', $children->id);
+
     }
 }

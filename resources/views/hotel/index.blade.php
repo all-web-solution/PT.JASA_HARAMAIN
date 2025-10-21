@@ -414,68 +414,33 @@
                             <th>Checkin</th>
                             <th>Checkout</th>
                             <th>Nama Hotel</th>
-                            <th>Harga perkamar</th>
-                            <th>Type kamar</th>
-                            <th>Total type kamar</th>
 
-                            <th>Catatan</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($hotels as $hotel)
                             <tr>
-                                <td>{{ ($hotels->currentPage() - 1) * $hotels->perPage() + $loop->iteration }}</td>
-                                <td>{{ $hotel->service->pelanggan->nama_travel }}</td>
-                                <td>{{ $hotel->tanggal_checkin }}</td>
-                                <td>{{ $hotel->tanggal_checkout }}</td>
-                                <td>{{ $hotel->nama_hotel }}</td>
-                                <td>{{ $hotel->harga_perkamar }}</td>
-                                <td>{{ $hotel->type }}</td>
-                                <td>{{ $hotel->jumlah_type }}</td>
-                                <td>{{ $hotel->catatan }}</td>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{$hotel->service->pelanggan->nama_travel ?? '-' }}</td>
+                                <td>{{ $hotel->tanggal_checkin ?? '-' }}</td>
+                                <td>{{ $hotel->tanggal_checkout ?? '-' }}</td>
+                                <td>{{ $hotel->nama_hotel ?? '-' }}</td>
                                 <td>
-                                    <a href="{{ route('hotel.edit', $hotel->id) }}">
-                                        <button class="btn btn-warning">Tambah Harga</button>
+                                    <a href="{{ route('hotel.show', $hotel->id) }}">
+                                        <button class="btn btn-primary">Detail</button>
                                     </a>
                                 </td>
-
                             </tr>
                         @endforeach
                     </tbody>
+
+
                 </table>
 
             </div>
 
-            <!-- Pagination -->
-            <div class="pagination-container">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
 
-                        {{-- Tombol Previous --}}
-                        <li class="page-item {{ $hotels->onFirstPage() ? 'disabled' : '' }}">
-                            <a class="page-link" href="{{ $hotels->previousPageUrl() }}" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-
-                        {{-- Tombol Nomor Halaman --}}
-                        @for ($i = 1; $i <= $hotels->lastPage(); $i++)
-                            <li class="page-item {{ $i == $hotels->currentPage() ? 'active' : '' }}">
-                                <a class="page-link" href="{{ $hotels->url($i) }}">{{ $i }}</a>
-                            </li>
-                        @endfor
-
-                        {{-- Tombol Next --}}
-                        <li class="page-item {{ $hotels->hasMorePages() ? '' : 'disabled' }}">
-                            <a class="page-link" href="{{ $hotels->nextPageUrl() }}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-
-                    </ul>
-                </nav>
-            </div>
         </div>
     </div>
 

@@ -386,8 +386,9 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Customer / Travel</th>
-                            <th>Wakaf yang pilih</th>
-                            <th>Jumlah</th>
+                            <th>
+                                Aksi
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -395,8 +396,12 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->service->pelanggan->nama_travel }}</td>
-                                <td>{{ $item->wakaf->nama }}</td>
-                                <td>{{ $item->jumlah }}</td>
+                                <td>
+                                    <a href="{{ route('wakaf.customer.detail', $item->service_id) }}"
+                                        class="btn-action btn-view" title="Lihat Detail">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
                             </tr>
                         @empty
                             <tr>

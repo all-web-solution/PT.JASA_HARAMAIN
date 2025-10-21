@@ -390,23 +390,26 @@
                         </tr>
                     </thead>
                     <tbody>
-@foreach ($contents as $content)
-    <tr>
-        <td data-label="No">{{ $loop->iteration }}</td>
-        <td data-label="Nama">{{ $content->name }}</td>
-        <td data-label="Aksi">
-            <a href="{{ route('content.edit', $content->id) }}">
-                <button class="btn btn-warning">Edit</button>
-            </a>
-            <form action="{{ route('content.destroy', $content->id) }}" method="post" style="display:inline;">
-                @csrf
-                @method('delete')
-                <button class="btn btn-danger">Delete</button>
-            </form>
-        </td>
-    </tr>
-@endforeach
-</tbody>
+                    @foreach ($contents as $content)
+                        <tr>
+                            <td data-label="No">{{ $loop->iteration }}</td>
+                            <td data-label="Nama">{{ $content->name }}</td>
+                            <td data-label="Aksi">
+                                <a href="{{ route('content.edit', $content->id) }}">
+                                    <button class="btn btn-warning">Edit</button>
+                                </a>
+                                <form action="{{ route('content.destroy', $content->id) }}" method="post" style="display:inline;">
+                                    @csrf
+                                    @method('delete')
+                                    <button class="btn btn-danger">Delete</button>
+                                </form>
+                                <a href="{{ route('content.supplier', $content->id) }}" class="btn btn-primary">
+                                    Supplier
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
 
                 </table>
             </div>

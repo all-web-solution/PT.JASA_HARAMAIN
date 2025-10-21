@@ -16,7 +16,7 @@ class CustomerDocument extends Model
 
     public function documentChild()
     {
-        return $this->belongsTo(DocumentChildren::class );
+        return $this->belongsTo(DocumentChildren::class, 'id');
     }
 
     public function document()

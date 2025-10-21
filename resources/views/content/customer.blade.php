@@ -138,44 +138,23 @@
                             <th>No</th>
                             <th>Nama Pelanggan</th>
                             <th>Nama Dokumen</th>
-                            <th>Dokumen Bawaan</th>
-                            <th>Jumlah</th>
-                            <th>Harga</th>
-                            <th>Pas Foto</th>
-                            <th>Paspor</th>
+
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($customers as $doc)
+                        @foreach ($customers as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $doc->service->pelanggan->nama_travel ?? '-' }}</td>
-                                <td>{{ $doc->documents->name ?? '-' }}</td>
-                                <td>{{ $doc->DocumentChildren->name ?? '-' }}</td>
-                                <td>{{ $doc->jumlah ?? '-' }}</td>
-                                <td>{{ $doc->DocumentChildren->price }}</td>
+                                <td>{{ $item->service->pelanggan->nama_travel }}</td>
+                                <td>{{ $item->document->name }}</td>
                                 <td>
-                                    @if ($doc->pas_foto)
-                                        <img src="{{ url('storage/' . $doc->pas_foto) }}" alt="Pas Foto" />
-                                    @else
-                                        <span>No Image</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if ($doc->paspor)
-                                        <img src="{{ url('storage/' . $doc->paspor) }}" alt="Paspor" />
-                                    @else
-                                        <span>No Image</span>
-                                    @endif
+                                   <a href="{{ route('visa.document.customer.detail', $item->id) }}" class="btn btn-primary">
+                                        Lihat Detail
+                                   </a>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" style="text-align:center; padding: 2rem;">
-                                    Belum ada data dokumen.
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>

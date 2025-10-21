@@ -164,6 +164,7 @@
                                 <th>Tanggal</th>
                                 <th>Harga</th>
                                 <th>Pax</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -175,6 +176,11 @@
                                     <td>{{ \Carbon\Carbon::parse($hotel->tanggal)->translatedFormat('l, d F Y') }}</td>
                                     <td><strong>Harga:</strong> Rp {{ $hotel->harga }}</td>
                                     <td>{{ $hotel->pax }}</td>
+                                    <td>
+                                        <a href="{{ route('handling.handling.hotel.show', $hotel->id) }}">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>

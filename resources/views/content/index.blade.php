@@ -167,6 +167,7 @@
                                             title="Edit">
                                             <i class="bi bi-pencil-fill"></i>
                                         </a>
+                                       
                                         <form id="delete-form-{{ $doc->id }}"
                                             action="{{ route('visa.document.delete', $doc->id) }}" method="post">
                                             @csrf
@@ -177,6 +178,7 @@
                                                 <i class="bi bi-trash-fill"></i>
                                             </button>
                                         </form>
+
                                     </div>
                                 </td>
                             </tr>

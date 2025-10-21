@@ -411,12 +411,7 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Travel</th>
-                        <th>Tanggal berangkat</th>
-                        <th>Rute</th>
                         <th>Maskapai</th>
-                        <th>Harga</th>
-                        <th>Keterangan</th>
-                        <th>Jumlah jamaah</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -425,15 +420,12 @@
                     <tr>
                         <td>{{$loop->iteration}}</td>
                         <td>{{$plane->service->pelanggan->nama_travel}}</td>
-                        <td>{{ \Carbon\Carbon::parse($plane->tanggal_keberangkatan)->translatedFormat('d F Y') }}</td>
-                        <td>{{$plane->rute}}</td>
+
                         <td>{{$plane->maskapai}}</td>
-                        <td>{{$plane->harga}}</td>
-                        <td>{{$plane->keterangan}}</td>
-                       <td>{{$plane->jumlah_jamaah}}</td>
+
                         <td>
-                            <a href="{{ route('transportation.plane.edit', $plane->id) }}">
-                                <button class="btn btn-warning">Edit</button>
+                            <a href="{{ route('transportation.plane.detail', $plane->id) }}">
+                                <button class="btn btn-primary">Detail</button>
                             </a>
                         </td>
                     </tr>

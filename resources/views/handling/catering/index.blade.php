@@ -187,30 +187,19 @@
                                 <th>No</th>
                                 <th>Nama Menu</th>
                                 <th>Harga</th>
-                                <th>PJ</th>
-                                <th>Nama Travel</th>
-                                <th>Kebutuhan</th>
-                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if ($meals->count())
+
                                 @foreach ($meals as $meal)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $meal->mealItem->name ?? '-' }}</td>
-                                        <td>{{ $meal->mealItem->price ?? '-' }}</td>
-                                        <td>{{ $meal->pj ?? '-' }}</td>
-                                        <td>{{ $meal->service->pelanggan->nama_travel ?? '-' }}</td>
-                                        <td>{{ $meal->kebutuhan ?? '-' }}</td>
-                                        <td>{{ $meal->status ?? '-' }}</td>
+                                        <td>{{ $meal->name}}</td>
+                                        <td>{{ $meal->price}}</td>
+
                                         <td>
-                                            <a href="{{ route('catering.show', $meal->id) }}" title="Lihat Detail">
-                                                <button class="btn btn-info">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                            </a>
+
                                             <a href="{{ route('catering.edit', $meal->id) }}" title="Edit">
                                                 <button class="btn btn-warning">
                                                     <i class="bi bi-pencil"></i>
@@ -228,15 +217,17 @@
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
+                                            <a href="{{ route('catering.supplier.show', $meal->id) }}">
+                                                <button class="btn btn-info" title="Detail Supplier">
+                                                    <i class="bi bi-info-circle"></i>
+                                                </button>
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="8" style="text-align:center">Belum ada data catering yang ditambahkan.
-                                    </td>
-                                </tr>
-                            @endif
+
+
+
                         </tbody>
                     </table>
                 </div>

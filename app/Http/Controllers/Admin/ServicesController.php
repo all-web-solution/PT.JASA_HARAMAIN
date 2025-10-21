@@ -1195,15 +1195,17 @@ private function handleTransportationItems(Request $request, Service $service)
         if ($request->filled('jumlah_pendamping')) {
         foreach ($request->jumlah_pendamping as $guideId => $jumlah) {
             if ($jumlah > 0) {
-                $tanggal = $request->input("tanggal_pendamping.$guideId");
+                $tanggal = $request->input("tanggal_pendamping[$guideId]");
 
                 $service->guides()->create([
                     'guide_id'       => $guideId,
                     'jumlah'         => $jumlah,
                     'keterangan'     => $request->input("keterangan_pendamping.$guideId") ?? null,
-                    'muthowif_dari'   => $tanggal['dari'] ?? null,
-                    'muthowif_sampai' => $tanggal['sampai'] ?? null,
+                    'muthowif_dari'   => $request->tanggal_pendamping[$guideId]["dari"],
+                    'muthowif_sampai' => $request->tanggal_pendamping[$guideId]["sampai"],
                 ]);
+
+
             }
         }
     }
@@ -1225,6 +1227,8 @@ private function handleTourItems(Request $request, Service $service)
                 ]);
             }
         }
+
+
     }
 }
 

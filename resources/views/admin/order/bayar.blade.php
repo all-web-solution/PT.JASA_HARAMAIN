@@ -326,5 +326,10 @@
                 </div>
             </div>
         @endif
+        <a href="{{ route('invoice.show', $order->service->id) }}">
+            <button class="btn btn-primary mt-3">
+                Cetak Invoice
+            </button>
+        </a>
     </div>
 @endsection

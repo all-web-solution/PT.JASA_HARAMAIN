@@ -12,7 +12,7 @@ class CateringController extends Controller
 {
     public function index()
     {
-        $meals = Meal::with(['mealItem', 'service.pendamping', 'service.pelanggan'])->get();
+        $meals = MealItem::all();
         return view('handling.catering.index', compact('meals'));
     }
     public function create()
@@ -51,27 +51,22 @@ class CateringController extends Controller
 
     public function edit($id)
     {
-        $meal = Meal::findOrFail($id);
-        $services = Service::all();
-        return view('handling.catering.edit', compact('meal', 'services'));
+        $meal = MealItem::findOrFail($id);
+        return view('handling.catering.edit', compact('meal'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'jumlah' => 'required|numeric',
-            'pj' => 'nullable|string|max:255',
-            'kebutuhan' => 'nullable|string',
-            'status' => 'nullable|in:proses,cancel,selesai',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric',
         ]);
 
-        $meal = Meal::findOrFail($id);
+        $meal = MealItem::findOrFail($id);
 
         $meal->update([
-            'jumlah' => $request->jumlah,
-            'pj' => $request->pj,
-            'kebutuhan' => $request->kebutuhan ?? '-',
-            'status' => $request->status ?? 'proses',
+            'name' => $request->name,
+            'price' => $request->price,
         ]);
 
         return redirect()->route('catering.index')->with('success', 'Menu makanan berhasil diperbarui.');
@@ -79,7 +74,7 @@ class CateringController extends Controller
 
     public function destroy($id)
     {
-        $meal = Meal::findOrFail($id);
+        $meal = MealItem::findOrFail($id);
         $meal->delete();
 
         return redirect()->route('catering.index')->with('success', 'Menu berhasil dihapus!');
@@ -87,9 +82,10 @@ class CateringController extends Controller
 
     public function show($id)
     {
-        $meal = Meal::with(['mealItem', 'service.pendamping', 'service.pelanggan'])->findOrFail($id);
+        $meal = Meal::findOrFail($id);
+        $service = Service::with('meals.mealItem')->findOrFail($meal->service_id);
 
-        return view('handling.catering.show', compact('meal'));
+        return view('handling.catering.show', compact('service'));
     }
 
     public function customer(Request $request)
@@ -106,5 +102,27 @@ class CateringController extends Controller
         });
 
         return view('handling.catering.customer', compact('customerMeal'));
+    }
+
+
+    public function showSupplier($id)
+    {
+        $guide = MealItem::findOrFail($id);
+        return view('handling.catering.supplier_detail', compact('guide'));
+    }
+    public function createSupplier($id)
+    {
+        $guide = MealItem::findOrFail($id);
+        return view('handling.catering.supplier_create', compact('guide'));
+    }
+
+    public function storeSupplier(Request $request, $id)
+    {
+
+        $guide = MealItem::findOrFail($id);
+        $guide->supplier = $request->input('name');
+        $guide->harga_dasar = $request->input('price');
+        $guide->save();
+        return redirect()->route('catering.supplier.show', $id);
     }
 }

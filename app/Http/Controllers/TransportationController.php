@@ -15,8 +15,15 @@ class TransportationController extends Controller
 {
     public function index()
     {
-        $planes = Plane::all();
-        return view('transportasi.pesawat.index',  compact('planes'));
+        // 1. Ambil semua data pesawat
+        $allPlanes = Plane::all();
+
+        // 2. Filter koleksi untuk mendapatkan hanya satu data per 'service_id'
+        //    Ini akan mengambil data *pertama* yang ditemui untuk setiap service_id unik.
+        $planes = $allPlanes->unique('service_id');
+
+        // 3. Kirim data yang sudah unik ke view
+        return view('transportasi.pesawat.index', compact('planes'));
     }
     public function indexCar()
     {
@@ -72,7 +79,9 @@ class TransportationController extends Controller
 
     public function TransportationCustomer()
     {
-        $customers = TransportationItem::all();
+        $AllCustomers = TransportationItem::all();
+        $customers = $AllCustomers->unique('service_id');
+
         return view('transportasi.mobil.customer', compact('customers'));
     }
 
@@ -120,10 +129,28 @@ public function update(Request $request, $id)
                 'total_amount' => $GrandTotal,
                 'sisa_hutang' => $GrandTotal,
                 'status_pembayaran' => 'belum_bayar'
-                
+
             ]);
        }
         return redirect()->route('transportation.plane.index')
             ->with('success', 'Harga pesawat & total order berhasil diperbarui!');
     }
+
+// app/Http/Controllers/PlaneController.php (atau nama controller Anda)
+
+public function detail($id)
+{
+    // Gunakan 'with()' untuk memuat relasi 'service' dan juga 'pelanggan' dari service tsb.
+    $plane = Plane::with('service.pelanggan')->findOrFail($id);
+
+    // Kirim data $plane (yang kini sudah berisi service dan pelanggan) ke view
+    return view('transportasi.pesawat.detail', compact('plane'));
+}
+
+public function detailCustomer($id)
+{
+    $transportationItem = TransportationItem::with('service.pelanggan')->findOrFail($id);
+
+    return view('transportasi.mobil.detail_customer', compact('transportationItem'));
+}
 }

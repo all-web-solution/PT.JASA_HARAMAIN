@@ -109,4 +109,28 @@ class ContentController extends Controller
             ->whereIn('service_id', $serviceIds)
             ->update(['status' => $newStatus]);
     }
+
+
+
+
+    public function showSupplier($id)
+    {
+        $content = ContentItem::findOrFail($id);
+        return view('dokumentasi.supplier', compact('content'));
+    }
+    public function createSupplier($id)
+    {
+        $content = ContentItem::findOrFail($id);
+        return view('dokumentasi.supplier_create', compact('content'));
+    }
+
+    public function storeSupplier(Request $request, $id)
+    {
+
+        $content = ContentItem::findOrFail($id);
+        $content->supplier = $request->input('name');
+        $content->harga_dasar = $request->input('price');
+        $content->save();
+        return redirect()->route('content.supplier', $id);
+    }
 }

@@ -22,8 +22,12 @@ class Hotel extends Model
         ];
 
     public function service(){
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(Service::class, 'id');
     }
+    public function pelanggan()
+{
+    return $this->belongsTo(Pelanggan::class);
+}
 
 
 }

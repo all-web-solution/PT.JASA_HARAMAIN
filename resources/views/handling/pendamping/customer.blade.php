@@ -129,30 +129,41 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nama Customer</th>
-                                <th>Nama Pendamping</th>
                                 <th>Jumlah</th>
-                                <th>Dari tanggal</th>
-                                <th>Sampai tanggal</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($guides as $item)
+                            @forelse ($guides as $serviceId => $group)
+                                @php
+                                    $firstGuide = $group->first();
+                                    $service = $firstGuide->service;
+                                    $pelanggan = $service?->pelanggan;
+                                @endphp
                                 <tr>
-                                    <td>{{ $loop->iteration ?? '-' }}</td>
-                                    <td>{{ $item->service->pelanggan->nama_travel ?? '-' }}</td>
-                                    <td>{{ $item->guideItem->nama}}</td>
-                                    <td>{{ $item->jumlah ?? '-' }}</td>
-                                    <td>{{ $item->muthowif_dari ?? '-' }}</td>
-                                    <td>{{ $item->muthowif_sampai ?? '-' }}</td>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $pelanggan->nama_travel }} </td>
+                                    <td>
+                                        {{ $group->sum('jumlah') }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('pendamping.customer.show',  $firstGuide->service->id) }}">
+                                            <button class="btn btn-primary btn-sm">
+                                                <i class="bi bi-eye"></i> Lihat Pendamping
+                                            </button>
+                                        </a>
+                                    </td>
+
+
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" style="text-align:center; padding: 2rem;">
-                                        Belum ada data customer pendamping.
-                                    </td>
+                                    <td colspan="6" class="text-center py-4">Belum ada data customer pendamping.</td>
                                 </tr>
                             @endforelse
                         </tbody>
+
+
                     </table>
                 </div>
             </div>

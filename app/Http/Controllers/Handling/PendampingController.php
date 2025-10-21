@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Handling;
 use App\Http\Controllers\Controller;
 use App\Models\GuideItems;
 use App\Models\Guide;
+use App\Models\Service;
+use Hamcrest\Core\Set;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -70,7 +72,38 @@ class PendampingController extends Controller
 
     public function customer()
     {
-        $guides = Guide::with('service.pelanggan')->get();
+        $guides = Guide::with(['service.pelanggan'])
+            ->get()
+            ->groupBy('service_id');
+
         return view('handling.pendamping.customer', compact('guides'));
+    }
+    public function showCustomer($service_id)
+{
+    // Ambil data service lengkap dengan pelanggan & pendamping
+    $service = Service::with(['pelanggan', 'guides'])->findOrFail($service_id);
+
+    return view('handling.pendamping.detail', compact('service'));
+}
+
+    public function showSupplier($id)
+    {
+        $guide = GuideItems::findOrFail($id);
+        return view('handling.pendamping.supplier_detail', compact('guide'));
+    }
+    public function createSupplier($id)
+    {
+        $guide = GuideItems::findOrFail($id);
+        return view('handling.pendamping.supplier_create', compact('guide'));
+    }
+
+    public function storeSupplier(Request $request, $id)
+    {
+
+        $guide = GuideItems::findOrFail($id);
+        $guide->supplier = $request->input('name');
+        $guide->harga_dasar = $request->input('price');
+        $guide->save();
+        return redirect()->route('pendamping.supplier.show', $id);
     }
 }

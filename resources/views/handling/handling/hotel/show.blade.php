@@ -205,15 +205,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="form-section">
-                    <h6 class="form-section-title">
-                        <i class="bi bi-person-check"></i> Detail Handling
-                    </h6>
-                    <p><strong>Nama Supir:</strong> {{ $hotel}}</p>
-                    <p><strong>Paket Info:</strong> {{ $hotel->paket_info }}</p>
-                </div>
-
             </div>
         </div>
     </div>

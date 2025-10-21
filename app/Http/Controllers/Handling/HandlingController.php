@@ -28,5 +28,11 @@ class HandlingController extends Controller
 
         return view('handling.handling.hotel.show', compact('hotel'));
     }
+    public function plane($id)
+    {
+        $plane = HandlingPlanes::with('handling.service.pelanggan')->findOrFail($id);
+
+        return view('handling.handling.plane.show', compact('plane'));
+    }
 
 }

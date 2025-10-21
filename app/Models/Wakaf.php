@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Wakaf extends Model
 {
-    protected $fillable = ['nama', 'harga'];
+    protected $fillable = ['nama', 'harga', 'supplier', 'harga_dasar'];
     public function wakafs()
     {
         return $this->hasMany(Wakaf::class, 'service_id');

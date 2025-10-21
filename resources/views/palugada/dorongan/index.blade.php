@@ -168,6 +168,11 @@
                                                 <i class="bi bi-trash-fill"></i>
                                             </button>
                                         </form>
+                                        <a href="{{ route('dorongan.supplier.show', $item->id) }}">
+                                            <button class="btn btn-info" title="Detail Supplier">
+                                                    <i class="bi bi-info-circle"></i>
+                                            </button>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

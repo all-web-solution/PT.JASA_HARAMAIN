@@ -143,6 +143,7 @@
                                 <th>Jumlah Jamaah</th>
                                 <th>Harga</th>
                                 <th>Kedatangan Jamaah</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -154,6 +155,10 @@
                                     <td>{{ $plane->jumlah_jamaah }}</td>
                                     <td>Rp {{ $plane->harga }}</td>
                                     <td>{{ \Carbon\Carbon::parse($plane->kedatangan_jamaah)->translatedFormat('l, d F Y') }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('handling.handling.plane.show', $plane->id) }}"
+                                            class="btn btn-info btn-sm">Detail</a>
                                     </td>
                                 </tr>
                             @empty

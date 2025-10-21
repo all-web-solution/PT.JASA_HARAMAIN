@@ -415,6 +415,7 @@
                         <th>Route</th>
                         <th>Dari tanggal</th>
                         <th>Sampai tanggal</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -426,7 +427,11 @@
                         <td>{{ $customer->route->route }}</td>
                         <td>{{ $customer->dari_tanggal }}</td>
                         <td>{{ $customer->sampai_tanggal }}</td>
-                        
+                        <td>
+                            <a href="{{ route('transportation.car.detail.customer', $customer->id) }}">
+                                <button class="btn btn-primary">Detail</button>
+                            </a>
+
                     </tr>
                     @endforeach
                     {{-- @foreach ($planes as $plane)
