@@ -1,5 +1,6 @@
 @extends('admin.master')
-@section('content')
+@section('title', 'Detail Order')
+@push('styles')
     <style>
         :root {
             --haramain-primary: #1a4b8c;
@@ -27,7 +28,8 @@
             border: 1px solid var(--border-color);
             margin-bottom: 2rem;
             background-color: #fff;
-            overflow: hidden; /* Ensures child elements respect border radius */
+            overflow: hidden;
+            /* Ensures child elements respect border radius */
         }
 
         .card-header {
@@ -87,7 +89,8 @@
 
         .table tbody td {
             padding: 1.1rem;
-            vertical-align: top; /* Changed to top for better alignment of long content */
+            vertical-align: top;
+            /* Changed to top for better alignment of long content */
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -109,6 +112,7 @@
             display: inline-block;
             margin-top: 0.5rem;
         }
+
         .service-details strong:first-child {
             margin-top: 0;
         }
@@ -117,15 +121,18 @@
         .payment-form-container {
             padding: 1.5rem;
         }
+
         .form-group {
             margin-bottom: 1.25rem;
         }
+
         .form-label {
             display: block;
             font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 0.5rem;
         }
+
         .form-control {
             width: 100%;
             padding: 0.75rem 1rem;
@@ -134,11 +141,13 @@
             font-size: 1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
+
         .form-control:focus {
             outline: none;
             border-color: var(--haramain-secondary);
             box-shadow: 0 0 0 3px rgba(42, 111, 219, 0.15);
         }
+
         .btn-submit {
             background-color: var(--success-color);
             color: #fff;
@@ -150,6 +159,7 @@
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
+
         .btn-submit:hover {
             background-color: #157347;
             transform: translateY(-2px);
@@ -165,6 +175,7 @@
             .card-title .full-text {
                 display: none;
             }
+
             .card-title .short-text {
                 display: inline;
             }
@@ -173,7 +184,9 @@
                 display: none;
             }
 
-            .table tbody, .table tr, .table td {
+            .table tbody,
+            .table tr,
+            .table td {
                 display: block;
                 width: 100%;
             }
@@ -221,7 +234,8 @@
             }
         }
     </style>
-
+@endpush
+@section('content')
     <div class="payment-container">
         <!-- Order Details Card -->
         <div class="card">
@@ -250,23 +264,17 @@
                             <tr>
                                 <td data-label="Kode Unik">{{ $order->service->unique_code }}</td>
                                 <td data-label="Customer">{{ $order->service->pelanggan->nama_travel }}</td>
-                                <td data-label="Berangkat">{{ $order->service->tanggal_keberangkatan }}</td>
-                                <td data-label="Pulang">{{ $order->service->tanggal_kepulangan }}</td>
+                                <td data-label="Berangkat">
+                                    {{ \Carbon\Carbon::parse($order->service->tanggal_keberangkatan)->format('d M Y') }}
+                                </td>
+                                <td data-label="Pulang">
+                                    {{ \Carbon\Carbon::parse($order->service->tanggal_kepulangan)->format('d M Y') }}</td>
                                 <td data-label="Jamaah">{{ $order->service->total_jamaah }}</td>
-
-                                <td data-label="Layanan Dipilih" class="service-details">
+                                <td data-label="Layanan Dipilih" class="service-details"
+                                    style="text-align: left; white-space: normal; min-width: 250px;">
                                     @php $hasContent = false; @endphp
 
-                                    {{-- Loop through each service type and display if available --}}
-                                    @if ($order->service->meals->count() > 0)
-                                        @php $hasContent = true; @endphp
-                                        <strong>Makanan:</strong><br>
-                                        @foreach ($order->service->meals as $meal)
-                                            - {{ $meal->mealItem->name }} (Rp. {{ number_format($meal->mealItem->price, 0, ',', '.') }})<br>
-                                        @endforeach
-                                    @endif
-
-                                    @if ($order->service->planes->count() > 0)
+                                    @if ($order->service->planes->count() > 0 || $order->service->transportationItem->count() > 0)
                                         @php $hasContent = true; @endphp
                                         <strong>Transportasi:</strong><br>
                                         @foreach ($order->service->planes as $plane)
@@ -277,24 +285,123 @@
                                         @endforeach
                                     @endif
 
-                                    {{-- Add other services similarly --}}
                                     @if ($order->service->hotels->count() > 0)
                                         @php $hasContent = true; @endphp
                                         <strong>Hotel:</strong><br>
                                         @foreach ($order->service->hotels as $hotel)
-                                            - {{ $hotel->nama_hotel }}<br>
+                                            - {{ $hotel->nama_hotel }}
+                                            @if ($hotel->type)
+                                                ({{ $hotel->type }} - {{ $hotel->jumlah_type ?? 0 }} kamar)
+                                            @endif
+                                            <br>
+                                        @endforeach
+                                    @endif
+
+                                    @if ($order->service->documents->count() > 0)
+                                        @php $hasContent = true; @endphp
+                                        <strong>Dokumen:</strong><br>
+                                        @foreach ($order->service->documents as $doc)
+                                            -
+                                            @if ($doc->documentChild)
+                                                {{ $doc->documentChild->name }}
+                                            @elseif ($doc->document)
+                                                {{ $doc->document->name }}
+                                            @endif
+                                            ({{ $doc->jumlah }} Pax)
+                                            <br>
+                                        @endforeach
+                                    @endif
+
+                                    @if ($order->service->handlings->count() > 0)
+                                        @php $hasContent = true; @endphp
+                                        <strong>Handling:</strong><br>
+                                        @foreach ($order->service->handlings as $handling)
+                                            - Handling {{ ucfirst($handling->name) }}
+                                            {{ $handling->handlingHotels?->first()?->nama ?? ($handling->handlingPlanes?->first()?->nama_bandara ?? 'N/A') }})
+                                            <br>
+                                        @endforeach
+                                    @endif
+
+                                    @if ($order->service->guides->count() > 0)
+                                        @php $hasContent = true; @endphp
+                                        <strong>Pendamping:</strong><br>
+                                        @foreach ($order->service->guides as $guide)
+                                            - {{ $guide->guideItem->nama ?? 'N/A' }} ({{ $guide->jumlah }} Orang)<br>
+                                        @endforeach
+                                    @endif
+
+                                    @if ($order->service->contents->count() > 0)
+                                        @php $hasContent = true; @endphp
+                                        <strong>Konten:</strong><br>
+                                        @foreach ($order->service->contents as $content)
+                                            - {{ $content->content->name ?? 'N/A' }} ({{ $content->jumlah }} Pax)<br>
+                                        @endforeach
+                                    @endif
+
+                                    @if ($order->service->reyals->count() > 0)
+                                        @php
+                                            $hasContent = true;
+                                            $reyal = $order->service->reyals->first();
+                                        @endphp
+                                        <strong>Reyal:</strong><br>
+                                        - Penukaran {{ $reyal->tipe }}
+                                        ({{ $reyal->tipe == 'tamis' ? 'Rp → SAR' : 'SAR → Rp' }})<br>
+                                    @endif
+
+                                    @if ($order->service->tours->count() > 0)
+                                        @php $hasContent = true; @endphp
+                                        <strong>Tour:</strong><br>
+                                        @foreach ($order->service->tours as $tour)
+                                            - {{ $tour->tourItem->name ?? 'N/A' }}
+                                            @if ($tour->transportation)
+                                                (Transport: {{ $tour->transportation->nama }})
+                                            @endif
+                                            <br>
+                                        @endforeach
+                                    @endif
+
+                                    @if ($order->service->meals->count() > 0)
+                                        @php $hasContent = true; @endphp
+                                        <strong>Makanan:</strong><br>
+                                        @foreach ($order->service->meals as $meal)
+                                            - {{ $meal->mealItem->name }} (Rp.
+                                            {{ number_format($meal->mealItem->price, 0, ',', '.') }})<br>
+                                        @endforeach
+                                    @endif
+
+                                    @if ($order->service->dorongans->count() > 0)
+                                        @php $hasContent = true; @endphp
+                                        <strong>Dorongan:</strong><br>
+                                        @foreach ($order->service->dorongans as $item)
+                                            - {{ $item->dorongan->name ?? 'N/A' }} ({{ $item->jumlah }} Pax)<br>
+                                        @endforeach
+                                    @endif
+
+                                    @if ($order->service->wakafs->count() > 0)
+                                        @php $hasContent = true; @endphp
+                                        <strong>Waqaf:</strong><br>
+                                        @foreach ($order->service->wakafs as $item)
+                                            - {{ $item->wakaf->nama ?? 'N/A' }} ({{ $item->jumlah }} Unit)<br>
+                                        @endforeach
+                                    @endif
+
+                                    @if ($order->service->badals->count() > 0)
+                                        @php $hasContent = true; @endphp
+                                        <strong>Badal Umrah:</strong><br>
+                                        @foreach ($order->service->badals as $item)
+                                            - Atas Nama: {{ $item->name }}<br>
                                         @endforeach
                                     @endif
 
                                     @if (!$hasContent)
                                         <span>Tidak ada detail layanan.</span>
                                     @endif
-                                    {{-- You can continue this pattern for all other services --}}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td colspan="6" class="text-center" style="text-align: center;">Tidak ada layanan yang terkait dengan order ini.</td>
+                                <td colspan="6" class="text-center" style="text-align: center;">Tidak ada layanan yang
+                                    terkait dengan order ini.</td>
                             </tr>
                         @endif
                     </tbody>
@@ -316,8 +423,8 @@
                         @csrf
                         <div class="form-group">
                             <label for="jumlah_dibayarkan" class="form-label">Jumlah yang Dibayarkan (SAR)</label>
-                            <input type="number" step="any" class="form-control" id="jumlah_dibayarkan" name="jumlah_dibayarkan"
-                                placeholder="Contoh: 1500.50" required>
+                            <input type="number" step="any" class="form-control" id="jumlah_dibayarkan"
+                                name="jumlah_dibayarkan" placeholder="Contoh: 1500.50" required>
                         </div>
                         <button type="submit" class="btn-submit">
                             <i class="bi bi-check-circle"></i> Simpan Pembayaran

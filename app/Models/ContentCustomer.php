@@ -8,10 +8,12 @@ class ContentCustomer extends Model
 {
     protected $fillable = ['service_id', 'content_id', 'jumlah', 'keterangan', 'status', 'tanggal_pelaksanaaan'];
 
-    public function service(){
+    public function service()
+    {
         return $this->belongsTo(Service::class);
     }
-    public function content(){
-        return $this->belongsTo(ContentItem::class);
+    public function content()
+    {
+        return $this->belongsTo(ContentItem::class, 'content_id');
     }
 }

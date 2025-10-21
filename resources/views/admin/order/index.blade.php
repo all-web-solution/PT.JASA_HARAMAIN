@@ -1,6 +1,6 @@
 @extends('admin.master')
 @section('title', 'Order List')
-@section('content')
+@push('styles')
     <style>
         :root {
             --haramain-primary: #1a4b8c;
@@ -112,6 +112,49 @@
             border: none;
         }
 
+        /* Search and Filter */
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box input {
+            padding-left: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            height: 40px;
+            width: 100%;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .filter-select {
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 0 1rem;
+            min-width: 150px;
+        }
+
         /* ✅ Responsive Umum (Tablet) */
         @media (max-width: 768px) {
             .search-filter-container {
@@ -159,9 +202,10 @@
 
         /* ✅ Responsive untuk layar kecil (≤ 320px) */
         @media (max-width: 320px) {
-            #filter{
+            #filter {
                 display: none;
             }
+
             .service-list-container {
                 padding: 1rem;
             }
@@ -236,7 +280,8 @@
             }
         }
     </style>
-
+@endpush
+@section('content')
     <div class="service-list-container">
         <div class="card">
             <div class="card-header">
@@ -285,7 +330,8 @@
                                 <td data-label="Invoice">{{ $order->invoice }}</td>
                                 <td data-label="Nama Pelanggan">{{ $order->service?->pelanggan?->nama_travel ?? '-' }}</td>
                                 <td data-label="Total">{{ number_format($order->total_amount, 0, ',', '.') }}</td>
-                                <td data-label="Dibayar">{{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}</td>
+                                <td data-label="Dibayar">{{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}
+                                </td>
                                 <td data-label="Sisa">{{ number_format($order->sisa_hutang, 0, ',', '.') }}</td>
                                 <td data-label="Aksi">
                                     @if ($order->status_pembayaran === 'belum_bayar')
@@ -293,11 +339,12 @@
                                             <button class="btn btn-primary btn-sm w-100">Bayar</button>
                                         </a>
                                     @elseif ($order->status_pembayaran === 'sudah_bayar')
-                                        <span class="bg-warning p-1 rounded text-dark d-block text-center">Sudah Bayar</span>
+                                        <span class="bg-warning p-1 rounded text-dark d-block text-center">Sudah
+                                            Bayar</span>
                                     @else
-                                    <a href="{{ route('orders.bayar', $order->id) }}">
-                                        <span class="bg-success p-1 rounded text-white d-block text-center">Lunas</span>
-                                    </a>
+                                        <a href="{{ route('orders.bayar', $order->id) }}">
+                                            <span class="bg-success p-1 rounded text-white d-block text-center">Lunas</span>
+                                        </a>
                                     @endif
                                 </td>
                             </tr>
@@ -309,18 +356,21 @@
             <div class="pagination-container">
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">&laquo;</a>
+                        <li class="page-item {{ $orders->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $orders->previousPageUrl() }}" aria-label="Previous">&laquo;</a>
                         </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">&raquo;</a>
+                        @foreach ($orders->getUrlRange(1, $orders->lastPage()) as $page => $url)
+                            <li class="page-item {{ $page == $orders->currentPage() ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+                        <li class="page-item {{ $orders->hasMorePages() ? '' : 'disabled' }}">
+                            <a class="page-link" href="{{ $orders->nextPageUrl() }}" aria-label="Next">&raquo;</a>
                         </li>
                     </ul>
                 </nav>
             </div>
+
         </div>
     </div>
 @endsection

@@ -370,13 +370,24 @@
 
         <!-- Pagination -->
         <div class="pagination-container">
-            {{-- This should be replaced with your actual pagination links like {{ $users->links() }} --}}
             <nav aria-label="Page navigation">
                 <ul class="pagination">
-                    <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                    <!-- Previous Button -->
+                    <li class="page-item {{ $users->onFirstPage() ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ $users->previousPageUrl() }}" aria-label="Previous">&laquo;</a>
+                    </li>
+
+                    <!-- Loop through page numbers -->
+                    @foreach ($users->getUrlRange(1, $users->lastPage()) as $page => $url)
+                        <li class="page-item {{ $page == $users->currentPage() ? 'active' : '' }}">
+                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                        </li>
+                    @endforeach
+
+                    <!-- Next Button -->
+                    <li class="page-item {{ $users->hasMorePages() ? '' : 'disabled' }}">
+                        <a class="page-link" href="{{ $users->nextPageUrl() }}" aria-label="Next">&raquo;</a>
+                    </li>
                 </ul>
             </nav>
         </div>

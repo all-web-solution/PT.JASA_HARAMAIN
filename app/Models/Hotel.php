@@ -19,15 +19,15 @@ class Hotel extends Model
         'type_custom_special_room',
         'jumlah_kasur',
         'harga_type_custom_special_room'
-        ];
+    ];
 
-    public function service(){
+    public function service()
+    {
         return $this->belongsTo(Service::class, 'id');
     }
     public function pelanggan()
-{
-    return $this->belongsTo(Pelanggan::class);
-}
-
+    {
+        return $this->belongsTo(Pelanggan::class);
+    }
 
 }
