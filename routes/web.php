@@ -37,6 +37,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.index');
     Route::get('/admin/services', [ServicesController::class, 'index'])->name('admin.services');
     Route::get('/services/create', [ServicesController::class, 'create'])->name('services.create');
+    Route::get('/services/{id}', [ServicesController::class, 'show'])->name('admin.services.show');
     Route::delete('/services/delete/{id}', [ServicesController::class, 'destroy'])->name('services.delete');
     Route::get('/services/edit/{id}', [ServicesController::class, 'edit'])->name('services.edit');
     Route::put('/services/update/{id}', [ServicesController::class, 'update'])->name('services.update');
@@ -223,8 +224,8 @@ Route::middleware(['auth', 'palugada'])->group(function () {
     Route::get('wakaf/customer', [WakafController::class, 'customer'])->name('wakaf.customer');
     Route::get('wakaf/customer/detail/{id}', [WakafController::class, 'customer_detail'])->name('wakaf.customer.detail');
     Route::get('/supplier/{id}/wakaf', [WakafController::class, 'showSupplier'])->name('wakaf.supplier.show');
-        Route::get('/supplier/{id}/wakaf/create', [WakafController::class, 'createSupplier'])->name('wakaf.supplier.create');
-        Route::put('/supplier/{id}/wakaf/store', [WakafController::class, 'storeSupplier'])->name('wakaf.supplier.store');
+    Route::get('/supplier/{id}/wakaf/create', [WakafController::class, 'createSupplier'])->name('wakaf.supplier.create');
+    Route::put('/supplier/{id}/wakaf/store', [WakafController::class, 'storeSupplier'])->name('wakaf.supplier.store');
 
     Route::get('/dorongan', [DoronganController::class, 'index'])->name('dorongan.index');
     Route::get('/dorongan/create', [DoronganController::class, 'create'])->name('dorongan.create');
@@ -235,8 +236,8 @@ Route::middleware(['auth', 'palugada'])->group(function () {
     Route::get('dorongan/customer', [DoronganController::class, 'customer'])->name('dorongan.customer');
     Route::get('dorongan/customer/{id}', [DoronganController::class, 'customer_detail'])->name('dorongan.customer.detail');
     Route::get('/supplier/{id}', [DoronganController::class, 'showSupplier'])->name('dorongan.supplier.show');
-        Route::get('/supplier/{id}/create', [DoronganController::class, 'createSupplier'])->name('dorongan.supplier.create');
-        Route::put('/supplier/{id}/store', [DoronganController::class, 'storeSupplier'])->name('dorongan.supplier.store');
+    Route::get('/supplier/{id}/create', [DoronganController::class, 'createSupplier'])->name('dorongan.supplier.create');
+    Route::put('/supplier/{id}/store', [DoronganController::class, 'storeSupplier'])->name('dorongan.supplier.store');
 
     Route::get('/badal', [App\Http\Controllers\BadalController::class, 'index'])->name('palugada.badal');
     Route::get('/badal/{id}/show', [App\Http\Controllers\BadalController::class, 'show'])->name('palugada.badal.show');

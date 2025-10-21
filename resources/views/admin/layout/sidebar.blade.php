@@ -25,7 +25,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.order*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('admin.order*') || request()->routeIs('orders*') ? 'active' : '' }}"
                     href="{{ route('admin.order') }}">
                     <i class="bi bi-credit-card-2-back"></i> PAYMENT
                 </a>
@@ -40,7 +40,7 @@
     @elseif (auth()->user()->role === 'hotel')
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hotel.index') || request()->routeIs('hotel.edit') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('hotel.index') || request()->routeIs('hotel.edit')  || request()->routeIs('hotel.show') ? 'active' : '' }}"
                     href="{{ route('hotel.index') }}">
                     <i class="bi bi-building"></i> HOTEL
                 </a>

@@ -574,9 +574,12 @@
                                                 <i class="bi bi-cloud-arrow-up"></i>
                                             </button>
                                         </a>
-                                        <button class="btn-action btn-view" title="view">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </button>
+                                        <a href="{{ route('admin.services.show', $service->id) }}"
+                                            title="Lihat Detail Layanan">
+                                            <button class="btn-action btn-view">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </button>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
