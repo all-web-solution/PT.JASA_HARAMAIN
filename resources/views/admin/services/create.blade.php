@@ -664,7 +664,7 @@
                                             <input type="number" class="form-control"
                                                 name="jumlah_doc_{{ $document->id }}" min="1">
 
-                                                
+
                                         </div>
                                     @endif
                                 @endforeach
@@ -990,7 +990,7 @@
                         </div>
                     </div>
 
-                    <div class="form-section p-3" id="cart-total-price" style="display: none;">
+                    {{-- <div class="form-section p-3" id="cart-total-price" style="display: none;">
                         <h6 class="form-section-title">
                             <i class="bi bi-card-checklist"></i> Detail produk yang dipilih
                         </h6>
@@ -1001,7 +1001,7 @@
                                 <span id="cart-total-text">Rp. 0</span>
                             </strong>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="form-actions">
                         <button type="submit" name="action" value="save" class="btn btn-primary">Simpan</button>
@@ -1515,27 +1515,27 @@
             });
         });
 
-                    // Logic untuk dinamisasi checkbox
-                    function toggleCheckboxOnClick(selector) {
-                        const items = document.querySelectorAll(selector);
-                        items.forEach(function(item) {
-                            item.addEventListener("click", function(e) {
-                                // Biar kalau yang diklik itu input-nya sendiri, gak dobel toggle
-                                if (e.target.tagName.toLowerCase() === 'input') return;
+        // Logic untuk dinamisasi checkbox
+        function toggleCheckboxOnClick(selector) {
+            const items = document.querySelectorAll(selector);
+            items.forEach(function(item) {
+                item.addEventListener("click", function(e) {
+                    // Biar kalau yang diklik itu input-nya sendiri, gak dobel toggle
+                    if (e.target.tagName.toLowerCase() === 'input') return;
 
-                                const checkbox = item.querySelector('input[type="checkbox"]');
-                                if (checkbox) {
-                                    checkbox.checked = !checkbox.checked;
-                                }
-                            });
-                        });
+                    const checkbox = item.querySelector('input[type="checkbox"]');
+                    if (checkbox) {
+                        checkbox.checked = !checkbox.checked;
                     }
+                });
+            });
+        }
 
-                    // --- panggil di mana pun ---
-                    toggleCheckboxOnClick(".document-item");
-                    toggleCheckboxOnClick(".type-item");
-                    toggleCheckboxOnClick(".child-item");
-                    toggleCheckboxOnClick(".service-tour")
-                    toggleCheckboxOnClick(".wakaf-item")
+        // --- panggil di mana pun ---
+        toggleCheckboxOnClick(".document-item");
+        toggleCheckboxOnClick(".type-item");
+        toggleCheckboxOnClick(".child-item");
+        toggleCheckboxOnClick(".service-tour")
+        toggleCheckboxOnClick(".wakaf-item")
     </script>
 @endsection
