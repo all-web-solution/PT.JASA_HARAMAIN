@@ -297,6 +297,7 @@
 
         .btn-secondary:hover {
             background-color: #f8f9fa;
+            color: var(--text-secondary);
         }
 
         .btn-submit {
@@ -674,9 +675,8 @@
                                             <label class="form-label">Jumlah {{ $document->name }}</label>
                                             <input type="number" class="form-control"
                                                 name="jumlah_doc_{{ $document->id }}" min="1">
-                                            <label class="form-label">Keterangan {{ $document->name }}</label>
-                                            <input type="text" class="form-control"
-                                                name="keterangan_doc_{{ $document->id }}">
+
+
                                         </div>
                                     @endif
                                 @endforeach
@@ -811,10 +811,9 @@
                                             data-id="{{ $content->id }}" data-name="{{ $content->name }}"
                                             data-price="{{ $content->price }}" data-type="konten"
                                             name="jumlah_konten[{{ $content->id }}]" min="1">
-
-                                        <label class="form-label mt-2">Tanggal {{ $content->name }} Dilaksanakan</label>
-                                        <input type="date" class="form-control"
-                                            name="tanggal_konten[{{ $content->id }}]">
+                                        <label for="keterangan_konten" class="form-label mt-3">Keterangan</label>
+                                        <input type="text" class="form-control"
+                                            name="keterangan_konten[{{ $content->id }}]">
                                     </div>
                                 @endforeach
                             </div>
@@ -1044,7 +1043,7 @@
                         </div>
                     </div>
 
-                    <div class="form-section p-3" id="cart-total-price" style="display: none;">
+                    {{-- <div class="form-section p-3" id="cart-total-price" style="display: none;">
                         <h6 class="form-section-title">
                             <i class="bi bi-card-checklist"></i> Detail produk yang dipilih
                         </h6>
@@ -1055,11 +1054,10 @@
                                 <span id="cart-total-text">Rp. 0</span>
                             </strong>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="form-actions">
                         <button type="submit" name="action" value="save" class="btn btn-primary">Simpan</button>
-                        <button type="submit" name="action" value="nego" class="btn btn-warning">Nego</button>
                     </div>
                 </form>
             </div>
@@ -1411,10 +1409,23 @@ if (typeItem) {
                             newForm.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border',
                                 'rounded');
                             newForm.innerHTML =
-                                `<label class="form-label">Jumlah ${name}</label><input type="number" class="form-control jumlah-child-doc" data-parent-id="${parentId}" data-child-id="${childId}" data-name="${name}" data-price="${price}" min="1" value="1"><label class="form-label mt-2">Keterangan</label><input type="text" class="form-control" name="keterangan_doc_child_${childId}">`;
+                                `<label class="form-label">Jumlah ${name}</label>
+             <input type="number"
+                    class="form-control jumlah-child-doc"
+                    data-parent-id="${parentId}"
+                    data-child-id="${childId}"
+                    data-name="${name}"
+                    data-price="${price}"
+                    min="1"
+                    value="1"
+                    name="jumlah_child_doc[${childId}]">`; // <-- TAMBAHKAN NAME ATTRIBUTE INI
                             formContainer.appendChild(newForm);
                         } else {
                             existingForm.classList.remove('hidden');
+                            const inputNumber = existingForm.querySelector('input[type="number"]');
+                            if (inputNumber && !inputNumber.hasAttribute('name')) {
+                                inputNumber.setAttribute('name', `jumlah_child_doc[${childId}]`);
+                            }
                         }
                         updateItemInCart(cartId, `Dokumen - ${name}`, 1, price);
                     } else {

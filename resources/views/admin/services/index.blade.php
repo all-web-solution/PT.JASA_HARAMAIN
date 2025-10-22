@@ -203,8 +203,8 @@
 
         /* Action Buttons */
         .btn-action {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 8px;
             display: inline-flex;
             align-items: center;
@@ -213,6 +213,7 @@
             transition: all 0.3s ease;
             border: none;
             background-color: transparent;
+            cursor: pointer;
         }
 
         .btn-action:hover {
@@ -225,6 +226,10 @@
 
         .btn-upload {
             color: var(--haramain-secondary);
+        }
+
+        .btn-view {
+            color: var(--text-primary);
         }
 
         .btn-view {
@@ -286,6 +291,7 @@
             gap: 8px;
             transition: all 0.3s ease;
             border: none;
+            text-decoration: none;
         }
 
         .btn-add-new:hover {
@@ -540,7 +546,7 @@
                             <th>Customer</th>
                             <th>Tanggal Keberangkatan</th>
                             <th>Tanggal Kepulangan</th>
-                            <th>Jumlah</th>
+                            <th>Jumlah Jamaah</th>
                             <th>Layanan</th>
                             <th>Status</th>
                             <th> </th>
@@ -554,7 +560,7 @@
                                 <td data-label="Tgl keberangkatan">{{ $service->tanggal_keberangkatan }}</td>
                                 <td data-label="Tgl kepulangan">{{ $service->tanggal_kepulangan }}</td>
                                 <td data-label="Jumlah jamaah">{{ $service->total_jamaah }}</td>
-                                <td data-label="Layanan yang di pilih">Under Maintenance!</td>
+                                <td data-label="Layanan yang di pilih">{{ implode(', ', (array) $service->services) }}</td>
 
                                 @if ($service->status === 'nego')
                                     <td data-label="Status">
@@ -574,12 +580,9 @@
                                                 <i class="bi bi-cloud-arrow-up"></i>
                                             </button>
                                         </a>
-                                        <a href="{{ route('admin.services.show', $service->id) }}"
-                                            title="Lihat Detail Layanan">
-                                            <button class="btn-action btn-view">
-                                                <i class="bi bi-eye-fill"></i>
-                                            </button>
-                                        </a>
+                                        <button class="btn-action btn-view" title="view">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -591,19 +594,23 @@
             <!-- Pagination -->
             <div class="pagination-container">
                 <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
+                    <ul class="pagination justify-content-center">
+                        {{-- Previous Page Link --}}
+                        <li class="page-item {{ $services->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $services->previousPageUrl() ?? '#' }}"
+                                tabindex="-1">&laquo;</a>
                         </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
+
+                        {{-- Page Number Links --}}
+                        @foreach ($services->getUrlRange(1, $services->lastPage()) as $page => $url)
+                            <li class="page-item {{ $services->currentPage() == $page ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        <li class="page-item {{ !$services->hasMorePages() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $services->nextPageUrl() ?? '#' }}">&raquo;</a>
                         </li>
                     </ul>
                 </nav>

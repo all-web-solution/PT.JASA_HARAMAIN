@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CustomerDocument;
+use Carbon\Carbon;
 
 class Service extends Model
 {
@@ -91,4 +92,12 @@ class Service extends Model
     {
         return $this->belongsTo(User::class, 'pendamping_id');
     }
+
+    public static function totalJamaahBulanIni()
+    {
+        return self::whereMonth('tanggal_keberangkatan', Carbon::now()->month)
+            ->whereYear('tanggal_keberangkatan', Carbon::now()->year)
+            ->sum('total_jamaah');
+    }
+
 }

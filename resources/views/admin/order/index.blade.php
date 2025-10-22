@@ -17,7 +17,7 @@
             --danger-color: #dc3545;
         }
 
-        .service-list-container {
+        .order-list-container {
             max-width: 100vw;
             margin: 0 auto;
             padding: 2rem;
@@ -57,61 +57,6 @@
             color: var(--haramain-secondary);
         }
 
-        .table-responsive {
-            padding: 0 1.5rem;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 0.75rem;
-        }
-
-        .table thead th {
-            background-color: var(--haramain-light);
-            color: var(--haramain-primary);
-            font-weight: 600;
-            padding: 1rem 1.25rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .table tbody tr {
-            background-color: white;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-        }
-
-        .table tbody tr:hover {
-            background-color: var(--hover-bg);
-        }
-
-        .table tbody td {
-            padding: 1rem;
-            vertical-align: middle;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .badge {
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.75rem;
-        }
-
-        .btn-add-new {
-            background-color: var(--haramain-secondary);
-            color: white;
-            border-radius: 8px;
-            padding: 0.625rem 1.5rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            border: none;
-        }
-
         /* Search and Filter */
         .search-filter-container {
             display: flex;
@@ -142,18 +87,105 @@
             color: var(--text-secondary);
         }
 
-        .filter-group {
+        /* Table style */
+        .table-responsive {
+            padding: 0 1.5rem 1rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.75rem;
+        }
+
+        .table thead th {
+            background-color: var(--haramain-light);
+            color: var(--haramain-primary);
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            background-color: white;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .table tbody tr:hover {
+            background-color: var(--hover-bg);
+            box-shadow: 0 4px 12px rgba(42, 111, 219, 0.1);
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+         .table tbody td:first-child {
+            border-left: 1px solid var(--border-color);
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .table tbody td:last-child {
+            border-right: 1px solid var(--border-color);
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .btn-add-new {
+            background-color: var(--haramain-secondary);
+            color: white;
+            border-radius: 8px;
+            padding: 0.625rem 1.5rem;
+            font-weight: 600;
             display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: flex-end;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
             gap: 1rem;
         }
 
-        .filter-select {
-            height: 40px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 0 1rem;
-            min-width: 150px;
+        .pagination .page-link {
+            border-radius: 10px;
+            margin: 0 3px;
+            color: var(--haramain-primary);
+            border-color: #d9e3f0;
         }
+
+        .pagination .page-item.active .page-link {
+            background-color: #2f6fed;
+            border-color: #2f6fed;
+            color: #fff;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background-color: #f5f7fa;
+            color: #adb5bd;
+            border-color: #e3e7ec;
+        }
+
 
         /* ✅ Responsive Umum (Tablet) */
         @media (max-width: 768px) {
@@ -206,7 +238,7 @@
                 display: none;
             }
 
-            .service-list-container {
+            .order-list-container {
                 padding: 1rem;
             }
 
@@ -280,9 +312,8 @@
             }
         }
     </style>
-@endpush
-@section('content')
-    <div class="service-list-container">
+
+    <div class="order-list-container">
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
@@ -290,25 +321,52 @@
                 </h5>
             </div>
 
-            <div class="search-filter-container" id="filter">
+            <!-- Search and Filter -->
+            <div class="search-filter-container">
                 <div class="search-box">
                     <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Cari customer/kode service...">
+                    <input type="text" id="searchInput" placeholder="Cari berdasarkan nama, email, dll...">
                 </div>
                 <div class="filter-group">
-                    <select class="filter-select">
-                        <option>Semua Status</option>
-                        <option>Pending</option>
-                        <option>Diproses</option>
-                        <option>Selesai</option>
-                        <option>Ditolak</option>
-                    </select>
-                    <select class="filter-select">
-                        <option>Semua Periode</option>
-                        <option>Hari Ini</option>
-                        <option>Minggu Ini</option>
-                        <option>Bulan Ini</option>
-                    </select>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary d-flex align-items-center" type="button"
+                            id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-funnel me-2"></i> Filter
+                        </button>
+
+                        <!-- Dropdown Filter -->
+                        <div class="dropdown-menu dropdown-menu-end p-4 shadow" style="width: 320px;">
+                            <form action="{{ route('admin.order') }}" method="GET">
+                                <h6 class="fw-bold mb-3">Filters</h6>
+
+                                <!-- Bulan -->
+                                <div class="mb-3">
+                                    <label for="bulan" class="form-label small text-muted">Bulan</label>
+                                    <select name="bulan" id="bulan" class="form-select">
+                                        <option value="">-- Pilih Bulan --</option>
+                                        @for ($i = 1; $i <= 12; $i++)
+                                            <option value="{{ $i }}"
+                                                {{ request('bulan') == $i ? 'selected' : '' }}>
+                                                {{ DateTime::createFromFormat('!m', $i)->format('F') }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                </div>
+
+                                <!-- Tahun -->
+                                <div class="mb-3">
+                                    <label for="tahun" class="form-label small text-muted">Tahun</label>
+                                    <input type="number" name="tahun" id="tahun" class="form-control"
+                                        placeholder="Tahun" value="{{ request('tahun', now()->year) }}">
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <a href="{{ route('admin.order') }}" class="btn btn-sm btn-outline-secondary">Reset</a>
+                                    <button type="submit" class="btn btn-sm btn-primary">Apply filters</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -324,48 +382,68 @@
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach ($orders as $order)
+                    <tbody id="userTableBody">
+                        @if ($orders->isEmpty())
                             <tr>
-                                <td data-label="Invoice">{{ $order->invoice }}</td>
-                                <td data-label="Nama Pelanggan">{{ $order->service?->pelanggan?->nama_travel ?? '-' }}</td>
-                                <td data-label="Total">{{ number_format($order->total_amount, 0, ',', '.') }}</td>
-                                <td data-label="Dibayar">{{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}
-                                </td>
-                                <td data-label="Sisa">{{ number_format($order->sisa_hutang, 0, ',', '.') }}</td>
-                                <td data-label="Aksi">
-                                    @if ($order->status_pembayaran === 'belum_bayar')
-                                        <a href="{{ route('orders.bayar', $order->id) }}">
-                                            <button class="btn btn-primary btn-sm w-100">Bayar</button>
-                                        </a>
-                                    @elseif ($order->status_pembayaran === 'sudah_bayar')
-                                        <span class="bg-warning p-1 rounded text-dark d-block text-center">Sudah
-                                            Bayar</span>
-                                    @else
-                                        <a href="{{ route('orders.bayar', $order->id) }}">
-                                            <span class="bg-success p-1 rounded text-white d-block text-center">Lunas</span>
-                                        </a>
-                                    @endif
+                                <td colspan="8" class="text-center py-5">
+                                    <img src="{{ asset('assets/images/empty-state.svg') }}" alt="No data"
+                                        style="height: 150px;">
+                                    <h5 class="mt-3" style="color: var(--haramain-primary);">Belum Ada Data Payment</h5>
+                                    <p class="text-muted">Mulai dengan menambahkan permintaan di service</p>
                                 </td>
                             </tr>
-                        @endforeach
+                        @else
+                            @foreach ($orders as $order)
+                                <tr>
+                                    <td data-label="Invoice">{{ $order->invoice }}</td>
+                                    <td data-label="Nama Pelanggan">{{ $order->service?->pelanggan?->nama_travel ?? '-' }}
+                                    </td>
+                                    <td data-label="Total">{{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                                    <td data-label="Dibayar">
+                                        {{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}
+                                    </td>
+                                    <td data-label="Sisa">{{ number_format($order->sisa_hutang, 0, ',', '.') }}</td>
+                                    <td data-label="Aksi">
+                                        @if ($order->status_pembayaran === 'belum_bayar')
+                                            <a href="{{ route('orders.bayar', $order->id) }}">
+                                                <button class="btn btn-primary btn-sm w-100">Bayar</button>
+                                            </a>
+                                        @elseif ($order->status_pembayaran === 'sudah_bayar')
+                                            <span class="bg-warning p-1 rounded text-dark d-block text-center">Sudah
+                                                Bayar</span>
+                                        @else
+                                            <a href="{{ route('orders.bayar', $order->id) }}">
+                                                <span
+                                                    class="bg-success p-1 rounded text-white d-block text-center">Lunas</span>
+                                            </a>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
 
+            <!-- Pagination -->
             <div class="pagination-container">
                 <nav aria-label="Page navigation">
-                    <ul class="pagination">
+                    <ul class="pagination justify-content-center">
+                        {{-- Previous Page Link --}}
                         <li class="page-item {{ $orders->onFirstPage() ? 'disabled' : '' }}">
-                            <a class="page-link" href="{{ $orders->previousPageUrl() }}" aria-label="Previous">&laquo;</a>
+                            <a class="page-link" href="{{ $orders->previousPageUrl() ?? '#' }}" tabindex="-1">&laquo;</a>
                         </li>
+
+                        {{-- Page Number Links --}}
                         @foreach ($orders->getUrlRange(1, $orders->lastPage()) as $page => $url)
-                            <li class="page-item {{ $page == $orders->currentPage() ? 'active' : '' }}">
+                            <li class="page-item {{ $orders->currentPage() == $page ? 'active' : '' }}">
                                 <a class="page-link" href="{{ $url }}">{{ $page }}</a>
                             </li>
                         @endforeach
-                        <li class="page-item {{ $orders->hasMorePages() ? '' : 'disabled' }}">
-                            <a class="page-link" href="{{ $orders->nextPageUrl() }}" aria-label="Next">&raquo;</a>
+
+                        {{-- Next Page Link --}}
+                        <li class="page-item {{ !$orders->hasMorePages() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $orders->nextPageUrl() ?? '#' }}">&raquo;</a>
                         </li>
                     </ul>
                 </nav>
@@ -373,4 +451,29 @@
 
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Improved Search Functionality
+            const searchInput = document.getElementById('searchInput');
+            const tableBody = document.getElementById('userTableBody');
+            const rows = tableBody.getElementsByTagName('tr');
+
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    // Get all text content from the row, not just specific cells
+                    const rowText = row.textContent.toLowerCase();
+
+                    if (rowText.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        });
+    </script>
 @endsection

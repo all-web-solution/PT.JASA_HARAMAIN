@@ -8,6 +8,7 @@ use App\Models\DocumentChildren;
 use App\Models\Dorongan;
 use App\Models\GuideItems;
 use App\Models\MealItem;
+use App\Models\Pelanggan;
 use App\Models\Route;
 use App\Models\TourItem;
 use App\Models\Transportation;
@@ -221,9 +222,9 @@ class DatabaseSeeder extends Seeder
             ['document_id' => 1, 'name' => 'visa haji', "price" => 16000],
             ['document_id' => 1, 'name' => 'visa ziarah', "price" => 20000],
             ['document_id' => 1, 'name' => 'visa personal',"price" => 5000],
-            ['document_id' => 1, 'name' => 'visa group',"price" => 22000],
+            ['document_id' => 1, 'name' => 'visa group', "price" => 22000],
             ['document_id' => 2, 'name' => 'polio', "price" => 31000],
-            ['document_id' => 2, 'name' => 'meningtis', "price" => 60000],
+            ['document_id' => 2, 'name' => 'meningtis',  "price" => 60000],
         ];
 
         foreach($documentChildren as $data){
@@ -266,6 +267,15 @@ class DatabaseSeeder extends Seeder
         ];
         foreach($types as $type){
             TypeHotel::create($type);
+        }
+
+        $pelanggans = [
+            ['foto' => '1.jpg', 'nama_travel' => 'Madinatain', 'alamat'=>'Jl. Suka-suka', 'email' => 'madinatain@travel.com', 'penanggung_jawab' => 'fulan', 'phone' => '000', 'no_ktp' => '1000', 'status' => 'active'],
+            ['foto' => '1.jpg', 'nama_travel' => 'Haramain', 'alamat'=>'Jl. duka-duka', 'email' => 'haramain@travel.com', 'penanggung_jawab' => 'fulan', 'phone' => '001', 'no_ktp' => '2000', 'status' => 'active']
+        ];
+
+        foreach($pelanggans as $pelanggan){
+            Pelanggan::create($pelanggan);
         }
     }
 }

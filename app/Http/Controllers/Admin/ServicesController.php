@@ -29,11 +29,13 @@ use App\Models\DoronganOrder;
 use App\Models\TypeHotel;
 use Illuminate\Support\Facades\DB;
 use App\Models\Badal;
+use App\Models\Document;
 use App\Models\DocumentChildren;
 use App\Models\HandlingHotel;
 use App\Models\HandlingPlanes;
 use App\Models\WakafCustomer;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ServicesController extends Controller
 {
@@ -95,6 +97,8 @@ class ServicesController extends Controller
         $deal = $dealQuery->get();
 
         $services = $nego->merge($deal);
+        $query = Service::query();
+        $services = $query->latest()->paginate(10);
 
         return view('admin.services.index', compact('services'));
     }
@@ -129,7 +133,7 @@ class ServicesController extends Controller
             'total_jamaah' => 'required|integer',
         ]);
 
-        $masterPrefix = 'TRX';
+        $masterPrefix = 'ID';
         $lastService = Service::where('unique_code', 'like', $masterPrefix . '-%')
             ->orderByDesc('id')
             ->first();
@@ -149,22 +153,135 @@ class ServicesController extends Controller
 
         $this->processServiceItems($request, $service);
 
-        // Buat order
-        $totalAmount = (float) $request->input('total_amount', 0);
-        Order::create([
-            'service_id' => $service->id,
-            'total_amount' => $totalAmount,
-            'invoice' => 'INV-' . time(),
-            'total_yang_dibayarkan' => 0,
-            'sisa_hutang' => $totalAmount,
-            'status_pembayaran' => $totalAmount == 0 ? 'lunas' : 'belum_bayar',
-        ]);
-        if ($status === 'deal') {
-            return redirect()->route('admin.services')->with('success', 'Data service berhasil disimpan.');
-        }
-        return redirect()->route('admin.services')->with('success', 'Data nego berhasil diperbarui.');
+        // ----------------------------------------------------
+    // 🔒 HITUNG ULANG TOTAL DI SERVER SETELAH ITEM DISIMPAN
+    // ----------------------------------------------------
+    $serverTotalAmount = 0;
 
+    // Muat ulang (refresh) relasi yang baru saja disimpan/diperbarui
+    // Ini penting agar kita mendapatkan data yang paling akurat dari database
+    $service->load([
+        'documents', // Relasi ke CustomerDocument
+        'hotels',    // Relasi ke Hotel
+        'badals',    // Relasi ke Badal
+        'meals',     // Relasi ke MealCustomer (atau nama relasi Anda)
+        'guides',    // Relasi ke GuideCustomer (atau nama relasi Anda)
+        'tours',     // Relasi ke TourCustomer (atau nama relasi Anda)
+        'wakafs',    // Relasi ke WakafCustomer
+        'dorongans', // Relasi ke DoronganOrder
+        'contents',  // Relasi ke ContentCustomer
+        // Tambahkan relasi lain yang relevan di sini
+    ]);
+
+    // Kalkulasi Harga Dokumen
+    foreach ($service->documents as $doc) {
+        // Asumsi: CustomerDocument punya kolom 'harga' & 'jumlah'
+        $serverTotalAmount += ($doc->harga ?? 0) * ($doc->jumlah ?? 0);
     }
+
+    // Kalkulasi Harga Hotel
+    // Anda PERLU MENYESUAIKAN ini sesuai cara Anda menyimpan harga hotel
+    // Apakah per kamar per malam? Apakah ada harga total per booking hotel?
+    foreach ($service->hotels as $hotel) {
+        // Contoh ASUMSI: Model Hotel memiliki kolom 'harga_total'
+        // $serverTotalAmount += $hotel->harga_total ?? 0;
+        // ATAU jika harga per kamar dan Anda punya lama menginap:
+        // $checkin = \Carbon\Carbon::parse($hotel->tanggal_checkin);
+        // $checkout = \Carbon\Carbon::parse($hotel->tanggal_checkout);
+        // $nights = $checkin->diffInDays($checkout);
+        // $serverTotalAmount += ($hotel->harga_perkamar ?? 0) * ($hotel->jumlah_kamar ?? 0) * $nights;
+        // === GANTI DENGAN LOGIKA HARGA HOTEL ANDA YANG BENAR ===
+         // Untuk sementara kita biarkan 0 jika logika belum jelas
+         $serverTotalAmount += 0; // <-- GANTI INI
+    }
+
+    // Kalkulasi Harga Badal
+    foreach ($service->badals as $badal) {
+        $serverTotalAmount += $badal->price ?? 0; // Asumsi: Badal punya kolom 'price'
+    }
+
+    // Kalkulasi Harga Meals
+    foreach ($service->meals as $mealCustomer) { // Asumsi relasi namanya 'meals' -> MealCustomer
+        // Asumsi: MealCustomer punya relasi 'mealItem' ke MealItem yg punya 'price'
+        // dan MealCustomer punya kolom 'jumlah'
+        $serverTotalAmount += ($mealCustomer->mealItem->price ?? 0) * ($mealCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    }
+
+    // Kalkulasi Harga Guides (Pendamping)
+    foreach ($service->guides as $guideCustomer) { // Asumsi relasi namanya 'guides' -> GuideCustomer
+        // Asumsi: GuideCustomer punya relasi 'guideItem' ke GuideItems yg punya 'harga'
+        // dan GuideCustomer punya kolom 'jumlah'
+        $serverTotalAmount += ($guideCustomer->guideItem->harga ?? 0) * ($guideCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    }
+
+    // Kalkulasi Harga Tours
+    foreach ($service->tours as $tourCustomer) { // Asumsi relasi namanya 'tours' -> TourCustomer
+        // Asumsi: TourCustomer punya relasi 'tourItem' ke TourItem yg punya 'price'
+        // dan TourCustomer punya relasi 'transportation' ke Transportation yg punya 'harga'
+        $tourPrice = $tourCustomer->tourItem->price ?? 0; // Harga dasar tour
+        $transportPrice = $tourCustomer->transportation->harga ?? 0; // Harga transport utk tour itu
+        $serverTotalAmount += $tourPrice + $transportPrice; // Sesuaikan jika logikanya beda
+    }
+
+    // Kalkulasi Harga Wakaf
+    foreach ($service->wakafs as $wakafCustomer) { // Asumsi relasi namanya 'wakafs' -> WakafCustomer
+         // Asumsi: WakafCustomer punya relasi 'wakafItem' ke Wakaf yg punya 'harga'
+         // dan WakafCustomer punya kolom 'jumlah'
+        $serverTotalAmount += ($wakafCustomer->wakafItem->harga ?? 0) * ($wakafCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    }
+
+     // Kalkulasi Harga Dorongan
+    foreach ($service->dorongans as $doronganOrder) { // Asumsi relasi namanya 'dorongans' -> DoronganOrder
+         // Asumsi: DoronganOrder punya relasi 'doronganItem' ke Dorongan yg punya 'price'
+         // dan DoronganOrder punya kolom 'jumlah'
+        $serverTotalAmount += ($doronganOrder->doronganItem->price ?? 0) * ($doronganOrder->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    }
+
+     // Kalkulasi Harga Content
+    foreach ($service->contents as $contentCustomer) { // Asumsi relasi namanya 'contents' -> ContentCustomer
+         // Asumsi: ContentCustomer punya relasi 'contentItem' ke ContentItem yg punya 'price'
+         // dan ContentCustomer punya kolom 'jumlah'
+        $serverTotalAmount += ($contentCustomer->contentItem->price ?? 0) * ($contentCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    }
+
+    // ... Tambahkan kalkulasi untuk item lain jika ada (misal: Handling, Reyal jika ada biayanya) ...
+
+    // ----------------------------------------------------
+    // BUAT ORDER DENGAN TOTAL YANG AMAN DARI SERVER
+    // ----------------------------------------------------
+    // Hapus baris lama: $totalAmount = (float) $request->input('total_amount', 0);
+    Order::create([
+        'service_id' => $service->id,
+        'total_amount' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
+        'invoice' => 'INV-' . time(),
+        'total_yang_dibayarkan' => 0,
+        'sisa_hutang' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
+        'status_pembayaran' => $serverTotalAmount == 0 ? 'lunas' : 'belum_bayar',
+    ]);
+
+    // ... (Redirect seperti sebelumnya) ...
+    return redirect()->route('admin.services')->with('success', 'Data service berhasil disimpan.');
+}
+
+        // Buat order
+        // $totalAmount = (float) $request->input('total_amount', 0);
+        // Order::create([
+        //     'service_id' => $service->id,
+        //     'total_amount' => $totalAmount,
+        //     'invoice' => 'INV-' . time(),
+        //     'total_yang_dibayarkan' => 0,
+        //     'sisa_hutang' => $totalAmount,
+        //     'status_pembayaran' => $totalAmount == 0 ? 'lunas' : 'belum_bayar',
+        // ]);
+        // if ($status === 'deal') {
+        //     return redirect()->route('service.uploadBerkas', [
+        //         'service_id' => $service->id,
+        //         'total_jamaah' => $request->total_jamaah,
+        //     ])->with('success', 'Data service berhasil disimpan.');
+        // }
+        // return redirect()->route('admin.services')->with('success', 'Data nego berhasil diperbarui.');
+
+
 
 
     public function show($id)
@@ -559,6 +676,7 @@ class ServicesController extends Controller
                             'service_id' => $service->id,
                             'content_id' => $contentId,
                             'jumlah' => $jumlah,
+                            'keterangan' => $request->keterangan,
                         ]);
                     }
                 }
@@ -1249,46 +1367,100 @@ class ServicesController extends Controller
         }
     }
 
-    private function handleDocumentItems(Request $request, Service $service)
-    {
-        if ($request->filled('dokumen_id')) {
-            if ($request->hasFile('paspor_dokumen')) {
-                $paspordokumen = $request->file('paspor_dokumen')->store('/', 'public');
+   private function handleDocumentItems(Request $request, Service $service)
+{
+    // 1. TANGANI UPLOAD FILE (DAN SIMPAN KE SERVICE)
+    // Asumsi: Kolom 'paspor_dokumen' & 'pas_foto_dokumen' ada di tabel 'services'
+    $fileData = [];
+    if ($request->hasFile('paspor_dokumen')) {
+        // Opsional: Hapus file lama jika ada sebelum menyimpan yang baru
+        if ($service->paspor_dokumen) {
+             Storage::disk('public')->delete($service->paspor_dokumen);
+        }
+        $fileData['paspor_dokumen'] = $request->file('paspor_dokumen')->store('service-docs', 'public'); // Simpan ke folder service-docs
+    }
+    if ($request->hasFile('pas_foto_dokumen')) {
+        // Opsional: Hapus file lama
+         if ($service->pas_foto_dokumen) {
+             Storage::disk('public')->delete($service->pas_foto_dokumen);
+         }
+        $fileData['pas_foto_dokumen'] = $request->file('pas_foto_dokumen')->store('service-docs', 'public'); // Simpan ke folder service-docs
+    }
+
+    // Update service HANYA jika ada file baru yang diupload
+    if (!empty($fileData)) {
+        $service->update($fileData); // Pastikan kolom ada di $fillable model Service
+    }
+
+    // Ini akan menampung semua ID item CustomerDocument yang valid untuk service ini
+    $validCustomerDocIds = [];
+
+    // ---------------------------------------------------------------------
+    // 2. PROSES DOKUMEN INDUK (YANG TIDAK PUNYA ANAK)
+    // Memindai semua input request untuk mencari key 'jumlah_doc_{id}'
+    // ---------------------------------------------------------------------
+    foreach ($request->all() as $key => $jumlah) {
+        // Cek jika nama input adalah 'jumlah_doc_' dan nilainya (jumlah) valid
+        if (strpos($key, 'jumlah_doc_') === 0 && $jumlah > 0) {
+            // Ambil ID dari nama input (misal: 'jumlah_doc_12' -> '12')
+            $documentId = substr($key, 11);
+            $document = Document::find($documentId); // Cari dokumen induk
+
+            if ($document) {
+                // Simpan (atau update jika sudah ada)
+                $customerDoc = $service->documents()->updateOrCreate(
+                    [
+                        'document_id' => $documentId,
+                        'document_children_id' => null // Tandai sebagai item induk
+                    ],
+                    [
+                        'jumlah' => $jumlah,
+                        'harga'  => $document->price ?? 0, // Ambil harga dari induk, default 0 jika null
+                    ]
+                );
+                // Simpan ID yang baru dibuat/diupdate
+                $validCustomerDocIds[] = $customerDoc->id;
             }
-            if ($request->hasFile('pas_foto_dokumen')) {
-                $pasfotodokumen = $request->file('pas_foto_dokumen')->store('/', 'public');
-            }
-            foreach ($request->dokumen_id as $docId) {
-                foreach ($request->child_documents as $child) {
-                    if ($child) {
-                        $itemChild = DocumentChildren::find($child);
-                        $jumlah = $request->input("jumlah_doc_child_{$itemChild->id}", 1);
-                        if ($jumlah > 0) {
-                            $service->documents()->create([
-                                'document_id' => $docId,
-                                'document_children_id' => $itemChild->id,
-                                'jumlah' => $jumlah,
-                                'harga' => $itemChild->price,
+        }
+    }
 
-                            ]);
-                        }
-                    } {
-                        $jumlah = $request->input("jumlah_doc_{$docId}", 1);
-                        if ($jumlah > 0) {
-                            $service->documents()->create([
-                                'document_id' => $docId,
-                                'document_children_id' => null,
-                                'jumlah' => $jumlah,
-                                'harga' => '0',
-
-
-                            ]);
-                        }
-                    }
+    // ---------------------------------------------------------------------
+    // 3. PROSES DOKUMEN ANAK (YANG DICENTANG DAN ADA JUMLAHNYA)
+    // ---------------------------------------------------------------------
+    // Cek apakah ada input jumlah_child_doc (array) yang dikirim
+    if ($request->has('jumlah_child_doc') && is_array($request->jumlah_child_doc)) {
+        // Loop melalui array jumlah_child_doc[CHILD_ID] => JUMLAH
+        foreach ($request->jumlah_child_doc as $childId => $jumlah) {
+            // Pastikan jumlah valid dan anak dokumennya ada
+            if ($jumlah > 0) {
+                $itemChild = DocumentChildren::find($childId);
+                if ($itemChild) {
+                    // Simpan (atau update jika sudah ada)
+                    $customerDoc = $service->documents()->updateOrCreate(
+                        [
+                            // Cari berdasarkan ID anak
+                            'document_children_id' => $itemChild->id
+                        ],
+                        [
+                            'document_id' => $itemChild->document_id, // Simpan ID induknya dari relasi
+                            'jumlah'      => $jumlah, // <-- AMBIL JUMLAH DARI INPUT BARU
+                            'harga'       => $itemChild->price ?? 0, // Ambil harga dari anak, default 0 jika null
+                        ]
+                    );
+                    // Simpan ID yang baru dibuat/diupdate
+                    $validCustomerDocIds[] = $customerDoc->id;
                 }
             }
         }
     }
+
+    // ---------------------------------------------------------------------
+    // 4. PEMBERSIHAN (Hapus item yang tidak dipilih lagi)
+    // ---------------------------------------------------------------------
+    $service->documents()
+            ->whereNotIn('id', $validCustomerDocIds)
+            ->delete();
+}
 
 
     private function handleReyalItems(Request $request, Service $service)

@@ -103,175 +103,33 @@
         }
     </style>
 
-    <div class="container-fluid p-4">
+    <div class="container-fluid p-3">
         <!-- Stats Cards -->
         <div class="row g-3 mb-4" id="cards-dashboard">
-            <div class="col-xl-3 col-md-6" id="card-reponsive">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Total Request</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                    {{ \App\Models\Service::count() }}
-                                </h3>
-                                <p class="card-text text-success mb-0"><small>+5% dari bulan lalu</small></p>
-                            </div>
-                            <div class="bg-primary bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-file-earmark-text fs-4" style="color: var(--haramain-secondary);"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-card-component title="Jamaah Bulan Ini" :count="\App\Models\Service::totalJamaahBulanIni()" icon="bi bi-people"
+                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
 
-            <div class="col-xl-3 col-md-6" id="card-reponsive">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Total Payment</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                    {{ \App\Models\Order::count() }}
-                                </h3>
-                                <p class="card-text text-danger mb-0"><small>3 overdue</small></p>
-                            </div>
-                            <div class="bg-warning bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-currency-dollar fs-4" style="color: #ff9800;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-card-component title="Total Travel" :count="\App\Models\Pelanggan::count()" icon="bi bi-currency-dollar"
+                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
 
-            <div class="col-xl-3 col-md-6" id="card-reponsive">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Jamaah Bulan Ini</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                    {{ \App\Models\Pelanggan::count() }}
-                                </h3>
-                                <p class="card-text text-success mb-0"><small>+12% dari bulan lalu</small></p>
-                            </div>
-                            <div class="bg-success bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-people fs-4" style="color: #4caf50;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-card-component title="Total Service" :count="12" icon="bi bi-currency-dollar"
+                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
 
-            <div class="col-xl-3 col-md-6" id="card-reponsive">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Total Travel</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                    {{ \App\Models\Order::count() }}
-                                </h3>
-                                <p class="card-text text-danger mb-0"><small>3 overdue</small></p>
-                            </div>
-                            <div class="bg-warning bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-currency-dollar fs-4" style="color: #ff9800;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-card-component title="Total Request" :count="\App\Models\Service::count()" icon="bi bi-currency-dollar"
+                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
 
-            <div class="col-xl-3 col-md-6" id="card-reponsive">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Total Service</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                    {{ \App\Models\Service::count() }}
-                                </h3>
-                                <p class="card-text text-success mb-0"><small>+12% dari bulan lalu</small></p>
-                            </div>
-                            <div class="bg-success bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-people fs-4" style="color: #4caf50;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6" id="card-reponsive">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Total Negosiasi</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                    {{ \App\Models\Service::count() }}
-                                </h3>
-                                <p class="card-text text-success mb-0"><small>+12% dari bulan lalu</small></p>
-                            </div>
-                            <div class="bg-success bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-people fs-4" style="color: #4caf50;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6" id="card-reponsive">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Tahap persiapan</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                    {{ \App\Models\Service::count() }}
-                                </h3>
-                                <p class="card-text text-success mb-0"><small>+12% dari bulan lalu</small></p>
-                            </div>
-                            <div class="bg-success bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-people fs-4" style="color: #4caf50;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6" id="card-reponsive">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Tahap produksi</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                    {{ \App\Models\Service::count() }}
-                                </h3>
-                                <p class="card-text text-success mb-0"><small>+12% dari bulan lalu</small></p>
-                            </div>
-                            <div class="bg-success bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-people fs-4" style="color: #4caf50;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6" id="card-reponsive">
-                <div class="card card-stat h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-subtitle mb-1">Tahap penyelesaian</h6>
-                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                    {{ \App\Models\Service::count() }}
-                                </h3>
-                                <p class="card-text text-success mb-0"><small>+12% dari bulan lalu</small></p>
-                            </div>
-                            <div class="bg-success bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-people fs-4" style="color: #4caf50;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-card-component title="Total Payment" :count="\App\Models\Order::count()" icon="bi bi-currency-dollar"
+                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
+
+            <x-card-component title="Total Nego" :count="\App\Models\Service::where('status', 'nego')->count()" icon="bi bi-currency-dollar"
+                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
+
+            <x-card-component title="Maintenance" :count="0" icon="bi bi-currency-dollar"
+                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
+
+            <x-card-component title="Maintenance" :count="0" icon="bi bi-currency-dollar"
+                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
+
         </div>
 
         <!-- Charts -->
