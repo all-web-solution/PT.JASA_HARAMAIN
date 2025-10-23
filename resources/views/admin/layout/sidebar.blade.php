@@ -199,5 +199,20 @@
                 </a>
             </li>
         </ul>
+    @elseif (auth()->user()->role == 'keuangan')
+        <ul class="nav flex-column mt-2">
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('keuangan.index*') ? 'active' : '' }}"
+                    href="{{ route('keuangan.index') }}">
+                    <i class="bi bi-calculator"></i> DASHBOARD
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('keuangan.index*') ? 'active' : '' }}"
+                    href="{{ route('keuangan.payment') }}">
+                    <i class="bi bi-calculator"></i> PEMBAYARAN
+                </a>
+            </li>
+        </ul>
     @endif
 </div>

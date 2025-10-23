@@ -74,6 +74,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/invoice/{service}', [InvoiceController::class, 'show'])->name('invoice.show');
     Route::get('/invoice/{service}/download', [InvoiceController::class, 'download'])->name('invoice.download');
     Route::get('/invoice/{id}/cetak', [InvoiceController::class, 'cetak'])->name('invoice.cetak');
+    Route::get('/payment_proff/{order}', [OrderController::class, 'payment_proff'])->name('payment.proff');
+    Route::get('/payment_proff/{order}/create', [OrderController::class, 'payment_proff_create'])->name('payment.proff.create');
+    Route::post('/payment_proff/{order}/create', [OrderController::class, 'payment_proff_store'])->name('payment.proff.store');
 });
 
 Route::middleware(['auth', 'hotel'])->group(function () {
@@ -258,4 +261,12 @@ Route::middleware(['auth', 'content'])->group(function () {
     Route::post('/customer/{customer}/status/pending', [ContentController::class, 'setStatusPending'])->name('customer.status.pending');
     Route::post('/customer/{customer}/status/selesai', [ContentController::class, 'setStatusSelesai'])->name('customer.status.selesai');
     Route::post('/customer/{customer}/status/batalkan', [ContentController::class, 'setStatusBatal'])->name('customer.status.batal');
+});
+
+
+Route::middleware(['auth', 'keuangan'])->group(function () {
+    Route::get('/keuangan', [App\Http\Controllers\KeuanganController::class, 'index'])->name('keuangan.index');
+    Route::get('/payment', [App\Http\Controllers\KeuanganController::class, 'payment'])->name('keuangan.payment');
+    Route::get('/payment/detail/{id}', [App\Http\Controllers\KeuanganController::class, 'payment_detail'])->name('keuangan.payment.detail');
+    Route::post('/payment/{order}/pay', [App\Http\Controllers\KeuanganController::class, 'pay'])->name('keuangan.payment.pay');
 });

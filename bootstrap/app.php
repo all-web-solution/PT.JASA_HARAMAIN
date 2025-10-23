@@ -20,7 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
         'content' => \App\Http\Middleware\ContentMiddleware::class,
         'visa' => \App\Http\Middleware\VisaMiddleware::class,
         'reyal' => \App\Http\Middleware\ReyalMiddleware::class,
-        'palugada' => \App\Http\Middleware\PalugadaMiddleware::class
+        'palugada' => \App\Http\Middleware\PalugadaMiddleware::class,
+        'keuangan' => \App\Http\Middleware\KeuanganMiddleware::class
     ]);
 })
     ->withExceptions(function (Exceptions $exceptions): void {

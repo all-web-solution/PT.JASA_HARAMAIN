@@ -31,6 +31,7 @@ return new class extends Migration
                 'reyal',
                 'palugada',
                 'konten dan dokumentasi',
+                "keuangan"
                 ])->default('admin');
             $table->boolean('is_active')->default(true);
             $table->timestamp('last_login_at')->nullable();

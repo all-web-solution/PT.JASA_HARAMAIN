@@ -1,428 +1,282 @@
 @extends('admin.master')
 @section('content')
     <style>
-        :root {
-            --haramain-primary: #1a4b8c;
-            --haramain-secondary: #2a6fdb;
-            --haramain-light: #e6f0fa;
-            --haramain-accent: #3d8bfd;
-            --text-primary: #2d3748;
-            --text-secondary: #4a5568;
-            --border-color: #d1e0f5;
-            --hover-bg: #f0f7ff;
-            --checked-color: #2a6fdb;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-        }
+        /* === Responsiveness for 320px screens === */
+        @media screen and (max-width: 320px) {
 
-        .service-list-container {
-            max-width: 100vw;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #f8fafd;
-        }
-
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card-title {
-            font-weight: 700;
-            color: var(--haramain-primary);
-            margin: 0;
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .card-title i {
-            font-size: 1.5rem;
-            color: var(--haramain-secondary);
-        }
-
-        /* Table Styles */
-        .table-responsive {
-            padding: 0 1.5rem;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 0.75rem;
-        }
-
-        .table thead th {
-            background-color: var(--haramain-light);
-            color: var(--haramain-primary);
-            font-weight: 600;
-            padding: 1rem 1.25rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .table tbody tr {
-            background-color: white;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-        }
-
-        .table tbody tr:hover {
-            background-color: var(--hover-bg);
-            box-shadow: 0 4px 12px rgba(42, 111, 219, 0.1);
-        }
-
-        .table tbody td {
-            padding: 1.25rem;
-            vertical-align: middle;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .table tbody td:first-child {
-            border-left: 1px solid var(--border-color);
-            border-top-left-radius: 8px;
-            border-bottom-left-radius: 8px;
-        }
-
-        .table tbody td:last-child {
-            border-right: 1px solid var(--border-color);
-            border-top-right-radius: 8px;
-            border-bottom-right-radius: 8px;
-        }
-
-        /* Status Badge */
-        .badge {
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .badge i {
-            font-size: 0.8rem;
-        }
-
-        .badge-primary {
-            background-color: var(--haramain-light);
-            color: var(--haramain-secondary);
-        }
-
-        .badge-success {
-            background-color: rgba(40, 167, 69, 0.1);
-            color: var(--success-color);
-        }
-
-        .badge-warning {
-            background-color: rgba(255, 193, 7, 0.1);
-            color: var(--warning-color);
-        }
-
-        .badge-danger {
-            background-color: rgba(220, 53, 69, 0.1);
-            color: var(--danger-color);
-        }
-
-        /* Customer/Travel Info */
-        .customer-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .customer-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--haramain-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            color: var(--haramain-secondary);
-            font-size: 1.25rem;
-        }
-
-        .customer-details {
-            line-height: 1.4;
-        }
-
-        .customer-name {
-            font-weight: 600;
-            color: var(--haramain-primary);
-        }
-
-        .customer-type {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            background-color: var(--haramain-light);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        /* Date Info */
-        .date-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .date-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .date-value {
-            font-weight: 600;
-            color: var(--haramain-primary);
-        }
-
-        /* Action Buttons */
-        .btn-action {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 0.25rem;
-            transition: all 0.3s ease;
-            border: none;
-            background-color: transparent;
-        }
-
-        .btn-action:hover {
-            background-color: var(--haramain-light);
-        }
-
-        .btn-action i {
-            font-size: 1rem;
-        }
-
-        .btn-edit {
-            color: var(--haramain-secondary);
-        }
-
-        .btn-delete {
-            color: var(--danger-color);
-        }
-
-        .btn-view {
-            color: var(--text-secondary);
-        }
-
-        /* Search and Filter */
-        .search-filter-container {
-            display: flex;
-            justify-content: space-between;
-            padding: 1.5rem;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .search-box {
-            position: relative;
-            width: 300px;
-        }
-
-        .search-box input {
-            padding-left: 2.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            height: 40px;
-            width: 100%;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .filter-select {
-            height: 40px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 0 1rem;
-            min-width: 150px;
-        }
-
-        /* Add New Button */
-        .btn-add-new {
-            background-color: var(--haramain-secondary);
-            color: white;
-            border-radius: 8px;
-            padding: 0.625rem 1.5rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        .btn-add-new:hover {
-            background-color: var(--haramain-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
-        }
-
-        /* Pagination */
-        .pagination-container {
-            display: flex;
-            justify-content: flex-end;
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--haramain-secondary);
-            border-color: var(--haramain-secondary);
-        }
-
-        .pagination .page-link {
-            color: var(--haramain-primary);
-            border-radius: 8px;
-            margin: 0 0.25rem;
-            border: 1px solid var(--border-color);
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .search-filter-container {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
+            /* Container padding */
+            .container-fluid {
+                padding: 10px !important;
             }
 
-            .search-box {
+            /* Kartu dashboard satu per baris */
+            #cards-dashboard .col-xl-3,
+            #cards-dashboard .col-md-6 {
+                width: 100% !important;
+                flex: 0 0 100%;
+            }
+
+            #card-reponsive {
+                margin-bottom: 10px;
+            }
+
+            /* Ukuran teks lebih kecil */
+            .card-title {
+                font-size: 18px !important;
+            }
+
+            .card-subtitle {
+                font-size: 13px !important;
+            }
+
+            /* Chart menyesuaikan lebar penuh */
+            #charts .col-lg-8,
+            #charts .col-lg-4 {
+                width: 100% !important;
+                flex: 0 0 100%;
+            }
+
+            .chart-container {
+                margin-bottom: 15px;
+            }
+
+            /* Tombol dropdown & action */
+            .btn {
+                font-size: 12px !important;
+                padding: 4px 8px !important;
+            }
+
+            /* === TABEL RESPONSIVE MOBILE === */
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            table.table {
                 width: 100%;
+                border-collapse: collapse;
+                font-size: 13px;
             }
 
-            .filter-group {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-
-            .table thead {
+            thead {
                 display: none;
+                /* sembunyikan header tabel */
             }
 
-            .table tbody tr {
+            tbody tr {
                 display: block;
-                margin-bottom: 1rem;
+                background: #fff;
+                margin-bottom: 10px;
                 border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+                padding: 10px;
             }
 
-            .table tbody td {
+            tbody td {
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
-                padding: 0.75rem 1rem;
+                padding: 5px 10px;
                 border: none;
-                border-radius: 0;
+                text-align: center
             }
 
-            .table tbody td:before {
+            tbody td::before {
                 content: attr(data-label);
-                font-weight: 600;
-                color: var(--haramain-primary);
-                margin-right: 1rem;
+                font-weight: bold;
+                color: #444;
+                flex: 1;
+                text-align: center;
             }
 
-            .table tbody td:first-child {
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
+            tbody td:last-child {
+                border-bottom: none;
             }
 
-            .table tbody td:last-child {
-                border-bottom-left-radius: 8px;
-                border-bottom-right-radius: 8px;
+            /* Teks judul tabel & tombol tambah order */
+            #recent .card-header h5 {
+                font-size: 16px !important;
+            }
+
+            #recent .btn-haramain {
+                font-size: 12px !important;
+                padding: 5px 8px !important;
             }
         }
     </style>
 
-    {{-- <div class="service-list-container">
-        <!-- Services List -->
-        <div class="card">
-            <!-- Services Table -->
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Customer/Travel</th>
-                            <th>Tipe</th>
-                            <th>Jumlah</th>
-                            <th>Kurs</th>
-                            <th>Hasil</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($reyals as $item)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->service->pelanggan->nama_travel }}</td>
-                            <td>{{ $item->tipe }}</td>
-                            <td>{{ $item->jumlah_input }}</td>
-                            <td>{{ $item->kurs }}</td>
-                            <td>{{ $item->hasil }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+    <div class="container-fluid p-4">
+        <!-- Stats Cards -->
+        <div class="row g-3 mb-4" id="cards-dashboard">
+            <div class="col-xl-3 col-md-6" id="card-reponsive">
+                <div class="card card-stat h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-subtitle mb-1">Total Hutang</h6>
+                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
+                                    {{ \App\Models\Service::count() }}
+                                </h3>
+                                <p class="card-text text-success mb-0"><small>+5% dari bulan lalu</small></p>
+                            </div>
+                            <div class="bg-primary bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-file-earmark-text fs-4" style="color: var(--haramain-secondary);"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Pagination -->
-            <div class="pagination-container">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+            <div class="col-xl-3 col-md-6" id="card-reponsive">
+                <div class="card card-stat h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-subtitle mb-1">Total pembayaran</h6>
+                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
+                                    {{ \App\Models\Order::count() }}
+                                </h3>
+                                <p class="card-text text-danger mb-0"><small>3 overdue</small></p>
+                            </div>
+                            <div class="bg-warning bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-currency-dollar fs-4" style="color: #ff9800;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6" id="card-reponsive">
+                <div class="card card-stat h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-subtitle mb-1">Total belum bayar</h6>
+                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
+                                    {{ \App\Models\Order::count() }}
+                                </h3>
+                                <p class="card-text text-danger mb-0"><small>3 overdue</small></p>
+                            </div>
+                            <div class="bg-warning bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-currency-dollar fs-4" style="color: #ff9800;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6" id="card-reponsive">
+                <div class="card card-stat h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-subtitle mb-1">Total lunas</h6>
+                                <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
+                                    {{ \App\Models\Order::count() }}
+                                </h3>
+                                <p class="card-text text-danger mb-0"><small>3 overdue</small></p>
+                            </div>
+                            <div class="bg-warning bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-currency-dollar fs-4" style="color: #ff9800;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        <!-- Charts -->
+        <div class="row g-4" id="charts">
+            <div class="col-lg-8">
+                <div class="chart-container h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0" style="color: var(--haramain-primary);">
+                            <i class="bi bi-bar-chart-line me-2"></i>Monthly Performance
+                        </h5>
+                        <div class="dropdown">
+                            <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                style="background-color: var(--haramain-light); color: var(--haramain-primary); border: 1px solid rgba(0, 0, 0, 0.08);">
+                                This Year
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">This Year</a></li>
+                                <li><a class="dropdown-item" href="#">Last Year</a></li>
+                                <li><a class="dropdown-item" href="#">Custom Range</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center"
+                        style="height: 300px; background: linear-gradient(45deg, #f5f7fa, #e8eff8); border-radius: 8px;">
+                        <div class="text-center text-muted">
+                            <i class="bi bi-bar-chart fs-1 mb-2"></i>
+                            <p>Monthly Performance Chart</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="chart-container h-100">
+                    <h5 class="fw-bold mb-3" style="color: var(--haramain-primary);">
+                        <i class="bi bi-pie-chart me-2"></i>Service Distribution
+                    </h5>
+                    <div class="d-flex align-items-center justify-content-center"
+                        style="height: 300px; background: linear-gradient(45deg, #f5f7fa, #e8eff8); border-radius: 8px;">
+                        <div class="text-center text-muted">
+                            <i class="bi bi-pie-chart fs-1 mb-2"></i>
+                            <p>Service Distribution Chart</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div> --}}
-    
+
+        <!-- Recent Activity Table -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm" id="recent">
+                    <div class="card-header bg-white border-0 pb-0 pt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold mb-2" style="color: var(--haramain-primary);">
+                                <i class="bi bi-clock-history me-2"></i>Recent Activity
+                            </h5>
+                            {{-- <a href="#" class="btn btn-haramain btn-sm">
+                                <i class="bi bi-plus-circle me-1"></i>New Order
+                            </a> --}}
+                        </div>
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice</th>
+                                        <th>Customer</th>
+                                        <th>Total hutang</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (\App\Models\Order::all() as $order)
+                                        <tr>
+                                            <td data-label="Kode unik">{{ $order->invoice }}</td>
+                                            <td data-label="Customer/Travel">{{ $order->service->pelanggan->nama_travel }}</td>
+                                            <td data-label="Customer/Travel">{{ $order->total_amount }}</td>
+                                            <td data-label="Customer/Travel">
+                                                @if ($order->status == 'lunas')
+                                                    <span class="badge bg-success">Lunas</span>
+                                                @elseif ($order->status == 'belum_bayar')
+                                                    <span class="badge bg-danger">Belum lunas</span>
+                                                @else
+                                                    <span class="badge bg-warning text-dark">Belum bayar</span>
+                                                @endif
+                                            </td>
+
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
