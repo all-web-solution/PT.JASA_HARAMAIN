@@ -303,20 +303,20 @@
                         <i class="bi bi-card-checklist"></i> Rincian Layanan yang Dipesan
                     </h6>
 
-                    {{-- TRANSPORTASI --}}
-                    {{-- Asumsi: $service->transportations adalah relasi --}}
-                    @if ($service->transportations && $service->transportations->isNotEmpty())
+                    {{-- TRANSPORTASI (Sudah Benar, tapi tambahkan null-safe ?) --}}
+                    @if ($service->planes?->isNotEmpty() || $service->transportationItem?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-airplane"></i> Transportasi</h6>
 
-                            @foreach ($service->transportations->where('type', 'airplane') as $tiket)
+                            @foreach ($service->planes ?? [] as $tiket)
                                 <div class="p-3 mb-2" style="background: var(--haramain-light); border-radius: 8px;">
-                                    <strong>Tiket Pesawat: {{ $tiket->maskapai }} ({{ $tiket->rute }})</strong>
+                                    <strong>Tiket Pesawat: {{ $tiket->maskapai ?? 'N/A' }}
+                                        ({{ $tiket->rute ?? 'N/A' }})</strong>
                                     <div class="detail-item"><span class="detail-label">Tanggal</span><span
-                                            class="detail-value">{{ \Carbon\Carbon::parse($tiket->tanggal)->format('d M Y') }}</span>
+                                            class="detail-value">{{ $tiket->tanggal_keberangkatan ? \Carbon\Carbon::parse($tiket->tanggal_keberangkatan)->format('d M Y') : 'N/A' }}</span>
                                     </div>
                                     <div class="detail-item"><span class="detail-label">Jumlah</span><span
-                                            class="detail-value">{{ $tiket->jumlah }} Pax</span></div>
+                                            class="detail-value">{{ $tiket->jumlah_jamaah ?? 0 }} Pax</span></div>
                                     @if ($tiket->keterangan)
                                         <div class="detail-item"><span class="detail-label">Ket</span><span
                                                 class="detail-value">{{ $tiket->keterangan }}</span></div>
@@ -324,128 +324,124 @@
                                 </div>
                             @endforeach
 
-                            @foreach ($service->transportations->where('type', 'bus') as $bus)
+                            @foreach ($service->transportationItem ?? [] as $bus)
                                 <div class="p-3 mb-2" style="background: var(--haramain-light); border-radius: 8px;">
-                                    <strong>Transport Darat: {{ $bus->transportation->nama ?? 'N/A' }}</strong>
+                                    <strong>Transport Darat: {{ $bus->transportation?->nama ?? 'N/A' }}</strong>
                                     <div class="detail-item"><span class="detail-label">Rute</span><span
-                                            class="detail-value">{{ $bus->route->route ?? 'N/A' }}</span></div>
+                                            class="detail-value">{{ $bus->route?->route ?? 'N/A' }}</span></div>
                                     <div class="detail-item"><span class="detail-label">Periode</span><span
-                                            class="detail-value">{{ \Carbon\Carbon::parse($bus->tanggal_dari)->format('d M') }}
-                                            - {{ \Carbon\Carbon::parse($bus->tanggal_sampai)->format('d M Y') }}</span>
+                                            class="detail-value">{{ $bus->dari_tanggal ? \Carbon\Carbon::parse($bus->dari_tanggal)->format('d M') : 'N/A' }}
+                                            -
+                                            {{ $bus->sampai_tanggal ? \Carbon\Carbon::parse($bus->sampai_tanggal)->format('d M Y') : 'N/A' }}</span>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     @endif
 
-                    {{-- HOTEL --}}
-                    {{-- Asumsi: $service->hotels adalah relasi --}}
-                    @if ($service->hotels && $service->hotels->isNotEmpty())
+                    {{-- HOTEL (Perbaikan Tipe Kamar) --}}
+                    @if ($service->hotels?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-building"></i> Hotel</h6>
                             @foreach ($service->hotels as $hotel)
                                 <div class="p-3 mb-2" style="background: var(--haramain-light); border-radius: 8px;">
-                                    <strong>{{ $hotel->nama_hotel }}</strong>
+                                    <strong>{{ $hotel->nama_hotel ?? 'N/A' }}</strong>
                                     <div class="detail-item"><span class="detail-label">Check-in</span><span
-                                            class="detail-value">{{ \Carbon\Carbon::parse($hotel->tanggal_checkin)->format('d M Y') }}</span>
+                                            class="detail-value">{{ $hotel->tanggal_checkin ? \Carbon\Carbon::parse($hotel->tanggal_checkin)->format('d M Y') : 'N/A' }}</span>
                                     </div>
                                     <div class="detail-item"><span class="detail-label">Check-out</span><span
-                                            class="detail-value">{{ \Carbon\Carbon::parse($hotel->tanggal_checkout)->format('d M Y') }}</span>
+                                            class="detail-value">{{ $hotel->tanggal_checkout ? \Carbon\Carbon::parse($hotel->tanggal_checkout)->format('d M Y') : 'N/A' }}</span>
                                     </div>
-                                    <div class="detail-item"><span class="detail-label">Total Kamar</span><span
-                                            class="detail-value">{{ $hotel->jumlah_kamar }} Kamar</span></div>
-                                    @if ($hotel->keterangan)
-                                        <div class="detail-item"><span class="detail-label">Ket</span><span
-                                                class="detail-value">{{ $hotel->keterangan }}</span></div>
-                                    @endif
-
-                                    {{-- Tipe Kamar (Pivot?) --}}
-                                    @if ($hotel->types?->isNotEmpty())
-                                        <div class="mt-2">
-                                            <small class="detail-label">Rincian Tipe Kamar:</small>
-                                            <ul class="list-group summary-list mt-1">
-                                                @foreach ($hotel->types as $type)
-                                                    <li
-                                                        class="list-group-item d-flex justify-content-between align-items-center p-2">
-                                                        {{ $type->nama_tipe }}
-                                                        <span
-                                                            class="badge rounded-pill">{{ $type->pivot?->jumlah_kamar_tipe }}
-                                                            Kamar</span>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
+                                    {{-- Tampilkan tipe jika ada --}}
+                                    @if ($hotel->type)
+                                        <div class="detail-item"><span class="detail-label">Tipe Kamar</span><span
+                                                class="detail-value">{{ $hotel->type }} ({{ $hotel->jumlah_type ?? 0 }}
+                                                Kamar)</span>
                                         </div>
+                                    @endif
+                                    <div class="detail-item"><span class="detail-label">Total Kamar</span><span
+                                            class="detail-value">{{ $hotel->jumlah_kamar ?? 0 }} Kamar</span>
+                                    </div>
+                                    @if ($hotel->catatan)
+                                        {{-- Ganti dari 'keterangan' ke 'catatan' sesuai model --}}
+                                        <div class="detail-item"><span class="detail-label">Catatan</span><span
+                                                class="detail-value">{{ $hotel->catatan }}</span></div>
                                     @endif
                                 </div>
                             @endforeach
                         </div>
                     @endif
 
-                    {{-- DOKUMEN --}}
-                    {{-- Asumsi: $service->documents adalah relasi --}}
-                    @if ($service->documents && $service->documents->isNotEmpty())
+                    {{-- DOKUMEN (Sudah Benar) --}}
+                    @if ($service->documents?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-file-text"></i> Dokumen</h6>
                             <ul class="list-group summary-list">
                                 @foreach ($service->documents as $doc)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <div>
-                                            {{ $doc->name }}
-                                            @if ($doc->pivot?->keterangan)
-                                                <small class="d-block text-muted">Ket:
-                                                    {{ $doc->pivot?->keterangan }}</small>
-                                            @endif
+                                            {{-- Pilih nama dari child atau parent --}}
+                                            {{ $doc->documentChild?->name ?? ($doc->document?->name ?? 'Dokumen Tidak Dikenal') }}
+                                            {{-- Tampilkan keterangan jika ada (belum ada di model/controller?) --}}
+                                            {{-- @if ($doc->keterangan)
+                                                <small class="d-block text-muted">Ket: {{ $doc->keterangan }}</small>
+                                            @endif --}}
                                         </div>
-                                        <span class="badge rounded-pill">{{ $doc->pivot?->jumlah_dokumen }} Pax</span>
+                                        <span class="badge rounded-pill">{{ $doc->jumlah ?? 0 }} Pax</span>
                                     </li>
                                 @endforeach
                             </ul>
                         </div>
                     @endif
 
-                    {{-- HANDLING --}}
-                    {{-- Asumsi: $service->handlings adalah relasi --}}
-                    @if ($service->handlings && $service->handlings->isNotEmpty())
+                    {{-- HANDLING (Perbaikan) --}}
+                    @if ($service->handlings?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-briefcase"></i> Handling</h6>
                             @foreach ($service->handlings as $handling)
                                 <div class="p-3 mb-2" style="background: var(--haramain-light); border-radius: 8px;">
-                                    <strong>Handling {{ ucfirst($handling->tipe) }}</strong>
-                                    @if ($handling->tipe == 'hotel')
+                                    {{-- Ambil tipe dari $handling->name --}}
+                                    <strong>Handling {{ ucfirst($handling->name ?? 'N/A') }}</strong>
+                                    @if (strtolower($handling->name ?? '') == 'hotel')
+                                        @php $detail = $handling->handlingHotels?->first(); @endphp
                                         <div class="detail-item"><span class="detail-label">Hotel</span><span
-                                                class="detail-value">{{ $handling->nama_hotel }}</span></div>
+                                                class="detail-value">{{ $detail?->nama ?? 'N/A' }}</span></div>
                                         <div class="detail-item"><span class="detail-label">Tanggal</span><span
-                                                class="detail-value">{{ \Carbon\Carbon::parse($handling->tanggal)->format('d M Y') }}</span>
+                                                class="detail-value">{{ $detail?->tanggal ? \Carbon\Carbon::parse($detail->tanggal)->format('d M Y') : 'N/A' }}</span>
                                         </div>
                                         <div class="detail-item"><span class="detail-label">Pax</span><span
-                                                class="detail-value">{{ $handling->pax }}</span></div>
-                                    @else
+                                                class="detail-value">{{ $detail?->pax ?? 0 }}</span></div>
+                                    @elseif (strtolower($handling->name ?? '') == 'bandara')
+                                        @php $detail = $handling->handlingPlanes?->first(); @endphp
                                         <div class="detail-item"><span class="detail-label">Bandara</span><span
-                                                class="detail-value">{{ $handling->nama_bandara }}</span></div>
+                                                class="detail-value">{{ $detail?->nama_bandara ?? 'N/A' }}</span></div>
                                         <div class="detail-item"><span class="detail-label">Kedatangan</span><span
-                                                class="detail-value">{{ \Carbon\Carbon::parse($handling->kedatangan_jamaah)->format('d M Y') }}</span>
+                                                class="detail-value">{{ $detail?->kedatangan_jamaah ? \Carbon\Carbon::parse($detail->kedatangan_jamaah)->format('d M Y') : 'N/A' }}</span>
                                         </div>
                                         <div class="detail-item"><span class="detail-label">Jamaah</span><span
-                                                class="detail-value">{{ $handling->jumlah_jamaah }}</span></div>
+                                                class="detail-value">{{ $detail?->jumlah_jamaah ?? 0 }}</span></div>
                                     @endif
                                 </div>
                             @endforeach
                         </div>
                     @endif
 
-                    {{-- PENDAMPING --}}
-                    {{-- Asumsi: $service->guides adalah relasi --}}
-                    @if ($service->guides && $service->guides->isNotEmpty())
+                    {{-- PENDAMPING (Perbaikan - Bukan Pivot) --}}
+                    @if ($service->guides?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-people"></i> Pendamping</h6>
                             <ul class="list-group summary-list">
                                 @foreach ($service->guides as $guide)
                                     <li class="list-group-item">
-                                        <strong>{{ $guide->nama }}</strong> ({{ $guide->pivot?->jumlah }} Orang)
+                                        {{-- Ambil nama dari relasi guideItem --}}
+                                        <strong>{{ $guide->guideItem?->nama ?? 'N/A' }}</strong>
+                                        ({{ $guide->jumlah ?? 0 }} Orang)
                                         <small class="d-block text-muted">
+                                            {{-- Ambil tanggal dari kolom di tabel guides --}}
                                             Periode:
-                                            {{ \Carbon\Carbon::parse($guide->pivot?->tanggal_dari)->format('d M Y') }} s/d
-                                            {{ \Carbon\Carbon::parse($guide->pivot?->tanggal_sampai)->format('d M Y') }}
+                                            {{ $guide->muthowif_dari ? \Carbon\Carbon::parse($guide->muthowif_dari)->format('d M Y') : 'N/A' }}
+                                            s/d
+                                            {{ $guide->muthowif_sampai ? \Carbon\Carbon::parse($guide->muthowif_sampai)->format('d M Y') : 'N/A' }}
                                         </small>
                                     </li>
                                 @endforeach
@@ -453,90 +449,96 @@
                         </div>
                     @endif
 
-                    {{-- KONTEN --}}
-                    {{-- Asumsi: $service->contents adalah relasi --}}
-                    @if ($service->contents && $service->contents->isNotEmpty())
+                    {{-- KONTEN (Perbaikan - Bukan Pivot) --}}
+                    @if ($service->contents?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-camera"></i> Konten</h6>
                             <ul class="list-group summary-list">
                                 @foreach ($service->contents as $content)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        {{ $content->name }}
-                                        <span class="badge rounded-pill">{{ $content->pivot?->jumlah }} Pax</span>
+                                        {{-- Ambil nama dari relasi content --}}
+                                        {{ $content->content?->name ?? 'N/A' }}
+                                        {{-- Ambil jumlah dari model ContentCustomer --}}
+                                        <span class="badge rounded-pill">{{ $content->jumlah ?? 0 }} Pax</span>
                                     </li>
                                 @endforeach
                             </ul>
                         </div>
                     @endif
 
-                    {{-- REYAL --}}
-                    {{-- Asumsi: $service->reyal adalah relasi (HasOne) --}}
-                    @if ($service->reyal)
+                    {{-- REYAL (Perbaikan - HasMany) --}}
+                    @if ($service->reyals?->isNotEmpty())
+                        @php $reyal = $service->reyals->first(); @endphp {{-- Ambil data pertama jika ada --}}
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-currency-exchange"></i> Penukaran Reyal</h6>
                             <div class="p-3" style="background: var(--haramain-light); border-radius: 8px;">
-                                <strong>Tipe: {{ ucfirst($service->reyal->tipe) }}
-                                    ({{ $service->reyal->tipe == 'tamis' ? 'Rupiah → Reyal' : 'Reyal → Rupiah' }})</strong>
-                                @if ($service->reyal->tipe == 'tamis')
+                                <strong>Tipe: {{ ucfirst($reyal->tipe ?? 'N/A') }}
+                                    ({{ $reyal->tipe == 'tamis' ? 'Rupiah → Reyal' : ($reyal->tipe == 'tumis' ? 'Reyal → Rupiah' : 'N/A') }})</strong>
+                                @if ($reyal->tipe == 'tamis')
                                     <div class="detail-item"><span class="detail-label">Jumlah (Rp)</span><span
                                             class="detail-value">Rp
-                                            {{ number_format($service->reyal->jumlah_rupiah) }}</span></div>
+                                            {{ number_format($reyal->jumlah_input ?? 0) }}</span></div>
                                     <div class="detail-item"><span class="detail-label">Kurs (Rp)</span><span
-                                            class="detail-value">Rp {{ number_format($service->reyal->kurs) }}</span>
+                                            class="detail-value">Rp {{ number_format($reyal->kurs ?? 0) }}</span>
                                     </div>
                                     <div class="detail-item"><span class="detail-label">Hasil (SAR)</span><span
-                                            class="detail-value">{{ number_format($service->reyal->hasil, 2) }} SAR</span>
+                                            class="detail-value">{{ number_format($reyal->hasil ?? 0, 2) }} SAR</span>
                                     </div>
-                                @else
+                                @elseif ($reyal->tipe == 'tumis')
                                     <div class="detail-item"><span class="detail-label">Jumlah (SAR)</span><span
-                                            class="detail-value">{{ number_format($service->reyal->jumlah_reyal) }}
+                                            class="detail-value">{{ number_format($reyal->jumlah_input ?? 0) }}
                                             SAR</span></div>
                                     <div class="detail-item"><span class="detail-label">Kurs (Rp)</span><span
-                                            class="detail-value">Rp {{ number_format($service->reyal->kurs) }}</span>
+                                            class="detail-value">Rp {{ number_format($reyal->kurs ?? 0) }}</span>
                                     </div>
                                     <div class="detail-item"><span class="detail-label">Hasil (Rp)</span><span
-                                            class="detail-value">Rp {{ number_format($service->reyal->hasil, 2) }}</span>
+                                            class="detail-value">Rp {{ number_format($reyal->hasil ?? 0, 2) }}</span>
                                     </div>
                                 @endif
                                 <div class="detail-item"><span class="detail-label">Tgl Penyerahan</span><span
-                                        class="detail-value">{{ \Carbon\Carbon::parse($service->reyal->tanggal_penyerahan)->format('d M Y') }}</span>
+                                        class="detail-value">{{ $reyal->tanggal_penyerahan ? \Carbon\Carbon::parse($reyal->tanggal_penyerahan)->format('d M Y') : 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>
                     @endif
 
-                    {{-- TOUR --}}
-                    {{-- Asumsi: $service->tours adalah relasi --}}
-                    @if ($service->tours && $service->tours->isNotEmpty())
+                    {{-- TOUR (Perbaikan - Bukan Pivot) --}}
+                    @if ($service->tours?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-geo-alt"></i> Tour</h6>
                             @foreach ($service->tours as $tour)
                                 <div class="p-3 mb-2" style="background: var(--haramain-light); border-radius: 8px;">
-                                    <strong>Tour: {{ $tour->name }}</strong>
+                                    {{-- Ambil nama dari relasi tourItem --}}
+                                    <strong>Tour: {{ $tour->tourItem?->name ?? 'N/A' }}</strong>
                                     <div class="detail-item"><span class="detail-label">Tanggal</span><span
-                                            class="detail-value">{{ \Carbon\Carbon::parse($tour->pivot?->tanggal_tour)->format('d M Y') }}</span>
+                                            {{-- Ambil tanggal dari kolom di tabel tours --}}
+                                            class="detail-value">{{ $tour->tanggal_keberangkatan ? \Carbon\Carbon::parse($tour->tanggal_keberangkatan)->format('d M Y') : 'N/A' }}</span>
                                     </div>
                                     <div class="detail-item"><span class="detail-label">Transport</span><span
-                                            class="detail-value">{{ $tour->pivot?->transportation->nama ?? 'N/A' }}</span>
+                                            {{-- Ambil transport dari relasi transportation --}}
+                                            class="detail-value">{{ $tour->transportation?->nama ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     @endif
 
-                    {{-- MEALS --}}
-                    {{-- Asumsi: $service->meals adalah relasi --}}
-                    @if ($service->meals && $service->meals->isNotEmpty())
+                    {{-- MEALS (Perbaikan - Bukan Pivot) --}}
+                    @if ($service->meals?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-egg-fried"></i> Meals</h6>
                             <ul class="list-group summary-list">
                                 @foreach ($service->meals as $meal)
                                     <li class="list-group-item">
-                                        <strong>{{ $meal->name }}</strong> ({{ $meal->pivot?->jumlah }} Pax)
+                                        {{-- Ambil nama dari relasi mealItem --}}
+                                        <strong>{{ $meal->mealItem?->name ?? 'N/A' }}</strong> ({{ $meal->jumlah ?? 0 }}
+                                        Pax)
                                         <small class="d-block text-muted">
+                                            {{-- Ambil tanggal dari kolom di tabel meals --}}
                                             Periode:
-                                            {{ \Carbon\Carbon::parse($meal->pivot?->tanggal_dari)->format('d M Y') }} s/d
-                                            {{ \Carbon\Carbon::parse($meal->pivot?->tanggal_sampai)->format('d M Y') }}
+                                            {{ $meal->dari_tanggal ? \Carbon\Carbon::parse($meal->dari_tanggal)->format('d M Y') : 'N/A' }}
+                                            s/d
+                                            {{ $meal->sampai_tanggal ? \Carbon\Carbon::parse($meal->sampai_tanggal)->format('d M Y') : 'N/A' }}
                                         </small>
                                     </li>
                                 @endforeach
@@ -544,49 +546,51 @@
                         </div>
                     @endif
 
-                    {{-- DORONGAN --}}
-                    {{-- Asumsi: $service->dorongans adalah relasi --}}
-                    @if ($service->dorongans && $service->dorongans->isNotEmpty())
+                    {{-- DORONGAN (Perbaikan - Bukan Pivot) --}}
+                    @if ($service->dorongans?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-basket"></i> Dorongan</h6>
                             <ul class="list-group summary-list">
                                 @foreach ($service->dorongans as $item)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        {{ $item->name }}
-                                        <span class="badge rounded-pill">{{ $item->pivot?->jumlah }} Pax</span>
+                                        {{-- Ambil nama dari relasi dorongan --}}
+                                        {{ $item->dorongan?->name ?? 'N/A' }}
+                                        {{-- Ambil jumlah dari model DoronganOrder --}}
+                                        <span class="badge rounded-pill">{{ $item->jumlah ?? 0 }} Pax</span>
                                     </li>
                                 @endforeach
                             </ul>
                         </div>
                     @endif
 
-                    {{-- WAQAF --}}
-                    {{-- Asumsi: $service->wakafs adalah relasi --}}
-                    @if ($service->wakafs && $service->wakafs->isNotEmpty())
+                    {{-- WAQAF (Perbaikan - Bukan Pivot) --}}
+                    @if ($service->wakafs?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-gift"></i> Wakaf</h6>
                             <ul class="list-group summary-list">
                                 @foreach ($service->wakafs as $item)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        {{ $item->nama }}
-                                        <span class="badge rounded-pill">{{ $item->pivot?->jumlah }} Unit</span>
+                                        {{-- Ambil nama dari relasi wakaf --}}
+                                        {{ $item->wakaf?->nama ?? 'N/A' }}
+                                        {{-- Ambil jumlah dari model WakafCustomer --}}
+                                        <span class="badge rounded-pill">{{ $item->jumlah ?? 0 }} Unit</span>
                                     </li>
                                 @endforeach
                             </ul>
                         </div>
                     @endif
 
-                    {{-- BADAL --}}
-                    {{-- Asumsi: $service->badals adalah relasi --}}
-                    @if ($service->badals && $service->badals->isNotEmpty())
+                    {{-- BADAL (Perbaikan - Nama Kolom) --}}
+                    @if ($service->badals?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-gift"></i> Badal Umrah</h6>
                             <ul class="list-group summary-list">
                                 @foreach ($service->badals as $item)
                                     <li class="list-group-item">
-                                        <strong>Atas Nama: {{ $item->nama_dibadalkan }}</strong>
+                                        {{-- Kolom di db adalah 'name' --}}
+                                        <strong>Atas Nama: {{ $item->name ?? 'N/A' }}</strong>
                                         <small class="d-block text-muted">Tgl Pelaksanaan:
-                                            {{ \Carbon\Carbon::parse($item->tanggal_pelaksanaan)->format('d M Y') }}</small>
+                                            {{ $item->tanggal_pelaksanaan ? \Carbon\Carbon::parse($item->tanggal_pelaksanaan)->format('d M Y') : 'N/A' }}</small>
                                     </li>
                                 @endforeach
                             </ul>
@@ -595,14 +599,22 @@
 
                 </div>
 
+                {{-- Total Biaya (Ambil dari Service, bukan Order?) --}}
+                @php
+                    // Coba ambil total amount dari relasi order pertama jika ada,
+                    // fallback ke 0 jika tidak ada order.
+                    // Sesuaikan jika logic total amount Anda berbeda.
+                    $order = $service->orders->first(); // Mengambil order pertama yang terkait
+                    $totalAmount = $order ? $order->total_amount : 0;
+                @endphp
                 <div class="form-section p-3" style="background: var(--haramain-light); border-radius: 8px;">
                     <h6 class="form-section-title">
                         <i class="bi bi-cash-coin"></i> Total Biaya
                     </h6>
                     <div class="detail-item" style="border: none;">
-                        <span class="detail-label" style="font-size: 1.2rem;">Total Akhir (Deal)</span>
+                        <span class="detail-label" style="font-size: 1.2rem;">Total Akhir</span>
                         <span class="detail-value" style="font-size: 1.5rem; color: var(--haramain-primary);">
-                            Rp {{ number_format($service->total_amount, 0, ',', '.') }}
+                            Rp {{ number_format($totalAmount, 0, ',', '.') }}
                         </span>
                     </div>
                 </div>
