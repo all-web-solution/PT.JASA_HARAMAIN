@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PT JASA HARAMAIN - Admin Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Favicon Placeholders -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon/favicon-16x16.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon/favicon-32x32.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('favicon/apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ asset('favicon/site.webmanifest') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -52,15 +57,16 @@
                 transform: translateX(5px);
             }
         }
+
         @media screen and (max-width: 320px) {
-            #title{
+            #title {
                 font-size: 20px;
             }
-            #bg-login{
+
+            #bg-login {
                 width: 300px;
             }
         }
-
     </style>
 </head>
 
@@ -139,29 +145,29 @@
         </div>
     </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const togglePassword = document.getElementById("togglePassword");
-        const passwordInput = document.getElementById("password");
-        const icon = togglePassword.querySelector("i");
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const togglePassword = document.getElementById("togglePassword");
+            const passwordInput = document.getElementById("password");
+            const icon = togglePassword.querySelector("i");
 
-        togglePassword.addEventListener("click", function () {
-            const isPassword = passwordInput.type === "password";
-            passwordInput.type = isPassword ? "text" : "password";
+            togglePassword.addEventListener("click", function() {
+                const isPassword = passwordInput.type === "password";
+                passwordInput.type = isPassword ? "text" : "password";
 
-            // Ganti ikon
-            icon.classList.toggle("fa-eye");
-            icon.classList.toggle("fa-eye-slash");
+                // Ganti ikon
+                icon.classList.toggle("fa-eye");
+                icon.classList.toggle("fa-eye-slash");
 
-            // Opsional: ubah warna saat aktif
-            if (!isPassword) {
-                icon.classList.remove("text-indigo-600");
-            } else {
-                icon.classList.add("text-indigo-600");
-            }
+                // Opsional: ubah warna saat aktif
+                if (!isPassword) {
+                    icon.classList.remove("text-indigo-600");
+                } else {
+                    icon.classList.add("text-indigo-600");
+                }
+            });
         });
-    });
-</script>
+    </script>
 
 
 </body>
