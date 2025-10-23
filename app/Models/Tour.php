@@ -20,6 +20,7 @@ class Tour extends Model
 
     public function tourItem()
     {
-        return $this->belongsTo(TourItem::class, 'id');
+        // Gunakan 'tour_id' sebagai foreign key
+        return $this->belongsTo(TourItem::class, 'tour_id');
     }
 }

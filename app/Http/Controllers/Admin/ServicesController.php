@@ -11,6 +11,7 @@ use App\Models\GuideItems;
 use App\Models\Hotel;
 use App\Models\Meal;
 use App\Models\Pelanggan;
+use App\Models\Document;
 use App\Models\Service;
 use App\Models\Plane;
 use App\Models\Tour;
@@ -169,7 +170,52 @@ class ServicesController extends Controller
 
     public function show($id)
     {
-        $service = Service::with('pelanggan')->findOrFail($id);
+        // Muat SEMUA relasi yang dibutuhkan oleh view 'show.blade.php'
+        $service = Service::with([
+            'pelanggan',
+
+            // Transportasi (Udara & Darat)
+            'planes', // Sesuaikan jika nama relasi berbeda
+            'transportationItem.transportation', // Master Transportasi
+            'transportationItem.route',          // Master Rute
+
+            // Hotel
+            'hotels', // Eager load relasi hotels dari Service
+
+            // Dokumen
+            'documents.document',      // Relasi ke master Document
+            'documents.documentChild', // Relasi ke master DocumentChildren
+
+            // Handling & detailnya
+            'handlings.handlingHotels',
+            'handlings.handlingPlanes',
+
+            // Pendamping & detailnya
+            'guides.guideItem', // Asumsi relasi guideItem di model Guide
+
+            // Konten & detailnya
+            'contents.content', // Asumsi relasi content di model ContentCustomer
+
+            // Reyal
+            'reyals', // Asumsi nama relasi reyals()
+
+            // Tour & detailnya
+            'tours.tourItem', // Asumsi relasi tourItem di model Tour
+            'tours.transportation', // Asumsi relasi transportation di model Tour
+
+            // Meals & detailnya
+            'meals.mealItem', // Asumsi relasi mealItem di model Meal
+
+            // Dorongan & detailnya
+            'dorongans.dorongan', // Asumsi relasi dorongan di model DoronganOrder
+
+            // Wakaf & detailnya
+            'wakafs.wakaf', // Asumsi relasi wakaf di model WakafCustomer
+
+            // Badal Umrah
+            'badals',
+
+        ])->findOrFail($id);
         return view('admin.services.show', compact('service'));
     }
 
@@ -1232,20 +1278,23 @@ class ServicesController extends Controller
 
     private function handleTourItems(Request $request, Service $service)
     {
-        if ($request->filled('tour_transport')) {
-            foreach ($request->tour_transport as $tourId => $transportationId) {
-                $tanggal = $request->tanggal_tour[$tourId] ?? null;
+        if ($request->filled('tour_ids') && is_array($request->tour_ids)) {
+            foreach ($request->tour_ids as $tourId) {
 
+                $transportationId = $request->input("tour_transport.$tourId"); // Contoh: input("tour_transport.5")
+                $tanggal = $request->input("tanggal_tour.$tourId"); // Contoh: input("tanggal_tour.5")
                 if ($tanggal) {
                     $service->tours()->create([
-                        'tour_id' => $tourId,
-                        'transportation_id' => $transportationId,
+                        'tour_id' => $tourId, // ID dari master tour_items
+                        'transportation_id' => $transportationId, // Bisa null jika tidak dipilih
                         'tanggal_keberangkatan' => $tanggal,
                     ]);
                 }
+                // Opsional: Tambahkan else log jika tanggal kosong padahal tour dipilih
+                else {
+                    \Log::warning("Tanggal tour tidak diisi untuk Service ID: {$service->id}, Tour ID: {$tourId}");
+                }
             }
-
-
         }
     }
 

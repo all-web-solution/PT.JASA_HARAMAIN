@@ -22,9 +22,9 @@ class Service extends Model
 
     // Relasi ke Travel
     public function pelanggan()
-{
-    return $this->belongsTo(Pelanggan::class, 'pelanggan_id', 'id');
-}
+    {
+        return $this->belongsTo(Pelanggan::class, 'pelanggan_id', 'id');
+    }
     protected $casts = [
         'services' => 'array',
     ];
@@ -48,12 +48,14 @@ class Service extends Model
     {
         return $this->hasMany(Meal::class, );
     }
-   public function guides()
-{
-    return $this->hasMany(Guide::class, 'service_id', 'id');
-}    public function tours()
+    public function guides()
     {
-        return $this->hasMany(Tour::class, );
+        return $this->hasMany(Guide::class, 'service_id', 'id');
+    }
+    public function tours()
+    {
+        // Tambahkan 'service_id' sebagai foreign key
+        return $this->hasMany(Tour::class, 'service_id');
     }
     public function documents()
     {
