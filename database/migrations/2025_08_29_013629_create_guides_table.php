@@ -32,6 +32,8 @@ return new class extends Migration
                 $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
                 $table->date('muthowif_dari');
                 $table->date('muthowif_sampai');
+                $table->string('supplier')->nullable();
+                $table->string('harga_dasar')->nullable();
             $table->timestamps();
         });
     }

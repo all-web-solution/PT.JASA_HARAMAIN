@@ -88,19 +88,19 @@ class DoronganController extends Controller
 
     public function showSupplier($id)
     {
-        $content = Dorongan::findOrFail($id);
+        $content = DoronganOrder::findOrFail($id);
         return view('palugada.dorongan.supplier', compact('content'));
     }
     public function createSupplier($id)
     {
-        $content = Dorongan::findOrFail($id);
+        $content = DoronganOrder::findOrFail($id);
         return view('palugada.dorongan.supplier_create', compact('content'));
     }
 
     public function storeSupplier(Request $request, $id)
     {
 
-        $content = Dorongan::findOrFail($id);
+        $content = DoronganOrder::findOrFail($id);
         $content->supplier = $request->input('name');
         $content->harga_dasar = $request->input('price');
         $content->save();

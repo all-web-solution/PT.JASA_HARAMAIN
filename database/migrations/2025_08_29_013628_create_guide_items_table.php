@@ -16,8 +16,7 @@ return new class extends Migration
             $table->string('nama');
             $table->string('harga');
             $table->string('keterangan');
-             $table->string('supplier')->nullable();
-            $table->string('harga_dasar')->nullable();
+            
             $table->timestamps();
         });
     }

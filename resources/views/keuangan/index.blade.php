@@ -249,7 +249,7 @@
                                     <tr>
                                         <th>Invoice</th>
                                         <th>Customer</th>
-                                        <th>Total hutang</th>
+                                        <th>Tagihan</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>

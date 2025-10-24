@@ -94,19 +94,19 @@ class WakafController extends Controller
 
     public function showSupplier($id)
     {
-        $content = Wakaf::findOrFail($id);
+        $content = WakafCustomer::findOrFail($id);
         return view('palugada.wakaf.supplier', compact('content'));
     }
     public function createSupplier($id)
     {
-        $content = Wakaf::findOrFail($id);
+        $content = WakafCustomer::findOrFail($id);
         return view('palugada.wakaf.supplier_create', compact('content'));
     }
 
     public function storeSupplier(Request $request, $id)
     {
 
-        $content = Wakaf::findOrFail($id);
+        $content = WakafCustomer::findOrFail($id);
         $content->supplier = $request->input('name');
         $content->harga_dasar = $request->input('price');
         $content->save();

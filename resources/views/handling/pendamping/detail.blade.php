@@ -83,6 +83,7 @@
                             <th>Dari Tanggal</th>
                             <th>Sampai Tanggal</th>
                             <th>Status</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -94,6 +95,11 @@
                                 <td>{{ $guide->muthowif_dari ?? '-' }}</td>
                                 <td>{{ $guide->muthowif_sampai ?? '-' }}</td>
                                 <td>{{ ucfirst($guide->status ?? '-') }}</td>
+                                <td>
+                                    <a href="{{ route('pendamping.supplier.show', $guide->id) }}">
+                                        <button class="btn btn-primary">Tambah Supplier</button>
+                                    </a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

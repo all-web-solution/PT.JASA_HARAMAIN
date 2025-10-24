@@ -12,7 +12,9 @@ class Guide extends Model
         'jumlah',
         'keterangan',
         'muthowif_dari',
-        'muthowif_sampai'
+        'muthowif_sampai',
+        'supplier',
+        'harga_dasar'
     ];
 
    public function service()

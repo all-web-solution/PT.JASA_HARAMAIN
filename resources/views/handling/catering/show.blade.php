@@ -101,6 +101,7 @@
                             <th>Nama Menu</th>
                             <th>Harga</th>
                             <th>Jumlah</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -110,6 +111,11 @@
                                 <td>{{ $meal->mealItem->name}}</td>
                                 <td>Rp {{ $meal->mealItem->price}}</td>
                                 <td>{{ $meal->jumlah }}</td>
+                                <td>
+                                    <a href="{{ route('catering.supplier.show', $meal->id) }}" class="btn btn-primary">
+                                        Tambah supplier
+                                    </a>
+                                </td>
                             </tr>
                         @endforeach
 
