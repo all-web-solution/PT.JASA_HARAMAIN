@@ -31,7 +31,6 @@ use App\Models\DoronganOrder;
 use App\Models\TypeHotel;
 use Illuminate\Support\Facades\DB;
 use App\Models\Badal;
-use App\Models\Document;
 use App\Models\DocumentChildren;
 use App\Models\HandlingHotel;
 use App\Models\HandlingPlanes;
@@ -1607,9 +1606,7 @@ foreach ($service->transportationItem as $item) {
                     ]);
                 }
                 // Opsional: Tambahkan else log jika tanggal kosong padahal tour dipilih
-                else {
-                    \Log::warning("Tanggal tour tidak diisi untuk Service ID: {$service->id}, Tour ID: {$tourId}");
-                }
+
             }
         }
     }
