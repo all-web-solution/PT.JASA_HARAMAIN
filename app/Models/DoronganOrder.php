@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DoronganOrder extends Model
 {
-    protected $fillable = ['service_id', 'dorongan_id', 'jumlah', 'tanggal_pelaksanaan', 'status'];
+    protected $fillable = ['service_id', 'dorongan_id', 'jumlah', 'tanggal_pelaksanaan', 'status', 'supplier', 'harga_dasar'];
 
     public function service()
     {

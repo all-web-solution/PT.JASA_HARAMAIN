@@ -13,6 +13,8 @@ class Guide extends Model
         'keterangan',
         'muthowif_dari',
         'muthowif_sampai',
+        'supplier',
+        'harga_dasar',
         'status'
     ];
 

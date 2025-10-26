@@ -81,7 +81,11 @@
                         @endphp
                         : <span class="badge {{ $itemBadge }}">{{ $itemStatus }}</span>
                     </dd>
-
+                     <a href="{{ route('dorongan.supplier.show', $itemDorongan->id) }}">
+                                            <button class="btn btn-info" title="Detail Supplier">
+                                                    <i class="bi bi-info-circle"></i>
+                                            </button>
+                                        </a>
                 </dl>
             </div>
         </div>

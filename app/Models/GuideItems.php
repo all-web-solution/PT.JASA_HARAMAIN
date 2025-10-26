@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GuideItems extends Model
 {
-    protected $fillable = ['nama', 'harga', 'keterangan', 'supplier', 'harga_dasar'];
+    protected $fillable = ['nama', 'harga', 'keterangan'];
 
     public function service()
     {

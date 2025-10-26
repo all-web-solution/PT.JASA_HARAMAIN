@@ -82,7 +82,14 @@
                             if ($itemStatus === 'Pending' || $itemStatus === 'Proses') $itemBadge = 'bg-warning text-dark';
                         @endphp
                         : <span class="badge {{ $itemBadge }}">{{ $itemStatus }}</span>
+
+
                     </dd>
+                    <a href="{{ route('wakaf.supplier.show', $itemWakaf->id) }}">
+                                         <button class="btn btn-info" title="Detail Supplier">
+                                                <i class="bi bi-info-circle"></i>
+                                        </button>
+                                    </a>
 
                 </dl>
             </div>

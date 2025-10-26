@@ -945,7 +945,7 @@
                             </div>
                             <div class="detail-section">
                                 @foreach ($meals as $meal)
-                                    <div id="form-meal-{{ $meal->id }}" class="form-group hidden">
+                                    <div id="form-meal-{{ $meal->id }}" class="form-group hidden" style="margin-bottom: 50px">
                                         <label class="form-label">Jumlah {{ $meal->name }}</label>
                                         <input type="number" class="form-control jumlah-item"
                                             data-id="{{ $meal->id }}" data-name="{{ $meal->name }}"

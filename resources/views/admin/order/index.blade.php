@@ -396,7 +396,7 @@
                         <tr>
                             <th>Invoice</th>
                             <th>Nama Pelanggan</th>
-                            <th>Total</th>
+                            <th>Tagihan</th>
                             <th>Dibayar</th>
                             <th>Sisa</th>
                             <th>Aksi</th>

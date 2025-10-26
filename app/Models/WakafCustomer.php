@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class WakafCustomer extends Model
 {
     protected $table = 'wakaf_customers'; // opsional, Laravel otomatis paham
-    protected $fillable = ['service_id', 'wakaf_id', 'jumlah'];
+    protected $fillable = ['service_id', 'wakaf_id', 'jumlah', 'status', 'supplier', 'harga_dasar'];
 
     public function service()
     {

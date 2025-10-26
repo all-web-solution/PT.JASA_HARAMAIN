@@ -90,6 +90,14 @@ class DatabaseSeeder extends Seeder
                 'address' => 'Kp Tamansari',
                 'role' => 'konten dan dokumentasi',
             ],
+            [
+                'name' => 'Keuangan keuangan',
+                'full_name' => 'Keuangan Haramaini',
+                'email' => 'keuangan@gmail.com',
+                'phone' => '0857486516617',
+                'address' => 'Kp Tamansari',
+                'role' => 'keuangan',
+            ],
         ];
 
         foreach ($users as $user) {

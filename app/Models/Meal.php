@@ -13,6 +13,9 @@ class Meal extends Model
         'status',
         'dari_tanggal',
         'sampai_tanggal',
+        'status',
+        'supplier',
+        'harga_dasar'
     ];
 
     public function service()

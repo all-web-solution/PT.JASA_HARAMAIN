@@ -90,16 +90,8 @@ class CateringController extends Controller
 
     public function customer(Request $request)
     {
-        $query = Meal::with(['mealItem', 'service.pelanggan']);
-
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
-        }
-
-        $customerMeal = $query->get()->map(function ($meal) {
-            $meal->total_price = $meal->mealItem->price * $meal->jumlah;
-            return $meal;
-        });
+        $data = Meal::all();
+        $customerMeal = $data->unique('service_id');
 
         return view('handling.catering.customer', compact('customerMeal'));
     }
@@ -107,19 +99,19 @@ class CateringController extends Controller
 
     public function showSupplier($id)
     {
-        $guide = MealItem::findOrFail($id);
+        $guide = Meal::findOrFail($id);
         return view('handling.catering.supplier_detail', compact('guide'));
     }
     public function createSupplier($id)
     {
-        $guide = MealItem::findOrFail($id);
+        $guide = Meal::findOrFail($id);
         return view('handling.catering.supplier_create', compact('guide'));
     }
 
     public function storeSupplier(Request $request, $id)
     {
 
-        $guide = MealItem::findOrFail($id);
+        $guide = Meal::findOrFail($id);
         $guide->supplier = $request->input('name');
         $guide->harga_dasar = $request->input('price');
         $guide->save();

@@ -22,6 +22,8 @@ return new class extends Migration
             $table->foreignId('wakaf_id')->constrained('wakafs')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('jumlah');
             $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
+            $table->string('supplier')->nullable();
+            $table->string('harga_dasar')->nullable();
             $table->timestamps();
         });
     }

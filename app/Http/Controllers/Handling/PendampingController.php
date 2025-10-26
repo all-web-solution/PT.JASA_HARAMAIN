@@ -88,19 +88,20 @@ class PendampingController extends Controller
 
     public function showSupplier($id)
     {
-        $guide = GuideItems::findOrFail($id);
+        $guide = Guide::findOrFail($id);
+
         return view('handling.pendamping.supplier_detail', compact('guide'));
     }
     public function createSupplier($id)
     {
-        $guide = GuideItems::findOrFail($id);
+        $guide = Guide::findOrFail($id);
         return view('handling.pendamping.supplier_create', compact('guide'));
     }
 
     public function storeSupplier(Request $request, $id)
     {
 
-        $guide = GuideItems::findOrFail($id);
+        $guide = Guide::findOrFail($id);
         $guide->supplier = $request->input('name');
         $guide->harga_dasar = $request->input('price');
         $guide->save();

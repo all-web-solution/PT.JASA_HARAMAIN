@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dorongans', function (Blueprint $table) {
+        Schema::create('upload_payments', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('price');
+            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('payment_proof');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dorongans');
+        Schema::dropIfExists('upload_payments');
     }
 };

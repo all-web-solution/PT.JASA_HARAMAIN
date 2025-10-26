@@ -23,9 +23,9 @@ class Service extends Model
 
     // Relasi ke Travel
     public function pelanggan()
-{
-    return $this->belongsTo(Pelanggan::class, 'pelanggan_id', 'id');
-}
+    {
+        return $this->belongsTo(Pelanggan::class, 'pelanggan_id', 'id');
+    }
     protected $casts = [
         'services' => 'array',
     ];

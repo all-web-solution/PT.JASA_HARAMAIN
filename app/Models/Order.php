@@ -16,4 +16,9 @@ class Order extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function uploadPayments()
+    {
+        return $this->hasMany(UploadPayment::class, 'order_id', 'id');
+    }
 }
