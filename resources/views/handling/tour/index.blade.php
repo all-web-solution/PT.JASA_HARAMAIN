@@ -172,9 +172,7 @@
                                                     <i class="bi bi-trash-fill"></i>
                                                 </button>
                                             </form>
-                                            <a href="{{ route('tour.supplier.show', $tour->id) }}"
-                                                class="btn btn-info btn-sm" title="Lihat Supplier">
-                                                <i class="bi bi-building"></i>
+                                            
                                         </div>
                                     </td>
                                 </tr>

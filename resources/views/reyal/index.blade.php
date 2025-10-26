@@ -449,6 +449,7 @@
                             <th>Kurs</th>
                             <th>Hasil</th>
                             <th>Tanggal penyerahan</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -461,6 +462,13 @@
                             <td>{{ $item->kurs }}</td>
                             <td>{{ $item->hasil }}</td>
                             <td>{{ $item->tanggal_penyerahan }}</td>
+                            <td>
+                                <a href="{{ route('reyal.supplier.index', $item->id) }}">
+                                    <button class="btn btn-primary">
+                                        Supplier
+                                    </button>
+                                </a>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>

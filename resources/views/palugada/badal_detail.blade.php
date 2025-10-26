@@ -84,6 +84,17 @@
                         @endphp
                         : <span class="badge {{ $itemBadge }}">{{ $itemStatus }}</span>
                     </dd>
+                    {{-- Ganti 'status' dengan field yang sesuai --}}
+                    <dt class="col-sm-3">Supplier </dt>
+                    <dd class="col-sm-9">
+                        :
+                        <a href="{{ route('palugada.badal.supplier.show', $item->id) }}">
+                            <span class="badge bg-warning text-dark">
+                                Supplier
+                            </span>
+                        </a>
+
+                    </dd>
 
                 </dl>
             </div>

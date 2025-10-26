@@ -403,9 +403,7 @@
                                     @method('delete')
                                     <button class="btn btn-danger">Delete</button>
                                 </form>
-                                <a href="{{ route('content.supplier', $content->id) }}" class="btn btn-primary">
-                                    Supplier
-                                </a>
+                                
                             </td>
                         </tr>
                     @endforeach

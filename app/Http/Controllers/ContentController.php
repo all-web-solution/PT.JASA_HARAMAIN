@@ -115,19 +115,19 @@ class ContentController extends Controller
 
     public function showSupplier($id)
     {
-        $content = ContentItem::findOrFail($id);
+        $content = ContentCustomer::findOrFail($id);
         return view('dokumentasi.supplier', compact('content'));
     }
     public function createSupplier($id)
     {
-        $content = ContentItem::findOrFail($id);
+        $content = ContentCustomer::findOrFail($id);
         return view('dokumentasi.supplier_create', compact('content'));
     }
 
     public function storeSupplier(Request $request, $id)
     {
 
-        $content = ContentItem::findOrFail($id);
+        $content = ContentCustomer::findOrFail($id);
         $content->supplier = $request->input('name');
         $content->harga_dasar = $request->input('price');
         $content->save();

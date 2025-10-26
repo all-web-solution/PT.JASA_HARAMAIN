@@ -79,19 +79,19 @@ public function show($id)
 
     public function showSupplier($id)
     {
-        $content = TourItem::findOrFail($id);
+        $content = Tour::findOrFail($id);
         return view('handling.tour.supplier', compact('content'));
     }
     public function createSupplier($id)
     {
-        $content = TourItem::findOrFail($id);
+        $content = Tour::findOrFail($id);
         return view('handling.tour.supplier_create', compact('content'));
     }
 
     public function storeSupplier(Request $request, $id)
     {
 
-        $content = TourItem::findOrFail($id);
+        $content = Tour::findOrFail($id);
         $content->supplier = $request->input('name');
         $content->harga_dasar = $request->input('price');
         $content->save();

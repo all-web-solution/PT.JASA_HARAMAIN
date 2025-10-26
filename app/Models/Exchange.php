@@ -12,8 +12,9 @@ class Exchange extends Model
         'jumlah_input', // rupiah atau reyal
         'kurs',         // kurs
         'hasil',
-        'tanggal_penyerahan'         // hasil konversi
-
+        'tanggal_penyerahan',
+        'supplier',
+        'harga_dasar'
     ];
 
     public function service(){

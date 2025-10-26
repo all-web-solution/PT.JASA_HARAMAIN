@@ -25,6 +25,8 @@ return new class extends Migration
             $table->decimal('hasil', 15, 2);          // hasil konversi
             $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
             $table->date('tanggal_penyerahan');
+            $table->string('supplier')->nullable();
+            $table->string('harga_dasar')->nullable();
             $table->timestamps();                     // created_at & updated_at
         });
     }

@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Badal extends Model
 {
-    protected $fillable = ['service_id', 'name', 'price', 'tanggal_pelaksanaan', 'status'];
+    protected $fillable = ['service_id', 'name', 'price', 'tanggal_pelaksanaan', 'supplier',
+        'harga_dasar'];
     public function service()
     {
         return $this->belongsTo(Service::class);

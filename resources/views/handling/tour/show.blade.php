@@ -158,6 +158,7 @@
                 <th>Nama Transportasi</th>
                 <th>Nama Tour</th>
                 <th>Tanggal Keberangkatan</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -173,6 +174,12 @@
                 <td>{{ $item->transportation->nama ?? 'N/A' }}</td>
                 <td>{{ $item->tourItem->name ?? 'N/A' }}</td>
                 <td>{{ $item->tanggal_keberangkatan ? \Carbon\Carbon::parse($item->tanggal_keberangkatan)->format('d F Y') : '-' }}</td>
+
+                <td data-label="Aksi">
+                                        <a href="{{ route('tour.supplier.show', $item->id) }}" class="btn btn-primary">
+                                            Supplier
+                                        </a>
+                                    </td>
             </tr>
             @empty
             <tr>

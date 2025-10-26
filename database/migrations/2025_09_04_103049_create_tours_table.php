@@ -23,7 +23,8 @@ return new class extends Migration
             $table->foreignId('transportation_id')->nullable()->constrained('transportations')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('tour_id')->nullable()->constrained('tour_items')->cascadeOnDelete()->cascadeOnUpdate();
             $table->date("tanggal_keberangkatan");
-            $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
+            $table->string('supplier')->nullable();
+            $table->string('harga_dasar')->nullable();
             $table->timestamps();
 
         });

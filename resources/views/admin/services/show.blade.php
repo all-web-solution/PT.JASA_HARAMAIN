@@ -224,6 +224,20 @@
                 gap: 0;
                 margin-bottom: 0;
             }
+            #title{
+                display: none;
+            }
+            #action_button{
+                display: flex;
+                justify-content: space-between;
+            }
+            #action_button a:first-child{
+                margin-right: 80px;
+            }
+            #travel{
+                display: block;
+            }
+
         }
     </style>
 @endpush
@@ -232,16 +246,16 @@
     <div class="service-create-container">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title">
+                <h5 class="card-title" id="title">
                     <i class="bi bi-file-earmark-text"></i> Detail Permintaan Service
                 </h5>
-                <div>
+                <div id="action_button">
                     {{-- Tombol Aksi (Edit, Cetak, dll) --}}
                     <a href="{{ route('services.edit', $service->id) }}" class="btn btn-primary">
-                        <i class="bi bi-pencil-square"></i> Edit
+                        <i class="bi bi-pencil-square"></i>
                     </a>
                     <a href="{{ route('admin.services') }}" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Kembali
+                        <i class="bi bi-arrow-left"></i>
                     </a>
                 </div>
             </div>
@@ -254,40 +268,48 @@
                     </h6>
                     <div class="form-row">
                         <div class="form-col">
-                            <div class="detail-item">
+                            <div class="detail-item" id="travel">
                                 <span class="detail-label">Nama Travel</span>
+                                <br>
                                 <span class="detail-value">{{ $service->pelanggan->nama_travel ?? 'N/A' }}</span>
                             </div>
-                            <div class="detail-item">
+                            <div class="detail-item" id="travel">
                                 <span class="detail-label">Penanggung Jawab</span>
+                                <br>
                                 <span class="detail-value">{{ $service->pelanggan->penanggung_jawab ?? 'N/A' }}</span>
                             </div>
-                            <div class="detail-item">
+                            <div class="detail-item" id="travel">
                                 <span class="detail-label">Email</span>
+                                <br>
                                 <span class="detail-value">{{ $service->pelanggan->email ?? 'N/A' }}</span>
                             </div>
-                            <div class="detail-item">
+                            <div class="detail-item" id="travel">
                                 <span class="detail-label">Telepon</span>
+                                <br>
                                 <span class="detail-value">{{ $service->pelanggan->phone ?? 'N/A' }}</span>
                             </div>
                         </div>
                         <div class="form-col">
-                            <div class="detail-item">
+                            <div class="detail-item" id="travel">
                                 <span class="detail-label">Tanggal Keberangkatan</span>
+                                <br>
                                 <span
                                     class="detail-value">{{ \Carbon\Carbon::parse($service->tanggal_keberangkatan)->format('d M Y') }}</span>
                             </div>
-                            <div class="detail-item">
+                            <div class="detail-item" id="travel">
                                 <span class="detail-label">Tanggal Kepulangan</span>
+                                <br>
                                 <span
                                     class="detail-value">{{ \Carbon\Carbon::parse($service->tanggal_kepulangan)->format('d M Y') }}</span>
                             </div>
-                            <div class="detail-item">
+                            <div class="detail-item" id="travel">
                                 <span class="detail-label">Jumlah Jamaah</span>
+                                <br>
                                 <span class="detail-value">{{ $service->total_jamaah }} Orang</span>
                             </div>
-                            <div class="detail-item">
+                            <div class="detail-item" id="travel">
                                 <span class="detail-label">Status</span>
+                                <br>
                                 <span class="detail-value">
                                     <span class="status-badge status-{{ strtolower($service->status) }}">
                                         {{ ucfirst($service->status) }}
@@ -611,8 +633,9 @@
                     <h6 class="form-section-title">
                         <i class="bi bi-cash-coin"></i> Total Biaya
                     </h6>
-                    <div class="detail-item" style="border: none;">
+                    <div class="detail-item" style="border: none;" id="travel">
                         <span class="detail-label" style="font-size: 1.2rem;">Total Akhir</span>
+                        <br>
                         <span class="detail-value" style="font-size: 1.5rem; color: var(--haramain-primary);">
                             Rp {{ number_format($totalAmount, 0, ',', '.') }}
                         </span>

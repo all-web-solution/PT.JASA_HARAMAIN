@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Badal;
 use Illuminate\Http\Request;
 
 class BadalController extends Controller
@@ -33,5 +34,22 @@ class BadalController extends Controller
 
     // 4. Kirim data service (untuk info customer) dan semuaItemBadal (untuk list) ke view
     return view('palugada.badal_detail', compact('service', 'semuaItemBadal'));
+    }
+
+    public function supplier($id){
+
+        return view('palugada.badal_supplier', ['badal' => Badal::find($id)]);
+    }
+    public function supplierCreate($id){
+
+        return view('palugada.badal_supplier_create', ['content' => Badal::find($id)]);
+    }
+    public function supplierStore(Request $request, $id){
+
+       $badal = Badal::findOrFail($id);
+       $badal->supplier = $request->name;
+       $badal->harga_dasar = $request->price;
+       $badal->save();
+        return redirect()->route('palugada.badal.supplier.show', $id);
     }
 }

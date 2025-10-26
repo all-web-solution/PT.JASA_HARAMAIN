@@ -29,31 +29,38 @@ class ReyalController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function createSupplier($id)
     {
-        //
+        $supplier = Exchange::findOrFail($id);
+        return view('reyal.supplier_create', compact('supplier'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function supplier(string $id)
     {
-        //
+        $supplier = Exchange::findOrFail($id);
+        return view('reyal.supplier', compact('supplier'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function createSupplierStore(Request $request, string $id)
     {
-        //
+        $supplier = Exchange::findOrFail($id);
+        $supplier->supplier = $request->input('name');
+        $supplier->harga_dasar = $request->input('price');
+        $supplier->save();
+        return redirect()->route('reyal.supplier.index', $id);
+
     }
 
     /**

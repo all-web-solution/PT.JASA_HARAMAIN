@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tour extends Model
 {
-    protected $fillable = ['service_id', 'transportation_id', 'tour_id', 'tanggal_keberangkatan', 'status'];
+    protected $fillable = [
+        'service_id',
+        'transportation_id',
+        'tour_id',
+        'tanggal_keberangkatan',
+        'supplier',
+        'harga_dasar'
+    ];
 
     public function service()
     {

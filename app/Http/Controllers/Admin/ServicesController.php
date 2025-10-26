@@ -525,39 +525,35 @@ foreach ($service->transportationItem as $item) {
 
 
     public function storeBerkas(Request $request, $id)
-    {
-        $service = Service::findOrFail($id);
+{
+    $service = Service::findOrFail($id);
 
-        // Default null biar gak error kalau file gak diupload
-        $path = $pathPaspor = $pathktp = $pathvisa = null;
+    // 1. Tambahkan Validasi di sini
+    $validated = $request->validate([
+        'pas_foto' => 'required|file|image|max:2048', // Wajib, file, gambar, maks 2MB
+        'paspor'   => 'required|file|mimes:pdf,jpg,png|max:2048', // Wajib, file, tipe tertentu
+        'ktp'      => 'required|file|mimes:pdf,jpg,png|max:2048',
+        'visa'     => 'required|file|mimes:pdf,jpg,png|max:2048',
+    ]);
 
-        // Simpan file jika ada
-        if ($request->hasFile('pas_foto')) {
-            $path = $request->file('pas_foto')->store('/', 'public');
-        }
-        if ($request->hasFile('paspor')) {
-            $pathPaspor = $request->file('paspor')->store('/', 'public');
-        }
-        if ($request->hasFile('ktp')) {
-            $pathktp = $request->file('ktp')->store('/', 'public');
-        }
-        if ($request->hasFile('visa')) {
-            $pathvisa = $request->file('visa')->store('/', 'public');
-        }
+    // 2. Karena sudah divalidasi 'required', kita tahu filenya ada.
+    // Kita bisa langsung store tanpa 'if'.
+    $path       = $request->file('pas_foto')->store('/', 'public');
+    $pathPaspor = $request->file('paspor')->store('/', 'public');
+    $pathktp    = $request->file('ktp')->store('/', 'public');
+    $pathvisa   = $request->file('visa')->store('/', 'public');
 
-        // Simpan ke tabel files
-        File::create([
-            'service_id' => $service->id,
-            'pas_foto' => $path,
-            'paspor' => $pathPaspor,
-            'ktp' => $pathktp,
-            'visa' => $pathvisa,
-        ]);
+    // 3. Simpan ke tabel files
+    File::create([
+        'service_id' => $service->id,
+        'pas_foto' => $path,
+        'paspor' => $pathPaspor,
+        'ktp' => $pathktp,
+        'visa' => $pathvisa,
+    ]);
 
-        return redirect()->route('admin.services')->with('success', 'Berkas berhasil diupload.');
-
-
-    }
+    return redirect()->route('admin.services')->with('success', 'Berkas berhasil diupload.');
+}
 
 
 

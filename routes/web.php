@@ -217,6 +217,9 @@ Route::group(['middleware' => 'guest'], function () {
 
 Route::post('/sign-out', [AuthController::class, 'sign_out'])->name('sign_out');
 Route::get('/reyal', [ReyalController::class, 'index'])->name('reyal.index')->middleware('auth', 'reyal');
+Route::get('/reyal/supplier/{id}', [ReyalController::class, 'supplier'])->name('reyal.supplier.index')->middleware('auth', 'reyal');
+Route::get('/reyal/supplier/{id}/create', [ReyalController::class, 'createSupplier'])->name('reyal.supplier.create')->middleware('auth', 'reyal');
+Route::put('/reyal/supplier/{id}/create', [ReyalController::class, 'createSupplierStore'])->name('reyal.supplier.create.store')->middleware('auth', 'reyal');
 Route::middleware(['auth', 'palugada'])->group(function () {
     Route::get('/wakaf', [WakafController::class, 'index'])->name('wakaf.index');
     Route::get('/wakaf/create', [WakafController::class, 'create'])->name('wakaf.create');
@@ -244,6 +247,9 @@ Route::middleware(['auth', 'palugada'])->group(function () {
 
     Route::get('/badal', [App\Http\Controllers\BadalController::class, 'index'])->name('palugada.badal');
     Route::get('/badal/{id}/show', [App\Http\Controllers\BadalController::class, 'show'])->name('palugada.badal.show');
+    Route::get('/badal/{id}/supplier', [App\Http\Controllers\BadalController::class, 'supplier'])->name('palugada.badal.supplier.show');
+    Route::get('/badal/{id}/supplier/create', [App\Http\Controllers\BadalController::class, 'supplierCreate'])->name('palugada.badal.supplier.create');
+    Route::put('/badal/{id}/supplier/store', [App\Http\Controllers\BadalController::class, 'supplierStore'])->name('palugada.badal.supplier.store');
 });
 Route::middleware(['auth', 'content'])->group(function () {
     Route::get('/content', [ContentController::class, 'index'])->name('content.index');

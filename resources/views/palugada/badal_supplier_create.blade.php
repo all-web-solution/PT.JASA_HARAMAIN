@@ -10,7 +10,7 @@
                         <h5 class="fw-bold mb-0 title-responsive-create-travel" style="color: var(--haramain-primary);">
                             <i class="bi bi-plus-circle me-2"></i>Tambah Supplier Baru
                         </h5>
-                        <a href="{{ route('content.supplier', $content->id) }}" class="btn btn-sm" style="background-color: var(--haramain-light); color: var(--haramain-primary);">
+                        <a href="{{ route('palugada.badal.supplier.show', $content->id) }}" class="btn btn-sm" style="background-color: var(--haramain-light); color: var(--haramain-primary);">
                             <i class="bi bi-arrow-left"></i> Kembali
                         </a>
                     </div>
@@ -23,7 +23,7 @@
                         untuk menyimpan supplier yang terkait dengan dokumen/layanan ini.
                         (Anda mungkin perlu membuat route ini di web.php)
                     --}}
-                    <form action="{{ route('content.supplier.store', $content->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('palugada.badal.supplier.store', $content->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('put')
 

@@ -87,6 +87,7 @@
                             <th>Jumlah</th>
                             <th>Tanggal pelanksanaan</th>
                             <th>Keterangan</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -99,6 +100,11 @@
                                     <td data-label="Jumlah">{{ $contentItem->jumlah }}</td>
                                     <td data-label="Jumlah">{{ $contentItem->tanggal_pelaksanaaan }}</td>
                                     <td data-label="Keterangan">{{ $contentItem->keterangan ?? 'Tidak ada' }}</td>
+                                    <td data-label="Aksi">
+                                        <a href="{{ route('content.supplier', $contentItem->id) }}" class="btn btn-primary">
+                                            Supplier
+                                        </a>
+                                    </td>
 
                                 </tr>
                             @endforeach
