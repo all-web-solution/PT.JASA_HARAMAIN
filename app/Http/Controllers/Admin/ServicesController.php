@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ContentCustomer;
 use App\Models\ContentItem;
+use Carbon\Carbon;
 use App\Models\File;
 use App\Models\Guide;
 use App\Models\GuideItems;
@@ -47,60 +48,140 @@ class ServicesController extends Controller
      */
     public function index(Request $request)
     {
-        $serviceFilter = $request->get('service');
-
-        // Tentukan prefix kode unik berdasarkan filter service
-        $codePrefix = match ($serviceFilter) {
-            'transportasi' => 'TRX',
-            'hotel' => 'H',
-            'dokumen' => 'D',
-            'handling' => 'G',
-            'pendamping' => 'P',
-            'konten' => 'K',
-            'reyal' => 'R',
-            'tour' => 'O',
-            'meal' => 'M',
-            'dorongan' => 'C',
-            'wakaf' => 'W',
-            'badal' => 'B',
-            default => null,
-        };
-
-        // Query Nego
-        $negoQuery = Service::where('status', 'nego')
-            ->selectRaw('
-                MIN(id) as id,
-                pelanggan_id,
-                MIN(tanggal_keberangkatan) as tanggal_keberangkatan,
-                MIN(tanggal_kepulangan) as tanggal_kepulangan,
-                SUM(total_jamaah) as total_jamaah,
-                GROUP_CONCAT(services) as services,
-                MIN(unique_code) as unique_code,
-                status
-            ')
-            ->groupBy('pelanggan_id', 'status');
-
-        // Query Deal
-        $dealQuery = Service::where('status', 'deal');
-
-        // Terapkan filter berdasarkan kode unik jika ada prefix
-        if ($codePrefix) {
-            $negoQuery->where('unique_code', 'LIKE', $codePrefix . '-%');
-            $dealQuery->where('unique_code', 'LIKE', $codePrefix . '-%');
-        }
-
-        // Urutkan berdasarkan angka dari MIN(unique_code)
-        $negoQuery->orderByRaw("CAST(SUBSTRING_INDEX(MIN(unique_code), '-', -1) AS UNSIGNED)");
-        $dealQuery->orderByRaw("CAST(SUBSTRING_INDEX(unique_code, '-', -1) AS UNSIGNED)");
-
-        $nego = $negoQuery->get();
-        $deal = $dealQuery->get();
-
-        $services = $nego->merge($deal);
         $query = Service::query();
         $services = $query->latest()->paginate(10);
 
-        return view('admin.services.index', compact('services'));
+        $countBadalNego = \App\Models\Badal::where('status', 'nego')->count();
+        $countContentCustomerNego = \App\Models\ContentCustomer::where('status', 'nego')->count();
+        $countCustomerDocumentNego = \App\Models\CustomerDocument::where('status', 'nego')->count();
+$countDoronganOrderNego = \App\Models\DoronganOrder::where('status', 'nego')->count();
+$countExchangeNego = \App\Models\Exchange::where('status', 'nego')->count(); // Corrected typo: Exchange
+$countGuideNego = \App\Models\Guide::where('status', 'nego')->count();
+$countHandlingHotelNego = \App\Models\HandlingHotel::where('status', 'nego')->count();
+$countHandlingPlaneNego = \App\Models\HandlingPlanes::where('status', 'nego')->count();
+$countHotelNego = \App\Models\Hotel::where('status', 'nego')->count();
+$countMealNego = \App\Models\Meal::where('status', 'nego')->count();
+$countPlaneNego = \App\Models\Plane::where('status', 'nego')->count();
+$countTourNego = \App\Models\Tour::where('status', 'nego')->count();
+$countTransportationItemNego = \App\Models\TransportationItem::where('status', 'nego')->count();
+$countWakafCustomerNego = \App\Models\WakafCustomer::where('status', 'nego')->count();
+
+        $totalNegoOverall =
+    $countBadalNego +
+    $countContentCustomerNego +
+    $countCustomerDocumentNego +
+    $countDoronganOrderNego +
+    $countExchangeNego +
+    $countGuideNego +
+    $countHandlingHotelNego +
+    $countHandlingPlaneNego +
+    $countHotelNego +
+    $countMealNego +
+    $countPlaneNego +
+    $countTourNego +
+    $countTransportationItemNego +
+    $countWakafCustomerNego;
+
+        $countBadalPersiapan = \App\Models\Badal::where('status', 'tahap persiapan')->count();
+$countContentCustomerPersiapan = \App\Models\ContentCustomer::where('status', 'tahap persiapan')->count();
+$countCustomerDocumentPersiapan = \App\Models\CustomerDocument::where('status', 'tahap persiapan')->count();
+$countDoronganOrderPersiapan = \App\Models\DoronganOrder::where('status', 'tahap persiapan')->count();
+$countExchangePersiapan = \App\Models\Exchange::where('status', 'tahap persiapan')->count();
+$countGuidePersiapan = \App\Models\Guide::where('status', 'tahap persiapan')->count();
+        $countHandlingHotelPersiapan = \App\Models\HandlingHotel::where('status', 'tahap persiapan')->count();
+
+$countHandlingPlanePersiapan = \App\Models\HandlingPlanes::where('status', 'tahap persiapan')->count();
+$countHotelPersiapan = \App\Models\Hotel::where('status', 'tahap persiapan')->count();
+$countMealPersiapan = \App\Models\Meal::where('status', 'tahap persiapan')->count();
+$countPlanePersiapan = \App\Models\Plane::where('status', 'tahap persiapan')->count();
+$countTourPersiapan = \App\Models\Tour::where('status', 'tahap persiapan')->count();
+$countTransportationItemPersiapan = \App\Models\TransportationItem::where('status', 'tahap persiapan')->count();
+$countWakafCustomerPersiapan = \App\Models\WakafCustomer::where('status', 'tahap persiapan')->count();
+
+// Menjumlahkan semua hitungan 'tahap persiapan'
+$totalPersiapanOverall =
+    $countBadalPersiapan +
+    $countContentCustomerPersiapan +
+    $countCustomerDocumentPersiapan +
+    $countDoronganOrderPersiapan +
+    $countExchangePersiapan +
+    $countGuidePersiapan +
+    $countHandlingHotelPersiapan + // Sertakan hitungan HandlingHotel yang sudah ada
+    $countHandlingPlanePersiapan +
+    $countHotelPersiapan +
+    $countMealPersiapan +
+    $countPlanePersiapan +
+    $countTourPersiapan +
+    $countTransportationItemPersiapan +
+    $countWakafCustomerPersiapan;
+
+    // --- Hitung Status 'tahap_produksi' ---
+$countBadalProduksi = \App\Models\Badal::where('status', 'tahap_produksi')->count();
+$countContentCustomerProduksi = \App\Models\ContentCustomer::where('status', 'tahap_produksi')->count();
+$countCustomerDocumentProduksi = \App\Models\CustomerDocument::where('status', 'tahap_produksi')->count();
+$countDoronganOrderProduksi = \App\Models\DoronganOrder::where('status', 'tahap_produksi')->count();
+$countExchangeProduksi = \App\Models\Exchange::where('status', 'tahap_produksi')->count();
+$countGuideProduksi = \App\Models\Guide::where('status', 'tahap_produksi')->count();
+$countHandlingHotelProduksi = \App\Models\HandlingHotel::where('status', 'tahap_produksi')->count();
+$countHandlingPlaneProduksi = \App\Models\HandlingPlanes::where('status', 'tahap_produksi')->count();
+$countHotelProduksi = \App\Models\Hotel::where('status', 'tahap_produksi')->count();
+$countMealProduksi = \App\Models\Meal::where('status', 'tahap_produksi')->count();
+$countPlaneProduksi = \App\Models\Plane::where('status', 'tahap_produksi')->count();
+$countTourProduksi = \App\Models\Tour::where('status', 'tahap_produksi')->count();
+$countTransportationItemProduksi = \App\Models\TransportationItem::where('status', 'tahap_produksi')->count();
+$countWakafCustomerProduksi = \App\Models\WakafCustomer::where('status', 'tahap_produksi')->count();
+
+// Jumlahkan semua hitungan 'tahap_produksi'
+$totalProduksiOverall =
+    $countBadalProduksi +
+    $countContentCustomerProduksi +
+    $countCustomerDocumentProduksi +
+    $countDoronganOrderProduksi +
+    $countExchangeProduksi +
+    $countGuideProduksi +
+    $countHandlingHotelProduksi +
+    $countHandlingPlaneProduksi +
+    $countHotelProduksi +
+    $countMealProduksi +
+    $countPlaneProduksi +
+    $countTourProduksi +
+    $countTransportationItemProduksi +
+    $countWakafCustomerProduksi;
+
+// --- Hitung Status 'done' ---
+$countBadalDone = \App\Models\Badal::where('status', 'done')->count();
+$countContentCustomerDone = \App\Models\ContentCustomer::where('status', 'done')->count();
+$countCustomerDocumentDone = \App\Models\CustomerDocument::where('status', 'done')->count();
+$countDoronganOrderDone = \App\Models\DoronganOrder::where('status', 'done')->count();
+$countExchangeDone = \App\Models\Exchange::where('status', 'done')->count();
+$countGuideDone = \App\Models\Guide::where('status', 'done')->count();
+$countHandlingHotelDone = \App\Models\HandlingHotel::where('status', 'done')->count();
+$countHandlingPlaneDone = \App\Models\HandlingPlanes::where('status', 'done')->count();
+$countHotelDone = \App\Models\Hotel::where('status', 'done')->count();
+$countMealDone = \App\Models\Meal::where('status', 'done')->count();
+$countPlaneDone = \App\Models\Plane::where('status', 'done')->count();
+$countTourDone = \App\Models\Tour::where('status', 'done')->count();
+$countTransportationItemDone = \App\Models\TransportationItem::where('status', 'done')->count();
+$countWakafCustomerDone = \App\Models\WakafCustomer::where('status', 'done')->count();
+
+// Jumlahkan semua hitungan 'done'
+$totalDoneOverall =
+    $countBadalDone +
+    $countContentCustomerDone +
+    $countCustomerDocumentDone +
+    $countDoronganOrderDone +
+    $countExchangeDone +
+    $countGuideDone +
+    $countHandlingHotelDone +
+    $countHandlingPlaneDone +
+    $countHotelDone +
+    $countMealDone +
+    $countPlaneDone +
+    $countTourDone +
+    $countTransportationItemDone +
+    $countWakafCustomerDone;
+
+        return view('admin.services.index', compact('services', 'totalNegoOverall', 'totalPersiapanOverall', 'totalProduksiOverall', 'totalDoneOverall'));
     }
 
 
@@ -168,10 +249,47 @@ class ServicesController extends Controller
         'guides',    // Relasi ke GuideCustomer (atau nama relasi Anda)
         'tours',     // Relasi ke TourCustomer (atau nama relasi Anda)
         'wakafs',    // Relasi ke WakafCustomer
-        'dorongans', // Relasi ke DoronganOrder
+        'dorongans.dorongan', // Relasi ke DoronganOrder
         'contents',  // Relasi ke ContentCustomer
         // Tambahkan relasi lain yang relevan di sini
     ]);
+
+    $service->loadMissing(['transportationItem.transportation', 'transportationItem.route']);
+
+foreach ($service->transportationItem as $item) {
+    // Safety check: pastikan relasi & tanggal ada
+    if ($item->transportation && $item->route && $item->dari_tanggal && $item->sampai_tanggal) {
+
+        try {
+            // 1. Ambil harga dasar per hari dari Tipe Transportasi
+            $hargaPerHari = $item->transportation->harga ?? 0;
+
+            // 2. Ambil harga tambahan rute (jika ada)
+            $hargaRute = $item->route->price ?? 0; // Sesuaikan 'price' jika nama kolomnya beda
+
+            // 3. Hitung jumlah hari penggunaan
+            $tanggalMulai = Carbon::parse($item->dari_tanggal);
+            $tanggalSelesai = Carbon::parse($item->sampai_tanggal);
+
+            // diffInDays menghitung selisih hari. Jika sama, hasilnya 0.
+            // Tambah 1 untuk mendapatkan jumlah hari penggunaan (inklusif).
+            // Cth: 25 Okt - 25 Okt = 0 hari selisih -> jadi 1 hari penggunaan.
+            // Cth: 26 Okt - 25 Okt = 1 hari selisih -> jadi 2 hari penggunaan.
+            $jumlahHari = $tanggalMulai->diffInDays($tanggalSelesai) + 1;
+
+            // 4. Kalkulasi subtotal untuk item ini
+            // (Harga per hari * Jumlah Hari) + Harga Rute (jika ada)
+            $subTotalDarat = ( ($hargaPerHari * $jumlahHari) + $hargaRute );
+
+            // 5. Tambahkan ke total server
+            $serverTotalAmount += $subTotalDarat;
+
+        } catch (\Exception $e) {
+            // Tangani jika format tanggal salah/invalid
+            // info("Error calculating transport cost: " . $e->getMessage());
+        }
+    }
+}
 
     // Kalkulasi Harga Dokumen
     foreach ($service->documents as $doc) {
@@ -179,21 +297,38 @@ class ServicesController extends Controller
         $serverTotalAmount += ($doc->harga ?? 0) * ($doc->jumlah ?? 0);
     }
 
-    // Kalkulasi Harga Hotel
-    // Anda PERLU MENYESUAIKAN ini sesuai cara Anda menyimpan harga hotel
-    // Apakah per kamar per malam? Apakah ada harga total per booking hotel?
     foreach ($service->hotels as $hotel) {
-        // Contoh ASUMSI: Model Hotel memiliki kolom 'harga_total'
-        // $serverTotalAmount += $hotel->harga_total ?? 0;
-        // ATAU jika harga per kamar dan Anda punya lama menginap:
-        // $checkin = \Carbon\Carbon::parse($hotel->tanggal_checkin);
-        // $checkout = \Carbon\Carbon::parse($hotel->tanggal_checkout);
-        // $nights = $checkin->diffInDays($checkout);
-        // $serverTotalAmount += ($hotel->harga_perkamar ?? 0) * ($hotel->jumlah_kamar ?? 0) * $nights;
-        // === GANTI DENGAN LOGIKA HARGA HOTEL ANDA YANG BENAR ===
-         // Untuk sementara kita biarkan 0 jika logika belum jelas
-         $serverTotalAmount += 0; // <-- GANTI INI
+
+    // Safety check: pastikan kolom-kolom ada isinya
+    if ($hotel->tanggal_checkin && $hotel->tanggal_checkout && $hotel->harga_perkamar > 0 && $hotel->jumlah_type > 0) {
+
+        try {
+            // 1. Ubah string tanggal menjadi objek Carbon
+            $checkin = Carbon::parse($hotel->tanggal_checkin);
+            $checkout = Carbon::parse($hotel->tanggal_checkout);
+
+            // 2. Hitung jumlah malam.
+            // diffInDays() adalah cara paling aman. Cth: checkout 25 - checkin 22 = 3 hari
+            $jumlah_malam = $checkin->diffInDays($checkout);
+
+            // 3. Jika jumlah malam adalah 0 (misal checkin/checkout di hari yg sama),
+            // kita anggap itu minimal 1 malam.
+            if ($jumlah_malam <= 0) {
+                $jumlah_malam = 1;
+            }
+
+            // 4. Kalkulasi subtotal untuk baris ini
+            $subTotalHotel = ($hotel->harga_perkamar * $hotel->jumlah_type) * $jumlah_malam;
+
+            // 5. Tambahkan ke total server
+            $serverTotalAmount += $subTotalHotel;
+
+        } catch (\Exception $e) {
+            // Tangani jika format tanggal salah/invalid, log error jika perlu
+            // info($e->getMessage());
+        }
     }
+}
 
     // Kalkulasi Harga Badal
     foreach ($service->badals as $badal) {
@@ -215,33 +350,34 @@ class ServicesController extends Controller
     }
 
     // Kalkulasi Harga Tours
-    foreach ($service->tours as $tourCustomer) { // Asumsi relasi namanya 'tours' -> TourCustomer
-        // Asumsi: TourCustomer punya relasi 'tourItem' ke TourItem yg punya 'price'
-        // dan TourCustomer punya relasi 'transportation' ke Transportation yg punya 'harga'
-        $tourPrice = $tourCustomer->tourItem->price ?? 0; // Harga dasar tour
-        $transportPrice = $tourCustomer->transportation->harga ?? 0; // Harga transport utk tour itu
-        $serverTotalAmount += $tourPrice + $transportPrice; // Sesuaikan jika logikanya beda
-    }
+    foreach ($service->tours as $tour) { // $tour adalah instance Model Tour
+    // Ambil harga dari relasi (gunakan casting float untuk keamanan)
+    $tourPrice = (float) ($tour->tourItem->price ?? 0); // Harga dasar tour (dari TourItem)
+    $transportPrice = (float) ($tour->transportation->harga ?? 0); // Harga transport (dari Transportation)
+
+    // Tambahkan ke total server
+    $serverTotalAmount += ($tourPrice + $transportPrice);
+}
 
     // Kalkulasi Harga Wakaf
     foreach ($service->wakafs as $wakafCustomer) { // Asumsi relasi namanya 'wakafs' -> WakafCustomer
          // Asumsi: WakafCustomer punya relasi 'wakafItem' ke Wakaf yg punya 'harga'
          // dan WakafCustomer punya kolom 'jumlah'
-        $serverTotalAmount += ($wakafCustomer->wakafItem->harga ?? 0) * ($wakafCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+        $serverTotalAmount += ($wakafCustomer->wakaf->harga ?? 0) * ($wakafCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
     }
 
      // Kalkulasi Harga Dorongan
     foreach ($service->dorongans as $doronganOrder) { // Asumsi relasi namanya 'dorongans' -> DoronganOrder
          // Asumsi: DoronganOrder punya relasi 'doronganItem' ke Dorongan yg punya 'price'
          // dan DoronganOrder punya kolom 'jumlah'
-        $serverTotalAmount += ($doronganOrder->doronganItem->price ?? 0) * ($doronganOrder->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+        $serverTotalAmount += ($doronganOrder->dorongan->price ?? 0) * ($doronganOrder->jumlah ?? 0); // Sesuaikan nama relasi/kolom
     }
 
      // Kalkulasi Harga Content
     foreach ($service->contents as $contentCustomer) { // Asumsi relasi namanya 'contents' -> ContentCustomer
          // Asumsi: ContentCustomer punya relasi 'contentItem' ke ContentItem yg punya 'price'
          // dan ContentCustomer punya kolom 'jumlah'
-        $serverTotalAmount += ($contentCustomer->contentItem->price ?? 0) * ($contentCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+        $serverTotalAmount += ($contentCustomer->content->price ?? 0) * ($contentCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
     }
 
     // ... Tambahkan kalkulasi untuk item lain jika ada (misal: Handling, Reyal jika ada biayanya) ...
@@ -1195,29 +1331,69 @@ class ServicesController extends Controller
         $service->badals()->delete();
     }
 
-
-
     private function handleHotelItems(Request $request, Service $service)
-    {
-        if ($request->filled('nama_hotel')) {
-            foreach ($request->nama_hotel as $i => $namaHotel) {
-                foreach ($request->type as $t => $type) {
-                    if (empty($namaHotel))
-                        continue;
-                    $hotel = $service->hotels()->create([
+{
+    // 1. Kita loop data 'hotel_data' yang sudah terstruktur rapi
+    if ($request->filled('hotel_data')) {
+
+        foreach ($request->hotel_data as $i => $types) {
+
+            // $i adalah indeks hotel (0, 1, dst.)
+            // $types adalah array [typeId => data] untuk hotel itu
+
+            // 2. Ambil data umum untuk hotel ini
+            $namaHotel = $request->nama_hotel[$i] ?? null;
+            if (empty($namaHotel)) {
+                continue; // Lewati jika tidak ada nama hotel
+            }
+
+            // 3. Loop setiap TIPE KAMAR yang dipilih untuk hotel ini
+            foreach ($types as $typeId => $typeData) {
+
+                $jumlah = $typeData['jumlah'] ?? 0;
+
+                // 4. Simpan ke database dengan data yang PASTI BENAR
+                if ($jumlah > 0) {
+                    $service->hotels()->create([
                         'nama_hotel' => $namaHotel,
                         'tanggal_checkin' => $request->tanggal_checkin[$i] ?? null,
                         'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
-                        'type' => $type,
-                        'jumlah_kamar' => $request->jumlah_kamar[$i],
-                        'harga_perkamar' => "0",
-                        'jumlah_type' => $request->jumlah_type[$i],
-                        'catatan' => $request->keterangan[$i]
+                        'type' => $typeData['type_name'] ?? null, // Dari hidden input
+                        'jumlah_kamar' => $request->jumlah_kamar[$i] ?? null, // Ini adalah "Total Kamar"
+
+                        // Bersihkan format harga (misal: '100.000' menjadi '100000')
+                        'harga_perkamar' => str_replace(['.', ','], '', $typeData['harga'] ?? 0),
+
+                        'jumlah_type' => $jumlah, // INI JUMLAH YANG BENAR
+                        'catatan' => $request->keterangan[$i] ?? null
                     ]);
                 }
             }
         }
     }
+}
+
+    // private function handleHotelItems(Request $request, Service $service)
+    // {
+    //     if ($request->filled('nama_hotel')) {
+    //         foreach ($request->nama_hotel as $i => $namaHotel) {
+    //             foreach ($request->type as $t => $type) {
+    //                 if (empty($namaHotel))
+    //                     continue;
+    //                 $hotel = $service->hotels()->create([
+    //                     'nama_hotel' => $namaHotel,
+    //                     'tanggal_checkin' => $request->tanggal_checkin[$i] ?? null,
+    //                     'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
+    //                     'type' => $type,
+    //                     'jumlah_kamar' => $request->jumlah_kamar[$i],
+    //                     'harga_perkamar' => "0",
+    //                     'jumlah_type' => $request->jumlah_type[$i],
+    //                     'catatan' => $request->keterangan[$i]
+    //                 ]);
+    //             }
+    //         }
+    //     }
+    // }
 
     private function handleTransportationItems(Request $request, Service $service)
     {
@@ -1240,30 +1416,52 @@ class ServicesController extends Controller
         }
 
         // 🚌 Transportasi Darat (Bus)
-        if ($request->filled('transportation') && in_array('bus', $request->transportation)) {
-            $transportationIds = $request->input('transportation_id', []);
-            $ruteIds = $request->input('rute_id', []);
-            $tanggalTransport = $request->input('tanggal_transport', []);
+    if ($request->filled('transportation') && in_array('bus', $request->transportation)) {
 
-            if (is_array($transportationIds)) {
-                foreach ($transportationIds as $index => $transportId) {
-                    $ruteId = $ruteIds[$index] ?? null;
-                    $tanggal = $tanggalTransport[$index] ?? [];
+        // 1. Validasi data yang masuk
+        $request->validate([
+            // Pastikan transportation_id adalah array
+            'transportation_id' => 'nullable|array',
+            // Setiap transportation_id yang dikirim WAJIB ada di tabel transportations
+            'transportation_id.*' => 'required|exists:transportations,id',
 
-                    $dariTanggal = $tanggal['dari'] ?? null;
-                    $sampaiTanggal = $tanggal['sampai'] ?? null;
+            'rute_id' => 'nullable|array',
+            // Setiap rute_id WAJIB diisi dan ada di tabel routes
+            'rute_id.*' => 'required|exists:routes,id',
 
-                    if ($transportId && $ruteId && $dariTanggal && $sampaiTanggal) {
-                        $service->transportationItem()->create([
-                            'transportation_id' => $transportId,
-                            'route_id' => $ruteId,
-                            'dari_tanggal' => $dariTanggal,
-                            'sampai_tanggal' => $sampaiTanggal,
-                        ]);
-                    }
-                }
+            'tanggal_transport' => 'nullable|array',
+            // Setiap tanggal WAJIB diisi
+            'tanggal_transport.*.dari' => 'required|date',
+            'tanggal_transport.*.sampai' => 'required|date|after_or_equal:tanggal_transport.*.dari',
+        ], [
+            // Pesan error kustom
+            'rute_id.*.required' => 'Rute wajib dipilih untuk setiap transportasi.',
+            'tanggal_transport.*.dari.required' => 'Tanggal "Dari" wajib diisi.',
+            'tanggal_transport.*.sampai.required' => 'Tanggal "Sampai" wajib diisi.',
+        ]);
+
+        // 2. Jika validasi lolos, kita bisa yakin data LENGKAP
+        $transportationIds = $request->input('transportation_id', []);
+
+        foreach ($transportationIds as $index => $transportId) {
+
+            // Kita bisa yakin data ini ada karena sudah lolos validasi
+            $ruteId = $request->input("rute_id.$index");
+            $dariTanggal = $request->input("tanggal_transport.$index.dari");
+            $sampaiTanggal = $request->input("tanggal_transport.$index.sampai");
+
+
+            // 'if' ini sekarang hanya sebagai formalitas (karena validasi sudah menangani)
+            if ($transportId && $ruteId && $dariTanggal && $sampaiTanggal) {
+                $service->transportationItem()->create([
+                    'transportation_id' => $transportId,
+                    'route_id' => $ruteId,
+                    'dari_tanggal' => $dariTanggal,
+                    'sampai_tanggal' => $sampaiTanggal,
+                ]);
             }
         }
+    }
     }
 
 
@@ -1464,31 +1662,72 @@ class ServicesController extends Controller
 
 
     private function handleReyalItems(Request $request, Service $service)
-    {
-        $tipe = $request->input('tipe');
-        $tanggalPenyerahan = $request->input('tanggal_penyerahan');
-        if ($tanggalPenyerahan) {
-            if ($tipe === 'tamis') {
-                $service->reyals()->create([
-                    'tipe' => 'tamis',
-                    'jumlah_input' => $request->input('jumlah_rupiah'),
-                    'kurs' => $request->input('kurs_tamis'),
-                    'hasil' => $request->input('hasil_tamis'),
-                    'tanggal_penyerahan' => $tanggalPenyerahan,
-                ]);
-            }
+{
+    // 1. Validasi semua input terlebih dahulu
+    $validatedData = $request->validate([
+        // 'tipe' dan 'tanggal_penyerahan' selalu wajib
+        'tipe' => 'required|in:tamis,tumis',
+        'tanggal_penyerahan' => 'required|date',
 
-            if ($tipe === 'tumis') {
-                $service->reyals()->create([
-                    'tipe' => 'tumis',
-                    'jumlah_input' => $request->input('jumlah_reyal'),
-                    'kurs' => $request->input('kurs_tumis'),
-                    'hasil' => $request->input('hasil_tumis'),
-                    'tanggal_penyerahan' => $tanggalPenyerahan,
-                ]);
-            }
-        }
+        // Wajib jika tipenya 'tamis'
+        'jumlah_rupiah' => 'required_if:tipe,tamis|nullable|numeric|min:0',
+        'kurs_tamis' => 'required_if:tipe,tamis|nullable|numeric|min:0',
+        'hasil_tamis' => 'required_if:tipe,tamis|nullable|numeric|min:0',
+
+        // Wajib jika tipenya 'tumis'
+        'jumlah_reyal' => 'required_if:tipe,tumis|nullable|numeric|min:0',
+        'kurs_tumis' => 'required_if:tipe,tumis|nullable|numeric|min:0',
+        'hasil_tumis' => 'required_if:tipe,tumis|nullable|numeric|min:0',
+    ]);
+
+    // 2. Jika validasi lolos, data dijamin ada.
+    // Gunakan 'if-else if' agar lebih jelas
+
+    if ($validatedData['tipe'] === 'tamis') {
+        $service->reyals()->create([
+            'tipe' => 'tamis',
+            'jumlah_input' => $validatedData['jumlah_rupiah'],
+            'kurs' => $validatedData['kurs_tamis'],
+            'hasil' => $validatedData['hasil_tamis'],
+            'tanggal_penyerahan' => $validatedData['tanggal_penyerahan'],
+        ]);
     }
+    else if ($validatedData['tipe'] === 'tumis') {
+        $service->reyals()->create([
+            'tipe' => 'tumis',
+            'jumlah_input' => $validatedData['jumlah_reyal'],
+            'kurs' => $validatedData['kurs_tumis'],
+            'hasil' => $validatedData['hasil_tumis'],
+            'tanggal_penyerahan' => $validatedData['tanggal_penyerahan'],
+        ]);
+    }
+}
+    // private function handleReyalItems(Request $request, Service $service)
+    // {
+    //     $tipe = $request->input('tipe');
+    //     $tanggalPenyerahan = $request->input('tanggal_penyerahan');
+    //     if ($tanggalPenyerahan) {
+    //         if ($tipe === 'tamis') {
+    //             $service->reyals()->create([
+    //                 'tipe' => 'tamis',
+    //                 'jumlah_input' => $request->input('jumlah_rupiah'),
+    //                 'kurs' => $request->input('kurs_tamis'),
+    //                 'hasil' => $request->input('hasil_tamis'),
+    //                 'tanggal_penyerahan' => $tanggalPenyerahan,
+    //             ]);
+    //         }
+
+    //         if ($tipe === 'tumis') {
+    //             $service->reyals()->create([
+    //                 'tipe' => 'tumis',
+    //                 'jumlah_input' => $request->input('jumlah_reyal'),
+    //                 'kurs' => $request->input('kurs_tumis'),
+    //                 'hasil' => $request->input('hasil_tumis'),
+    //                 'tanggal_penyerahan' => $tanggalPenyerahan,
+    //             ]);
+    //         }
+    //     }
+    // }
 
 
     private function handleWakafItems(Request $request, Service $service)
@@ -1533,7 +1772,7 @@ class ServicesController extends Controller
                         'service_id' => $service->id,
                         'content_id' => $contentId,
                         'jumlah' => $jumlah,
-                        'tanggal_pelaksanaaan' => $request->input("tanggal_konten.$contentId") ?? null,
+                        'tanggal_pelaksanaan' => $request->input("tanggal_konten.$contentId") ?? null,
                     ]);
                 }
             }
@@ -1556,11 +1795,6 @@ class ServicesController extends Controller
             }
         }
     }
-    // public function bayar(Order $order)
-    // {
-    //     $order->load('service.meals');
-    //     return view('admin.order.bayar', compact('order'));
-    // }
 
     public function bayar(Order $order)
     {
