@@ -22,8 +22,8 @@ return new class extends Migration
             $table->foreignId('meal_id')->constrained('meal_items')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('jumlah');
             $table->date('dari_tanggal');
-                $table->date('sampai_tanggal');
-                $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
+            $table->date('sampai_tanggal');
+            $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
             $table->timestamps();
         });
     }
