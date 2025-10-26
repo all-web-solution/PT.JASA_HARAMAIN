@@ -491,6 +491,21 @@
     </style>
 
     <div class="service-list-container">
+        <div class="row g-3 mb-4 p-1"> {{-- Assuming you use a Bootstrap row --}}
+            <x-card-component class="col-xl-3 col-md-6" title="Total Nego" :count="$totalNegoOverall" {{-- Use variable from controller --}}
+                icon="bi bi-hourglass-split" {{-- Example icon --}} iconColor="var(--haramain-primary)" textColor="text-primary"
+                desc="Menunggu konfirmasi" />
+            <x-card-component class="col-xl-3 col-md-6" title="Persiapan" :count="$totalPersiapanOverall" {{-- Use variable from controller --}}
+                icon="bi bi-box-seam" {{-- Example icon --}} iconColor="var(--haramain-primary)" textColor="text-primary"
+                desc="Sedang dipersiapkan" />
+            <x-card-component class="col-xl-3 col-md-6" title="Tahap Produksi" :count="$totalProduksiOverall" {{-- Use variable from controller --}}
+                icon="bi bi-gear-fill" {{-- Example icon --}} iconColor="var(--haramain-primary)" textColor="text-primary"
+                desc="Sedang dikerjakan" />
+            <x-card-component class="col-xl-3 col-md-6" title="Selesai (Done)" :count="$totalDoneOverall" {{-- Use variable from controller --}}
+                icon="bi bi-check2-circle" {{-- Example icon --}} iconColor="var(--haramain-primary)"
+                textColor="text-primary" desc="Layanan telah selesai" />
+        </div>
+
         <!-- Services List -->
         <div class="card">
             <div class="card-header">
@@ -506,7 +521,7 @@
             <div class="search-filter-container">
                 <div class="search-box">
                     <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Cari customer/kode service...">
+                    <input type="text" id="searchInput" placeholder="Cari customer/kode service...">
                 </div>
                 <div class="filter-group">
 
@@ -619,6 +634,30 @@
     </div>
 
     <script>
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Improved Search Functionality
+            const searchInput = document.getElementById('searchInput');
+            const tableBody = document.getElementById('userTableBody');
+            const rows = tableBody.getElementsByTagName('tr');
+
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    // Get all text content from the row, not just specific cells
+                    const rowText = row.textContent.toLowerCase();
+
+                    if (rowText.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             // Delete confirmation
             const deleteButtons = document.querySelectorAll('.btn-delete');
@@ -633,46 +672,8 @@
                             row.remove();
                             alert('Permintaan service berhasil dihapus!');
                         }, 300);
-
-                        /*
-                        fetch('/services/' + serviceId, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                row.remove();
-                                alert('Permintaan service berhasil dihapus!');
-                            }
-                        });
-                        */
                     }
                 });
-            });
-
-            // Search functionality
-            const searchInput = document.querySelector('.search-box input');
-            searchInput.addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') {
-                    const searchTerm = this.value.toLowerCase();
-                    const rows = document.querySelectorAll('tbody tr');
-
-                    rows.forEach(row => {
-                        const customerName = row.querySelector('td:first-child .customer-name')
-                            .textContent.toLowerCase();
-                        const serviceCode = row.querySelector('td:nth-child(2)').textContent
-                            .toLowerCase();
-
-                        if (customerName.includes(searchTerm) || serviceCode.includes(searchTerm)) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-                }
             });
         });
     </script>
