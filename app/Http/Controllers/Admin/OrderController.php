@@ -13,7 +13,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
 
-         $query = Order::query();
+        $query = Order::query();
 
         // Filter berdasarkan bulan
         if ($request->filled('bulan')) {
