@@ -328,7 +328,7 @@
                     @foreach ($order->uploadPayments as $file)
                     <a href="{{ asset('storage/' . $file->payment_proof) }}" target="_blank" class="mx-3">
                         <img src="{{ asset('storage/' . $file->payment_proof) }}" alt="Bukti Pembayaran"
-                            style="max-width: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+                            style="width: 100px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
                     </a>
                     @endforeach
                 </div>

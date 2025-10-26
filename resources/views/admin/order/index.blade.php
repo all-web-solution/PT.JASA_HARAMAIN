@@ -424,19 +424,9 @@
                                     </td>
                                     <td data-label="Sisa">{{ number_format($order->sisa_hutang, 0, ',', '.') }}</td>
                                     <td data-label="Aksi">
-                                        @if ($order->status_pembayaran === 'belum_bayar')
-                                            <a href="{{ route('orders.bayar', $order->id) }}">
-                                                <button class="btn btn-primary btn-sm w-100">Bayar</button>
-                                            </a>
-                                        @elseif ($order->status_pembayaran === 'sudah_bayar')
-                                            <span class="bg-warning p-1 rounded text-dark d-block text-center">Sudah
-                                                Bayar</span>
-                                        @else
-                                            <a href="{{ route('orders.bayar', $order->id) }}">
-                                                <span
-                                                    class="bg-success p-1 rounded text-white d-block text-center">Lunas</span>
-                                            </a>
-                                        @endif
+                                       <a href="{{ route('payment.proff', $order->id) }}" class="btn btn-primary">
+                                            Bukti transfer
+                                       </a>
                                     </td>
                                 </tr>
                             @endforeach

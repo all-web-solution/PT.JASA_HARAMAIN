@@ -12,7 +12,8 @@ class Tour extends Model
         'tour_id',
         'tanggal_keberangkatan',
         'supplier',
-        'harga_dasar'
+        'harga_dasar',
+        'status'
     ];
 
     public function service()
