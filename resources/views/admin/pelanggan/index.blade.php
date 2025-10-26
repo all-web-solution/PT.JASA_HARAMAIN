@@ -64,7 +64,7 @@
 
         /* Table Styles */
         .table-responsive {
-            max-width: 72vw;
+            max-width: 100vw;
             padding: 0 1.5rem 1rem;
             /* Adjusted padding */
         }
@@ -333,23 +333,22 @@
         <!-- Stats Cards -->
         <div class="row g-3 mb-4 p-1" id="cards-dashboard">
             <!-- Total Travel -->
-            <x-card-component title="Total Travel" :count="$totalPelanggan" icon="bi bi-building" iconColor="var(--haramain-primary)"
-                textColor="var(--text-muted)" desc="Semua travel terdaftar" />
+            <x-card-component class="col-xl-3 col-md-6" title="Total Travel" :count="$totalPelanggan" icon="bi bi-building"
+                iconColor="var(--haramain-primary)" textColor="text-primary" desc="Semua travel terdaftar" />
 
             <!-- Travel Aktif -->
-            <x-card-component title="Travel Aktif" :count="$pelangganAktif" icon="bi bi-check-circle"
-                iconColor="var(--haramain-primary)" textColor="{{ $totalPelanggan > 0 ? 'text-success' : 'text-muted' }}"
+            <x-card-component class="col-xl-3 col-md-6" title="Travel Aktif" :count="$pelangganAktif" icon="bi bi-check-circle"
+                iconColor="var(--haramain-primary)" textColor="text-primary"
                 desc="{{ round(($pelangganAktif / $totalPelanggan) * 100) }}% dari total" />
 
             <!-- Travel Non-Aktif -->
-            <x-card-component title="Travel Non-Aktif" :count="$pelangganNonAktif" icon="bi bi-x-circle"
-                iconColor="var(--haramain-primary)" textColor="{{ $totalPelanggan > 0 ? 'text-success' : 'text-muted' }}"
+            <x-card-component class="col-xl-3 col-md-6" title="Travel Non-Aktif" :count="$pelangganNonAktif" icon="bi bi-x-circle"
+                iconColor="var(--haramain-primary)" textColor="text-primary"
                 desc="{{ round(($pelangganNonAktif / $totalPelanggan) * 100) }}% dari total" />
 
             <!-- Penambahan Bulan Ini -->
-            <x-card-component title="Kenaikan Bulan ini" :count="$pelangganBulanIni" icon="bi bi-graph-up"
-                iconColor="var(--haramain-primary)" textColor="{{ $totalPelanggan > 0 ? 'text-success' : 'text-muted' }}"
-                desc="{{ $pelangganBulanIni }} travel baru" />
+            <x-card-component class="col-xl-3 col-md-6" title="Kenaikan Bulan ini" :count="$pelangganBulanIni" icon="bi bi-graph-up"
+                iconColor="var(--haramain-primary)" textColor="text-primary" desc="{{ $pelangganBulanIni }} travel baru" />
         </div>
 
         <!-- Customers List -->
@@ -533,26 +532,6 @@
                     </ul>
                 </nav>
             </div>
-
-            {{-- <div class="pagination-container">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div> --}}
         </div>
     </div>
 
