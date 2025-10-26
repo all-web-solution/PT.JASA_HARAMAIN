@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
              $table->foreignId('transportation_id')->constrained('transportations')->cascadeOnDelete()->cascadeOnUpdate();
              $table->string('route');
-             $table->string('price');
+             $table->decimal('price', 15, 0)->default(0);
             $table->timestamps();
         });
     }
