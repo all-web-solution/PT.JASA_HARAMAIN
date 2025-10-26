@@ -1,319 +1,339 @@
 @extends('admin.master')
 @section('title', 'Order List')
-@push('styles')
-    <style>
-        :root {
-            --haramain-primary: #1a4b8c;
-            --haramain-secondary: #2a6fdb;
-            --haramain-light: #e6f0fa;
-            --haramain-accent: #3d8bfd;
-            --text-primary: #2d3748;
-            --text-secondary: #4a5568;
-            --border-color: #d1e0f5;
-            --hover-bg: #f0f7ff;
-            --checked-color: #2a6fdb;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-        }
-
-        .order-list-container {
-            max-width: 100vw;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #f8fafd;
-        }
-
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card-title {
-            font-weight: 700;
-            color: var(--haramain-primary);
-            margin: 0;
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .card-title i {
-            font-size: 1.5rem;
-            color: var(--haramain-secondary);
-        }
-
-        /* Search and Filter */
-        .search-filter-container {
-            display: flex;
-            justify-content: space-between;
-            padding: 1.5rem;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .search-box {
-            position: relative;
-            width: 300px;
-        }
-
-        .search-box input {
-            padding-left: 2.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            height: 40px;
-            width: 100%;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
-
-        /* Table style */
-        .table-responsive {
-            padding: 0 1.5rem 1rem;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 0.75rem;
-        }
-
-        .table thead th {
-            background-color: var(--haramain-light);
-            color: var(--haramain-primary);
-            font-weight: 600;
-            padding: 1rem 1.25rem;
-            border-bottom: 2px solid var(--border-color);
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .table tbody tr {
-            background-color: white;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-        }
-
-        .table tbody tr:hover {
-            background-color: var(--hover-bg);
-            box-shadow: 0 4px 12px rgba(42, 111, 219, 0.1);
-        }
-
-        .table tbody td {
-            padding: 1rem;
-            vertical-align: middle;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-         .table tbody td:first-child {
-            border-left: 1px solid var(--border-color);
-            border-top-left-radius: 8px;
-            border-bottom-left-radius: 8px;
-        }
-
-        .table tbody td:last-child {
-            border-right: 1px solid var(--border-color);
-            border-top-right-radius: 8px;
-            border-bottom-right-radius: 8px;
-        }
-
-        .badge {
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.75rem;
-        }
-
-        .btn-add-new {
-            background-color: var(--haramain-secondary);
-            color: white;
-            border-radius: 8px;
-            padding: 0.625rem 1.5rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        /* Pagination */
-        .pagination-container {
-            display: flex;
-            justify-content: flex-end;
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-color);
-            gap: 1rem;
-        }
-
-        .pagination .page-link {
-            border-radius: 10px;
-            margin: 0 3px;
-            color: var(--haramain-primary);
-            border-color: #d9e3f0;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #2f6fed;
-            border-color: #2f6fed;
-            color: #fff;
-        }
-
-        .pagination .page-item.disabled .page-link {
-            background-color: #f5f7fa;
-            color: #adb5bd;
-            border-color: #e3e7ec;
-        }
-
-
-        /* ✅ Responsive Umum (Tablet) */
-        @media (max-width: 768px) {
-            .search-filter-container {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            .filter-group {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-
-            .table thead {
-                display: none;
-            }
-
-            .table tbody tr {
-                display: block;
-                margin-bottom: 1rem;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                padding: 0.5rem;
-            }
-
-            .table tbody td {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0.5rem 1rem;
-                border: none;
-            }
-
-            .table tbody td:before {
-                content: attr(data-label);
-                font-weight: 600;
-                color: var(--haramain-primary);
-                margin-right: 1rem;
-            }
-        }
-
-        /* ✅ Responsive untuk layar kecil (≤ 320px) */
-        @media (max-width: 320px) {
-            #filter {
-                display: none;
+@section('content')
+    @push('styles')
+        <style>
+            :root {
+                --haramain-primary: #1a4b8c;
+                --haramain-secondary: #2a6fdb;
+                --haramain-light: #e6f0fa;
+                --haramain-accent: #3d8bfd;
+                --text-primary: #2d3748;
+                --text-secondary: #4a5568;
+                --border-color: #d1e0f5;
+                --hover-bg: #f0f7ff;
+                --checked-color: #2a6fdb;
+                --success-color: #28a745;
+                --warning-color: #ffc107;
+                --danger-color: #dc3545;
             }
 
             .order-list-container {
-                padding: 1rem;
+                max-width: 100vw;
+                margin: 0 auto;
+                padding: 2rem;
+                background-color: #f8fafd;
+            }
+
+            .card {
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                border: 1px solid var(--border-color);
+                margin-bottom: 2rem;
+                overflow: hidden;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
             }
 
             .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 1rem;
+                background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
+                border-bottom: 1px solid var(--border-color);
+                padding: 1.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
             }
 
             .card-title {
-                font-size: 1rem;
-                gap: 6px;
+                font-weight: 700;
+                color: var(--haramain-primary);
+                margin: 0;
+                font-size: 1.25rem;
+                display: flex;
+                align-items: center;
+                gap: 12px;
             }
 
+            .card-title i {
+                font-size: 1.5rem;
+                color: var(--haramain-secondary);
+            }
+
+            /* Search and Filter */
             .search-filter-container {
-                padding: 1rem;
-                flex-direction: column;
-                gap: 0.75rem;
+                display: flex;
+                justify-content: space-between;
+                padding: 1.5rem;
+                align-items: center;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .search-box {
+                position: relative;
+                width: 300px;
             }
 
             .search-box input {
-                height: 36px;
-                font-size: 0.85rem;
-            }
-
-            .filter-group {
-                flex-direction: column;
+                padding-left: 2.5rem;
+                border-radius: 8px;
+                border: 1px solid var(--border-color);
+                height: 40px;
                 width: 100%;
             }
 
-            .filter-select {
-                width: 100%;
-                font-size: 0.8rem;
-                height: 36px;
+            .search-box i {
+                position: absolute;
+                left: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-secondary);
             }
 
+            /* Table style */
             .table-responsive {
-                padding: 0.5rem;
-                overflow-x: auto;
+                padding: 0 1.5rem 1rem;
+            }
+
+            .table {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0 0.75rem;
+            }
+
+            .table thead th {
+                background-color: var(--haramain-light);
+                color: var(--haramain-primary);
+                font-weight: 600;
+                padding: 1rem 1.25rem;
+                border-bottom: 2px solid var(--border-color);
+                text-align: center;
+                vertical-align: middle;
             }
 
             .table tbody tr {
-                margin-bottom: 0.75rem;
+                background-color: white;
+                transition: all 0.3s ease;
+                border-radius: 8px;
+            }
+
+            .table tbody tr:hover {
+                background-color: var(--hover-bg);
+                box-shadow: 0 4px 12px rgba(42, 111, 219, 0.1);
             }
 
             .table tbody td {
-                padding: 0.5rem;
-                font-size: 0.8rem;
-                flex-direction: column;
-                align-items: flex-start;
+                padding: 1rem;
+                vertical-align: middle;
+                border-top: 1px solid var(--border-color);
+                border-bottom: 1px solid var(--border-color);
             }
 
-            .table tbody td:before {
+            .table tbody td:first-child {
+                border-left: 1px solid var(--border-color);
+                border-top-left-radius: 8px;
+                border-bottom-left-radius: 8px;
+            }
+
+            .table tbody td:last-child {
+                border-right: 1px solid var(--border-color);
+                border-top-right-radius: 8px;
+                border-bottom-right-radius: 8px;
+            }
+
+            .badge {
+                padding: 0.5rem 0.75rem;
+                border-radius: 6px;
+                font-weight: 600;
                 font-size: 0.75rem;
-                margin-bottom: 0.25rem;
             }
 
-            .btn {
-                font-size: 0.75rem;
-                padding: 0.4rem 0.75rem;
+            .btn-add-new {
+                background-color: var(--haramain-secondary);
+                color: white;
+                border-radius: 8px;
+                padding: 0.625rem 1.5rem;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s ease;
+                border: none;
             }
 
+            /* Pagination */
             .pagination-container {
-                justify-content: center;
-                padding: 0.75rem;
+                display: flex;
+                justify-content: flex-end;
+                padding: 1.5rem;
+                border-top: 1px solid var(--border-color);
+                gap: 1rem;
             }
 
             .pagination .page-link {
-                font-size: 0.75rem;
-                padding: 0.4rem 0.6rem;
+                border-radius: 10px;
+                margin: 0 3px;
+                color: var(--haramain-primary);
+                border-color: #d9e3f0;
             }
-        }
-    </style>
+
+            .pagination .page-item.active .page-link {
+                background-color: #2f6fed;
+                border-color: #2f6fed;
+                color: #fff;
+            }
+
+            .pagination .page-item.disabled .page-link {
+                background-color: #f5f7fa;
+                color: #adb5bd;
+                border-color: #e3e7ec;
+            }
+
+            #card-payment {
+                width: 100%;
+            }
+
+
+            /* ✅ Responsive Umum (Tablet) */
+            @media (max-width: 768px) {
+                .search-filter-container {
+                    flex-direction: column;
+                    gap: 1rem;
+                    align-items: flex-start;
+                }
+
+                .search-box {
+                    width: 100%;
+                }
+
+                .filter-group {
+                    width: 100%;
+                    flex-wrap: wrap;
+                }
+
+                .table thead {
+                    display: none;
+                }
+
+                .table tbody tr {
+                    display: block;
+                    margin-bottom: 1rem;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    padding: 0.5rem;
+                }
+
+                .table tbody td {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 0.5rem 1rem;
+                    border: none;
+                }
+
+                .table tbody td:before {
+                    content: attr(data-label);
+                    font-weight: 600;
+                    color: var(--haramain-primary);
+                    margin-right: 1rem;
+                }
+            }
+
+            /* ✅ Responsive untuk layar kecil (≤ 320px) */
+            @media (max-width: 320px) {
+                #filter {
+                    display: none;
+                }
+
+                .order-list-container {
+                    padding: 1rem;
+                }
+
+                .card-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    padding: 1rem;
+                }
+
+                .card-title {
+                    font-size: 1rem;
+                    gap: 6px;
+                }
+
+                .search-filter-container {
+                    padding: 1rem;
+                    flex-direction: column;
+                    gap: 0.75rem;
+                }
+
+                .search-box input {
+                    height: 36px;
+                    font-size: 0.85rem;
+                }
+
+                .filter-group {
+                    flex-direction: column;
+                    width: 100%;
+                }
+
+                .filter-select {
+                    width: 100%;
+                    font-size: 0.8rem;
+                    height: 36px;
+                }
+
+                .table-responsive {
+                    padding: 0.5rem;
+                    overflow-x: auto;
+                }
+
+                .table tbody tr {
+                    margin-bottom: 0.75rem;
+                }
+
+                .table tbody td {
+                    padding: 0.5rem;
+                    font-size: 0.8rem;
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .table tbody td:before {
+                    font-size: 0.75rem;
+                    margin-bottom: 0.25rem;
+                }
+
+                .btn {
+                    font-size: 0.75rem;
+                    padding: 0.4rem 0.75rem;
+                }
+
+                .pagination-container {
+                    justify-content: center;
+                    padding: 0.75rem;
+                }
+
+                .pagination .page-link {
+                    font-size: 0.75rem;
+                    padding: 0.4rem 0.6rem;
+                }
+            }
+        </style>
+    @endpush
 
     <div class="order-list-container">
+        <div class="row g-3 mb-4 p-1" id="cards-payment">
+            <x-card-component class="col-md-4" title="Total Payment" :count="\App\Models\Order::count()" icon="bi bi-receipt-cutoff"
+                {{-- Icon Struk/Invoice Total --}} iconColor="var(--haramain-primary)" textColor="text-primary"
+                desc="Jumlah seluruh Invoice" />
+
+            <x-card-component class="col-md-4" title="Belum Bayar" :count="\App\Models\Order::where('status_pembayaran', 'belum_bayar')->count()" icon="bi bi-exclamation-triangle-fill"
+                {{-- Icon Peringatan/Pending --}} iconColor="var(--haramain-primary)" {{-- Sesuaikan warna ikon jika perlu --}} textColor="text-primary"
+                {{-- Sesuaikan warna teks jika perlu --}} desc="Invoice yang belum lunas" />
+
+            <x-card-component class="col-md-4" title="Lunas" :count="\App\Models\Order::where('status_pembayaran', 'lunas')->count()" icon="bi bi-check2-circle"
+                {{-- Icon Selesai/Lunas --}} iconColor="var(--haramain-primary)" {{-- Sesuaikan warna ikon jika perlu --}} textColor="text-primary"
+                desc="Invoice yang sudah lunas" />
+        </div>
+
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
@@ -325,7 +345,7 @@
             <div class="search-filter-container">
                 <div class="search-box">
                     <i class="bi bi-search"></i>
-                    <input type="text" id="searchInput" placeholder="Cari berdasarkan nama, email, dll...">
+                    <input type="text" id="searchInput" placeholder="Cari customer/kode service...">
                 </div>
                 <div class="filter-group">
                     <div class="dropdown">
