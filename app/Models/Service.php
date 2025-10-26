@@ -35,7 +35,7 @@ class Service extends Model
     }
     public function transportationItem()
     {
-        return $this->hasMany(TransportationItem::class, );
+        return $this->hasMany(TransportationItem::class, 'service_id');
     }
     public function hotels()
     {
@@ -49,12 +49,13 @@ class Service extends Model
     {
         return $this->hasMany(Meal::class, );
     }
-   public function guides()
-{
-    return $this->hasMany(Guide::class, 'service_id', 'id');
-}    public function tours()
+    public function guides()
     {
-        return $this->hasMany(Tour::class, );
+        return $this->hasMany(Guide::class, 'service_id', 'id');
+    }
+    public function tours()
+    {
+        return $this->hasMany(Tour::class, 'service_id');
     }
     public function documents()
     {
@@ -65,16 +66,17 @@ class Service extends Model
         return $this->hasMany(File::class, 'service_id');
     }
     public function reyals()
-    {
-        return $this->hasMany(Exchange::class, );
-    }
+{
+    // Tentukan foreign key 'service_id' secara eksplisit
+    return $this->hasMany(Exchange::class, 'service_id');
+}
     public function wakafs()
     {
         return $this->hasMany(WakafCustomer::class, 'service_id');
     }
     public function dorongans()
     {
-        return $this->hasMany(DoronganOrder::class, );
+        return $this->hasMany(DoronganOrder::class, 'service_id');
     }
     public function contents()
     {
