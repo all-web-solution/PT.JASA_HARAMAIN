@@ -106,29 +106,21 @@
     <div class="container-fluid p-3">
         <!-- Stats Cards -->
         <div class="row g-3 mb-4" id="cards-dashboard">
-            <x-card-component title="Jamaah Bulan Ini" :count="\App\Models\Service::totalJamaahBulanIni()" icon="bi bi-people"
-                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
+            <x-card-component class="col-xl-3 col-md-6" title="Jamaah Bulan Ini" :count="\App\Models\Service::totalJamaahBulanIni()" icon="bi bi-people"
+                {{-- Tetap atau bi bi-person-check-fill --}} iconColor="var(--haramain-primary)" textColor="text-primary"
+                desc="Total jamaah bulan ini" />
 
-            <x-card-component title="Total Travel" :count="\App\Models\Pelanggan::count()" icon="bi bi-currency-dollar"
-                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
+            <x-card-component class="col-xl-3 col-md-6" title="Total Travel" :count="\App\Models\Pelanggan::count()" icon="bi bi-building"
+                {{-- Icon Gedung/Perusahaan --}} iconColor="var(--haramain-primary)" textColor="text-primary"
+                desc="Jumlah travel terdaftar" />
 
-            <x-card-component title="Total Service" :count="12" icon="bi bi-currency-dollar"
-                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
+            <x-card-component class="col-xl-3 col-md-6" title="Total Service" :count="12" icon="bi bi-card-checklist"
+                {{-- Icon Daftar Layanan --}} iconColor="var(--haramain-primary)" textColor="text-primary"
+                desc="Total tipe layanan tersedia" />
 
-            <x-card-component title="Total Request" :count="\App\Models\Service::count()" icon="bi bi-currency-dollar"
-                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
-
-            <x-card-component title="Total Payment" :count="\App\Models\Order::count()" icon="bi bi-currency-dollar"
-                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
-
-            <x-card-component title="Total Nego" :count="\App\Models\Service::where('status', 'nego')->count()" icon="bi bi-currency-dollar"
-                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
-
-            <x-card-component title="Maintenance" :count="0" icon="bi bi-currency-dollar"
-                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
-
-            <x-card-component title="Maintenance" :count="0" icon="bi bi-currency-dollar"
-                iconColor="var(--haramain-primary)" textColor="text-success" desc="under maintenance!" />
+            <x-card-component class="col-xl-3 col-md-6" title="Total Request" :count="\App\Models\Service::count()" icon="bi bi-clipboard-data"
+                {{-- Icon Data Permintaan --}} iconColor="var(--haramain-primary)" textColor="text-primary"
+                desc="Jumlah permintaan layanan" />
 
         </div>
 
