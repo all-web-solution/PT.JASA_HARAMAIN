@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class HandlingHotel extends Model
 {
-    protected $fillable = ['handling_id', 'nama', 'tanggal', 'harga', 'pax', 'kode_booking', 'rumlis', 'identitas_koper'];
+    protected $fillable = ['handling_id', 'nama', 'tanggal', 'harga', 'pax', 'kode_booking', 'rumlis', 'identitas_koper', 'status'];
 
     public function handling()
     {

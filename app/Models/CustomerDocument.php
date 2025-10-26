@@ -12,6 +12,7 @@ class CustomerDocument extends Model
         'document_id',
         'jumlah',
         'harga',
+        'status',
     ];
 
     public function documentChild()
