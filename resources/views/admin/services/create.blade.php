@@ -616,12 +616,11 @@
                                     <div class="form-group mt-2">
                                         <label class="form-label">Total kamar</label>
                                         <input type="number" class="form-control" name="jumlah_kamar[0]"
-                                            min="0" readonly>
+                                            min="0">
                                     </div>
                                     <div class="form-group mt-2">
                                         <label class="form-label">Keterangan</label>
-                                        <input type="text" class="form-control" name="keterangan[0]"
-                                            min="0">
+                                        <input type="text" class="form-control" name="keterangan[0]" min="0">
                                     </div>
 
                                     <div class="mt-3 text-end">
@@ -806,11 +805,21 @@
                             <div class="detail-section">
                                 @foreach ($contents as $content)
                                     <div id="form-konten-{{ $content->id }}" class="form-group hidden">
-                                        <label class="form-label">Jumlah {{ $content->name }}</label>
-                                        <input type="number" class="form-control jumlah-item"
-                                            data-id="{{ $content->id }}" data-name="{{ $content->name }}"
-                                            data-price="{{ $content->price }}" data-type="konten"
-                                            name="jumlah_konten[{{ $content->id }}]" min="1">
+                                        <div class="form-row d-flex gap-3 mt-2">
+                                            <div class="form-col">
+                                                <label class="form-label">Jumlah {{ $content->name }}</label>
+                                                <input type="number" class="form-control jumlah-item"
+                                                    data-id="{{ $content->id }}" data-name="{{ $content->name }}"
+                                                    data-price="{{ $content->price }}" data-type="konten"
+                                                    name="jumlah_konten[{{ $content->id }}]" min="1">
+                                            </div>
+
+                                            <div class="form-col">
+                                                <label class="form-label">Tanggal Pelaksanaan</label>
+                                                <input type="date" class="form-control"
+                                                    name="tanggal_konten[{{ $content->id }}]">
+                                            </div>
+                                        </div>
                                         <label for="keterangan_konten" class="form-label mt-3">Keterangan</label>
                                         <input type="text" class="form-control"
                                             name="keterangan_konten[{{ $content->id }}]">
@@ -906,9 +915,13 @@
                                                 data-price="{{ $trans->harga }}" data-tour-name="{{ $tour->name }}"
                                                 data-trans-name="{{ $trans->nama }}">
                                                 <div class="service-name">{{ $trans->nama }}</div>
+                                                <div class="service-desc">Kapasitas: {{ $trans->kapasitas ?? 'N/A' }}
+                                                </div>
+                                                <div class="service-desc">Fasilitas: {{ $trans->fasilitas ?? 'N/A' }}
+                                                </div>
                                                 <div class="service-desc">Harga: Rp {{ number_format($trans->harga) }}
                                                 </div>
-                                                <input type="checkbox" name="tour_transport[{{ $tour->id }}]"
+                                                <input type="radio" name="tour_transport[{{ $tour->id }}]"
                                                     value="{{ $trans->id }}">
                                             </div>
                                         @endforeach
@@ -940,13 +953,13 @@
                                             name="jumlah_meals[{{ $meal->id }}]" min="1">
                                         <div class="form-row d-flex gap-3 mt-2">
                                             <div class="form-col">
-                                                <label class="form-label">Tanggal Dari</label>
+                                                <label class="form-label">Dari Tanggal</label>
                                                 <input type="date" class="form-control"
                                                     name="dari_tanggal_makanan[{{ $meal->id }}][dari]">
                                             </div>
 
                                             <div class="form-col">
-                                                <label class="form-label">Tanggal Sampai</label>
+                                                <label class="form-label">Sampai Tanggal</label>
                                                 <input type="date" class="form-control"
                                                     name="sampai_tanggal_makanan[{{ $meal->id }}][sampai]">
                                             </div>
@@ -1177,12 +1190,12 @@
                     <div class="route-select hidden"><label class="form-label mt-2">Pilih Rute:</label><select name="rute_id[${transportCounter}]" class="form-control"><option value="">-- Pilih Rute --</option></select></div>
                     <div class="route-select">
                 <label class="form-label mt-2">Dari tanggal:</label>
-                <input type="date" name="tanggal_transport[0][dari]" class="form-control">
+                <input type="date" name="tanggal_transport[${transportCounter}][dari]" class="form-control">
             </div>
 
             <div class="route-select">
                 <label class="form-label mt-2">Sampai tanggal:</label>
-                <input type="date" name="tanggal_transport[0][sampai]" class="form-control">
+                <input type="date" name="tanggal_transport[${transportCounter}][sampai]" class="form-control">
             </div>
                     <div class="mt-2 text-end"><button type="button" class="btn btn-danger btn-sm remove-transport">Hapus</button></div>
                 </div>
@@ -1207,7 +1220,15 @@
                         @endforeach
                     </div><div class="type-input-container"></div></div>
                 </div>
-                <div class="form-group mt-2"><label class="form-label">Harga Total (untuk Divisi Hotel)</label><input type="number" class="form-control" name="harga_total_hotel[${hotelCounter}]" min="0"></div>
+                <div class="form-group mt-2">
+                                        <label class="form-label">Total kamar</label>
+                                        <input type="number" class="form-control" name="jumlah_kamar[${hotelCounter}]"
+                                            min="0">
+                                    </div>
+                                    <div class="form-group mt-2">
+                                        <label class="form-label">Keterangan</label>
+                                        <input type="text" class="form-control" name="keterangan[${hotelCounter}]" min="0">
+                                    </div>
                 <div class="mt-3 text-end"><button type="button" class="btn btn-danger btn-sm removeHotel">Hapus Hotel</button></div>
             `;
                 hotelWrapper.appendChild(newForm);
@@ -1222,6 +1243,10 @@
                 newForm.innerHTML = `
                 <div class="form-group mb-2"><label class="form-label">Nama yang dibadalkan</label><input type="text" class="form-control nama_badal" name="nama_badal[${badalCounter}]"></div>
                 <div class="form-group mb-2"><label class="form-label">Harga</label><input type="number" class="form-control harga_badal" name="harga_badal[${badalCounter}]" min="0"></div>
+                <div class="form-group mb-2">
+                    <label class="form-label">Tanggal pelaksanaan</label>
+                    <input type="date" class="form-control" name="tanggal_pelaksanaan_badal[${badalCounter}]" min="0">
+                </div>
                 <div class="mt-2 text-end"><button type="button" class="btn btn-danger btn-sm removeBadal">Hapus Badal</button></div>
             `;
                 badalWrapper.appendChild(newForm);
@@ -1235,127 +1260,164 @@
                 const carItem = e.target.closest('.service-car');
                 if (carItem) {
                     const transportSet = carItem.closest('.transport-set');
-                    transportSet.querySelectorAll('.service-car').forEach(car => car.classList.remove(
-                        'selected'));
-                    carItem.classList.add('selected');
+
+                    // --- TEMUKAN RADIO BUTTON DI DALAM DIV YANG DIKLIK ---
+                    const radioButton = carItem.querySelector('input[type="radio"]');
+
+                    // --- LOOP SEMUA MOBIL DALAM GRUP INI ---
+                    transportSet.querySelectorAll('.service-car').forEach(car => {
+                        const otherRadio = car.querySelector('input[type="radio"]');
+                        if (car === carItem && radioButton) {
+                            // Jika ini mobil yang diklik, tambahkan class & check radionya
+                            car.classList.add('selected');
+                            radioButton.checked = true; // <-- BARIS PENTING
+                        } else {
+                            // Jika ini mobil lain, hapus class & uncheck radionya (jika ada)
+                            car.classList.remove('selected');
+                            if (otherRadio) {
+                                otherRadio.checked = false;
+                            }
+                        }
+                    });
+
+                    // Lanjutkan mengisi dropdown rute
                     const routes = JSON.parse(carItem.dataset.routes || '[]');
                     const select = transportSet.querySelector('select[name^="rute_id"]');
-                    const routeSelectDiv = transportSet.querySelector('.route-select');
-                    select.innerHTML = `<option value="">-- Pilih Rute --</option>`;
+                    const routeSelectDiv = transportSet.querySelector(
+                        '.route-select.hidden'); // Cari div yg mungkin hidden
+                    select.innerHTML = `<option value="">-- Pilih Rute --</option>`; // Reset options
                     routes.forEach(route => {
                         select.insertAdjacentHTML('beforeend',
                             `<option value="${route.id}" data-price="${route.price}" data-car-name="${carItem.dataset.name}">${route.route} - Rp. ${parseInt(route.price).toLocaleString('id-ID')}</option>`
                         );
                     });
-                    routeSelectDiv.classList.remove('hidden');
+                    // Tampilkan dropdown rute jika sebelumnya hidden
+                    if (routeSelectDiv) {
+                        routeSelectDiv.classList.remove('hidden');
+                    }
                 }
 
-               // Asumsi 'e' adalah event object dari click event
-// Asumsi 'cart' adalah objek keranjang global
+                // Asumsi 'e' adalah event object dari click event
+                // Asumsi 'cart' adalah objek keranjang global
 
-// --- Fungsi Baru: Menghitung dan Memperbarui Total Kamar ---
-function updateJumlahKamarTotal(hotelForm) {
-    let totalKamar = 0;
-    // Cari semua input kuantitas (jumlah) tipe kamar di dalam container dinamis
-    const qtyInputs = hotelForm.querySelectorAll('.type-input-container input[data-is-qty="true"]');
+                // --- Fungsi Baru: Menghitung dan Memperbarui Total Kamar ---
+                function updateJumlahKamarTotal(hotelForm) {
+                    let totalKamar = 0;
+                    // Cari semua input kuantitas (jumlah) tipe kamar di dalam container dinamis
+                    const qtyInputs = hotelForm.querySelectorAll(
+                        '.type-input-container input[data-is-qty="true"]');
 
-    qtyInputs.forEach(input => {
-        // Pastikan nilai adalah angka dan minimal 0
-        totalKamar += parseInt(input.value) || 0;
-    });
+                    qtyInputs.forEach(input => {
+                        // Pastikan nilai adalah angka dan minimal 0
+                        totalKamar += parseInt(input.value) || 0;
+                    });
 
-    // Cari input 'Jumlah kamar' utama (yang ingin Anda perbarui)
-    // Asumsi: name-nya adalah 'jumlah_kamar[index]'
-    const jumlahKamarInput = hotelForm.querySelector('input[name^="jumlah_kamar["]');
+                    // Cari input 'Jumlah kamar' utama (yang ingin Anda perbarui)
+                    // Asumsi: name-nya adalah 'jumlah_kamar[index]'
+                    const jumlahKamarInput = hotelForm.querySelector('input[name^="jumlah_kamar["]');
 
-    if (jumlahKamarInput) {
-        jumlahKamarInput.value = totalKamar;
-    }
-}
+                    if (jumlahKamarInput) {
+                        jumlahKamarInput.value = totalKamar;
+                    }
+                }
 
-// --- Fungsi untuk menambahkan event listener ke input kuantitas yang baru ---
-function addQtyChangeListener(inputElement, hotelForm) {
-    inputElement.addEventListener('input', function() {
-        // Saat kuantitas berubah, perbarui cart dan total kamar
-        const typeId = this.dataset.typeId;
-        const newQty = parseInt(this.value) || 0;
+                // --- Fungsi untuk menambahkan event listener ke input kuantitas yang baru ---
+                function addQtyChangeListener(inputElement, hotelForm) {
+                    inputElement.addEventListener('input', function() {
+                        // Saat kuantitas berubah, perbarui cart dan total kamar
+                        const typeId = this.dataset.typeId;
+                        const newQty = parseInt(this.value) || 0;
 
-        // Cari elemen 'type-item' yang terkait untuk mendapatkan nama dan harga
-        const typeItem = hotelForm.querySelector(`.type-item[data-type-id="${typeId}"]`);
+                        // Cari elemen 'type-item' yang terkait untuk mendapatkan nama dan harga
+                        const typeItem = hotelForm.querySelector(
+                            `.type-item[data-type-id="${typeId}"]`);
 
-        if (typeItem) {
-            const price = parseInt(typeItem.dataset.price) || 0;
-            const name = typeItem.dataset.name;
-            const cartId = `hotel-${hotelForm.dataset.index}-type-${typeId}`;
-            const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value.trim() || `Hotel ${hotelForm.dataset.index}`;
+                        if (typeItem) {
+                            const price = parseInt(typeItem.dataset.price) || 0;
+                            const name = typeItem.dataset.name;
+                            const cartId = `hotel-${hotelForm.dataset.index}-type-${typeId}`;
+                            const hotelName = hotelForm.querySelector(
+                                    'input[data-field="nama_hotel"]').value.trim() ||
+                                `Hotel ${hotelForm.dataset.index}`;
 
-            // Perbarui Cart
-            if (newQty > 0) {
-                 updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${name}`, newQty, price);
-            } else {
-                 // Jika quantity 0, hapus dari cart dan DOM jika perlu
-                 // Namun, karena min="1" pada input, ini jarang terjadi, tapi baik untuk antisipasi
-                 delete cart[cartId];
-            }
-        }
+                            // Perbarui Cart
+                            if (newQty > 0) {
+                                updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${name}`,
+                                    newQty, price);
+                            } else {
+                                // Jika quantity 0, hapus dari cart dan DOM jika perlu
+                                // Namun, karena min="1" pada input, ini jarang terjadi, tapi baik untuk antisipasi
+                                delete cart[cartId];
+                            }
+                        }
 
-        // Perbarui Total Jumlah Kamar
-        updateJumlahKamarTotal(hotelForm);
+                        // Perbarui Total Jumlah Kamar
+                        updateJumlahKamarTotal(hotelForm);
 
-        // Perbarui UI Cart (Total Harga, dll.)
-        updateCartUI();
-    });
-}
+                        // Perbarui UI Cart (Total Harga, dll.)
+                        updateCartUI();
+                    });
+                }
 
 
-// --- Kode Hotel Type Click yang dimodifikasi ---
+                // --- Kode Hotel Type Click yang dimodifikasi ---
 
-// Hotel Type Click
-const typeItem = e.target.closest('.type-item');
-if (typeItem) {
-    const hotelForm = typeItem.closest('.hotel-form');
-    const dynamicContainer = hotelForm.querySelector('.type-input-container');
-    const typeId = typeItem.dataset.typeId;
-    const name = typeItem.dataset.name;
-    const price = parseInt(typeItem.dataset.price) || 0;
-    const cartId = `hotel-${hotelForm.dataset.index}-type-${typeId}`;
-    const existingInputDiv = dynamicContainer.querySelector(`[data-type-id="${typeId}"]`);
+                // Hotel Type Click
+                const typeItem = e.target.closest('.type-item');
+                if (typeItem) {
+                    const hotelForm = typeItem.closest('.hotel-form');
+                    const dynamicContainer = hotelForm.querySelector('.type-input-container');
+                    const typeId = typeItem.dataset.typeId;
+                    const name = typeItem.dataset.name;
+                    const price = parseInt(typeItem.dataset.price) || 0;
+                    const cartId = `hotel-${hotelForm.dataset.index}-type-${typeId}`;
+                    const existingInputDiv = dynamicContainer.querySelector(`[data-type-id="${typeId}"]`);
 
-    if (existingInputDiv) {
-        // --- LOGIKA PENGHAPUSAN ---
-        existingInputDiv.remove();
-        typeItem.classList.remove('selected');
-        delete cart[cartId];
-    } else {
-        // --- LOGIKA PENAMBAHAN ---
-        typeItem.classList.add('selected');
-        const inputDiv = document.createElement('div');
-        inputDiv.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border',
-            'rounded');
-        inputDiv.dataset.typeId = typeId;
-        inputDiv.innerHTML =
-            `<label class="form-label">Jumlah Kamar (${name})</label><input type="number" class="form-control qty-input-hotel" name="jumlah_type[]" min="1" value="1" data-is-qty="true" data-type-id="${typeId}"><label class="form-label mt-2">Harga (${name})</label><input type="text" class="form-control" name="harga_kamar[${hotelForm.dataset.index}][${typeId}]" value="${price.toLocaleString('id-ID')}" readonly>`;
-        dynamicContainer.appendChild(inputDiv);
+                    if (existingInputDiv) {
+                        // --- LOGIKA PENGHAPUSAN ---
+                        existingInputDiv.remove();
+                        typeItem.classList.remove('selected');
+                        delete cart[cartId];
+                    } else {
+                        // --- LOGIKA PENAMBAHAN ---
+                        typeItem.classList.add('selected');
+                        const inputDiv = document.createElement('div');
+                        inputDiv.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border',
+                            'rounded');
+                        inputDiv.dataset.typeId = typeId;
+                        const hotelIndex = hotelForm.dataset.index;
+                        inputDiv.innerHTML =
+                            // 1. UBAH NAMA INPUT 'JUMLAH'
+                            `<label class="form-label">Jumlah Kamar (${name})</label>` +
+                            `<input type="number" class="form-control qty-input-hotel" name="hotel_data[${hotelIndex}][${typeId}][jumlah]" min="1" value="1" data-is-qty="true" data-type-id="${typeId}">` +
 
-        // Cari input kuantitas yang baru dibuat
-        const newQtyInput = inputDiv.querySelector('input[data-is-qty="true"]');
+                            // 2. UBAH NAMA INPUT 'HARGA' (agar konsisten)
+                            `<label class="form-label mt-2">Harga (${name})</label>` +
+                            `<input type="text" class="form-control" name="hotel_data[${hotelIndex}][${typeId}][harga]" value="${price.toLocaleString('id-ID')}" readonly>` +
 
-        // Tambahkan event listener ke input kuantitas yang baru
-        addQtyChangeListener(newQtyInput, hotelForm);
+                            // 3. TAMBAHKAN INPUT HIDDEN UNTUK NAMA TIPE
+                            `<input type="hidden" name="hotel_data[${hotelIndex}][${typeId}][type_name]" value="${name}">`;
+                        dynamicContainer.appendChild(inputDiv);
 
-        const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value
-            .trim() || `Hotel ${hotelForm.dataset.index}`;
+                        // Cari input kuantitas yang baru dibuat
+                        const newQtyInput = inputDiv.querySelector('input[data-is-qty="true"]');
 
-        // Tambahkan ke Cart (dengan qty=1)
-        updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${name}`, 1, price);
-    }
+                        // Tambahkan event listener ke input kuantitas yang baru
+                        addQtyChangeListener(newQtyInput, hotelForm);
 
-    // --- Panggil updateJumlahKamarTotal setelah penambahan/penghapusan ---
-    updateJumlahKamarTotal(hotelForm);
+                        const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value
+                            .trim() || `Hotel ${hotelForm.dataset.index}`;
 
-    // Perbarui UI Cart (Total Harga, dll.)
-    updateCartUI();
-}
+                        // Tambahkan ke Cart (dengan qty=1)
+                        updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${name}`, 1, price);
+                    }
+
+                    // --- Panggil updateJumlahKamarTotal setelah penambahan/penghapusan ---
+                    updateJumlahKamarTotal(hotelForm);
+
+                    // Perbarui UI Cart (Total Harga, dll.)
+                    updateCartUI();
+                }
                 // === REVISI: Document Click (Multi-Choice) ===
                 const documentItem = e.target.closest('.document-item');
                 if (documentItem) {
@@ -1499,9 +1561,22 @@ if (typeItem) {
                 if (transportItem) {
                     const type = transportItem.dataset.transportasi;
                     const isSelected = transportItem.classList.toggle('selected');
-                    transportItem.querySelector('input').checked = isSelected;
+                    const checkbox = transportItem.querySelector('input'); // Ambil checkboxnya
+                    if (checkbox) {
+                        checkbox.checked = isSelected;
+                        // --- TAMBAHKAN DEBUGGING INI ---
+                        console.log(
+                            `Transport item clicked: ${type}, Selected: ${isSelected}, Checkbox checked: ${checkbox.checked}`
+                        );
+                        // ---------------------------------
+                    } else {
+                        console.error("Checkbox not found inside .transport-item!"); // Jika selector gagal
+                    }
                     document.getElementById(type === 'airplane' ? 'pesawat' : 'bis').classList.toggle(
                         'hidden', !isSelected);
+                    // transportItem.querySelector('input').checked = isSelected;
+                    // document.getElementById(type === 'airplane' ? 'pesawat' : 'bis').classList.toggle(
+                    //     'hidden', !isSelected);
                 }
 
                 // Handling Selection
@@ -1539,18 +1614,41 @@ if (typeItem) {
                     const tourName = tourTransOption.dataset.tourName;
                     const transName = tourTransOption.dataset.transName;
                     const price = parseInt(tourTransOption.dataset.price) || 0;
-
                     const uniqueKey = `tour-${tourId}-${transId}`;
 
-                    // Toggle selected class
-                    const isSelected = tourTransOption.classList.toggle('selected');
+                    // Temukan radio button di dalam div yang diklik
+                    const currentRadio = tourTransOption.querySelector('input[type="radio"]');
+                    const tourForm = tourTransOption.closest('.tour-form');
 
+                    // Reset semua opsi di grup ini DULU
+                    let isSelected = false;
+                    tourForm.querySelectorAll('.transport-option').forEach(option => {
+                        const otherRadio = option.querySelector('input[type="radio"]');
+                        if (option === tourTransOption && currentRadio) {
+                            // Jika ini yang diklik, tandai untuk dipilih & check
+                            option.classList.add('selected');
+                            currentRadio.checked = true;
+                            isSelected = true; // Tandai bahwa ada yg terpilih
+                            console.log(
+                                `Radio button for tour ${tourId}, transport ${transId} CHECKED:`,
+                                currentRadio.checked);
+                        } else {
+                            // Jika opsi lain, HAPUS selection & uncheck
+                            option.classList.remove('selected');
+                            if (otherRadio) otherRadio.checked = false;
+                        }
+                    });
+
+                    // Update cart HANYA jika ada yang terpilih
                     if (isSelected) {
-                        // Jika baru dipilih, tambahkan ke cart
                         updateItemInCart(uniqueKey, `Tour ${tourName} - ${transName}`, 1, price);
                     } else {
-                        // Jika di-unselect, hapus dari cart
-                        delete cart[uniqueKey];
+                        // (Seharusnya tidak terjadi dgn radio, tapi untuk jaga-jaga) Hapus dari cart jika tidak ada yg terpilih
+                        Object.keys(cart).forEach(key => { // Hapus semua transport untuk tour ini
+                            if (key.startsWith(`tour-${tourId}-`)) {
+                                delete cart[key];
+                            }
+                        });
                         updateCartUI();
                     }
                 }
