@@ -48,138 +48,156 @@ class ServicesController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Service::query();
-        $services = $query->latest()->paginate(10);
+        // 1. Ambil input search
+        $searchKeyword = $request->input('search');
+
+        // 2. Mulai query
+        $query = Service::query()->latest(); // Urutkan terbaru dulu
+
+        // 3. Terapkan Search (jika ada)
+        if ($searchKeyword) {
+            $query->where(function ($q) use ($searchKeyword) {
+                $q->where('unique_code', 'LIKE', '%' . $searchKeyword . '%')
+                  ->orWhereHas('pelanggan', function ($subQ) use ($searchKeyword) {
+                      $subQ->where('nama_travel', 'LIKE', '%' . $searchKeyword . '%');
+                  });
+            });
+        }
+
+        // 7. Eager load & Paginate
+        $services = $query->with('pelanggan') // Muat relasi pelanggan
+                          ->paginate(10)      // Ambil 10 data per halaman
+                          ->appends($request->query()); // Pertahankan filter di pagination
 
         $countBadalNego = \App\Models\Badal::where('status', 'nego')->count();
         $countContentCustomerNego = \App\Models\ContentCustomer::where('status', 'nego')->count();
         $countCustomerDocumentNego = \App\Models\CustomerDocument::where('status', 'nego')->count();
-$countDoronganOrderNego = \App\Models\DoronganOrder::where('status', 'nego')->count();
-$countExchangeNego = \App\Models\Exchange::where('status', 'nego')->count(); // Corrected typo: Exchange
-$countGuideNego = \App\Models\Guide::where('status', 'nego')->count();
-$countHandlingHotelNego = \App\Models\HandlingHotel::where('status', 'nego')->count();
-$countHandlingPlaneNego = \App\Models\HandlingPlanes::where('status', 'nego')->count();
-$countHotelNego = \App\Models\Hotel::where('status', 'nego')->count();
-$countMealNego = \App\Models\Meal::where('status', 'nego')->count();
-$countPlaneNego = \App\Models\Plane::where('status', 'nego')->count();
-$countTourNego = \App\Models\Tour::where('status', 'nego')->count();
-$countTransportationItemNego = \App\Models\TransportationItem::where('status', 'nego')->count();
-$countWakafCustomerNego = \App\Models\WakafCustomer::where('status', 'nego')->count();
+        $countDoronganOrderNego = \App\Models\DoronganOrder::where('status', 'nego')->count();
+        $countExchangeNego = \App\Models\Exchange::where('status', 'nego')->count(); // Corrected typo: Exchange
+        $countGuideNego = \App\Models\Guide::where('status', 'nego')->count();
+        $countHandlingHotelNego = \App\Models\HandlingHotel::where('status', 'nego')->count();
+        $countHandlingPlaneNego = \App\Models\HandlingPlanes::where('status', 'nego')->count();
+        $countHotelNego = \App\Models\Hotel::where('status', 'nego')->count();
+        $countMealNego = \App\Models\Meal::where('status', 'nego')->count();
+        $countPlaneNego = \App\Models\Plane::where('status', 'nego')->count();
+        $countTourNego = \App\Models\Tour::where('status', 'nego')->count();
+        $countTransportationItemNego = \App\Models\TransportationItem::where('status', 'nego')->count();
+        $countWakafCustomerNego = \App\Models\WakafCustomer::where('status', 'nego')->count();
 
         $totalNegoOverall =
-    $countBadalNego +
-    $countContentCustomerNego +
-    $countCustomerDocumentNego +
-    $countDoronganOrderNego +
-    $countExchangeNego +
-    $countGuideNego +
-    $countHandlingHotelNego +
-    $countHandlingPlaneNego +
-    $countHotelNego +
-    $countMealNego +
-    $countPlaneNego +
-    $countTourNego +
-    $countTransportationItemNego +
-    $countWakafCustomerNego;
+        $countBadalNego +
+        $countContentCustomerNego +
+        $countCustomerDocumentNego +
+        $countDoronganOrderNego +
+        $countExchangeNego +
+        $countGuideNego +
+        $countHandlingHotelNego +
+        $countHandlingPlaneNego +
+        $countHotelNego +
+        $countMealNego +
+        $countPlaneNego +
+        $countTourNego +
+        $countTransportationItemNego +
+        $countWakafCustomerNego;
 
         $countBadalPersiapan = \App\Models\Badal::where('status', 'tahap persiapan')->count();
-$countContentCustomerPersiapan = \App\Models\ContentCustomer::where('status', 'tahap persiapan')->count();
-$countCustomerDocumentPersiapan = \App\Models\CustomerDocument::where('status', 'tahap persiapan')->count();
-$countDoronganOrderPersiapan = \App\Models\DoronganOrder::where('status', 'tahap persiapan')->count();
-$countExchangePersiapan = \App\Models\Exchange::where('status', 'tahap persiapan')->count();
-$countGuidePersiapan = \App\Models\Guide::where('status', 'tahap persiapan')->count();
+        $countContentCustomerPersiapan = \App\Models\ContentCustomer::where('status', 'tahap persiapan')->count();
+        $countCustomerDocumentPersiapan = \App\Models\CustomerDocument::where('status', 'tahap persiapan')->count();
+        $countDoronganOrderPersiapan = \App\Models\DoronganOrder::where('status', 'tahap persiapan')->count();
+        $countExchangePersiapan = \App\Models\Exchange::where('status', 'tahap persiapan')->count();
+        $countGuidePersiapan = \App\Models\Guide::where('status', 'tahap persiapan')->count();
         $countHandlingHotelPersiapan = \App\Models\HandlingHotel::where('status', 'tahap persiapan')->count();
 
-$countHandlingPlanePersiapan = \App\Models\HandlingPlanes::where('status', 'tahap persiapan')->count();
-$countHotelPersiapan = \App\Models\Hotel::where('status', 'tahap persiapan')->count();
-$countMealPersiapan = \App\Models\Meal::where('status', 'tahap persiapan')->count();
-$countPlanePersiapan = \App\Models\Plane::where('status', 'tahap persiapan')->count();
-$countTourPersiapan = \App\Models\Tour::where('status', 'tahap persiapan')->count();
-$countTransportationItemPersiapan = \App\Models\TransportationItem::where('status', 'tahap persiapan')->count();
-$countWakafCustomerPersiapan = \App\Models\WakafCustomer::where('status', 'tahap persiapan')->count();
+        $countHandlingPlanePersiapan = \App\Models\HandlingPlanes::where('status', 'tahap persiapan')->count();
+        $countHotelPersiapan = \App\Models\Hotel::where('status', 'tahap persiapan')->count();
+        $countMealPersiapan = \App\Models\Meal::where('status', 'tahap persiapan')->count();
+        $countPlanePersiapan = \App\Models\Plane::where('status', 'tahap persiapan')->count();
+        $countTourPersiapan = \App\Models\Tour::where('status', 'tahap persiapan')->count();
+        $countTransportationItemPersiapan = \App\Models\TransportationItem::where('status', 'tahap persiapan')->count();
+        $countWakafCustomerPersiapan = \App\Models\WakafCustomer::where('status', 'tahap persiapan')->count();
 
-// Menjumlahkan semua hitungan 'tahap persiapan'
-$totalPersiapanOverall =
-    $countBadalPersiapan +
-    $countContentCustomerPersiapan +
-    $countCustomerDocumentPersiapan +
-    $countDoronganOrderPersiapan +
-    $countExchangePersiapan +
-    $countGuidePersiapan +
-    $countHandlingHotelPersiapan + // Sertakan hitungan HandlingHotel yang sudah ada
-    $countHandlingPlanePersiapan +
-    $countHotelPersiapan +
-    $countMealPersiapan +
-    $countPlanePersiapan +
-    $countTourPersiapan +
-    $countTransportationItemPersiapan +
-    $countWakafCustomerPersiapan;
+        // Menjumlahkan semua hitungan 'tahap persiapan'
+        $totalPersiapanOverall =
+        $countBadalPersiapan +
+        $countContentCustomerPersiapan +
+        $countCustomerDocumentPersiapan +
+        $countDoronganOrderPersiapan +
+        $countExchangePersiapan +
+        $countGuidePersiapan +
+        $countHandlingHotelPersiapan + // Sertakan hitungan HandlingHotel yang sudah ada
+        $countHandlingPlanePersiapan +
+        $countHotelPersiapan +
+        $countMealPersiapan +
+        $countPlanePersiapan +
+        $countTourPersiapan +
+        $countTransportationItemPersiapan +
+        $countWakafCustomerPersiapan;
 
-    // --- Hitung Status 'tahap_produksi' ---
-$countBadalProduksi = \App\Models\Badal::where('status', 'tahap_produksi')->count();
-$countContentCustomerProduksi = \App\Models\ContentCustomer::where('status', 'tahap_produksi')->count();
-$countCustomerDocumentProduksi = \App\Models\CustomerDocument::where('status', 'tahap_produksi')->count();
-$countDoronganOrderProduksi = \App\Models\DoronganOrder::where('status', 'tahap_produksi')->count();
-$countExchangeProduksi = \App\Models\Exchange::where('status', 'tahap_produksi')->count();
-$countGuideProduksi = \App\Models\Guide::where('status', 'tahap_produksi')->count();
-$countHandlingHotelProduksi = \App\Models\HandlingHotel::where('status', 'tahap_produksi')->count();
-$countHandlingPlaneProduksi = \App\Models\HandlingPlanes::where('status', 'tahap_produksi')->count();
-$countHotelProduksi = \App\Models\Hotel::where('status', 'tahap_produksi')->count();
-$countMealProduksi = \App\Models\Meal::where('status', 'tahap_produksi')->count();
-$countPlaneProduksi = \App\Models\Plane::where('status', 'tahap_produksi')->count();
-$countTourProduksi = \App\Models\Tour::where('status', 'tahap_produksi')->count();
-$countTransportationItemProduksi = \App\Models\TransportationItem::where('status', 'tahap_produksi')->count();
-$countWakafCustomerProduksi = \App\Models\WakafCustomer::where('status', 'tahap_produksi')->count();
+        // --- Hitung Status 'tahap_produksi' ---
+        $countBadalProduksi = \App\Models\Badal::where('status', 'tahap_produksi')->count();
+        $countContentCustomerProduksi = \App\Models\ContentCustomer::where('status', 'tahap_produksi')->count();
+        $countCustomerDocumentProduksi = \App\Models\CustomerDocument::where('status', 'tahap_produksi')->count();
+        $countDoronganOrderProduksi = \App\Models\DoronganOrder::where('status', 'tahap_produksi')->count();
+        $countExchangeProduksi = \App\Models\Exchange::where('status', 'tahap_produksi')->count();
+        $countGuideProduksi = \App\Models\Guide::where('status', 'tahap_produksi')->count();
+        $countHandlingHotelProduksi = \App\Models\HandlingHotel::where('status', 'tahap_produksi')->count();
+        $countHandlingPlaneProduksi = \App\Models\HandlingPlanes::where('status', 'tahap_produksi')->count();
+        $countHotelProduksi = \App\Models\Hotel::where('status', 'tahap_produksi')->count();
+        $countMealProduksi = \App\Models\Meal::where('status', 'tahap_produksi')->count();
+        $countPlaneProduksi = \App\Models\Plane::where('status', 'tahap_produksi')->count();
+        $countTourProduksi = \App\Models\Tour::where('status', 'tahap_produksi')->count();
+        $countTransportationItemProduksi = \App\Models\TransportationItem::where('status', 'tahap_produksi')->count();
+        $countWakafCustomerProduksi = \App\Models\WakafCustomer::where('status', 'tahap_produksi')->count();
 
-// Jumlahkan semua hitungan 'tahap_produksi'
-$totalProduksiOverall =
-    $countBadalProduksi +
-    $countContentCustomerProduksi +
-    $countCustomerDocumentProduksi +
-    $countDoronganOrderProduksi +
-    $countExchangeProduksi +
-    $countGuideProduksi +
-    $countHandlingHotelProduksi +
-    $countHandlingPlaneProduksi +
-    $countHotelProduksi +
-    $countMealProduksi +
-    $countPlaneProduksi +
-    $countTourProduksi +
-    $countTransportationItemProduksi +
-    $countWakafCustomerProduksi;
+        // Jumlahkan semua hitungan 'tahap_produksi'
+        $totalProduksiOverall =
+        $countBadalProduksi +
+        $countContentCustomerProduksi +
+        $countCustomerDocumentProduksi +
+        $countDoronganOrderProduksi +
+        $countExchangeProduksi +
+        $countGuideProduksi +
+        $countHandlingHotelProduksi +
+        $countHandlingPlaneProduksi +
+        $countHotelProduksi +
+        $countMealProduksi +
+        $countPlaneProduksi +
+        $countTourProduksi +
+        $countTransportationItemProduksi +
+        $countWakafCustomerProduksi;
 
-// --- Hitung Status 'done' ---
-$countBadalDone = \App\Models\Badal::where('status', 'done')->count();
-$countContentCustomerDone = \App\Models\ContentCustomer::where('status', 'done')->count();
-$countCustomerDocumentDone = \App\Models\CustomerDocument::where('status', 'done')->count();
-$countDoronganOrderDone = \App\Models\DoronganOrder::where('status', 'done')->count();
-$countExchangeDone = \App\Models\Exchange::where('status', 'done')->count();
-$countGuideDone = \App\Models\Guide::where('status', 'done')->count();
-$countHandlingHotelDone = \App\Models\HandlingHotel::where('status', 'done')->count();
-$countHandlingPlaneDone = \App\Models\HandlingPlanes::where('status', 'done')->count();
-$countHotelDone = \App\Models\Hotel::where('status', 'done')->count();
-$countMealDone = \App\Models\Meal::where('status', 'done')->count();
-$countPlaneDone = \App\Models\Plane::where('status', 'done')->count();
-$countTourDone = \App\Models\Tour::where('status', 'done')->count();
-$countTransportationItemDone = \App\Models\TransportationItem::where('status', 'done')->count();
-$countWakafCustomerDone = \App\Models\WakafCustomer::where('status', 'done')->count();
+        // --- Hitung Status 'done' ---
+        $countBadalDone = \App\Models\Badal::where('status', 'done')->count();
+        $countContentCustomerDone = \App\Models\ContentCustomer::where('status', 'done')->count();
+        $countCustomerDocumentDone = \App\Models\CustomerDocument::where('status', 'done')->count();
+        $countDoronganOrderDone = \App\Models\DoronganOrder::where('status', 'done')->count();
+        $countExchangeDone = \App\Models\Exchange::where('status', 'done')->count();
+        $countGuideDone = \App\Models\Guide::where('status', 'done')->count();
+        $countHandlingHotelDone = \App\Models\HandlingHotel::where('status', 'done')->count();
+        $countHandlingPlaneDone = \App\Models\HandlingPlanes::where('status', 'done')->count();
+        $countHotelDone = \App\Models\Hotel::where('status', 'done')->count();
+        $countMealDone = \App\Models\Meal::where('status', 'done')->count();
+        $countPlaneDone = \App\Models\Plane::where('status', 'done')->count();
+        $countTourDone = \App\Models\Tour::where('status', 'done')->count();
+        $countTransportationItemDone = \App\Models\TransportationItem::where('status', 'done')->count();
+        $countWakafCustomerDone = \App\Models\WakafCustomer::where('status', 'done')->count();
 
-// Jumlahkan semua hitungan 'done'
-$totalDoneOverall =
-    $countBadalDone +
-    $countContentCustomerDone +
-    $countCustomerDocumentDone +
-    $countDoronganOrderDone +
-    $countExchangeDone +
-    $countGuideDone +
-    $countHandlingHotelDone +
-    $countHandlingPlaneDone +
-    $countHotelDone +
-    $countMealDone +
-    $countPlaneDone +
-    $countTourDone +
-    $countTransportationItemDone +
-    $countWakafCustomerDone;
+        // Jumlahkan semua hitungan 'done'
+        $totalDoneOverall =
+        $countBadalDone +
+        $countContentCustomerDone +
+        $countCustomerDocumentDone +
+        $countDoronganOrderDone +
+        $countExchangeDone +
+        $countGuideDone +
+        $countHandlingHotelDone +
+        $countHandlingPlaneDone +
+        $countHotelDone +
+        $countMealDone +
+        $countPlaneDone +
+        $countTourDone +
+        $countTransportationItemDone +
+        $countWakafCustomerDone;
 
         return view('admin.services.index', compact('services', 'totalNegoOverall', 'totalPersiapanOverall', 'totalProduksiOverall', 'totalDoneOverall'));
     }
@@ -449,7 +467,7 @@ foreach ($service->transportationItem as $item) {
             'contents.content', // Asumsi relasi content di model ContentCustomer
 
             // Reyal
-            'reyals', // Asumsi nama relasi reyals()
+            'exchanges', // Asumsi nama relasi exchanges()
 
             // Tour & detailnya
             'tours.tourItem', // Asumsi relasi tourItem di model Tour
@@ -1365,7 +1383,7 @@ foreach ($service->transportationItem as $item) {
         $service->guides()->delete();
         $service->tours()->delete();
         $service->documents()->delete();
-        $service->reyals()->delete();
+        $service->exchanges()->delete();
         $service->wakafs()->delete();
         $service->dorongans()->delete();
         $service->contents()->delete();
@@ -1726,7 +1744,7 @@ foreach ($service->transportationItem as $item) {
     // Gunakan 'if-else if' agar lebih jelas
 
     if ($validatedData['tipe'] === 'tamis') {
-        $service->reyals()->create([
+        $service->exchanges()->create([
             'tipe' => 'tamis',
             'jumlah_input' => $validatedData['jumlah_rupiah'],
             'kurs' => $validatedData['kurs_tamis'],
@@ -1735,7 +1753,7 @@ foreach ($service->transportationItem as $item) {
         ]);
     }
     else if ($validatedData['tipe'] === 'tumis') {
-        $service->reyals()->create([
+        $service->exchanges()->create([
             'tipe' => 'tumis',
             'jumlah_input' => $validatedData['jumlah_reyal'],
             'kurs' => $validatedData['kurs_tumis'],
@@ -1750,7 +1768,7 @@ foreach ($service->transportationItem as $item) {
     //     $tanggalPenyerahan = $request->input('tanggal_penyerahan');
     //     if ($tanggalPenyerahan) {
     //         if ($tipe === 'tamis') {
-    //             $service->reyals()->create([
+    //             $service->exchanges()->create([
     //                 'tipe' => 'tamis',
     //                 'jumlah_input' => $request->input('jumlah_rupiah'),
     //                 'kurs' => $request->input('kurs_tamis'),
@@ -1760,7 +1778,7 @@ foreach ($service->transportationItem as $item) {
     //         }
 
     //         if ($tipe === 'tumis') {
-    //             $service->reyals()->create([
+    //             $service->exchanges()->create([
     //                 'tipe' => 'tumis',
     //                 'jumlah_input' => $request->input('jumlah_reyal'),
     //                 'kurs' => $request->input('kurs_tumis'),
@@ -1867,7 +1885,7 @@ foreach ($service->transportationItem as $item) {
             'service.contents.content',
 
             // Reyal
-            'service.reyals', // Asumsi nama relasi di Service.php adalah reyals()
+            'service.exchanges', // Asumsi nama relasi di Service.php adalah exchanges()
 
             // Tour
             'service.tours.tourItem',
