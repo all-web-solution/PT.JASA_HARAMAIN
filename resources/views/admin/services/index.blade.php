@@ -519,36 +519,17 @@
 
             <!-- Search and Filter -->
             <div class="search-filter-container">
-                <div class="search-box">
-                    <i class="bi bi-search"></i>
-                    <input type="text" id="searchInput" placeholder="Cari customer/kode service...">
-                </div>
+                {{-- Ganti SELURUH <div class="filter-group"> lama dengan ini --}}
                 <div class="filter-group">
-
-                    <form method="GET" action="{{ route('admin.services') }}">
-                        <select name="service" class="filter-select" onchange="this.form.submit()">
-                            <option value="">-- Semua Layanan --</option>
-                            <option value="transportasi" {{ request('service') == 'transportasi' ? 'selected' : '' }}>
-                                Transportasi</option>
-                            <option value="hotel" {{ request('service') == 'hotel' ? 'selected' : '' }}>Hotel</option>
-                            <option value="dokumen" {{ request('service') == 'dokumen' ? 'selected' : '' }}>Dokumen</option>
-                            <option value="handling" {{ request('service') == 'handling' ? 'selected' : '' }}>Handling
-                            </option>
-                            <option value="pendamping" {{ request('service') == 'pendamping' ? 'selected' : '' }}>Pendamping
-                            </option>
-                            <option value="konten" {{ request('service') == 'konten' ? 'selected' : '' }}>Konten</option>
-                            <option value="reyal" {{ request('service') == 'reyal' ? 'selected' : '' }}>Reyal</option>
-                            <option value="tour" {{ request('service') == 'tour' ? 'selected' : '' }}>Tour</option>
-                            <option value="meal" {{ request('service') == 'meal' ? 'selected' : '' }}>Meal</option>
-                            <option value="dorongan" {{ request('service') == 'dorongan' ? 'selected' : '' }}>Dorongan
-                            </option>
-                            <option value="wakaf" {{ request('service') == 'wakaf' ? 'selected' : '' }}>Wakaf</option>
-                            <option value="badal" {{ request('service') == 'badal' ? 'selected' : '' }}>Badal</option>
-                        </select>
-                    </form>
-
-
-
+                    <form method="GET" action="{{ route('admin.services') }}" id="searchFilterForm"
+                        class="d-flex flex-grow-1 gap-2">
+                        {{-- Kotak Pencarian --}}
+                        <div class="search-box flex-grow-1 position-relative">
+                            <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                            <input type="text" name="search" id="searchInput" class="form-control ps-5"
+                                placeholder="Cari customer/Jenis layanan..." value="{{ request('search') }}">
+                        </div>
+                    </form> {{-- Akhir dari form UTAMA --}}
                 </div>
             </div>
 
@@ -567,7 +548,7 @@
                             <th> </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="userTableBody">
                         @foreach ($services as $service)
                             <tr>
                                 <td data-label="Kode unik">{{ $service->unique_code }}</td>
@@ -575,7 +556,8 @@
                                 <td data-label="Tgl keberangkatan">{{ $service->tanggal_keberangkatan }}</td>
                                 <td data-label="Tgl kepulangan">{{ $service->tanggal_kepulangan }}</td>
                                 <td data-label="Jumlah jamaah">{{ $service->total_jamaah }}</td>
-                                <td data-label="Layanan yang di pilih">{{ implode(', ', (array) $service->services) }}</td>
+                                <td data-label="Layanan yang di pilih">{{ implode(', ', (array) $service->services) }}
+                                </td>
 
                                 @if ($service->status === 'nego')
                                     <td data-label="Status">
@@ -595,9 +577,11 @@
                                                 <i class="bi bi-cloud-arrow-up"></i>
                                             </button>
                                         </a>
-                                        <button class="btn-action btn-view" title="view">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </button>
+                                        <a href="{{ route('admin.services.show', $service->id) }}">
+                                            <button class="btn-action btn-view" title="view">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </button>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
