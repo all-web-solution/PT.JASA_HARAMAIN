@@ -338,10 +338,10 @@
                                         @endforeach
                                     @endif
 
-                                    @if ($order->service->reyals->count() > 0)
+                                    @if ($order->service->exchanges->count() > 0)
                                         @php
                                             $hasContent = true;
-                                            $reyal = $order->service->reyals->first();
+                                            $reyal = $order->service->exchanges->first();
                                         @endphp
                                         <strong>Reyal:</strong><br>
                                         - Penukaran {{ $reyal->tipe }}
