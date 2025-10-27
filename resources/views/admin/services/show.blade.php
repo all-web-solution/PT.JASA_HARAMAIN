@@ -167,12 +167,12 @@
         }
 
         .detail-label {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-secondary);
         }
 
         .detail-value {
-            font-weight: 600;
+            font-weight: 500;
             color: var(--text-primary);
             text-align: right;
         }
