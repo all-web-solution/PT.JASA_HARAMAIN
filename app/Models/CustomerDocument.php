@@ -13,6 +13,8 @@ class CustomerDocument extends Model
         'jumlah',
         'harga',
         'status',
+        'harga_dasar',
+        'supplier',
     ];
 
     public function documentChild()

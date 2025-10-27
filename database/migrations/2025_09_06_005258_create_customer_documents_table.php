@@ -19,11 +19,13 @@ return new class extends Migration
                 ->on('services')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-             $table->foreignId('document_children_id')->nullable()->constrained('document_childrens')->cascadeOnDelete()->cascadeOnUpdate();
-             $table->foreignId('document_id')->constrained('documents')->cascadeOnDelete()->cascadeOnUpdate();
-             $table->string('jumlah');
-             $table->string('harga');
+            $table->foreignId('document_children_id')->nullable()->constrained('document_childrens')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('document_id')->constrained('documents')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('jumlah');
+            $table->string('harga');
             $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
+            $table->string('supplier')->nullable();
+            $table->string('harga_dasar')->nullable();
             $table->timestamps();
         });
     }
