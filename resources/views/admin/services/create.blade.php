@@ -945,7 +945,8 @@
                             </div>
                             <div class="detail-section">
                                 @foreach ($meals as $meal)
-                                    <div id="form-meal-{{ $meal->id }}" class="form-group hidden" style="margin-bottom: 50px">
+                                    <div id="form-meal-{{ $meal->id }}" class="form-group hidden"
+                                        style="margin-bottom: 50px">
                                         <label class="form-label">Jumlah {{ $meal->name }}</label>
                                         <input type="number" class="form-control jumlah-item"
                                             data-id="{{ $meal->id }}" data-name="{{ $meal->name }}"
@@ -1658,8 +1659,14 @@
                 const reyalCard = e.target.closest('.card-reyal');
                 if (reyalCard) {
                     document.querySelectorAll('.card-reyal').forEach(c => c.classList.remove('selected'));
+                    // Hapus centang dari semua radio button reyal dulu (jika ada)
+                    document.querySelectorAll('.card-reyal input[type="radio"]').forEach(radio => radio
+                        .checked = false);
                     reyalCard.classList.add('selected');
                     const type = reyalCard.dataset.reyalType;
+                    // Temukan radio button di dalam card yang diklik dan centang
+                    const radioInput = reyalCard.querySelector('input[type="radio"]');
+                    if (radioInput) radioInput.checked = true;
                     const formTamis = document.getElementById('form-tamis');
                     const formTumis = document.getElementById('form-tumis');
                     formTamis.classList.toggle('hidden', type !== 'tamis');
