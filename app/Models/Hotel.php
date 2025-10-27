@@ -18,7 +18,8 @@ class Hotel extends Model
         'jumlah_type',
         'type_custom_special_room',
         'jumlah_kasur',
-        'harga_type_custom_special_room'
+        'harga_type_custom_special_room',
+        'status'
     ];
 
     public function service()
