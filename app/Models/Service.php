@@ -65,7 +65,7 @@ class Service extends Model
     {
         return $this->hasMany(File::class, 'service_id');
     }
-    public function reyals()
+    public function exchanges()
 {
     // Tentukan foreign key 'service_id' secara eksplisit
     return $this->hasMany(Exchange::class, 'service_id');
