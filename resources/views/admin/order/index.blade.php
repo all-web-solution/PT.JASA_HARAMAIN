@@ -122,6 +122,7 @@
 
             .table tbody td {
                 padding: 1rem;
+                text-align: center;
                 vertical-align: middle;
                 border-top: 1px solid var(--border-color);
                 border-bottom: 1px solid var(--border-color);
@@ -227,6 +228,7 @@
                     align-items: center;
                     padding: 0.5rem 1rem;
                     border: none;
+                    text-align: center;
                 }
 
                 .table tbody td:before {
@@ -424,9 +426,9 @@
                                     </td>
                                     <td data-label="Sisa">{{ number_format($order->sisa_hutang, 0, ',', '.') }}</td>
                                     <td data-label="Aksi">
-                                       <a href="{{ route('payment.proff', $order->id) }}" class="btn btn-primary">
+                                        <a href="{{ route('payment.proff', $order->id) }}" class="btn btn-primary">
                                             Bukti transfer
-                                       </a>
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach
