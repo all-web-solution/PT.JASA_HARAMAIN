@@ -1002,45 +1002,74 @@ foreach ($service->transportationItem as $item) {
 
     public function edit($id)
     {
-        $service = Service::with([
-            'pelanggan',
-            'hotels',
-            'planes',
-            'transportationItem.transportation.routes',
-            'transportationItem.route',
-            'handlings', // Simplified for clarity
-            'meals',
-            'guides',
-            'tours', // Eager load the tours and their selected transportation
-            'documents',
-            'wakafs',
-            'dorongans',
-            'contents',
-            'badals'
-        ])->findOrFail($id);
+        // $service = Service::with([
+        //     'pelanggan',
+        //     'hotels',
+        //     'planes',
+        //     'transportationItem.transportation.routes',
+        //     'transportationItem.route',
+        //     'handlings', // Simplified for clarity
+        //     'meals',
+        //     'guides',
+        //     'tours', // Eager load the tours and their selected transportation
+        //     'documents',
+        //     'wakafs',
+        //     'dorongans',
+        //     'contents',
+        //     'badals'
+        // ])->findOrFail($id);
 
-        $data = [
-            'service' => $service,
-            // The selectedServices can be decoded directly from the service object
-            'selectedServices' => $service->services ?? [],
-            'pelanggans' => Pelanggan::all(),
-            'transportations' => Transportation::with('routes')->get(),
-            'guides' => Guide::all(),
-            'tours' => Tour::all(),
-            'meals' => Meal::all(),
-            'documents' => DocumentModel::with('childrens')->get(),
-            'wakaf' => WakafCustomer::all(),
-            'dorongan' => DoronganOrder::all(),
-            'contents' => ContentCustomer::all(),
-            'types' => TypeHotel::all(),
-        ];
+        // $data = [
+        //     'service' => $service,
+        //     // The selectedServices can be decoded directly from the service object
+        //     'selectedServices' => $service->services ?? [],
+        //     'pelanggans' => Pelanggan::all(),
+        //     'transportations' => Transportation::with('routes')->get(),
+        //     'guides' => Guide::all(),
+        //     'tours' => Tour::all(),
+        //     'meals' => Meal::all(),
+        //     'documents' => DocumentModel::with('childrens')->get(),
+        //     'wakaf' => WakafCustomer::all(),
+        //     'dorongan' => DoronganOrder::all(),
+        //     'contents' => ContentCustomer::all(),
+        //     'types' => TypeHotel::all(),
+        // ];
 
-        return view('admin.services.edit', $data);
+        // return view('admin.services.edit', $data);
+       $service = Service::with([
+        'pelanggan', 'hotels', 'planes', 'transportationItem',
+        'handlings', 'meals', 'guides', 'tours',
+        'documents', 'wakafs', 'dorongans', 'contents', 'badals'
+    ])->findOrFail($id);
+
+    $data = [
+        'service'      => $service,
+
+        // PERBAIKAN: Lakukan decode di sini.
+        // Ini mengubah string JSON dari DB menjadi array PHP.
+        'selectedServices' => json_decode($service->services, true) ?? [],
+
+        // Ambil SEMUA data master (sama seperti di create)
+        'pelanggans'      => Pelanggan::all(),
+        'transportations' => Transportation::with('routes')->get(),
+        'guides'          => GuideItems::all(),
+        'tours'           => TourItem::all(),
+        'meals'           => MealItem::all(),
+        'documents'       => DocumentModel::with('childrens')->get(),
+        'wakaf'           => Wakaf::all(),
+        'dorongan'        => Dorongan::all(),
+        'contents'        => ContentItem::all(),
+        'types'           => TypeHotel::all(),
+    ];
+
+    return view('admin.services.edit', $data);
     }
-    public function update(Request $request, $id)
-    {
-        $service = Service::findOrFail($id);
-        $status = $request->input('action') === 'nego' ? 'nego' : 'deal';
+public function update(Request $request, $id)
+{
+    $service = Service::findOrFail($id);
+    $status = $request->input('action') === 'nego' ? 'nego' : 'deal';
+
+    DB::transaction(function () use ($request, $service, $status) {
 
         /* =====================================================
          * ✅ VALIDASI INPUT
@@ -1066,21 +1095,22 @@ foreach ($service->transportationItem as $item) {
         ]);
 
         /* =====================================================
-         * ✈️ UPDATE / TAMBAH DATA PESAWAT
+         * ✈️ UPDATE / TAMBAH / HAPUS DATA PESAWAT
          * ===================================================== */
-        if (
-            $request->has('rute') &&
-            is_array($request->rute) &&
-            collect($request->rute)->filter()->isNotEmpty() &&
-            $request->filled('tanggal')
-        ) {
+        if ($request->has('rute')) {
+            $existingPlaneIds = collect($request->plane_id)->filter()->toArray();
+
+            // Hapus yang tidak dikirim dari form
+            Plane::where('service_id', $service->id)
+                ->whereNotIn('id', $existingPlaneIds)
+                ->delete();
+
             foreach ($request->rute as $i => $rute) {
-                if (empty($rute))
-                    continue;
+                if (empty($rute)) continue;
 
-                $planeId = $request->plane_id[$i] ?? null;
-                $plane = Plane::find($planeId) ?? new Plane(['service_id' => $service->id]);
+                $plane = $service->planes()->find($request->plane_id[$i]) ?? new Plane();
 
+                $plane->service_id = $service->id;
                 $plane->tanggal_keberangkatan = $request->tanggal[$i] ?? now();
                 $plane->rute = $rute;
                 $plane->maskapai = $request->maskapai[$i] ?? null;
@@ -1091,7 +1121,6 @@ foreach ($service->transportationItem as $item) {
                 if ($request->hasFile("tiket_berangkat.$i")) {
                     $plane->tiket_berangkat = $this->storeFileIfExists($request->file("tiket_berangkat.$i"), $i, 'tiket');
                 }
-
                 if ($request->hasFile("tiket_pulang.$i")) {
                     $plane->tiket_pulang = $this->storeFileIfExists($request->file("tiket_pulang.$i"), $i, 'tiket');
                 }
@@ -1103,207 +1132,199 @@ foreach ($service->transportationItem as $item) {
         /* =====================================================
          * 🚌 TRANSPORTASI
          * ===================================================== */
-        if ($request->has('transportation_id') && collect($request->transportation_id)->filter()->isNotEmpty()) {
-            foreach ($request->transportation_id as $ti => $transportId) {
-                if (empty($transportId))
-                    continue;
+        if ($request->has('transportation_id')) {
+            TransportationItem::where('service_id', $service->id)->delete();
 
-                $itemId = $request->item_id[$ti] ?? null;
-                $transp = TransportationItem::find($itemId) ?? new TransportationItem(['service_id' => $service->id]);
+            foreach ($request->transportation_id as $i => $transportId) {
+                if (empty($transportId)) continue;
 
-                $transp->transportation_id = $transportId;
-                $transp->route_id = $request->rute_id[$ti];
-                $transp->save();
+                TransportationItem::create([
+                    'service_id' => $service->id,
+                    'transportation_id' => $transportId,
+                    'route_id' => $request->rute_id[$i] ?? null,
+                ]);
             }
         }
 
         /* =====================================================
          * 📄 DOKUMEN
          * ===================================================== */
-        if ($request->has('dokumen_id') && collect($request->dokumen_id)->filter()->isNotEmpty()) {
-            foreach ($request->dokumen_id as $index => $documentId) {
-                if (empty($documentId))
-                    continue;
+        if ($request->has('dokumen_id')) {
+            CustomerDocument::where('service_id', $service->id)->delete();
 
-                $cusdocid = $request->customer_document_id[$index] ?? null;
-                $jumlah = $request->jumlah_doc_child[$index] ?? 0;
+            foreach ($request->dokumen_id as $i => $docId) {
+                if (empty($docId)) continue;
 
-                $itemCusDoc = CustomerDocument::find($cusdocid) ?? new CustomerDocument(['service_id' => $service->id]);
-                $itemCusDoc->jumlah = $jumlah;
-                $itemCusDoc->save();
+                CustomerDocument::create([
+                    'service_id' => $service->id,
+                    'dokumen_id' => $docId,
+                    'jumlah' => $request->jumlah_doc_child[$i] ?? 0,
+                ]);
             }
         }
 
         /* =====================================================
          * 🏨 HANDLING HOTEL
          * ===================================================== */
-        if ($request->has('nama_hotel_handling') && collect($request->nama_hotel_handling)->filter()->isNotEmpty()) {
-            $handlingHotelId = $request->handling_hotel_id;
-            $item = HandlingHotel::find($handlingHotelId);
-            if ($item) {
-                $item->update([
+        if ($request->filled('nama_hotel_handling')) {
+            $handling = HandlingHotel::find($request->handling_hotel_id) ?? new HandlingHotel();
+            $handling->updateOrCreate(
+                ['id' => $request->handling_hotel_id],
+                [
+                    'service_id' => $service->id,
                     'nama' => $request->nama_hotel_handling,
                     'tanggal' => $request->tanggal_hotel_handling,
                     'harga' => $request->harga_hotel_handling,
                     'pax' => $request->pax_hotel_handling,
-                ]);
-            }
+                ]
+            );
         }
 
         /* =====================================================
          * 🛬 HANDLING BANDARA
          * ===================================================== */
-        if ($request->has('nama_bandara_handling') && collect($request->nama_bandara_handling)->filter()->isNotEmpty()) {
-            $handlingBandaraId = $request->handling_bandara_id;
-            $item = HandlingPlanes::find($handlingBandaraId);
-            if ($item) {
-                $item->update([
+        if ($request->filled('nama_bandara_handling')) {
+            HandlingPlanes::updateOrCreate(
+                ['id' => $request->handling_bandara_id],
+                [
+                    'service_id' => $service->id,
                     'nama_bandara' => $request->nama_bandara_handling,
                     'jumlah_jamaah' => $request->jumlah_jamaah_handling,
                     'harga' => $request->harga_bandara_handling,
                     'kedatangan_jamaah' => $request->kedatangan_jamaah_handling,
                     'nama_supir' => $request->nama_supir,
-                ]);
-            }
+                ]
+            );
         }
 
         /* =====================================================
-         * 👥 PENDAMPING
-         * ===================================================== */
-        if ($request->has('jumlah_pendamping') && is_array($request->jumlah_pendamping)) {
-            foreach ($request->jumlah_pendamping as $guideId => $jumlah) {
-                if (!is_null($jumlah) && $jumlah !== '') {
-                    $guideItem = Guide::where('service_id', $service->id)->where('guide_id', $guideId)->first();
-                    if ($guideItem)
-                        $guideItem->update(['jumlah' => $jumlah]);
-                }
+ * 👥 PENDAMPING, 📸 KONTEN, 🍱 MEALS, 💸 DORONGAN, 💰 WAKAF
+ * ===================================================== */
+if ($request->has('jumlah_pendamping')) {
+    foreach ($request->jumlah_pendamping as $id => $jumlah) {
+        if ($jumlah !== null && $jumlah !== '') {
+            $pendamping = Guide::where('service_id', $service->id)
+                ->where('guide_id', $id)
+                ->first();
+            if ($pendamping) {
+                $pendamping->update(['jumlah' => $jumlah]);
             }
         }
+    }
+}
 
-        /* =====================================================
-         * 📸 KONTEN
-         * ===================================================== */
-        if ($request->has('jumlah_konten') && is_array($request->jumlah_konten)) {
-            foreach ($request->jumlah_konten as $contentId => $jumlah) {
-                if (!is_null($jumlah) && $jumlah !== '') {
-                    $contentItem = ContentCustomer::where('service_id', $service->id)->where('content_id', $contentId)->first();
-                    if ($contentItem)
-                        $contentItem->update(['jumlah' => $jumlah]);
-                }
+if ($request->has('jumlah_konten')) {
+    foreach ($request->jumlah_konten as $id => $jumlah) {
+        if ($jumlah !== null && $jumlah !== '') {
+            $konten = ContentCustomer::where('service_id', $service->id)
+                ->where('content_id', $id)
+                ->first();
+            if ($konten) {
+                $konten->update(['jumlah' => $jumlah]);
             }
         }
+    }
+}
 
-        /* =====================================================
-         * 🗺️ TOUR
-         * ===================================================== */
-        if ($request->has('tour_id') && collect($request->tour_id)->filter()->isNotEmpty()) {
-            $tourId = $request->id_tour;
-            $tourFinally = Tour::find($tourId);
-            if ($tourFinally) {
-                foreach ($request->tour_transport as $transport) {
-                    $tourFinally->update([
-                        'transportation_id' => $transport,
-                        'tour_id' => $request->tour_id,
-                    ]);
-                }
+if ($request->has('jumlah_meals')) {
+    foreach ($request->jumlah_meals as $id => $jumlah) {
+        if ($jumlah !== null && $jumlah !== '') {
+            $meal = Meal::where('service_id', $service->id)
+                ->where('meal_id', $id)
+                ->first();
+            if ($meal) {
+                $meal->update(['jumlah' => $jumlah]);
             }
         }
+    }
+}
 
-        /* =====================================================
-         * 🍱 MEALS
-         * ===================================================== */
-        if ($request->has('jumlah_meals') && is_array($request->jumlah_meals)) {
-            foreach ($request->jumlah_meals as $mealId => $jumlah) {
-                if (!is_null($jumlah) && $jumlah !== '') {
-                    $mealItem = Meal::where('service_id', $service->id)->where('meal_id', $mealId)->first();
-                    if ($mealItem)
-                        $mealItem->update(['jumlah' => $jumlah]);
-                }
+if ($request->has('jumlah_dorongan')) {
+    foreach ($request->jumlah_dorongan as $id => $jumlah) {
+        if ($jumlah !== null && $jumlah !== '') {
+            $dorongan = DoronganOrder::where('service_id', $service->id)
+                ->where('dorongan_id', $id)
+                ->first();
+            if ($dorongan) {
+                $dorongan->update(['jumlah' => $jumlah]);
             }
         }
+    }
+}
 
-        /* =====================================================
-         * 💸 DORONGAN
-         * ===================================================== */
-        if ($request->has('jumlah_dorongan') && is_array($request->jumlah_dorongan)) {
-            foreach ($request->jumlah_dorongan as $doronganId => $jumlah) {
-                if (!is_null($jumlah) && $jumlah !== '') {
-                    $doronganItem = DoronganOrder::where('service_id', $service->id)->where('dorongan_id', $doronganId)->first();
-                    if ($doronganItem)
-                        $doronganItem->update(['jumlah' => $jumlah]);
-                }
+if ($request->has('jumlah_wakaf')) {
+    foreach ($request->jumlah_wakaf as $id => $jumlah) {
+        if ($jumlah !== null && $jumlah !== '') {
+            $wakaf = WakafCustomer::where('service_id', $service->id)
+                ->where('wakaf_id', $id)
+                ->first();
+            if ($wakaf) {
+                $wakaf->update(['jumlah' => $jumlah]);
             }
         }
+    }
+}
 
         /* =====================================================
          * 🕋 BADAL
          * ===================================================== */
-        if ($request->has('nama_badal') && is_array($request->nama_badal)) {
-            foreach ($request->nama_badal as $index => $namaBadal) {
-                if (empty($namaBadal))
-                    continue;
-
-                $hargaBadal = $request->harga_badal[$index] ?? 0;
-                $badalItem = Badal::where('service_id', $service->id)->first();
-
-                if ($badalItem) {
-                    $badalItem->update([
-                        'name' => $namaBadal,
-                        'price' => $hargaBadal,
-                    ]);
-                }
+        if ($request->has('nama_badal')) {
+            Badal::where('service_id', $service->id)->delete();
+            foreach ($request->nama_badal as $i => $nama) {
+                if (empty($nama)) continue;
+                Badal::create([
+                    'service_id' => $service->id,
+                    'name' => $nama,
+                    'price' => $request->harga_badal[$i] ?? 0,
+                    'tanggal_pelaksanaan' => $request->tanggal_badal[$i]
+                 ]);
             }
         }
 
         /* =====================================================
          * 🏨 HOTEL
          * ===================================================== */
-        if ($request->has('tanggal_checkin') && is_array($request->tanggal_checkin)) {
-            foreach ($request->tanggal_checkin as $index => $tanggalCheckin) {
-                if (empty($tanggalCheckin))
-                    continue;
+        if ($request->has('tanggal_checkin')) {
+            Hotel::where('service_id', $service->id)->delete();
+            foreach ($request->tanggal_checkin as $i => $checkin) {
+                if (empty($checkin)) continue;
 
-                $hotel = Hotel::where('service_id', $service->id)->skip($index)->first();
-                $typeHotel = $request->type_hotel[$index] ?? 'Standard';
-                $jumlahType = $request->jumlah_type[$index] ?? 0;
+                Hotel::create([
+                    'service_id' => $service->id,
+                    'tanggal_checkin' => $checkin,
+                    'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
+                    'nama_hotel' => $request->nama_hotel[$i] ?? null,
+                    'jumlah_kamar' => $request->jumlah_kamar[$i] ?? 0,
+                    'type' => $request->type_hotel[$i] ?? 'Standard',
+                    'jumlah_type' => $request->jumlah_type[$i] ?? 0,
+                ]);
+            }
+        }
 
-                if ($hotel) {
-                    $hotel->update([
-                        'tanggal_checkin' => $tanggalCheckin,
-                        'tanggal_checkout' => $request->tanggal_checkout[$index] ?? null,
-                        'nama_hotel' => $request->nama_hotel[$index] ?? null,
-                        'jumlah_kamar' => $request->jumlah_kamar[$index] ?? 0,
-                        'type' => $typeHotel,
-                        'jumlah_type' => $jumlahType
+        /* =====================================================
+         * 🗺️ TOUR
+         * ===================================================== */
+        if ($request->has('tour_id')) {
+            $tour = Tour::find($request->id_tour);
+            if ($tour && $request->has('tour_transport')) {
+                foreach ($request->tour_transport as $transport) {
+                    $tour->update([
+                        'transportation_id' => $transport,
+                        'tour_id' => $request->tour_id,
                     ]);
                 }
             }
         }
+    });
 
-        /* =====================================================
-         * 💰 WAKAF
-         * ===================================================== */
-        if ($request->has('jumlah_wakaf') && is_array($request->jumlah_wakaf)) {
-            foreach ($request->jumlah_wakaf as $wakafId => $jumlah) {
-                if (!is_null($jumlah) && $jumlah !== '') {
-                    $wakafItem = WakafCustomer::where('service_id', $service->id)
-                        ->where('wakaf_id', $wakafId)
-                        ->first();
-
-                    if ($wakafItem) {
-                        $wakafItem->update(['jumlah' => $jumlah]);
-                    }
-                }
-            }
-        }
-        /* =====================================================
-         * ✅ REDIRECT SELESAI
-         * ===================================================== */
-        return redirect()->route('admin.services', [
-            'service_id' => $service->id,
-            'total_jamaah' => $request->total_jamaah,
-        ])->with('success', 'Data service berhasil diperbarui.');
-    }
+    /* =====================================================
+     * ✅ REDIRECT SELESAI
+     * ===================================================== */
+    return redirect()->route('admin.services', [
+        'service_id' => $service->id,
+        'total_jamaah' => $request->total_jamaah,
+    ])->with('success', 'Data service dan semua relasinya berhasil diperbarui.');
+}
 
 
 
