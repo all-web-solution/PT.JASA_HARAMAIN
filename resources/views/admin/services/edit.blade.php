@@ -210,7 +210,7 @@
                                     'hotel' => ['icon' => 'bi-building', 'name' => 'Hotel'],
                                     'dokumen' => ['icon' => 'bi-file-text', 'name' => 'Dokumen'],
                                     'handling' => ['icon' => 'bi-briefcase', 'name' => 'Handling'],
-                                    'pendamping' => ['icon' => 'bi-people', 'name' => 'Muthowif'], {{-- Ganti nama --}}
+                                    'pendamping' => ['icon' => 'bi-people', 'name' => 'Muthowif'],// {{-- Ganti nama --}}
                                     'konten' => ['icon' => 'bi-camera', 'name' => 'Konten'],
                                     'reyal' => ['icon' => 'bi-currency-exchange', 'name' => 'Reyal'],
                                     'tour' => ['icon' => 'bi-geo-alt', 'name' => 'Tour'],
