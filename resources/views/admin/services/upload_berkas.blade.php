@@ -1,30 +1,56 @@
 @extends('admin.master')
+@section('title', 'Upload Berkas Jamaah')
+@push('styles')
+    <style>
+        @media (max-width: 768px) {
+            h4 {
+                text-align: center;
+                font-size: 1.1rem;
+            }
 
+            button.btn {
+                width: 100%;
+            }
+        }
+    </style>
+@endpush
 @section('content')
-<div class="container-fluid py-3">
-    <div class="card shadow-sm border-0">
-        <div class="card-body">
-            <h4 class="mb-3 fw-bold" style="color: var(--haramain-primary);">
-                <i class="bi bi-upload me-2"></i> Upload Berkas Jamaah
-            </h4>
+    <div class="container-fluid py-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h4 class="mb-3 fw-bold" style="color: var(--haramain-primary);">
+                    <i class="bi bi-upload me-2"></i> Upload Berkas Jamaah
+                </h4>
 
-            <form action="{{ route('service.storeBerkas', $service->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
+                <form action="{{ route('service.storeBerkas', $service->id) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
 
-
-                <!-- Tabel tampilan laptop -->
-                <div class="table-responsive d-none d-md-block">
-                    <table class="table table-bordered align-middle text-center">
-                        <thead class="table-light">
-                            <tr>
-                                <th>No</th>
-                                <th>Pas Foto</th>
-                                <th>Paspor</th>
-                                <th>KTP</th>
-                                <th>Visa</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    @if ($errors->any())
+                        <div
+                            style="background-color: #fde8e8; border: 1px solid var(--danger-color); color: #9b1c1c; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h6 style="color: #9b1c1c; margin-top: 0; margin-bottom: 0.75rem; font-weight: 700;">
+                                <i class="bi bi-exclamation-triangle-fill"></i> Terjadi Kesalahan
+                            </h6>
+                            <ul style="margin: 0; padding-left: 20px;">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <!-- Tabel tampilan laptop -->
+                    <div class="table-responsive d-none d-md-block">
+                        <table class="table table-bordered align-middle text-center">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Pas Foto</th>
+                                    <th>Paspor</th>
+                                    <th>KTP</th>
+                                    <th>Visa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
                                 <tr>
                                     <td class="fw-bold"></td>
@@ -34,12 +60,12 @@
                                     <td><input type="file" name="visa" class="form-control"></td>
                                 </tr>
 
-                        </tbody>
-                    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
 
-                <!-- Tampilan mobile -->
-                <div class="d-block d-md-none">
+                    <!-- Tampilan mobile -->
+                    <div class="d-block d-md-none">
 
                         <div class="card mb-3 border">
                             <div class="card-body">
@@ -62,27 +88,15 @@
                             </div>
                         </div>
 
-                </div>
+                    </div>
 
-                <div class="text-end mt-3">
-                    <button type="submit" class="btn btn-primary px-4">
-                        <i class="bi bi-cloud-arrow-up"></i> Upload
-                    </button>
-                </div>
-            </form>
+                    <div class="text-end mt-3">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-cloud-arrow-up"></i> Upload
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-
-<style>
-    @media (max-width: 768px) {
-        h4 {
-            text-align: center;
-            font-size: 1.1rem;
-        }
-        button.btn {
-            width: 100%;
-        }
-    }
-</style>
 @endsection

@@ -1,5 +1,6 @@
 @extends('admin.master')
-@section('content')
+@section('title', 'Daftar Berkas Customer')
+@push('styles')
     <style>
         :root {
             --haramain-primary: #1a4b8c;
@@ -376,9 +377,11 @@
                 padding: 1rem;
             }
 
-            .card-header, .search-filter-container {
+            .card-header,
+            .search-filter-container {
                 flex-direction: column;
-                align-items: stretch; /* Ubah dari flex-start */
+                align-items: stretch;
+                /* Ubah dari flex-start */
                 gap: 1rem;
             }
 
@@ -389,7 +392,8 @@
             }
 
             .btn-add-new {
-                width: 100%; /* Tombol memenuhi lebar */
+                width: 100%;
+                /* Tombol memenuhi lebar */
                 justify-content: center;
             }
 
@@ -403,7 +407,8 @@
             }
 
             .filter-select {
-                width: 100%; /* Filter memenuhi lebar */
+                width: 100%;
+                /* Filter memenuhi lebar */
             }
 
             .table thead {
@@ -412,7 +417,8 @@
 
             .table tbody tr {
                 display: block;
-                margin-bottom: 1.5rem; /* Beri jarak lebih antar baris/kartu */
+                margin-bottom: 1.5rem;
+                /* Beri jarak lebih antar baris/kartu */
                 border-radius: 8px;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 border: 1px solid var(--border-color);
@@ -420,24 +426,30 @@
 
             .table tbody td {
                 display: flex;
-                flex-direction: column; /* Susun label di atas, nilai di bawah */
-                align-items: flex-start; /* Rata kiri */
+                flex-direction: column;
+                /* Susun label di atas, nilai di bawah */
+                align-items: flex-start;
+                /* Rata kiri */
                 justify-content: center;
                 text-align: left;
                 padding: 0.75rem 1rem;
                 border: none;
-                border-bottom: 1px solid var(--border-color); /* Garis pemisah antar field */
+                border-bottom: 1px solid var(--border-color);
+                /* Garis pemisah antar field */
             }
 
             .table tbody tr td:last-child {
-                border-bottom: none; /* Hilangkan border untuk item terakhir */
+                border-bottom: none;
+                /* Hilangkan border untuk item terakhir */
             }
 
             .table tbody td:before {
                 content: attr(data-label);
-                font-weight: 700; /* Dibuat tebal agar jelas */
+                font-weight: 700;
+                /* Dibuat tebal agar jelas */
                 color: var(--haramain-primary);
-                margin-bottom: 0.5rem; /* Jarak antara label dan nilai */
+                margin-bottom: 0.5rem;
+                /* Jarak antara label dan nilai */
                 font-size: 0.8rem;
                 text-transform: uppercase;
             }
@@ -455,21 +467,26 @@
             /* Styling khusus untuk container tombol aksi */
             .action-buttons-container {
                 display: flex;
-                flex-wrap: wrap; /* Tombol akan turun jika tidak muat */
-                gap: 0.5rem; /* Jarak antar tombol */
+                flex-wrap: wrap;
+                /* Tombol akan turun jika tidak muat */
+                gap: 0.5rem;
+                /* Jarak antar tombol */
                 width: 100%;
             }
 
             .action-buttons-container .btn {
-                flex-grow: 1; /* Tombol akan membesar mengisi ruang */
+                flex-grow: 1;
+                /* Tombol akan membesar mengisi ruang */
             }
 
             .pagination-container {
-                justify-content: center; /* Paginasi di tengah */
+                justify-content: center;
+                /* Paginasi di tengah */
             }
         }
     </style>
-
+@endpush
+@section('content')
     <div class="service-list-container">
         <!-- Services List -->
         <div class="card">
@@ -481,9 +498,6 @@
                     <i class="bi bi-plus-circle"></i> Tambah berkas
                 </a>
             </div>
-
-            <!-- Search and Filter -->
-          
 
             <!-- Services Table -->
             <div class="table-responsive">
@@ -500,41 +514,38 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($files as $item)
+                        @forelse ($files as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->service->pelanggan->nama_travel }}</td>
                                 <td>{{ $item->service->pelanggan->penanggung_jawab }}</td>
                                 <td>{{ $item->service->pelanggan->phone }}</td>
-                                <td><img src="{{ url('storage/' . $item->pas_foto) }}" alt="" width="50px" height="50px"></td>
-                                <td><img src="{{ url('storage/' . $item->paspor) }}" alt="" width="50px" height="50px"></td>
-                                <td><img src="{{ url('storage/' . $item->ktp) }}" alt="" width="50px" height="50px"></td>
-
+                                <td>
+                                    <a href="{{ url('storage/' . $item->pas_foto) }}" target="_blank" rel="noopener noreferrer">
+                                        <img src="{{ url('storage/' . $item->pas_foto) }}" alt="Pas Foto" width="50px"
+                                            height="50px">
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ url('storage/' . $item->paspor) }}" target="_blank" rel="noopener noreferrer">
+                                        <img src="{{ url('storage/' . $item->paspor) }}" alt="Paspor" width="50px"
+                                            height="50px">
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ url('storage/' . $item->ktp) }}" target="_blank" rel="noopener noreferrer">
+                                        <img src="{{ url('storage/' . $item->ktp) }}" alt="KTP" width="50px"
+                                            height="50px">
+                                    </a>
+                                </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">Tidak ada data berkas.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination-container">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
         </div>
     </div>
