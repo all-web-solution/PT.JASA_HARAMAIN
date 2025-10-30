@@ -52,6 +52,6 @@ class AuthController extends Controller
     public function sign_out()
     {
         Auth::logout();
-        return redirect('/admin/services')->with('success', 'Anda telah berhasil keluar');
+        return redirect()->route('login')->with('success', 'Anda telah berhasil keluar');
     }
 }
