@@ -1,5 +1,6 @@
 @extends('admin.master')
-@section('content')
+@section('title', 'Daftar Permintaan Service')
+@push('styles')
     <style>
         :root {
             --haramain-primary: #1a4b8c;
@@ -489,7 +490,8 @@
             }
         }
     </style>
-
+@endpush
+@section('content')
     <div class="service-list-container">
         <div class="row g-3 mb-4 p-1"> {{-- Assuming you use a Bootstrap row --}}
             <x-card-component class="col-xl-3 col-md-6" title="Total Nego" :count="$totalNegoOverall" {{-- Use variable from controller --}}
@@ -556,7 +558,23 @@
                                 <td data-label="Tgl keberangkatan">{{ $service->tanggal_keberangkatan }}</td>
                                 <td data-label="Tgl kepulangan">{{ $service->tanggal_kepulangan }}</td>
                                 <td data-label="Jumlah jamaah">{{ $service->total_jamaah }}</td>
-                                <td data-label="Layanan yang di pilih">{{ implode(', ', (array) $service->services) }}
+                                <td data-label="Layanan yang di pilih">
+                                    @php
+                                        // Decode string JSON menjadi array PHP
+                                        $serviceList = json_decode($service->services);
+                                    @endphp
+
+                                    @if (is_array($serviceList) && !empty($serviceList))
+                                        <ul>
+                                            @foreach ($serviceList as $item)
+                                                <li style="list-style-type: disc; margin-left: 20px;">
+                                                    {{ $item }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        -
+                                    @endif
                                 </td>
 
                                 @if ($service->status === 'nego')
@@ -616,7 +634,8 @@
             </div>
         </div>
     </div>
-
+@endsection
+@push('scripts')
     <script>
         // Search functionality
         document.addEventListener('DOMContentLoaded', function() {
@@ -661,4 +680,28 @@
             });
         });
     </script>
-@endsection
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    title: 'Gagal!',
+                    text: '{{ session('error') }}',
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            @endif
+        });
+    </script>
+@endpush

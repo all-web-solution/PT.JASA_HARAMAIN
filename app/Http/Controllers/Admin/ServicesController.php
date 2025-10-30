@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ContentCustomer;
 use App\Models\ContentItem;
+use App\Models\Exchange;
 use Carbon\Carbon;
 use App\Models\File;
 use App\Models\Guide;
@@ -37,6 +38,7 @@ use App\Models\HandlingPlanes;
 use App\Models\WakafCustomer;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ServicesController extends Controller
 {
@@ -69,20 +71,20 @@ class ServicesController extends Controller
                           ->paginate(10)      // Ambil 10 data per halaman
                           ->appends($request->query()); // Pertahankan filter di pagination
 
-        $countBadalNego = \App\Models\Badal::where('status', 'nego')->count();
-        $countContentCustomerNego = \App\Models\ContentCustomer::where('status', 'nego')->count();
-        $countCustomerDocumentNego = \App\Models\CustomerDocument::where('status', 'nego')->count();
-        $countDoronganOrderNego = \App\Models\DoronganOrder::where('status', 'nego')->count();
-        $countExchangeNego = \App\Models\Exchange::where('status', 'nego')->count(); // Corrected typo: Exchange
-        $countGuideNego = \App\Models\Guide::where('status', 'nego')->count();
-        $countHandlingHotelNego = \App\Models\HandlingHotel::where('status', 'nego')->count();
-        $countHandlingPlaneNego = \App\Models\HandlingPlanes::where('status', 'nego')->count();
-        $countHotelNego = \App\Models\Hotel::where('status', 'nego')->count();
-        $countMealNego = \App\Models\Meal::where('status', 'nego')->count();
-        $countPlaneNego = \App\Models\Plane::where('status', 'nego')->count();
-        $countTourNego = \App\Models\Tour::where('status', 'nego')->count();
-        $countTransportationItemNego = \App\Models\TransportationItem::where('status', 'nego')->count();
-        $countWakafCustomerNego = \App\Models\WakafCustomer::where('status', 'nego')->count();
+        $countBadalNego = Badal::where('status', 'nego')->count();
+        $countContentCustomerNego = ContentCustomer::where('status', 'nego')->count();
+        $countCustomerDocumentNego = CustomerDocument::where('status', 'nego')->count();
+        $countDoronganOrderNego = DoronganOrder::where('status', 'nego')->count();
+        $countExchangeNego = Exchange::where('status', 'nego')->count(); // Corrected typo: Exchange
+        $countGuideNego = Guide::where('status', 'nego')->count();
+        $countHandlingHotelNego = HandlingHotel::where('status', 'nego')->count();
+        $countHandlingPlaneNego = HandlingPlanes::where('status', 'nego')->count();
+        $countHotelNego = Hotel::where('status', 'nego')->count();
+        $countMealNego = Meal::where('status', 'nego')->count();
+        $countPlaneNego = Plane::where('status', 'nego')->count();
+        $countTourNego = Tour::where('status', 'nego')->count();
+        $countTransportationItemNego = TransportationItem::where('status', 'nego')->count();
+        $countWakafCustomerNego = WakafCustomer::where('status', 'nego')->count();
 
         $totalNegoOverall =
         $countBadalNego +
@@ -100,21 +102,21 @@ class ServicesController extends Controller
         $countTransportationItemNego +
         $countWakafCustomerNego;
 
-        $countBadalPersiapan = \App\Models\Badal::where('status', 'tahap persiapan')->count();
-        $countContentCustomerPersiapan = \App\Models\ContentCustomer::where('status', 'tahap persiapan')->count();
-        $countCustomerDocumentPersiapan = \App\Models\CustomerDocument::where('status', 'tahap persiapan')->count();
-        $countDoronganOrderPersiapan = \App\Models\DoronganOrder::where('status', 'tahap persiapan')->count();
-        $countExchangePersiapan = \App\Models\Exchange::where('status', 'tahap persiapan')->count();
-        $countGuidePersiapan = \App\Models\Guide::where('status', 'tahap persiapan')->count();
-        $countHandlingHotelPersiapan = \App\Models\HandlingHotel::where('status', 'tahap persiapan')->count();
+        $countBadalPersiapan = Badal::where('status', 'tahap persiapan')->count();
+        $countContentCustomerPersiapan = ContentCustomer::where('status', 'tahap persiapan')->count();
+        $countCustomerDocumentPersiapan = CustomerDocument::where('status', 'tahap persiapan')->count();
+        $countDoronganOrderPersiapan = DoronganOrder::where('status', 'tahap persiapan')->count();
+        $countExchangePersiapan = Exchange::where('status', 'tahap persiapan')->count();
+        $countGuidePersiapan = Guide::where('status', 'tahap persiapan')->count();
+        $countHandlingHotelPersiapan = HandlingHotel::where('status', 'tahap persiapan')->count();
 
-        $countHandlingPlanePersiapan = \App\Models\HandlingPlanes::where('status', 'tahap persiapan')->count();
-        $countHotelPersiapan = \App\Models\Hotel::where('status', 'tahap persiapan')->count();
-        $countMealPersiapan = \App\Models\Meal::where('status', 'tahap persiapan')->count();
-        $countPlanePersiapan = \App\Models\Plane::where('status', 'tahap persiapan')->count();
-        $countTourPersiapan = \App\Models\Tour::where('status', 'tahap persiapan')->count();
-        $countTransportationItemPersiapan = \App\Models\TransportationItem::where('status', 'tahap persiapan')->count();
-        $countWakafCustomerPersiapan = \App\Models\WakafCustomer::where('status', 'tahap persiapan')->count();
+        $countHandlingPlanePersiapan = HandlingPlanes::where('status', 'tahap persiapan')->count();
+        $countHotelPersiapan = Hotel::where('status', 'tahap persiapan')->count();
+        $countMealPersiapan = Meal::where('status', 'tahap persiapan')->count();
+        $countPlanePersiapan = Plane::where('status', 'tahap persiapan')->count();
+        $countTourPersiapan = Tour::where('status', 'tahap persiapan')->count();
+        $countTransportationItemPersiapan = TransportationItem::where('status', 'tahap persiapan')->count();
+        $countWakafCustomerPersiapan = WakafCustomer::where('status', 'tahap persiapan')->count();
 
         // Menjumlahkan semua hitungan 'tahap persiapan'
         $totalPersiapanOverall =
@@ -134,20 +136,20 @@ class ServicesController extends Controller
         $countWakafCustomerPersiapan;
 
         // --- Hitung Status 'tahap_produksi' ---
-        $countBadalProduksi = \App\Models\Badal::where('status', 'tahap_produksi')->count();
-        $countContentCustomerProduksi = \App\Models\ContentCustomer::where('status', 'tahap_produksi')->count();
-        $countCustomerDocumentProduksi = \App\Models\CustomerDocument::where('status', 'tahap_produksi')->count();
-        $countDoronganOrderProduksi = \App\Models\DoronganOrder::where('status', 'tahap_produksi')->count();
-        $countExchangeProduksi = \App\Models\Exchange::where('status', 'tahap_produksi')->count();
-        $countGuideProduksi = \App\Models\Guide::where('status', 'tahap_produksi')->count();
-        $countHandlingHotelProduksi = \App\Models\HandlingHotel::where('status', 'tahap_produksi')->count();
-        $countHandlingPlaneProduksi = \App\Models\HandlingPlanes::where('status', 'tahap_produksi')->count();
-        $countHotelProduksi = \App\Models\Hotel::where('status', 'tahap_produksi')->count();
-        $countMealProduksi = \App\Models\Meal::where('status', 'tahap_produksi')->count();
-        $countPlaneProduksi = \App\Models\Plane::where('status', 'tahap_produksi')->count();
-        $countTourProduksi = \App\Models\Tour::where('status', 'tahap_produksi')->count();
-        $countTransportationItemProduksi = \App\Models\TransportationItem::where('status', 'tahap_produksi')->count();
-        $countWakafCustomerProduksi = \App\Models\WakafCustomer::where('status', 'tahap_produksi')->count();
+        $countBadalProduksi = Badal::where('status', 'tahap_produksi')->count();
+        $countContentCustomerProduksi = ContentCustomer::where('status', 'tahap_produksi')->count();
+        $countCustomerDocumentProduksi = CustomerDocument::where('status', 'tahap_produksi')->count();
+        $countDoronganOrderProduksi = DoronganOrder::where('status', 'tahap_produksi')->count();
+        $countExchangeProduksi = Exchange::where('status', 'tahap_produksi')->count();
+        $countGuideProduksi = Guide::where('status', 'tahap_produksi')->count();
+        $countHandlingHotelProduksi = HandlingHotel::where('status', 'tahap_produksi')->count();
+        $countHandlingPlaneProduksi = HandlingPlanes::where('status', 'tahap_produksi')->count();
+        $countHotelProduksi = Hotel::where('status', 'tahap_produksi')->count();
+        $countMealProduksi = Meal::where('status', 'tahap_produksi')->count();
+        $countPlaneProduksi = Plane::where('status', 'tahap_produksi')->count();
+        $countTourProduksi = Tour::where('status', 'tahap_produksi')->count();
+        $countTransportationItemProduksi = TransportationItem::where('status', 'tahap_produksi')->count();
+        $countWakafCustomerProduksi = WakafCustomer::where('status', 'tahap_produksi')->count();
 
         // Jumlahkan semua hitungan 'tahap_produksi'
         $totalProduksiOverall =
@@ -167,20 +169,20 @@ class ServicesController extends Controller
         $countWakafCustomerProduksi;
 
         // --- Hitung Status 'done' ---
-        $countBadalDone = \App\Models\Badal::where('status', 'done')->count();
-        $countContentCustomerDone = \App\Models\ContentCustomer::where('status', 'done')->count();
-        $countCustomerDocumentDone = \App\Models\CustomerDocument::where('status', 'done')->count();
-        $countDoronganOrderDone = \App\Models\DoronganOrder::where('status', 'done')->count();
-        $countExchangeDone = \App\Models\Exchange::where('status', 'done')->count();
-        $countGuideDone = \App\Models\Guide::where('status', 'done')->count();
-        $countHandlingHotelDone = \App\Models\HandlingHotel::where('status', 'done')->count();
-        $countHandlingPlaneDone = \App\Models\HandlingPlanes::where('status', 'done')->count();
-        $countHotelDone = \App\Models\Hotel::where('status', 'done')->count();
-        $countMealDone = \App\Models\Meal::where('status', 'done')->count();
-        $countPlaneDone = \App\Models\Plane::where('status', 'done')->count();
-        $countTourDone = \App\Models\Tour::where('status', 'done')->count();
-        $countTransportationItemDone = \App\Models\TransportationItem::where('status', 'done')->count();
-        $countWakafCustomerDone = \App\Models\WakafCustomer::where('status', 'done')->count();
+        $countBadalDone = Badal::where('status', 'done')->count();
+        $countContentCustomerDone = ContentCustomer::where('status', 'done')->count();
+        $countCustomerDocumentDone = CustomerDocument::where('status', 'done')->count();
+        $countDoronganOrderDone = DoronganOrder::where('status', 'done')->count();
+        $countExchangeDone = Exchange::where('status', 'done')->count();
+        $countGuideDone = Guide::where('status', 'done')->count();
+        $countHandlingHotelDone = HandlingHotel::where('status', 'done')->count();
+        $countHandlingPlaneDone = HandlingPlanes::where('status', 'done')->count();
+        $countHotelDone = Hotel::where('status', 'done')->count();
+        $countMealDone = Meal::where('status', 'done')->count();
+        $countPlaneDone = Plane::where('status', 'done')->count();
+        $countTourDone = Tour::where('status', 'done')->count();
+        $countTransportationItemDone = TransportationItem::where('status', 'done')->count();
+        $countWakafCustomerDone = WakafCustomer::where('status', 'done')->count();
 
         // Jumlahkan semua hitungan 'done'
         $totalDoneOverall =
@@ -1080,6 +1082,32 @@ public function update(Request $request, $id)
             'tanggal_keberangkatan' => 'required|date',
             'tanggal_kepulangan' => 'required|date',
             'total_jamaah' => 'required|integer',
+
+            'transportation_id' => [
+                'nullable', // Boleh null JIKA 'bus' tidak dicentang
+                // 'Wajib ada jika' 'services' mengandung 'transportasi' DAN 'transportation_types' mengandung 'bus'
+                Rule::requiredIf(function () use ($request) {
+                    return $request->has('services') && in_array('transportasi', $request->services) &&
+                           $request->has('transportation_types') && in_array('bus', $request->transportation_types);
+                }),
+                'array',
+                'min:1' // Minimal harus ada 1 item
+            ],
+            'transportation_id.*' => 'required|exists:transportations,id',
+            'rute_id' => ['nullable', Rule::requiredIf(/*...logika yang sama...*/ function () use ($request) { return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation_types') && in_array('bus', $request->transportation_types); }), 'array', 'min:1'],
+            'rute_id.*' => 'required|exists:routes,id',
+            'transport_dari' => ['nullable', Rule::requiredIf(/*...logika yang sama...*/ function () use ($request) { return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation_types') && in_array('bus', $request->transportation_types); }), 'array', 'min:1'],
+            'transport_dari.*' => 'required|date',
+            'transport_sampai' => ['nullable', Rule::requiredIf(/*...logika yang sama...*/ function () use ($request) { return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation_types') && in_array('bus', $request->transportation_types); }), 'array', 'min:1'],
+            'transport_sampai.*' => 'required|date|after_or_equal:transport_dari.*',
+
+        ], [
+            // --- PESAN ERROR KUSTOM ---
+            'transportation_id.required' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
+            'transportation_id.min' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
+            'rute_id.required' => 'Rute wajib dipilih untuk setiap transportasi darat.',
+            'transport_dari.required' => 'Tanggal "Dari" wajib diisi untuk setiap transportasi darat.',
+            'transport_sampai.required' => 'Tanggal "Sampai" wajib diisi untuk setiap transportasi darat.',
         ]);
 
         /* =====================================================
@@ -1097,53 +1125,94 @@ public function update(Request $request, $id)
         /* =====================================================
          * ✈️ UPDATE / TAMBAH / HAPUS DATA PESAWAT
          * ===================================================== */
-        if ($request->has('rute')) {
-            $existingPlaneIds = collect($request->plane_id)->filter()->toArray();
 
-            // Hapus yang tidak dikirim dari form
-            Plane::where('service_id', $service->id)
-                ->whereNotIn('id', $existingPlaneIds)
-                ->delete();
+        // PERBAIKAN: Cek dulu apakah service 'transportasi' masih DIPILIH di form utama
+        if ($request->has('services') && in_array('transportasi', $request->services)) {
 
-            foreach ($request->rute as $i => $rute) {
-                if (empty($rute)) continue;
+            // JIKA 'transportasi' MASIH DIPILIH:
 
-                $plane = $service->planes()->find($request->plane_id[$i]) ?? new Plane();
+            // Cek apakah sub-service 'airplane' DIPILIH
+            if ($request->has('transportation_types') && in_array('airplane', $request->transportation_types)) {
+                $existingPlaneIds = collect($request->plane_id)->filter()->toArray();
 
-                $plane->service_id = $service->id;
-                $plane->tanggal_keberangkatan = $request->tanggal[$i] ?? now();
-                $plane->rute = $rute;
-                $plane->maskapai = $request->maskapai[$i] ?? null;
-                $plane->harga = $request->harga_tiket[$i] ?? null;
-                $plane->keterangan = $request->keterangan[$i] ?? null;
-                $plane->jumlah_jamaah = $request->jumlah[$i] ?? 0;
+                // Hapus tiket yang checkbox-nya dihapus oleh user
+                Plane::where('service_id', $service->id)
+                    ->whereNotIn('id', $existingPlaneIds)
+                    ->delete();
 
-                if ($request->hasFile("tiket_berangkat.$i")) {
-                    $plane->tiket_berangkat = $this->storeFileIfExists($request->file("tiket_berangkat.$i"), $i, 'tiket');
+                // Update / Tambah tiket yang ada di form
+                foreach ($request->rute as $i => $rute) {
+                    if (empty($rute)) continue;
+
+                    $plane = $service->planes()->find($request->plane_id[$i]) ?? new Plane();
+
+                    $plane->service_id = $service->id;
+                    $plane->tanggal_keberangkatan = $request->tanggal[$i] ?? now();
+                    $plane->rute = $rute;
+                    $plane->maskapai = $request->maskapai[$i] ?? null;
+                    $plane->harga = $request->harga_tiket[$i] ?? null;
+                    $plane->keterangan = $request->keterangan[$i] ?? null;
+                    $plane->jumlah_jamaah = $request->jumlah[$i] ?? 0;
+
+                    if ($request->hasFile("tiket_berangkat.$i")) {
+                        $plane->tiket_berangkat = $this->storeFileIfExists($request->file("tiket_berangkat.$i"), $i, 'tiket');
+                    }
+                    if ($request->hasFile("tiket_pulang.$i")) {
+                        $plane->tiket_pulang = $this->storeFileIfExists($request->file("tiket_pulang.$i"), $i, 'tiket');
+                    }
+
+                    $plane->save();
                 }
-                if ($request->hasFile("tiket_pulang.$i")) {
-                    $plane->tiket_pulang = $this->storeFileIfExists($request->file("tiket_pulang.$i"), $i, 'tiket');
-                }
-
-                $plane->save();
+            } else {
+                // 'transportasi' DIPILIH, TAPI tidak ada data 'rute'.
+                // Artinya user hanya memilih 'Transportasi Darat'
+                // Kita hapus semua data Pesawat.
+                Plane::where('service_id', $service->id)->delete();
             }
+
+        } else {
+            // JIKA 'transportasi' TIDAK DIPILIH SAMA SEKALI
+            // Hapus semua data pesawat yang terkait dengan service ini.
+            Plane::where('service_id', $service->id)->delete();
         }
 
         /* =====================================================
          * 🚌 TRANSPORTASI
          * ===================================================== */
-        if ($request->has('transportation_id')) {
-            TransportationItem::where('service_id', $service->id)->delete();
 
-            foreach ($request->transportation_id as $i => $transportId) {
-                if (empty($transportId)) continue;
+        // PERBAIKAN: Cek dulu apakah service 'transportasi' masih DIPILIH di form utama
+        if ($request->has('services') && in_array('transportasi', $request->services)) {
 
-                TransportationItem::create([
-                    'service_id' => $service->id,
-                    'transportation_id' => $transportId,
-                    'route_id' => $request->rute_id[$i] ?? null,
-                ]);
+            // JIKA 'transportasi' MASIH DIPILIH:
+
+            // Cek apakah sub-service 'bus' DIPILIH
+            if ($request->has('transportation_types') && in_array('bus', $request->transportation_types)) {
+                // Hapus semua item lama (logika delete-dan-recreate Anda sudah benar)
+                TransportationItem::where('service_id', $service->id)->delete();
+
+                // Buat ulang berdasarkan data form
+                foreach ($request->transportation_id as $i => $transportId) {
+                    if (empty($transportId)) continue;
+
+                    TransportationItem::create([
+                        'service_id' => $service->id,
+                        'transportation_id' => $transportId,
+                        'route_id' => $request->rute_id[$i] ?? null,
+                        'dari_tanggal' => $request->transport_dari[$i] ?? null,
+                        'sampai_tanggal' => $request->transport_sampai[$i] ?? null,
+                    ]);
+                }
+            } else {
+                // 'transportasi' DIPILIH, TAPI tidak ada data 'transportation_id'.
+                // Artinya user hanya memilih 'Pesawat'.
+                // Kita hapus semua data Transportasi Darat.
+                TransportationItem::where('service_id', $service->id)->delete();
             }
+
+        } else {
+            // JIKA 'transportasi' TIDAK DIPILIH SAMA SEKALI
+            // Hapus semua data transportasi darat yang terkait dengan service ini.
+            TransportationItem::where('service_id', $service->id)->delete();
         }
 
         /* =====================================================
