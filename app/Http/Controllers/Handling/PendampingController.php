@@ -79,12 +79,12 @@ class PendampingController extends Controller
         return view('handling.pendamping.customer', compact('guides'));
     }
     public function showCustomer($service_id)
-{
-    // Ambil data service lengkap dengan pelanggan & pendamping
-    $service = Service::with(['pelanggan', 'guides'])->findOrFail($service_id);
+    {
+        // Ambil data service lengkap dengan pelanggan & pendamping
+        $service = Service::with(['pelanggan', 'guides'])->findOrFail($service_id);
 
-    return view('handling.pendamping.detail', compact('service'));
-}
+        return view('handling.pendamping.detail', compact('service'));
+    }
 
     public function showSupplier($id)
     {
