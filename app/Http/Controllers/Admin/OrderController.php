@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
@@ -122,7 +122,7 @@ public function payment_proff_store(Request $request, Order $order)
         if ($request->hasFile('foto')) {
             // Ini akan menyimpan file di: storage/app/public/payment_proofs
             $path = $request->file('foto')->store('payment_proofs', 'public');
-           
+
         }
 
         // 3. Buat entri database
