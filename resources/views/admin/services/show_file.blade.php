@@ -511,6 +511,7 @@
                             <th>Pas foto</th>
                             <th>Paspor</th>
                             <th>KTP</th>
+                            <th>Visa</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -520,28 +521,45 @@
                                 <td>{{ $item->service->pelanggan->nama_travel }}</td>
                                 <td>{{ $item->service->pelanggan->penanggung_jawab }}</td>
                                 <td>{{ $item->service->pelanggan->phone }}</td>
-                                <td>
-                                    <a href="{{ url('storage/' . $item->pas_foto) }}" target="_blank" rel="noopener noreferrer">
-                                        <img src="{{ url('storage/' . $item->pas_foto) }}" alt="Pas Foto" width="50px"
-                                            height="50px">
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="{{ url('storage/' . $item->paspor) }}" target="_blank" rel="noopener noreferrer">
-                                        <img src="{{ url('storage/' . $item->paspor) }}" alt="Paspor" width="50px"
-                                            height="50px">
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="{{ url('storage/' . $item->ktp) }}" target="_blank" rel="noopener noreferrer">
-                                        <img src="{{ url('storage/' . $item->ktp) }}" alt="KTP" width="50px"
-                                            height="50px">
-                                    </a>
-                                </td>
+                                @php
+                                    if (!function_exists('renderFileCell')) {
+                                        function renderFileCell($filePath, $label)
+                                        {
+                                            if (!$filePath) {
+                                                return '<span>Tidak ada file</span>';
+                                            }
+
+                                            $file = 'storage/' . $filePath;
+
+                                            if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $file)) {
+                                                return '<a href="' .
+                                                    url($file) .
+                                                    '" target="_blank" rel="noopener noreferrer">
+                            <img src="' .
+                                                    url($file) .
+                                                    '" alt="' .
+                                                    e($label) .
+                                                    '" width="50" height="50">
+                        </a>';
+                                            } elseif (preg_match('/\.pdf$/i', $file)) {
+                                                return '<a href="' .
+                                                    url($file) .
+                                                    '" target="_blank" rel="noopener noreferrer">File PDF</a>';
+                                            } else {
+                                                return '<span>Tidak ada file</span>';
+                                            }
+                                        }
+                                    }
+                                @endphp
+                                <td>{!! renderFileCell($item->pas_foto, 'Pas Foto') !!}</td>
+                                <td>{!! renderFileCell($item->paspor, 'Paspor') !!}</td>
+                                <td>{!! renderFileCell($item->ktp, 'KTP') !!}</td>
+                                <td>{!! renderFileCell($item->visa, 'Visa') !!}</td>
+
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center text-muted">Tidak ada data berkas.</td>
+                                <td colspan="8" class="text-center text-muted">Tidak ada data berkas.</td>
                             </tr>
                         @endforelse
                     </tbody>
