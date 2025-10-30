@@ -551,59 +551,71 @@
                         </tr>
                     </thead>
                     <tbody id="userTableBody">
-                        @foreach ($services as $service)
+                        @if ($services->isEmpty())
                             <tr>
-                                <td data-label="Kode unik">{{ $service->unique_code }}</td>
-                                <td data-label="Customer/Travel">{{ $service->pelanggan->nama_travel }}</td>
-                                <td data-label="Tgl keberangkatan">{{ $service->tanggal_keberangkatan }}</td>
-                                <td data-label="Tgl kepulangan">{{ $service->tanggal_kepulangan }}</td>
-                                <td data-label="Jumlah jamaah">{{ $service->total_jamaah }}</td>
-                                <td data-label="Layanan yang di pilih">
-                                    @php
-                                        // Decode string JSON menjadi array PHP
-                                        $serviceList = json_decode($service->services);
-                                    @endphp
-
-                                    @if (is_array($serviceList) && !empty($serviceList))
-                                        <ul>
-                                            @foreach ($serviceList as $item)
-                                                <li style="list-style-type: disc; margin-left: 20px;">
-                                                    {{ $item }}
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    @else
-                                        -
-                                    @endif
-                                </td>
-
-                                @if ($service->status === 'nego')
-                                    <td data-label="Status">
-                                        <a href="{{ route('admin.service.nego', $service->id) }}">
-                                            <button class="btn btn-warning"
-                                                style="width: 100%; white-space: normal;">Lanjutkan pemesanan</button>
-                                        </a>
-                                    </td>
-                                @else
-                                    <td data-label="Status">Deal</td>
-                                @endif
-
-                                <td data-label="Aksi">
-                                    <div class="action-buttons">
-                                        <a href="{{ route('admin.service.file', $service->id) }}">
-                                            <button class="btn-action btn-upload" title="Upload berkas yang di perlukan">
-                                                <i class="bi bi-cloud-arrow-up"></i>
-                                            </button>
-                                        </a>
-                                        <a href="{{ route('admin.services.show', $service->id) }}">
-                                            <button class="btn-action btn-view" title="view">
-                                                <i class="bi bi-eye-fill"></i>
-                                            </button>
-                                        </a>
-                                    </div>
+                                <td colspan="8" class="text-center py-5">
+                                    <img src="{{ asset('assets/images/empty-state.svg') }}" alt="No data"
+                                        style="height: 150px;">
+                                    <h5 class="mt-3" style="color: var(--haramain-primary);">Belum Ada Data Services</h5>
+                                    <p class="text-muted">Mulai dengan menambahkan permintaan di service</p>
                                 </td>
                             </tr>
-                        @endforeach
+                        @else
+                            @foreach ($services as $service)
+                                <tr>
+                                    <td data-label="Kode unik">{{ $service->unique_code }}</td>
+                                    <td data-label="Customer/Travel">{{ $service->pelanggan->nama_travel }}</td>
+                                    <td data-label="Tgl keberangkatan">{{ $service->tanggal_keberangkatan }}</td>
+                                    <td data-label="Tgl kepulangan">{{ $service->tanggal_kepulangan }}</td>
+                                    <td data-label="Jumlah jamaah">{{ $service->total_jamaah }}</td>
+                                    <td data-label="Layanan yang di pilih">
+                                        @php
+                                            // Decode string JSON menjadi array PHP
+                                            $serviceList = json_decode($service->services);
+                                        @endphp
+
+                                        @if (is_array($serviceList) && !empty($serviceList))
+                                            <ul>
+                                                @foreach ($serviceList as $item)
+                                                    <li style="list-style-type: disc; margin-left: 20px;">
+                                                        {{ $item }}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+
+                                    @if ($service->status === 'nego')
+                                        <td data-label="Status">
+                                            <a href="{{ route('admin.service.nego', $service->id) }}">
+                                                <button class="btn btn-warning"
+                                                    style="width: 100%; white-space: normal;">Lanjutkan pemesanan</button>
+                                            </a>
+                                        </td>
+                                    @else
+                                        <td data-label="Status">Deal</td>
+                                    @endif
+
+                                    <td data-label="Aksi">
+                                        <div class="action-buttons">
+                                            <a href="{{ route('admin.service.file', $service->id) }}">
+                                                <button class="btn-action btn-upload"
+                                                    title="Upload berkas yang di perlukan">
+                                                    <i class="bi bi-cloud-arrow-up"></i>
+                                                </button>
+                                            </a>
+                                            <a href="{{ route('admin.services.show', $service->id) }}">
+                                                <button class="btn-action btn-view" title="view">
+                                                    <i class="bi bi-eye-fill"></i>
+                                                </button>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
