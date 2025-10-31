@@ -342,7 +342,7 @@
                     </h5>
                 </div>
                 <div class="payment-form-container">
-                    <form action="{{ route('keuangan.payment.pay', $order) }}" method="POST">
+                    <form action="{{ route('keuangan.payment.pay', $order) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label for="jumlah_dibayarkan" class="form-label">Jumlah yang Dibayarkan (SAR)</label>
@@ -351,15 +351,26 @@
                         </div>
                         <div class="form-group">
                             <label for="jumlah_dibayarkan" class="form-label">Status</label>
-                             <select class="form-control" name="status" id="travel-select" required>
+                            <select class="form-control" name="status" id="travel-select" required>
                                 <option value="" >Pilih status</option>
                                 <option value="belum_bayar" >Belum bayar</option>
                                 <option value="belum_lunas" >Belum lunas</option>
                                 <option value="lunas" >Lunas</option>
 
-                        </select>
+                            </select>
                         </div>
-
+                        <div class="mb-3">
+                            <label for="foto" class="form-label">Bukti Pembayaran</label>
+                            <input type="file" class="form-control" id="foto" name="bukti_pembayaran" accept="image/*">
+                        </div>
+                        <div class="form-group">
+                            <label for="jumlah_dibayarkan" class="form-label">Status bukti pembayaran</label>
+                            <select class="form-control" name="status_bukti_pembayaran" id="travel-select" required>
+                                <option value="" >Pilih status</option>
+                                <option value="approve" >Approve</option>
+                                <option value="unapprove" >Unapprove</option>
+                            </select>
+                        </div>
                         <button type="submit" class="btn-submit">
                             <i class="bi bi-check-circle"></i> Simpan Pembayaran
                         </button>
@@ -385,6 +396,8 @@
                             <th>Total yang di bayarkan</th>
                             <th>Sisa hutang</th>
                             <th>Tanggal pembayaran</th>
+                            <th>Bukti pembayaran</th>
+                            <th>status bukti pembayaran</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -395,6 +408,17 @@
                                 <td>Rp {{ number_format($item->total_yang_dibayarkan ?? 0, 0, ',', '.') }}</td>
                                 <td>Rp {{ number_format($item->sisa_hutang ?? 0, 0, ',', '.') }}</td>
                                 <td>{{ $item->created_at->format('d M Y') }}</td>
+                                <td>
+                                    @if ($item->bukti_pembayaran)
+                                    <a href="{{ asset('storage/' . $item->bukti_pembayaran) }}">
+                                        <img src="{{ url('storage/' . $item->bukti_pembayaran) }}" alt="bukti" width="100px" height="100px">
+                                    </a>
+                                    @else
+                                        Belum ada bukti pembayaran
+                                    @endif
+
+                                </td>
+                                <td>{{ $item->status_bukti_pembayaran }}</td>
                             </tr>
                         @empty
                             <tr>
