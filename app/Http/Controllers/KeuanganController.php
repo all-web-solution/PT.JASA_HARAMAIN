@@ -10,7 +10,93 @@ class KeuanganController extends Controller
 {
     public function index()
     {
-        return view('keuangan.index');
+        // ==========================================================
+        // DATA UNTUK KARTU & GRAFIK BULAT (Pie Chart)
+        // ==========================================================
+
+        // Ambil data (collection) untuk kartu count()
+        $dataBelumBayar = Order::where('status_pembayaran', 'belum_bayar')->get();
+        $dataBelumLunas = Order::where('status_pembayaran', 'belum_lunas')->get();
+        $dataLunas = Order::where('status_pembayaran', 'lunas')->get();
+
+        // Hitung total (sum) untuk kartu jumlah dan pie chart
+        $totalBelumBayar = $dataBelumBayar->sum('total_amount');
+        $totalBelumLunas = $dataBelumLunas->sum('total_amount');
+        $totalLunas = $dataLunas->sum('total_amount');
+
+        // Hitung total keseluruhan
+        $totalKeseluruhan = $totalBelumBayar + $totalBelumLunas + $totalLunas;
+
+        // Siapkan data untuk Pie Chart
+        $pieChartData = [
+            'labels' => ['Belum Bayar', 'Belum Lunas', 'Lunas'],
+            'data'   => [$totalBelumBayar, $totalBelumLunas, $totalLunas],
+        ];
+
+
+        // ==========================================================
+        // (BARU) DATA UNTUK GRAFIK BATANG (Monthly Performance)
+        // ==========================================================
+
+        // 1. Kueri efisien: Ambil data bulanan untuk SEMUA status sekaligus
+        $monthlyPerformance = Order::select(
+                DB::raw('MONTH(created_at) as bulan'),
+                'status_pembayaran', // <-- Kunci: Ambil statusnya
+                DB::raw('SUM(total_amount) as total')
+            )
+            ->whereYear('created_at', date('Y')) // Hanya tahun ini
+            // Kelompokkan berdasarkan bulan DAN status
+            ->groupBy('bulan', 'status_pembayaran')
+            ->orderBy('bulan', 'asc')
+            ->get();
+
+        // 2. Siapkan array label (Bulan)
+        $barChartLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+
+        // 3. Siapkan 3 array data, isi dengan 0 (nilai default)
+        $barChartDataLunas = array_fill(0, 12, 0);
+        $barChartDataBelumLunas = array_fill(0, 12, 0);
+        $barChartDataBelumBayar = array_fill(0, 12, 0);
+
+        // 4. Proses hasil kueri ke 3 array data
+        foreach ($monthlyPerformance as $data) {
+            // $data->bulan adalah 1-12, index array adalah 0-11
+            $bulanIndex = $data->bulan - 1;
+
+            if ($data->status_pembayaran == 'lunas') {
+                $barChartDataLunas[$bulanIndex] = $data->total;
+            } elseif ($data->status_pembayaran == 'belum_lunas') {
+                $barChartDataBelumLunas[$bulanIndex] = $data->total;
+            } elseif ($data->status_pembayaran == 'belum_bayar') {
+                $barChartDataBelumBayar[$bulanIndex] = $data->total;
+            }
+        }
+
+
+        // ==========================================================
+        // 6. Kirim semua variabel ke view
+        // ==========================================================
+        return view('keuangan.index', [
+            // Data List (untuk kartu count())
+            'dataBelumBayar' => $dataBelumBayar,
+            'dataBelumLunas' => $dataBelumLunas,
+            'dataLunas' => $dataLunas,
+
+            // Data Total Angka (untuk kartu jumlah Rp)
+            'totalBelumBayar' => $totalBelumBayar,
+            'totalBelumLunas' => $totalBelumLunas,
+            'totalLunas' => $totalLunas,
+            'totalKeseluruhan' => $totalKeseluruhan,
+
+            // Data untuk Grafik Bulat
+            'pieChartData' => $pieChartData,
+
+            // (BARU) Data untuk Grafik Batang (3 set)
+            'barChartLabels' => $barChartLabels,
+            'barChartDataLunas' => $barChartDataLunas,
+            'barChartDataBelumLunas' => $barChartDataBelumLunas,
+            'barChartDataBelumBayar' => $barChartDataBelumBayar,
+        ]);
     }
     public function payment()
     {
