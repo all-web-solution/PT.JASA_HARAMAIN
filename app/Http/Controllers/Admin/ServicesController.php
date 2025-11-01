@@ -238,7 +238,7 @@ class ServicesController extends Controller
             ->first();
         $lastNumber = $lastService ? (int) explode('-', $lastService->unique_code)[1] : 0;
         $uniqueCode = $masterPrefix . '-' . ($lastNumber + 1);
-        $status = $request->input('action') === 'nego' ? 'nego' : 'deal';
+        $status = 'nego';
 
         $service = Service::create([
             'pelanggan_id' => $request->travel,
@@ -406,11 +406,11 @@ class ServicesController extends Controller
         // Hapus baris lama: $totalAmount = (float) $request->input('total_amount', 0);
         Order::create([
             'service_id' => $service->id,
-            'total_amount' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
+            'total_estimasi' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
             'invoice' => 'INV-' . time(),
             'total_yang_dibayarkan' => 0,
-            'sisa_hutang' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
-            'status_pembayaran' => $serverTotalAmount == 0 ? 'lunas' : 'belum_bayar',
+            'sisa_hutang' => 0, // <-- Gunakan hasil perhitungan server
+            'status_pembayaran' => $serverTotalAmount == 0 ? 'belum bayar' : 'estimasi',
         ]);
 
         // ... (Redirect seperti sebelumnya) ...
@@ -632,13 +632,13 @@ class ServicesController extends Controller
         // Cek apakah sudah ada order untuk service ini
         $order = Order::where('service_id', $service->id)->first();
 
+        $order->update([
+            // 'total_amount' => $order->total_amount + $newAmount,
+            // 'sisa_hutang' => ($order->sisa_hutang ?? 0) + $newAmount,
+            'status_pembayaran' => 'belum_bayar', // tetap belum lunas karena ada tambahan
+        ]);
         if ($order) {
             // Jika order sudah ada, tambahkan total_amount baru ke yang lama
-            $order->update([
-                'total_amount' => $order->total_amount + $newAmount,
-                'sisa_hutang' => ($order->sisa_hutang ?? 0) + $newAmount,
-                'status_pembayaran' => 'belum_bayar', // tetap belum lunas karena ada tambahan
-            ]);
         } else {
             // Jika belum ada order, buat baru
             Order::create([
