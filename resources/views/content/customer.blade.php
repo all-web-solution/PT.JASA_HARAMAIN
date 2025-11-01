@@ -12,6 +12,13 @@
             --border-color: #d1e0f5;
             --hover-bg: #f0f7ff;
             --background-light: #f8fafd;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-bg: rgba(40, 167, 69, 0.1);
+            --warning-bg: rgba(255, 193, 7, 0.1);
+            --danger-bg: rgba(220, 53, 69, 0.1);
+            --primary-bg: var(--haramain-light);
         }
 
         .service-list-container {
@@ -70,7 +77,7 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
-            text-align: left;
+            text-align: center;
             white-space: nowrap;
         }
 
@@ -87,10 +94,10 @@
         }
 
         .table tbody td {
-            padding: 1rem;
-            /* Adjusted padding for image cells */
+            padding: 1.25rem;
+            /* Padding seragam */
             vertical-align: middle;
-            border: 1px solid transparent;
+            text-align: center;
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -107,19 +114,71 @@
             border-bottom-right-radius: 8px;
         }
 
-        /* Image Styling in Table */
-        .table tbody td img {
-            width: 80px;
-            height: 80px;
+        /* Tombol Aksi */
+
+        .btn-action {
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
-            object-fit: cover;
-            border: 2px solid var(--border-color);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.25rem;
+            transition: all 0.3s ease;
+            border: none;
+            background-color: transparent;
         }
 
-        .table tbody td img:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .btn-action:hover {
+            background-color: var(--haramain-light);
+        }
+
+        .btn-action i {
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--haramain-secondary);
+            border-color: var(--haramain-secondary);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--haramain-primary);
+            border-color: var(--haramain-primary);
+        }
+
+        /* Badge Status */
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: capitalize;
+        }
+
+        .badge-success {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+        }
+
+        .badge-warning {
+            background-color: var(--warning-bg);
+            color: var(--warning-color);
+        }
+
+        .badge-danger {
+            background-color: var(--danger-bg);
+            color: var(--danger-color);
+        }
+
+        .badge-primary {
+            background-color: var(--primary-bg);
+            color: var(--haramain-secondary);
         }
     </style>
 @endpush
@@ -138,23 +197,71 @@
                             <th>No</th>
                             <th>Nama Pelanggan</th>
                             <th>Nama Dokumen</th>
-
+                            <th>Jumlah</th>
+                            <th>Supplier</th>
+                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($customers as $item)
+                        {{-- Pastikan $customers adalah variabel dari controller --}}
+                        @forelse ($customers as $item)
+                            {{-- $item adalah instance dari CustomerDocument --}}
+
+                            {{-- Logika untuk menentukan warna badge --}}
+                            @php
+                                $status = strtolower($item->status);
+                                $statusClass = '';
+                                if (in_array($status, ['done', 'deal'])) {
+                                    $statusClass = 'badge-success';
+                                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan', 'tahap produksi'])) {
+                                    $statusClass = 'badge-warning';
+                                } elseif (in_array($status, ['cancelled', 'batal'])) {
+                                    $statusClass = 'badge-danger';
+                                } else {
+                                    $statusClass = 'badge-primary';
+                                }
+                            @endphp
+
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->service->pelanggan->nama_travel }}</td>
-                                <td>{{ $item->document->name }}</td>
+
+                                {{-- Ambil dari relasi service -> pelanggan --}}
+                                <td>{{ $item->service?->pelanggan?->nama_travel ?? 'N/A' }}</td>
+
+                                {{-- Ambil dari relasi document --}}
+                                @if ($item->documentChild?->name)
+                                    <td>{{ $item->documentChild?->name ?? 'N/A' }}</td>
+                                @else
+                                    <td>{{ $item->document?->name ?? 'N/A' }}</td>
+                                @endif
+
+                                {{-- Ambil LANGSUNG dari $item --}}
+                                <td>{{ $item->jumlah }}</td>
+
+                                {{-- Ambil LANGSUNG dari $item --}}
+                                <td>{{ $item->supplier ?? '-' }}</td>
+
+                                {{-- Ambil LANGSUNG dari $item dan beri badge --}}
                                 <td>
-                                   <a href="{{ route('visa.document.customer.detail', $item->id) }}" class="btn btn-primary">
-                                        Lihat Detail
-                                   </a>
+                                    <span class="badge {{ $statusClass }}">{{ $item->status }}</span>
+                                </td>
+
+                                <td>
+                                    <a href="{{ route('visa.document.customer.detail', $item->id) }}"> <button
+                                            class="btn-action btn-view" title="view">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </button>
+                                    </a>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 2rem;">
+                                    Tidak ada data dokumen ditemukan.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
