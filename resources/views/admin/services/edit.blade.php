@@ -1,6 +1,6 @@
 @extends('admin.master')
-
-@section('content')
+@section('title', 'Edit Permintaan Service')
+@push('styles')
     <style>
         :root {
             --haramain-primary: #1a4b8c;
@@ -64,7 +64,8 @@
             .btn { width: 100%; justify-content: center; }
         }
     </style>
-
+@endpush
+@section('content')
     <div class="service-create-container">
         <div class="card">
             <div class="card-header">
@@ -80,7 +81,19 @@
                 <form action="{{ route('services.update', $service->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
-
+                    @if ($errors->any())
+                        <div
+                            style="background-color: #fde8e8; border: 1px solid var(--danger-color); color: #9b1c1c; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h6 style="color: #9b1c1c; margin-top: 0; margin-bottom: 0.75rem; font-weight: 700;">
+                                <i class="bi bi-exclamation-triangle-fill"></i> Terjadi Kesalahan
+                            </h6>
+                            <ul style="margin: 0; padding-left: 20px;">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     {{-- SECTION: DATA TRAVEL --}}
                     <div class="form-section">
                         <h6 class="form-section-title">
@@ -131,14 +144,14 @@
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Keberangkatan</label>
                                     <input type="date" class="form-control" name="tanggal_keberangkatan" required
-                                        value="{{ $service->tanggal_keberangkatan}}"> {{-- Fix: Format date --}}
+                                        value="{{ $service->tanggal_keberangkatan }}"> {{-- Fix: Format date --}}
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Kepulangan</label>
                                     <input type="date" class="form-control" name="tanggal_kepulangan" required
-                                        value="{{ $service->tanggal_kepulangan}}"> {{-- Fix: Format date --}}
+                                        value="{{ $service->tanggal_kepulangan }}"> {{-- Fix: Format date --}}
                                 </div>
                             </div>
                         </div>
@@ -158,36 +171,45 @@
                         $existingBadals = $service->badals;
 
                         // PERBAIKAN: Ambil seluruh objek pivot, diindeks oleh ID master
-                        $selectedGuides   = $service->guides?->keyBy('guide_id') ?? collect();
-                        $selectedMeals    = $service->meals?->keyBy('meal_id') ?? collect();
+                        $selectedGuides = $service->guides?->keyBy('guide_id') ?? collect();
+                        $selectedMeals = $service->meals?->keyBy('meal_id') ?? collect();
                         $selectedDorongan = $service->dorongans?->keyBy('dorongan_id') ?? collect();
-                        $selectedWakaf    = $service->wakafs?->keyBy('wakaf_id') ?? collect();
+                        $selectedWakaf = $service->wakafs?->keyBy('wakaf_id') ?? collect();
                         $selectedContents = $service->contents?->keyBy('content_id') ?? collect();
-                        $selectedTours    = $service->tours?->keyBy('tour_id') ?? collect();
+                        $selectedTours = $service->tours?->keyBy('tour_id') ?? collect();
 
                         // Untuk Dokumen
                         $customerDocs = $service->documents;
 
-                        $selectedDocParents = $customerDocs->whereNotNull('document_children_id')
-                                                           ->pluck('document_id')
-                                                           ->unique()
-                                                           ->toArray();
+                        $selectedDocParents = $customerDocs
+                            ->whereNotNull('document_children_id')
+                            ->pluck('document_id')
+                            ->unique()
+                            ->toArray();
 
-                        $selectedDocChildren = $customerDocs->whereNotNull('document_children_id')
+                        $selectedDocChildren = $customerDocs
+                            ->whereNotNull('document_children_id')
                             ->mapWithKeys(function ($item) {
-                                return [$item->document_children_id => [
-                                    'jumlah' => $item->jumlah,
-                                    'id'     => $item->id
-                                ]];
-                            })->all();
+                                return [
+                                    $item->document_children_id => [
+                                        'jumlah' => $item->jumlah,
+                                        'id' => $item->id,
+                                    ],
+                                ];
+                            })
+                            ->all();
 
-                        $selectedBaseDocs = $customerDocs->whereNull('document_children_id')
+                        $selectedBaseDocs = $customerDocs
+                            ->whereNull('document_children_id')
                             ->mapWithKeys(function ($item) {
-                                return [$item->document_id => [
-                                    'jumlah' => $item->jumlah,
-                                    'id'     => $item->id
-                                ]];
-                            })->all();
+                                return [
+                                    $item->document_id => [
+                                        'jumlah' => $item->jumlah,
+                                        'id' => $item->id,
+                                    ],
+                                ];
+                            })
+                            ->all();
 
                         $allSelectedDocItems = array_merge($selectedDocParents, array_keys($selectedBaseDocs));
 
@@ -206,19 +228,19 @@
                         </h6>
                         <div class="service-grid">
                             @foreach ([
-                                    'transportasi' => ['icon' => 'bi-airplane', 'name' => 'Transportasi'],
-                                    'hotel' => ['icon' => 'bi-building', 'name' => 'Hotel'],
-                                    'dokumen' => ['icon' => 'bi-file-text', 'name' => 'Dokumen'],
-                                    'handling' => ['icon' => 'bi-briefcase', 'name' => 'Handling'],
-                                    'pendamping' => ['icon' => 'bi-people', 'name' => 'Muthowif'],// {{-- Ganti nama --}}
-                                    'konten' => ['icon' => 'bi-camera', 'name' => 'Konten'],
-                                    'reyal' => ['icon' => 'bi-currency-exchange', 'name' => 'Reyal'],
-                                    'tour' => ['icon' => 'bi-geo-alt', 'name' => 'Tour'],
-                                    'meals' => ['icon' => 'bi-egg-fried', 'name' => 'Meals'],
-                                    'dorongan' => ['icon' => 'bi-basket', 'name' => 'Dorongan'],
-                                    'waqaf' => ['icon' => 'bi-gift', 'name' => 'Waqaf'],
-                                    'badal' => ['icon' => 'bi-gift', 'name' => 'Badal Umrah'],
-                                ] as $key => $serviceInfo)
+            'transportasi' => ['icon' => 'bi-airplane', 'name' => 'Transportasi'],
+            'hotel' => ['icon' => 'bi-building', 'name' => 'Hotel'],
+            'dokumen' => ['icon' => 'bi-file-text', 'name' => 'Dokumen'],
+            'handling' => ['icon' => 'bi-briefcase', 'name' => 'Handling'],
+            'pendamping' => ['icon' => 'bi-people', 'name' => 'Muthowif'], // {{-- Ganti nama --}}
+            'konten' => ['icon' => 'bi-camera', 'name' => 'Konten'],
+            'reyal' => ['icon' => 'bi-currency-exchange', 'name' => 'Reyal'],
+            'tour' => ['icon' => 'bi-geo-alt', 'name' => 'Tour'],
+            'meals' => ['icon' => 'bi-egg-fried', 'name' => 'Meals'],
+            'dorongan' => ['icon' => 'bi-basket', 'name' => 'Dorongan'],
+            'waqaf' => ['icon' => 'bi-gift', 'name' => 'Waqaf'],
+            'badal' => ['icon' => 'bi-gift', 'name' => 'Badal Umrah'],
+        ] as $key => $serviceInfo)
                                 <div class="service-item {{ in_array($key, $selectedServices) ? 'selected' : '' }}"
                                     data-service="{{ $key }}">
                                     <div class="service-icon"><i class="bi {{ $serviceInfo['icon'] }}"></i></div>
@@ -245,8 +267,8 @@
                                     <div class="transport-item {{ !$existingPlanes->isEmpty() ? 'selected' : '' }}"
                                         data-transportasi="airplane">
                                         <div class="service-name">Pesawat</div>
-                                        <input type="checkbox" name="transportation_types[]" value="airplane" class="d-none"
-                                            {{ !$existingPlanes->isEmpty() ? 'checked' : '' }}>
+                                        <input type="checkbox" name="transportation_types[]" value="airplane"
+                                            class="d-none" {{ !$existingPlanes->isEmpty() ? 'checked' : '' }}>
                                     </div>
                                     <div class="transport-item {{ !$existingTransports->isEmpty() ? 'selected' : '' }}"
                                         data-transportasi="bus">
@@ -268,7 +290,7 @@
                                                     <div class="col-md-6"><label
                                                             class="form-label fw-semibold">Tanggal</label><input
                                                             type="date" class="form-control" name="tanggal[]"
-                                                            value="{{ $plane->tanggal_keberangkatan}}"></div>
+                                                            value="{{ $plane->tanggal_keberangkatan }}"></div>
                                                     <div class="col-md-6"><label
                                                             class="form-label fw-semibold">Rute</label><input
                                                             type="text" class="form-control" name="rute[]"
@@ -320,7 +342,8 @@
                                 <div class="form-group {{ $existingTransports->isEmpty() ? 'hidden' : '' }}"
                                     id="bis" data-transportasi="bus">
                                     <label class="form-label">Transportasi darat</label>
-                                    <button type="button" class="btn btn-primary btn-sm mb-3" id="add-transport-btn">Tambah
+                                    <button type="button" class="btn btn-primary btn-sm mb-3"
+                                        id="add-transport-btn">Tambah
                                         Transportasi</button>
                                     <div id="new-transport-forms">
                                         @forelse($existingTransports as $index => $transport)
@@ -334,7 +357,8 @@
                                                             data-name="{{ $data->nama }}"
                                                             data-price="{{ $data->harga }}">
                                                             <div class="service-name">{{ $data->nama }}</div>
-                                                            <input type="radio" name="transportation_id[{{$index}}]"
+                                                            <input type="radio"
+                                                                name="transportation_id[{{ $index }}]"
                                                                 value="{{ $data->id }}" class="d-none"
                                                                 {{ $data->id == $transport->transportation_id ? 'checked' : '' }}>
                                                         </div>
@@ -343,14 +367,17 @@
                                                 <div class="route-select mt-3">
                                                     <label class="form-label">Pilih Rute:</label>
                                                     <select name="rute_id[{{ $index }}]" class="form-select">
-                                                        @if($transport->transportation)
-                                                            @foreach($transport->transportation->routes as $route)
-                                                                <option value="{{ $route->id }}" {{ $route->id == $transport->route_id ? 'selected' : '' }}>
-                                                                    {{ $route->route }} - Rp. {{ number_format($route->price) }}
+                                                        @if ($transport->transportation)
+                                                            @foreach ($transport->transportation->routes as $route)
+                                                                <option value="{{ $route->id }}"
+                                                                    {{ $route->id == $transport->route_id ? 'selected' : '' }}>
+                                                                    {{ $route->route }} - Rp.
+                                                                    {{ number_format($route->price) }}
                                                                 </option>
                                                             @endforeach
                                                         @else
-                                                            <option value="">-- Pilih Tipe Transportasi Dulu --</option>
+                                                            <option value="">-- Pilih Tipe Transportasi Dulu --
+                                                            </option>
                                                         @endif
                                                     </select>
                                                 </div>
@@ -359,11 +386,15 @@
                                                 <div class="form-row mt-3">
                                                     <div class="form-col">
                                                         <label class="form-label">Dari Tanggal</label>
-                                                        <input type="date" class="form-control" name="transport_dari[]" value="{{ $transport->dari_tanggal }}">
+                                                        <input type="date" class="form-control"
+                                                            name="transport_dari[]"
+                                                            value="{{ $transport->dari_tanggal }}">
                                                     </div>
                                                     <div class="form-col">
                                                         <label class="form-label">Sampai Tanggal</label>
-                                                        <input type="date" class="form-control" name="transport_sampai[]" value="{{ $transport->sampai_tanggal }}">
+                                                        <input type="date" class="form-control"
+                                                            name="transport_sampai[]"
+                                                            value="{{ $transport->sampai_tanggal }}">
                                                     </div>
                                                 </div>
                                                 {{-- AKHIR BARIS BARU --}}
@@ -399,11 +430,13 @@
                                                 <div class="form-row mt-3">
                                                     <div class="form-col">
                                                         <label class="form-label">Dari Tanggal</label>
-                                                        <input type="date" class="form-control" name="transport_dari[]">
+                                                        <input type="date" class="form-control"
+                                                            name="transport_dari[]">
                                                     </div>
                                                     <div class="form-col">
                                                         <label class="form-label">Sampai Tanggal</label>
-                                                        <input type="date" class="form-control" name="transport_sampai[]">
+                                                        <input type="date" class="form-control"
+                                                            name="transport_sampai[]">
                                                     </div>
                                                 </div>
                                                 {{-- AKHIR BARIS BARU --}}
@@ -423,7 +456,8 @@
                         <div class="detail-form {{ in_array('hotel', $selectedServices) ? '' : 'hidden' }}"
                             id="hotel-details">
                             <h6 class="detail-title"><i class="bi bi-building"></i> Hotel</h6>
-                            <button type="button" class="btn btn-sm btn-primary mb-3" id="addHotel">Tambah Hotel</button>
+                            <button type="button" class="btn btn-sm btn-primary mb-3" id="addHotel">Tambah
+                                Hotel</button>
                             <div id="hotelWrapper">
                                 @forelse($existingHotels as $index => $hotel)
                                     <div class="hotel-form bg-white p-3 border mb-3" data-index="{{ $index }}">
@@ -445,8 +479,9 @@
                                             <div class="col-md-4">
                                                 <label class="form-label fw-semibold">Tipe Kamar</label>
                                                 <select class="form-select" name="type_hotel[]">
-                                                    @foreach($types as $type)
-                                                        <option value="{{ $type->nama_tipe }}" {{ $hotel->type == $type->nama_tipe ? 'selected' : '' }}>
+                                                    @foreach ($types as $type)
+                                                        <option value="{{ $type->nama_tipe }}"
+                                                            {{ $hotel->type == $type->nama_tipe ? 'selected' : '' }}>
                                                             {{ $type->nama_tipe }}
                                                         </option>
                                                     @endforeach
@@ -454,11 +489,13 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label class="form-label fw-semibold">Jumlah Tipe</label>
-                                                <input type="number" class="form-control" name="jumlah_type[]" min="0" value="{{ $hotel->jumlah_type }}">
+                                                <input type="number" class="form-control" name="jumlah_type[]"
+                                                    min="0" value="{{ $hotel->jumlah_type }}">
                                             </div>
                                             <div class="col-md-4">
                                                 <label class="form-label fw-semibold">Jumlah Kamar</label>
-                                                <input type="number" class="form-control" name="jumlah_kamar[]" min="0" value="{{ $hotel->jumlah_kamar }}">
+                                                <input type="number" class="form-control" name="jumlah_kamar[]"
+                                                    min="0" value="{{ $hotel->jumlah_kamar }}">
                                             </div>
 
                                         </div>
@@ -482,18 +519,21 @@
                                             <div class="col-md-4">
                                                 <label class="form-label fw-semibold">Tipe Kamar</label>
                                                 <select class="form-select" name="type_hotel[]">
-                                                    @foreach($types as $type)
-                                                        <option value="{{ $type->nama_tipe }}">{{ $type->nama_tipe }}</option>
+                                                    @foreach ($types as $type)
+                                                        <option value="{{ $type->nama_tipe }}">{{ $type->nama_tipe }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-md-4">
                                                 <label class="form-label fw-semibold">Jumlah Tipe</label>
-                                                <input type="number" class="form-control" name="jumlah_type[]" min="0" value="0">
+                                                <input type="number" class="form-control" name="jumlah_type[]"
+                                                    min="0" value="0">
                                             </div>
                                             <div class="col-md-4">
                                                 <label class="form-label fw-semibold">Jumlah Kamar</label>
-                                                <input type="number" class="form-control" name="jumlah_kamar[]" min="0" value="0">
+                                                <input type="number" class="form-control" name="jumlah_kamar[]"
+                                                    min="0" value="0">
                                             </div>
                                         </div>
                                         <div class="mt-3 text-end"><button type="button"
@@ -515,7 +555,8 @@
                                             data-has-children="{{ $document->childrens->isNotEmpty() ? 'true' : 'false' }}">
                                             <div class="service-name">{{ $document->nama_dokumen }}</div>
 
-                                            <input type="checkbox" name="dokumen_parent_id[]" value="{{ $document->id }}"
+                                            <input type="checkbox" name="dokumen_parent_id[]"
+                                                value="{{ $document->id }}"
                                                 {{ in_array($document->id, $allSelectedDocItems) ? 'checked' : '' }}
                                                 class="d-none">
                                         </div>
@@ -534,7 +575,8 @@
                                                     <div class="child-item {{ array_key_exists($child->id, $selectedDocChildren) ? 'selected' : '' }}"
                                                         data-child-id="{{ $child->id }}">
                                                         <div class="service-name">{{ $child->nama_dokumen }}</div>
-                                                        <div class="service-desc">Rp. {{ number_format($child->harga) }}</div>
+                                                        <div class="service-desc">Rp. {{ number_format($child->harga) }}
+                                                        </div>
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -547,14 +589,19 @@
                                                     <div id="doc-child-form-{{ $child->id }}"
                                                         class="form-group mt-2 bg-white p-3 border rounded {{ $selectedChildData ? '' : 'hidden' }}">
 
-                                                        <input type="hidden" name="customer_document_id[]" value="{{ $selectedChildData['id'] ?? '' }}">
+                                                        <input type="hidden" name="customer_document_id[]"
+                                                            value="{{ $selectedChildData['id'] ?? '' }}">
 
-                                                        <input type="hidden" class="dokumen_id_input" name="dokumen_id[]" value="{{ $child->id }}" {{ !$selectedChildData ? 'disabled' : '' }}>
+                                                        <input type="hidden" class="dokumen_id_input"
+                                                            name="dokumen_id[]" value="{{ $child->id }}"
+                                                            {{ !$selectedChildData ? 'disabled' : '' }}>
 
-                                                        <label class="form-label">Jumlah {{ $child->nama_dokumen }}</label>
+                                                        <label class="form-label">Jumlah
+                                                            {{ $child->nama_dokumen }}</label>
                                                         <input type="number" class="form-control jumlah_doc_child_input"
                                                             name="jumlah_doc_child[]" min="1"
-                                                            value="{{ $selectedChildData['jumlah'] ?? 1 }}" {{ !$selectedChildData ? 'disabled' : '' }}>
+                                                            value="{{ $selectedChildData['jumlah'] ?? 1 }}"
+                                                            {{ !$selectedChildData ? 'disabled' : '' }}>
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -567,14 +614,17 @@
                                         <div class="form-group {{ $selectedBaseData ? '' : 'hidden' }} document-base-form"
                                             id="doc-{{ $document->id }}-form" data-document-id="{{ $document->id }}">
 
-                                            <input type="hidden" name="customer_document_id[]" value="{{ $selectedBaseData['id'] ?? '' }}">
+                                            <input type="hidden" name="customer_document_id[]"
+                                                value="{{ $selectedBaseData['id'] ?? '' }}">
 
-                                            <input type="hidden" class="dokumen_id_input" name="dokumen_id[]" value="{{ $document->id }}" {{ !$selectedBaseData ? 'disabled' : '' }}>
+                                            <input type="hidden" class="dokumen_id_input" name="dokumen_id[]"
+                                                value="{{ $document->id }}" {{ !$selectedBaseData ? 'disabled' : '' }}>
 
                                             <label class="form-label fw-bold">Jumlah {{ $document->nama_dokumen }}</label>
                                             <input type="number" class="form-control jumlah_doc_child_input"
                                                 name="jumlah_doc_child[]" min="1"
-                                                value="{{ $selectedBaseData['jumlah'] ?? 1 }}" {{ !$selectedBaseData ? 'disabled' : '' }}>
+                                                value="{{ $selectedBaseData['jumlah'] ?? 1 }}"
+                                                {{ !$selectedBaseData ? 'disabled' : '' }}>
                                         </div>
                                     @endif
                                 @endforeach
@@ -587,46 +637,79 @@
                             <h6 class="detail-title"><i class="bi bi-briefcase"></i> Handling</h6>
                             <div class="detail-section">
                                 <div class="service-grid">
-                                    <div class="handling-item {{ $existingHandlingHotel ? 'selected' : '' }}" data-handling="hotel">
+                                    <div class="handling-item {{ $existingHandlingHotel ? 'selected' : '' }}"
+                                        data-handling="hotel">
                                         <div class="service-name">Hotel</div>
-                                        <input type="checkbox" name="handlings[]" value="hotel" class="d-none" {{ $existingHandlingHotel ? 'checked' : '' }}>
+                                        <input type="checkbox" name="handlings[]" value="hotel" class="d-none"
+                                            {{ $existingHandlingHotel ? 'checked' : '' }}>
                                     </div>
-                                    <div class="handling-item {{ $existingHandlingPlanes ? 'selected' : '' }}" data-handling="bandara">
+                                    <div class="handling-item {{ $existingHandlingPlanes ? 'selected' : '' }}"
+                                        data-handling="bandara">
                                         <div class="service-name">Bandara</div>
-                                        <input type="checkbox" name="handlings[]" value="bandara" class="d-none" {{ $existingHandlingPlanes ? 'checked' : '' }}>
+                                        <input type="checkbox" name="handlings[]" value="bandara" class="d-none"
+                                            {{ $existingHandlingPlanes ? 'checked' : '' }}>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group {{ $existingHandlingHotel ? '' : 'hidden' }}" id="hotel-handling-form">
-                                <input type="hidden" name="handling_hotel_id" value="{{ $existingHandlingHotel?->id }}">
+                            <div class="form-group {{ $existingHandlingHotel ? '' : 'hidden' }}"
+                                id="hotel-handling-form">
+                                <input type="hidden" name="handling_hotel_id"
+                                    value="{{ $existingHandlingHotel?->id }}">
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Nama Hotel</label><input type="text" class="form-control" name="nama_hotel_handling" value="{{ $existingHandlingHotel?->nama }}"></div>
-                                    <div class="form-col"><label class="form-label">Tanggal</label><input type="date" class="form-control" name="tanggal_hotel_handling" value="{{ $existingHandlingHotel?->tanggal?->format('Y-m-d') }}"></div>
+                                    <div class="form-col"><label class="form-label">Nama Hotel</label><input
+                                            type="text" class="form-control" name="nama_hotel_handling"
+                                            value="{{ $existingHandlingHotel?->nama }}"></div>
+                                    <div class="form-col"><label class="form-label">Tanggal</label><input type="date"
+                                            class="form-control" name="tanggal_hotel_handling"
+                                            value="{{ $existingHandlingHotel?->tanggal?->format('Y-m-d') }}"></div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Harga</label><input type="text" class="form-control" name="harga_hotel_handling" value="{{ $existingHandlingHotel?->harga }}"></div>
-                                    <div class="form-col"><label class="form-label">Pax</label><input type="text" class="form-control" name="pax_hotel_handling" value="{{ $existingHandlingHotel?->pax }}"></div>
+                                    <div class="form-col"><label class="form-label">Harga</label><input type="text"
+                                            class="form-control" name="harga_hotel_handling"
+                                            value="{{ $existingHandlingHotel?->harga }}"></div>
+                                    <div class="form-col"><label class="form-label">Pax</label><input type="text"
+                                            class="form-control" name="pax_hotel_handling"
+                                            value="{{ $existingHandlingHotel?->pax }}"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Kode Booking</label><input type="file" class="form-control" name="kode_booking_hotel_handling">
-                                    <label class="form-label">Room List</label><input type="file" class="form-control" name="rumlis_hotel_handling">
-                                    <label class="form-label">Identitas Koper</label><input type="file" class="form-control" name="identitas_hotel_handling">
+                                    <label class="form-label">Kode Booking</label><input type="file"
+                                        class="form-control" name="kode_booking_hotel_handling">
+                                    <label class="form-label">Room List</label><input type="file" class="form-control"
+                                        name="rumlis_hotel_handling">
+                                    <label class="form-label">Identitas Koper</label><input type="file"
+                                        class="form-control" name="identitas_hotel_handling">
                                 </div>
                             </div>
-                            <div class="form-group {{ $existingHandlingPlanes ? '' : 'hidden' }}" id="bandara-handling-form">
-                                <input type="hidden" name="handling_bandara_id" value="{{ $existingHandlingPlanes?->id }}">
+                            <div class="form-group {{ $existingHandlingPlanes ? '' : 'hidden' }}"
+                                id="bandara-handling-form">
+                                <input type="hidden" name="handling_bandara_id"
+                                    value="{{ $existingHandlingPlanes?->id }}">
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Nama Bandara</label><input type="text" class="form-control" name="nama_bandara_handling" value="{{ $existingHandlingPlanes?->nama_bandara }}"></div>
-                                    <div class="form-col"><label class="form-label">Jumlah Jamaah</label><input type="text" class="form-control" name="jumlah_jamaah_handling" value="{{ $existingHandlingPlanes?->jumlah_jamaah }}"></div>
-                                    <div class="form-col"><label class="form-label">Harga</label><input type="text" class="form-control" name="harga_bandara_handling" value="{{ $existingHandlingPlanes?->harga }}"></div>
+                                    <div class="form-col"><label class="form-label">Nama Bandara</label><input
+                                            type="text" class="form-control" name="nama_bandara_handling"
+                                            value="{{ $existingHandlingPlanes?->nama_bandara }}"></div>
+                                    <div class="form-col"><label class="form-label">Jumlah Jamaah</label><input
+                                            type="text" class="form-control" name="jumlah_jamaah_handling"
+                                            value="{{ $existingHandlingPlanes?->jumlah_jamaah }}"></div>
+                                    <div class="form-col"><label class="form-label">Harga</label><input type="text"
+                                            class="form-control" name="harga_bandara_handling"
+                                            value="{{ $existingHandlingPlanes?->harga }}"></div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Kedatangan Jamaah</label><input type="date" class="form-control" name="kedatangan_jamaah_handling" value="{{ $existingHandlingPlanes?->kedatangan_jamaah?->format('Y-m-d') }}"></div>
-                                    <div class="form-col"><label class="form-label">Paket Info</label><input type="file" class="form-control" name="paket_info"></div>
+                                    <div class="form-col"><label class="form-label">Kedatangan Jamaah</label><input
+                                            type="date" class="form-control" name="kedatangan_jamaah_handling"
+                                            value="{{ $existingHandlingPlanes?->kedatangan_jamaah?->format('Y-m-d') }}">
+                                    </div>
+                                    <div class="form-col"><label class="form-label">Paket Info</label><input
+                                            type="file" class="form-control" name="paket_info"></div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Nama Sopir</label><input type="text" class="form-control" name="nama_supir" value="{{ $existingHandlingPlanes?->nama_supir }}"></div>
-                                    <div class="form-col"><label class="form-label">Identitas Koper</label><input type="file" class="form-control" name="identitas_koper_bandara_handling"></div>
+                                    <div class="form-col"><label class="form-label">Nama Sopir</label><input
+                                            type="text" class="form-control" name="nama_supir"
+                                            value="{{ $existingHandlingPlanes?->nama_supir }}"></div>
+                                    <div class="form-col"><label class="form-label">Identitas Koper</label><input
+                                            type="file" class="form-control" name="identitas_koper_bandara_handling">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -658,11 +741,15 @@
                                         <div class="form-row mt-3">
                                             <div class="form-col">
                                                 <label class="form-label">Dari Tanggal</label>
-                                                <input type="date" class="form-control" name="pendamping_dari[{{ $guide->id }}]" value="{{ $selectedGuide ? $selectedGuide->tanggal_dari?->format('Y-m-d') : '' }}">
+                                                <input type="date" class="form-control"
+                                                    name="pendamping_dari[{{ $guide->id }}]"
+                                                    value="{{ $selectedGuide ? $selectedGuide->tanggal_dari?->format('Y-m-d') : '' }}">
                                             </div>
                                             <div class="form-col">
                                                 <label class="form-label">Sampai Tanggal</label>
-                                                <input type="date" class="form-control" name="pendamping_sampai[{{ $guide->id }}]" value="{{ $selectedGuide ? $selectedGuide->tanggal_sampai?->format('Y-m-d') : '' }}">
+                                                <input type="date" class="form-control"
+                                                    name="pendamping_sampai[{{ $guide->id }}]"
+                                                    value="{{ $selectedGuide ? $selectedGuide->tanggal_sampai?->format('Y-m-d') : '' }}">
                                             </div>
                                         </div>
                                         {{-- AKHIR BARIS BARU --}}
@@ -696,7 +783,9 @@
 
                                         {{-- BARIS BARU: Input Tanggal Konten --}}
                                         <label class="form-label mt-2">Tanggal Pelaksanaan</label>
-                                        <input type="date" class="form-control" name="konten_tanggal[{{ $content->id }}]" value="{{ $selectedContent ? $selectedContent->tanggal_pelaksanaan?->format('Y-m-d') : '' }}">
+                                        <input type="date" class="form-control"
+                                            name="konten_tanggal[{{ $content->id }}]"
+                                            value="{{ $selectedContent ? $selectedContent->tanggal_pelaksanaan?->format('Y-m-d') : '' }}">
                                         {{-- AKHIR BARIS BARU --}}
                                     </div>
                                 @endforeach
@@ -711,17 +800,20 @@
                                 <div class="form-row">
                                     <div class="form-col">
                                         <label class="form-label">Field 1 (contoh)</label>
-                                        <input type="text" class="form-control" name="reyal_field_1" value="{{ $existingReyal?->field_1 }}">
+                                        <input type="text" class="form-control" name="reyal_field_1"
+                                            value="{{ $existingReyal?->field_1 }}">
                                     </div>
                                     <div class="form-col">
                                         <label class="form-label">Field 2 (contoh)</label>
-                                        <input type="text" class="form-control" name="reyal_field_2" value="{{ $existingReyal?->field_2 }}">
+                                        <input type="text" class="form-control" name="reyal_field_2"
+                                            value="{{ $existingReyal?->field_2 }}">
                                     </div>
                                 </div>
                                 {{-- BARIS BARU: Input Tanggal Reyal --}}
                                 <div class="form-group mt-3">
                                     <label class="form-label">Tanggal Penyerahan ke Travel</label>
-                                    <input type="date" class="form-control" name="tanggal_penyerahan_reyal" value="{{ $existingReyal?->tanggal_penyerahan?->format('Y-m-d') }}">
+                                    <input type="date" class="form-control" name="tanggal_penyerahan_reyal"
+                                        value="{{ $existingReyal?->tanggal_penyerahan?->format('Y-m-d') }}">
                                 </div>
                                 {{-- AKHIR BARIS BARU --}}
                             </div>
@@ -735,9 +827,11 @@
                             <div class="detail-section">
                                 <div class="tours service-grid">
                                     @foreach ($tours as $tour)
-                                        <div class="service-tour {{ $selectedTours->has($tour->id) ? 'selected' : '' }}" data-id="{{ $tour->id }}">
+                                        <div class="service-tour {{ $selectedTours->has($tour->id) ? 'selected' : '' }}"
+                                            data-id="{{ $tour->id }}">
                                             <div class="service-name">{{ $tour->name }}</div>
-                                            <input type="checkbox" name="tour_id[]" value="{{ $tour->id }}" class="d-none" {{ $selectedTours->has($tour->id) ? 'checked' : '' }}>
+                                            <input type="checkbox" name="tour_id[]" value="{{ $tour->id }}"
+                                                class="d-none" {{ $selectedTours->has($tour->id) ? 'checked' : '' }}>
                                         </div>
                                     @endforeach
                                 </div>
@@ -752,10 +846,13 @@
                                     <div class="transport-options service-grid">
                                         @foreach ($transportations as $trans)
                                             @php
-                                                $isSelectedTour = $selectedTourData && $selectedTourData->transportation_id == $trans->id;
+                                                $isSelectedTour =
+                                                    $selectedTourData &&
+                                                    $selectedTourData->transportation_id == $trans->id;
                                             @endphp
                                             <div class="transport-option {{ $isSelectedTour ? 'selected' : '' }}"
-                                                data-tour-id="{{ $tour->id }}" data-trans-id="{{ $trans->id }}">
+                                                data-tour-id="{{ $tour->id }}"
+                                                data-trans-id="{{ $trans->id }}">
                                                 <div class="service-name">{{ $trans->nama }}</div>
                                                 <input type="radio" name="tour_transport[{{ $tour->id }}]"
                                                     value="{{ $trans->id }}" class="d-none"
@@ -795,11 +892,15 @@
                                         <div class="form-row mt-3">
                                             <div class="form-col">
                                                 <label class="form-label">Dari Tanggal</label>
-                                                <input type="date" class="form-control" name="meals_dari[{{ $meal->id }}]" value="{{ $selectedMeal ? $selectedMeal->tanggal_dari?->format('Y-m-d') : '' }}">
+                                                <input type="date" class="form-control"
+                                                    name="meals_dari[{{ $meal->id }}]"
+                                                    value="{{ $selectedMeal ? $selectedMeal->tanggal_dari?->format('Y-m-d') : '' }}">
                                             </div>
                                             <div class="form-col">
                                                 <label class="form-label">Sampai Tanggal</label>
-                                                <input type="date" class="form-control" name="meals_sampai[{{ $meal->id }}]" value="{{ $selectedMeal ? $selectedMeal->tanggal_sampai?->format('Y-m-d') : '' }}">
+                                                <input type="date" class="form-control"
+                                                    name="meals_sampai[{{ $meal->id }}]"
+                                                    value="{{ $selectedMeal ? $selectedMeal->tanggal_sampai?->format('Y-m-d') : '' }}">
                                             </div>
                                         </div>
                                         {{-- AKHIR BARIS BARU --}}
@@ -823,7 +924,7 @@
                             </div>
                             <div class="detail-section">
                                 @foreach ($dorongan as $item)
-                                     @php $selectedItem = $selectedDorongan->get($item->id); @endphp
+                                    @php $selectedItem = $selectedDorongan->get($item->id); @endphp
                                     <div id="form-dorongan-{{ $item->id }}"
                                         class="form-group {{ $selectedItem ? '' : 'hidden' }} bg-white p-3 border rounded">
                                         <label class="form-label fw-bold">Jumlah {{ $item->name }}</label>
@@ -833,7 +934,9 @@
 
                                         {{-- BARIS BARU: Input Tanggal Dorongan --}}
                                         <label class="form-label mt-2">Tanggal Pelaksanaan</label>
-                                        <input type="date" class="form-control" name="dorongan_tanggal[{{ $item->id }}]" value="{{ $selectedItem ? $selectedItem->tanggal_pelaksanaan : '' }}">
+                                        <input type="date" class="form-control"
+                                            name="dorongan_tanggal[{{ $item->id }}]"
+                                            value="{{ $selectedItem ? $selectedItem->tanggal_pelaksanaan : '' }}">
                                         {{-- AKHIR BARIS BARU --}}
                                     </div>
                                 @endforeach
@@ -889,7 +992,8 @@
                                         {{-- BARIS BARU: Input Tanggal Badal --}}
                                         <div class="form-group mb-2">
                                             <label class="form-label">Tanggal Pelaksanaan</label>
-                                            <input type="date" class="form-control tanggal_badal" name="tanggal_badal[]" value="{{ $badal->tanggal_pelaksanaan }}">
+                                            <input type="date" class="form-control tanggal_badal"
+                                                name="tanggal_badal[]" value="{{ $badal->tanggal_pelaksanaan }}">
                                         </div>
                                         {{-- AKHIR BARIS BARU --}}
                                         <div class="mt-2 text-end">
@@ -911,7 +1015,8 @@
                                         {{-- BARIS BARU: Input Tanggal Badal --}}
                                         <div class="form-group mb-2">
                                             <label class="form-label">Tanggal Pelaksanaan</label>
-                                            <input type="date" class="form-control tanggal_badal" name="tanggal_badal[]">
+                                            <input type="date" class="form-control tanggal_badal"
+                                                name="tanggal_badal[]">
                                         </div>
                                         {{-- AKHIR BARIS BARU --}}
                                         <div class="mt-2 text-end">
@@ -926,8 +1031,10 @@
 
                     {{-- Tombol Aksi --}}
                     <div class="form-actions">
-                        <button type="submit" name="action" value="nego" class="btn btn-secondary">Simpan sebagai Nego</button>
-                        <button type="submit" name="action" value="deal" class="btn btn-primary">Simpan dan Deal</button>
+                        <button type="submit" name="action" value="nego" class="btn btn-secondary">Simpan sebagai
+                            Nego</button>
+                        <button type="submit" name="action" value="deal" class="btn btn-primary">Simpan dan
+                            Deal</button>
                     </div>
                 </form>
             </div>
@@ -950,8 +1057,8 @@
                 <div class="col-12"><label class="form-label">Jumlah (Jamaah)</label><input type="number"
                         class="form-control" name="jumlah[]"></div>
             </div>
-            <div class="mt-3 text-end"><button type="button"
-                    class="btn btn-danger btn-sm removeTicket">Hapus</button></div>
+            <div class="mt-3 text-end"><button type="button" class="btn btn-danger btn-sm removeTicket">Hapus</button>
+            </div>
         </div>
     </template>
 
@@ -968,7 +1075,7 @@
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Tipe Kamar</label>
                     <select class="form-select" name="type_hotel[]">
-                        @foreach($types as $type)
+                        @foreach ($types as $type)
                             <option value="{{ $type->nama_tipe }}">{{ $type->nama_tipe }}</option>
                         @endforeach
                     </select>
@@ -982,13 +1089,13 @@
                     <input type="number" class="form-control" name="jumlah_kamar[]" min="0" value="0">
                 </div>
             </div>
-            <div class="mt-3 text-end"><button type="button"
-                    class="btn btn-danger btn-sm removeHotel">Hapus</button></div>
+            <div class="mt-3 text-end"><button type="button" class="btn btn-danger btn-sm removeHotel">Hapus</button>
+            </div>
         </div>
     </template>
 
     <template id="badal-template">
-         <div class="badal-form bg-white p-3 border mb-3">
+        <div class="badal-form bg-white p-3 border mb-3">
             <div class="form-group mb-2">
                 <label class="form-label">Nama yang dibadalkan</label>
                 <input type="text" class="form-control nama_badal" name="nama_badal[]">
@@ -1014,9 +1121,8 @@
             <input type="hidden" name="item_id[]" value="">
             <div class="cars">
                 @foreach ($transportations as $data)
-                    <div class="service-car" data-id="{{ $data->id }}"
-                        data-routes='@json($data->routes)' data-name="{{ $data->nama }}"
-                        data-price="{{ $data->harga }}">
+                    <div class="service-car" data-id="{{ $data->id }}" data-routes='@json($data->routes)'
+                        data-name="{{ $data->nama }}" data-price="{{ $data->harga }}">
                         <div class="service-name">{{ $data->nama }}</div>
                         <input type="radio" name="transportation_id[0]" {{-- name akan diupdate JS --}}
                             value="{{ $data->id }}" class="d-none">
@@ -1082,8 +1188,10 @@
                 const hotelForm = template.querySelector('.hotel-form');
                 hotelForm.dataset.index = hotelCounter;
                 // Update name attributes for arrays
-                hotelForm.querySelector('[name="tanggal_checkin[]"]').name = `tanggal_checkin[${hotelCounter}]`;
-                hotelForm.querySelector('[name="tanggal_checkout[]"]').name = `tanggal_checkout[${hotelCounter}]`;
+                hotelForm.querySelector('[name="tanggal_checkin[]"]').name =
+                    `tanggal_checkin[${hotelCounter}]`;
+                hotelForm.querySelector('[name="tanggal_checkout[]"]').name =
+                    `tanggal_checkout[${hotelCounter}]`;
                 hotelForm.querySelector('[name="nama_hotel[]"]').name = `nama_hotel[${hotelCounter}]`;
                 hotelForm.querySelector('[name="type_hotel[]"]').name = `type_hotel[${hotelCounter}]`;
                 hotelForm.querySelector('[name="jumlah_type[]"]').name = `jumlah_type[${hotelCounter}]`;
@@ -1110,8 +1218,10 @@
                 });
                 // Update name untuk select, input tanggal
                 transportSet.querySelector('select').name = `rute_id[${newIndex}]`;
-                transportSet.querySelector('[name="transport_dari[]"]').name = `transport_dari[${newIndex}]`;
-                transportSet.querySelector('[name="transport_sampai[]"]').name = `transport_sampai[${newIndex}]`;
+                transportSet.querySelector('[name="transport_dari[]"]').name =
+                `transport_dari[${newIndex}]`;
+                transportSet.querySelector('[name="transport_sampai[]"]').name =
+                    `transport_sampai[${newIndex}]`;
                 transportSet.querySelector('[name="item_id[]"]').name = `item_id[${newIndex}]`;
 
                 document.getElementById('new-transport-forms').appendChild(template);
@@ -1152,9 +1262,10 @@
 
                 // --- 3. Klik Pilihan Handling (Hotel / Bandara) ---
                 const handlingItem = e.target.closest('.handling-item');
-                if(handlingItem) {
+                if (handlingItem) {
                     const type = handlingItem.dataset.handling;
-                    const form = document.getElementById(type === 'hotel' ? 'hotel-handling-form' : 'bandara-handling-form');
+                    const form = document.getElementById(type === 'hotel' ? 'hotel-handling-form' :
+                        'bandara-handling-form');
                     const checkbox = handlingItem.querySelector('input');
 
                     handlingItem.classList.toggle('selected');
@@ -1164,13 +1275,17 @@
                 }
 
                 // --- 4. Klik Item Pilihan (Pendamping, Konten, Meal, dll) ---
-                const toggleItem = e.target.closest('.pendamping-item, .content-item, .meal-item, .dorongan-item, .wakaf-item, .service-tour');
+                const toggleItem = e.target.closest(
+                    '.pendamping-item, .content-item, .meal-item, .dorongan-item, .wakaf-item, .service-tour'
+                    );
                 if (toggleItem) {
-                    const type = toggleItem.dataset.type || (toggleItem.classList.contains('service-tour') ? 'tour' : null);
+                    const type = toggleItem.dataset.type || (toggleItem.classList.contains('service-tour') ?
+                        'tour' : null);
                     const id = toggleItem.dataset.id;
 
-                    if(type && id) {
-                        const form = document.getElementById(`form-${type}-${id}`) || document.getElementById(`${type}-${id}-form`);
+                    if (type && id) {
+                        const form = document.getElementById(`form-${type}-${id}`) || document
+                            .getElementById(`${type}-${id}-form`);
                         toggleItem.classList.toggle('selected');
 
                         if (form) {
@@ -1179,14 +1294,15 @@
 
                         if (type === 'tour') {
                             const tourCheckbox = toggleItem.querySelector('input[type="checkbox"]');
-                            if(tourCheckbox) tourCheckbox.checked = toggleItem.classList.contains('selected');
+                            if (tourCheckbox) tourCheckbox.checked = toggleItem.classList.contains(
+                                'selected');
                         }
                     }
                 }
 
                 // --- 5. Klik Pilihan Transportasi untuk Tour ---
                 const tourTransportOption = e.target.closest('.transport-option');
-                if(tourTransportOption) {
+                if (tourTransportOption) {
                     const group = tourTransportOption.closest('.transport-options');
                     group.querySelectorAll('.transport-option').forEach(opt => {
                         if (opt !== tourTransportOption) {
@@ -1207,7 +1323,7 @@
                     const routeSelect = routeSelectDiv.querySelector('select');
 
                     transportSet.querySelectorAll('.service-car').forEach(car => {
-                         if (car !== serviceCar) {
+                        if (car !== serviceCar) {
                             car.classList.remove('selected');
                             car.querySelector('input[type="radio"]').checked = false;
                         }
@@ -1219,14 +1335,15 @@
                     const routes = JSON.parse(serviceCar.dataset.routes || '[]');
                     routeSelect.innerHTML = '<option value="">-- Pilih Rute --</option>';
                     routes.forEach(route => {
-                        routeSelect.innerHTML += `<option value="${route.id}" data-price="${route.price}">${route.route} - Rp. ${parseInt(route.price).toLocaleString('id-ID')}</option>`;
+                        routeSelect.innerHTML +=
+                            `<option value="${route.id}" data-price="${route.price}">${route.route} - Rp. ${parseInt(route.price).toLocaleString('id-ID')}</option>`;
                     });
                     routeSelectDiv.classList.remove('hidden');
                 }
 
                 // --- 7. Klik Pilihan Dokumen (Parent) ---
                 const documentItem = e.target.closest('.document-item');
-                if(documentItem) {
+                if (documentItem) {
                     const docId = documentItem.dataset.documentId;
                     const hasChildren = documentItem.dataset.hasChildren === 'true';
                     const checkbox = documentItem.querySelector('input');
@@ -1243,15 +1360,16 @@
 
                     if (form) {
                         form.classList.toggle('hidden', !checkbox.checked);
-                        form.querySelectorAll('input.dokumen_id_input, input.jumlah_doc_child_input').forEach(input => {
-                            input.disabled = !checkbox.checked;
-                        });
+                        form.querySelectorAll('input.dokumen_id_input, input.jumlah_doc_child_input')
+                            .forEach(input => {
+                                input.disabled = !checkbox.checked;
+                            });
                     }
                 }
 
                 // --- 8. Klik Pilihan Dokumen (Anak) ---
                 const childItem = e.target.closest('.child-item');
-                if(childItem) {
+                if (childItem) {
                     const childId = childItem.dataset.childId;
                     const form = document.getElementById(`doc-child-form-${childId}`);
 
@@ -1259,14 +1377,16 @@
 
                     if (form) {
                         form.classList.toggle('hidden', !childItem.classList.contains('selected'));
-                        form.querySelectorAll('input.dokumen_id_input, input.jumlah_doc_child_input').forEach(input => {
-                            input.disabled = !childItem.classList.contains('selected');
-                        });
+                        form.querySelectorAll('input.dokumen_id_input, input.jumlah_doc_child_input')
+                            .forEach(input => {
+                                input.disabled = !childItem.classList.contains('selected');
+                            });
                     }
                 }
 
                 // --- 9. Tombol Hapus Dinamis ---
-                const removeAction = (e, wrapperId, itemClass, minItems = 1, alertMsg = 'Minimal harus ada 1 form.') => {
+                const removeAction = (e, wrapperId, itemClass, minItems = 1, alertMsg =
+                    'Minimal harus ada 1 form.') => {
                     const wrapper = e.target.closest(wrapperId);
                     if (wrapper.querySelectorAll(itemClass).length > minItems) {
                         e.target.closest(itemClass).remove();
@@ -1279,7 +1399,8 @@
                     removeAction(e, '#ticketWrapper', '.ticket-form', 1, 'Minimal harus ada 1 form tiket.');
                 }
                 if (e.target.matches('.remove-transport')) {
-                    removeAction(e, '#new-transport-forms', '.transport-set', 1, 'Minimal harus ada 1 form transportasi darat.');
+                    removeAction(e, '#new-transport-forms', '.transport-set', 1,
+                        'Minimal harus ada 1 form transportasi darat.');
                 }
                 if (e.target.matches('.removeHotel')) {
                     removeAction(e, '#hotelWrapper', '.hotel-form', 1, 'Minimal harus ada 1 form hotel.');
