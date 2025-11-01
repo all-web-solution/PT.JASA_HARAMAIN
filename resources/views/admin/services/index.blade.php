@@ -489,19 +489,34 @@
                 /* Paginasi di tengah */
             }
         }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spin {
+            display: inline-block;
+            animation: spin 3s linear infinite;
+        }
     </style>
 @endpush
 @section('content')
     <div class="service-list-container">
         <div class="row g-3 mb-4 p-1"> {{-- Assuming you use a Bootstrap row --}}
             <x-card-component class="col-xl-3 col-md-6" title="Total Nego" :count="$totalNegoOverall" {{-- Use variable from controller --}}
-                icon="bi bi-hourglass-split" {{-- Example icon --}} iconColor="var(--haramain-primary)" textColor="text-primary"
+                icon="bi bi-hourglass-split spin" {{-- Example icon --}} iconColor="var(--haramain-primary)" textColor="text-primary"
                 desc="Menunggu konfirmasi" />
             <x-card-component class="col-xl-3 col-md-6" title="Persiapan" :count="$totalPersiapanOverall" {{-- Use variable from controller --}}
                 icon="bi bi-box-seam" {{-- Example icon --}} iconColor="var(--haramain-primary)" textColor="text-primary"
                 desc="Sedang dipersiapkan" />
             <x-card-component class="col-xl-3 col-md-6" title="Tahap Produksi" :count="$totalProduksiOverall" {{-- Use variable from controller --}}
-                icon="bi bi-gear-fill" {{-- Example icon --}} iconColor="var(--haramain-primary)" textColor="text-primary"
+                icon="bi bi-gear-fill spin" {{-- Example icon --}} iconColor="var(--haramain-primary)" textColor="text-primary"
                 desc="Sedang dikerjakan" />
             <x-card-component class="col-xl-3 col-md-6" title="Selesai (Done)" :count="$totalDoneOverall" {{-- Use variable from controller --}}
                 icon="bi bi-check2-circle" {{-- Example icon --}} iconColor="var(--haramain-primary)"
