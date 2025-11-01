@@ -398,6 +398,7 @@
                         <tr>
                             <th>Invoice</th>
                             <th>Nama Pelanggan</th>
+                            <th>Estimasi</th>
                             <th>Tagihan</th>
                             <th>Dibayar</th>
                             <th>Sisa</th>
@@ -420,6 +421,7 @@
                                     <td data-label="Invoice">{{ $order->invoice }}</td>
                                     <td data-label="Nama Pelanggan">{{ $order->service?->pelanggan?->nama_travel ?? '-' }}
                                     </td>
+                                    <td data-label="Estimasi">{{ number_format($order->total_estimasi, 0, ',', '.') }}</td>
                                     <td data-label="Total">{{ number_format($order->total_amount, 0, ',', '.') }}</td>
                                     <td data-label="Dibayar">
                                         {{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}
