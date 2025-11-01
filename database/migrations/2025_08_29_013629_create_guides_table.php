@@ -34,6 +34,7 @@ return new class extends Migration
                 $table->date('muthowif_sampai');
                 $table->string('supplier')->nullable();
                 $table->string('harga_dasar')->nullable();
+                $table->string('harga_jual')->nullable();
             $table->timestamps();
         });
     }
