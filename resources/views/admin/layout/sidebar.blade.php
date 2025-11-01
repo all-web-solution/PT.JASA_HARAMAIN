@@ -25,7 +25,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.order*') || request()->routeIs('orders*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('admin.order*') || request()->routeIs('orders*') || request()->routeIs('payment.*') ? 'active' : '' }}"
                     href="{{ route('admin.order') }}">
                     <i class="bi bi-credit-card-2-back"></i> PAYMENT
                 </a>
