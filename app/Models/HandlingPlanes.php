@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class HandlingPlanes extends Model
 {
-    protected $fillable = ['handling_id', 'nama_bandara', 'jumlah_jamaah', 'harga', 'kedatangan_jamaah', 'paket_info', 'nama_supir', 'identitas_koper', 'status', 'harga_dasar', 'supplier',];
+    protected $fillable = ['handling_id', 'nama_bandara', 'jumlah_jamaah', 'harga', 'kedatangan_jamaah', 'paket_info', 'nama_supir', 'identitas_koper', 'status', 'harga_dasar', 'harga_jual', 'supplier',];
     public function handling()
     {
         return $this->belongsTo(Handling::class);

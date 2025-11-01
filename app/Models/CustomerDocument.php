@@ -14,6 +14,7 @@ class CustomerDocument extends Model
         'harga',
         'status',
         'harga_dasar',
+        'harga_jual',
         'supplier',
     ];
 

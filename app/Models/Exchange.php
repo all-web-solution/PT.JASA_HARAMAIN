@@ -14,7 +14,8 @@ class Exchange extends Model
         'hasil',
         'tanggal_penyerahan',
         'supplier',
-        'harga_dasar'
+        'harga_dasar',
+        'harga_jual'
     ];
 
     public function service(){

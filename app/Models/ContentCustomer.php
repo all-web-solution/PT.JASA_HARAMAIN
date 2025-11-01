@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContentCustomer extends Model
 {
-    protected $fillable = ['service_id', 'content_id', 'jumlah', 'keterangan', 'status', 'tanggal_pelaksanaan', 'supplier', 'harga_dasar'];
+    protected $fillable = ['service_id', 'content_id', 'jumlah', 'keterangan', 'status', 'tanggal_pelaksanaan', 'supplier', 'harga_dasar', 'harga_jual'];
 
     public function service()
     {
