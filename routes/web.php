@@ -202,6 +202,8 @@ Route::middleware(['auth', 'visa'])->group(function () {
     Route::delete('/document/{id}/detail/delete', [DocumentController::class, 'createDocumentDelete'])->name('visa.document.show.delete');
     Route::get('/document/customer', [DocumentController::class, 'customer'])->name('visa.document.customer');
     Route::get('/document/customer/{id}/detail', [DocumentController::class, 'detail'])->name('visa.document.customer.detail');
+    Route::get('/document-customer/{document}/edit', [DocumentController::class, 'editDocumentCustomer'])->name('document.customer.edit');
+    Route::put('/document-customer/{document}', [DocumentController::class, 'updateDocumentCustomer'])->name('document.customer.update');
     Route::get('/document/supplier/{id}', [DocumentController::class, 'supplier'])->name('visa.document.customer.detail.supplier');
     Route::get('/document/supplier/{id}/create', [DocumentController::class, 'supplier_create'])->name('visa.document.customer.detail.supplier.create');
     Route::put('/document/supplier/{id}/store', [DocumentController::class, 'supplier_store'])->name('visa.document.customer.detail.supplier.store');
@@ -259,6 +261,9 @@ Route::middleware(['auth', 'content'])->group(function () {
     Route::put('/content/update/{id}', [ContentController::class, 'update'])->name('content.update');
     Route::delete('/content/delete/{id}', [ContentController::class, 'destroy'])->name('content.destroy');
     Route::get('/content/customer', [ContentController::class, 'customer'])->name('content.customer');
+    Route::get('/content-customer/detail/{id}', [ContentController::class, 'showContentItemDetail'])->name('content.customer.detail');
+    Route::get('/customers/{contentCustomer}/edit', [ContentController::class, 'editCustomer'])->name('customer.edit');
+    Route::put('/customers/{contentCustomer}', [ContentController::class, 'updateCustomer'])->name('customer.update');
     Route::get('/content/supplier/{id}', [ContentController::class, 'showSupplier'])->name('content.supplier');
     Route::get('/content/supplier/{id}/create', [ContentController::class, 'createSupplier'])->name('content.supplier.create');
     Route::put('/content/supplier/{id}/create', [ContentController::class, 'storeSupplier'])->name('content.supplier.store');
