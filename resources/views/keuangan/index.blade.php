@@ -113,11 +113,11 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-subtitle mb-1">Total Belum bayar</h6>
+                            <h4 class="card-subtitle mb-1">Total Belum bayar</h4>
                             <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
                                 {{ $dataBelumBayar->count() }}
                             </h3>
-                            <p class="card-text text-danger mb-0"><small>3 overdue</small></p>
+
                         </div>
                         <div class="bg-warning bg-opacity-10 p-3 rounded">
                             <i class="bi bi-clock-history fs-4" style="color: #ff9800;"></i>
@@ -131,11 +131,11 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-subtitle mb-1">Total belum lunas</h6>
+                            <h4 class="card-subtitle mb-1">Total belum lunas</h4>
                             <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
                                 {{ $dataBelumLunas->count() }}
                             </h3>
-                            <p class="card-text text-danger mb-0"><small>3 overdue</small></p>
+
                         </div>
                         <div class="bg-warning bg-opacity-10 p-3 rounded">
                             <i class="bi bi-hourglass-split fs-4" style="color: #ff9800;"></i>
@@ -149,11 +149,11 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-subtitle mb-1">Total lunas</h6>
+                            <h4 class="card-subtitle mb-1">Total lunas</h4>
                             <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
                                 {{ $dataLunas->count() }}
                             </h3>
-                            <p class="card-text text-success mb-0"><small>+10 this week</small></p>
+
                         </div>
                         <div class="bg-success bg-opacity-10 p-3 rounded">
                             <i class="bi bi-check-circle fs-4" style="color: #4caf50;"></i>
@@ -167,11 +167,10 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-subtitle mb-1">Total Keseluruhan</h6>
+                            <h4 class="card-subtitle mb-1">Total Keseluruhan</h4>
                             <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
                                 Rp. {{ number_format($totalKeseluruhan) }}
                             </h3>
-                            <p class="card-text text-muted mb-0"><small>All status combined</small></p>
                         </div>
                         <div class="bg-primary bg-opacity-10 p-3 rounded">
                             <i class="bi bi-currency-dollar fs-4" style="color: #0d6efd;"></i>
@@ -184,7 +183,7 @@
         <div class="col-xl-4 col-md-6" id="card-reponsive">
             <div class="card card-stat h-100">
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-1">Jumlah Belum bayar</h6>
+                    <h4 class="card-subtitle mb-1">Jumlah Belum bayar</h4>
                     <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
                         Rp. {{ number_format($totalBelumBayar) }}
                     </h3>
@@ -194,7 +193,7 @@
         <div class="col-xl-4 col-md-6" id="card-reponsive">
             <div class="card card-stat h-100">
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-1">Jumlah belum lunas</h6>
+                    <h4 class="card-subtitle mb-1">Jumlah belum lunas</h4>
                     <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
                         Rp. {{ number_format($totalBelumLunas) }}
                     </h3>
@@ -204,7 +203,7 @@
         <div class="col-xl-4 col-md-6" id="card-reponsive">
             <div class="card card-stat h-100">
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-1">Jumlah lunas</h6>
+                    <h4 class="card-subtitle mb-1">Jumlah lunas</h4>
                     <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
                         Rp. {{ number_format($totalLunas) }}
                     </h3>
@@ -221,20 +220,7 @@
         <!-- Kolom Grafik Batang (8 unit) -->
         <div class="col-lg-8">
             <div class="chart-container h-100">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold mb-0" style="color: var(--haramain-primary);">
-                        <i class="bi bi-bar-chart-line me-2"></i>Monthly Performance
-                    </h5>
-                    <div class="dropdown">
-                        <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                            style="background-color: var(--haramain-light); color: var(--haramain-primary); border: 1px solid rgba(0, 0, 0, 0.08);">
-                            This Year
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">This Year</a></li>
-                        </ul>
-                    </div>
-                </div>
+               
                 <div class="chart-wrapper" style="height: 300px;">
                     <canvas id="monthlyPerformanceChart"></canvas>
                 </div>
@@ -244,9 +230,6 @@
         <!-- Kolom Grafik Bulat (4 unit) -->
         <div class="col-lg-4">
             <div class="chart-container h-100">
-                <h5 class="fw-bold mb-3" style="color: var(--haramain-primary);">
-                    <i class="bi bi-pie-chart me-2"></i>Status Distribution
-                </h5>
                 <div class="chart-wrapper d-flex justify-content-center align-items-center"
                     style="height: 300px;">
                     <canvas id="statusDistributionChart" style="max-height: 300px; max-width: 300px;"></canvas>
