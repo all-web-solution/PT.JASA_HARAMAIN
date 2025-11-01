@@ -13,60 +13,7 @@
     <link rel="manifest" href="{{ asset('favicon/site.webmanifest') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --haramain-primary: #0d47a1;
-            --haramain-secondary: #1976d2;
-            --haramain-light: #f8fafc;
-            --haramain-accent: #42a5f5;
-            --text-primary: #334155;
-            --text-secondary: #64748b;
-            --text-muted: #94a3b8;
-        }
-
-        .gradient-bg {
-            background: linear-gradient(180deg, var(--haramain-primary) 0%, var(--haramain-secondary) 100%);
-        }
-
-        .input-focus:focus {
-            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.3);
-        }
-
-        .shake {
-            animation: shake 0.5s;
-        }
-
-        @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            10%,
-            30%,
-            50%,
-            70%,
-            90% {
-                transform: translateX(-5px);
-            }
-
-            20%,
-            40%,
-            60%,
-            80% {
-                transform: translateX(5px);
-            }
-        }
-
-        @media screen and (max-width: 320px) {
-            #title {
-                font-size: 20px;
-            }
-
-            #bg-login {
-                width: 300px;
-            }
-        }
+        :root{--haramain-primary:#0d47a1;--haramain-secondary:#1976d2;--haramain-light:#f8fafc;--haramain-accent:#42a5f5;--text-primary:#334155;--text-secondary:#64748b;--text-muted:#94a3b8}.gradient-bg{background:linear-gradient(180deg,var(--haramain-primary) 0%,var(--haramain-secondary) 100%)}.input-focus:focus{box-shadow:0 0 0 3px rgb(118 75 162 / .3)}.shake{animation:shake 0.5s}@keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-5px)}20%,40%,60%,80%{transform:translateX(5px)}}@media screen and (max-width:320px){#title{font-size:20px}#bg-login{width:300px}}
     </style>
 </head>
 
@@ -146,30 +93,8 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const togglePassword = document.getElementById("togglePassword");
-            const passwordInput = document.getElementById("password");
-            const icon = togglePassword.querySelector("i");
-
-            togglePassword.addEventListener("click", function() {
-                const isPassword = passwordInput.type === "password";
-                passwordInput.type = isPassword ? "text" : "password";
-
-                // Ganti ikon
-                icon.classList.toggle("fa-eye");
-                icon.classList.toggle("fa-eye-slash");
-
-                // Opsional: ubah warna saat aktif
-                if (!isPassword) {
-                    icon.classList.remove("text-indigo-600");
-                } else {
-                    icon.classList.add("text-indigo-600");
-                }
-            });
-        });
+        document.addEventListener("DOMContentLoaded",function(){const togglePassword=document.getElementById("togglePassword");const passwordInput=document.getElementById("password");const icon=togglePassword.querySelector("i");togglePassword.addEventListener("click",function(){const isPassword=passwordInput.type==="password";passwordInput.type=isPassword?"text":"password";icon.classList.toggle("fa-eye");icon.classList.toggle("fa-eye-slash");if(!isPassword){icon.classList.remove("text-indigo-600")}else{icon.classList.add("text-indigo-600")}})})
     </script>
-
-
 </body>
 
 </html>
