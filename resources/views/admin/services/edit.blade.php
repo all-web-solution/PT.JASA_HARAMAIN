@@ -1434,15 +1434,17 @@
 
     <template id="transport-set-template">
         <div class="transport-set card p-3 mt-3" data-index="0">
-            <input type="hidden" name="item_id[]" value=""> {{-- Pastikan ada item_id kosong --}}
+            <input type="hidden" name="item_id[]" value="">
             <div class="cars">
                 @foreach ($transportations as $data)
                     <div class="service-car" data-id="{{ $data->id }}"
                         data-routes='@json($data->routes)' data-name="{{ $data->nama }}"
                         data-price="{{ $data->harga }}">
                         <div class="service-name">{{ $data->nama }}</div>
-                        <input type="radio" name="transportation_id[0]" value="{{ $data->id }}"
-                            class="d-none">
+                        <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
+                        <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
+                        <div class="service-desc">Harga: {{ number_format($data->harga) }}/hari</div>
+                        <input type="radio" name="transportation_id[0]" value="{{ $data->id }}">
                     </div>
                 @endforeach
             </div>
@@ -1582,7 +1584,7 @@
                 });
                 transportSet.querySelector('select').name = `rute_id[${newIndex}]`;
                 transportSet.querySelector('[name="transport_dari[]"]').name =
-                `transport_dari[${newIndex}]`; // PERBAIKAN: Ganti nama
+                `transport_dari[${newIndex}]`;  // PERBAIKAN: Ganti nama
                 transportSet.querySelector('[name="transport_sampai[]"]').name =
                     `transport_sampai[${newIndex}]`; // PERBAIKAN: Ganti nama
 
@@ -1601,15 +1603,36 @@
                     const checkbox = serviceItem.querySelector('input[type="checkbox"]');
                     const detailForm = document.getElementById(`${serviceType}-details`);
 
+                    // Toggle status
                     serviceItem.classList.toggle('selected');
-                    checkbox.checked = serviceItem.classList.contains('selected');
+                    const isSelected = serviceItem.classList.contains('selected'); // Dapatkan status baru
+                    checkbox.checked = isSelected;
 
                     if (detailForm) {
-                        detailForm.classList.toggle('hidden', !checkbox.checked);
+                        detailForm.classList.toggle('hidden', !isSelected); // Sembunyikan/tampilkan form
+
+                        // ▼▼▼ PERBAIKAN 1: VALIDASI ▼▼▼
+                        // Nonaktifkan semua input di dalamnya jika service TIDAK dipilih.
+                        detailForm.querySelectorAll('input, select, textarea, button').forEach(el => {
+                            // Jangan disable tombol "Kembali ke Pilihan Layanan"
+                            if (!el.classList.contains('back-to-services-btn')) {
+                                el.disabled = !isSelected;
+                            }
+                        });
+
+                        // ▼▼▼ PERBAIKAN 2: AUTO-SCROLL ▼▼▼
+                        if (isSelected) {
+                            detailForm.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
                     }
                 }
+                // ▲▲▲ AKHIR BLOK PERBAIKAN ▲▲▲
 
                 // --- 2. Klik Pilihan Transportasi (Pesawat / Bus) ---
+                // ▼▼▼ BLOK INI TELAH DIPERBAIKI ▼▼▼
                 const transportItem = e.target.closest('.transport-item');
                 if (transportItem) {
                     const type = transportItem.dataset.transportasi;
@@ -1617,12 +1640,24 @@
                     const checkbox = transportItem.querySelector('input');
 
                     transportItem.classList.toggle('selected');
-                    checkbox.checked = transportItem.classList.contains('selected');
+                    const isSelected = transportItem.classList.contains('selected'); // Dapatkan status baru
+                    checkbox.checked = isSelected;
 
-                    if (form) form.classList.toggle('hidden', !checkbox.checked);
+                    if (form) {
+                        form.classList.toggle('hidden', !isSelected);
+                        // 💡 PERBAIKAN UTAMA: Nonaktifkan input di dalam sub-form
+                        form.querySelectorAll('input, select, textarea, button').forEach(el => {
+                             // Jangan disable tombol "Tambah" atau "Hapus"
+                            if (!el.classList.contains('removeTicket') && !el.classList.contains('remove-transport') && !el.id.includes('addTicket') && !el.id.includes('add-transport-btn')) {
+                                el.disabled = !isSelected;
+                            }
+                        });
+                    }
                 }
+                // ▲▲▲ AKHIR BLOK PERBAIKAN ▲▲▲
 
                 // --- 3. Klik Pilihan Handling (Hotel / Bandara) ---
+                // ▼▼▼ BLOK INI TELAH DIPERBAIKI ▼▼▼
                 const handlingItem = e.target.closest('.handling-item');
                 if (handlingItem) {
                     const type = handlingItem.dataset.handling;
@@ -1631,12 +1666,21 @@
                     const checkbox = handlingItem.querySelector('input');
 
                     handlingItem.classList.toggle('selected');
-                    checkbox.checked = handlingItem.classList.contains('selected');
+                    const isSelected = handlingItem.classList.contains('selected'); // Dapatkan status baru
+                    checkbox.checked = isSelected;
 
-                    if (form) form.classList.toggle('hidden', !checkbox.checked);
+                    if (form) {
+                        form.classList.toggle('hidden', !isSelected);
+                        // 💡 PERBAIKAN UTAMA: Nonaktifkan input di dalamnya
+                        form.querySelectorAll('input, select, textarea').forEach(el => {
+                            el.disabled = !isSelected;
+                        });
+                    }
                 }
+                // ▲▲▲ AKHIR BLOK PERBAIKAN ▲▲▲
 
                 // --- 4. Klik Item Pilihan (Pendamping, Konten, Meal, dll) ---
+                // ▼▼▼ BLOK INI TELAH DIPERBAIKI ▼▼▼
                 const toggleItem = e.target.closest(
                     '.pendamping-item, .content-item, .meal-item, .dorongan-item, .wakaf-item, .service-tour'
                 );
@@ -1652,7 +1696,11 @@
 
                         if (form) {
                             form.classList.toggle('hidden', !isSelected);
-                            // Set nilai default ke 0 atau 1 saat toggle
+                            // 💡 PERBAIKAN UTAMA: Nonaktifkan input di dalamnya
+                            form.querySelectorAll('input, select, textarea').forEach(el => {
+                                el.disabled = !isSelected;
+                            });
+
                             const qtyInput = form.querySelector('input[type="number"]');
                             if (qtyInput) {
                                 if (isSelected && (qtyInput.value === '0' || qtyInput.value === '')) {
@@ -1667,6 +1715,7 @@
                         }
                     }
                 }
+                // ▲▲▲ AKHIR BLOK PERBAIKAN ▲▲▲
 
                 // --- 5. Klik Pilihan Transportasi untuk Tour ---
                 const tourTransportOption = e.target.closest('.transport-option');
@@ -1717,7 +1766,8 @@
                     const checkbox = documentItem.querySelector('input');
 
                     documentItem.classList.toggle('selected');
-                    checkbox.checked = documentItem.classList.contains('selected');
+                    const isSelected = documentItem.classList.contains('selected');
+                    checkbox.checked = isSelected;
 
                     let form;
                     if (hasChildren) {
@@ -1727,10 +1777,10 @@
                     }
 
                     if (form) {
-                        form.classList.toggle('hidden', !checkbox.checked);
+                        form.classList.toggle('hidden', !isSelected);
                         form.querySelectorAll('input.dokumen_id_input, input.jumlah_doc_child_input')
                             .forEach(input => {
-                                input.disabled = !checkbox.checked;
+                                input.disabled = !isSelected;
                             });
                     }
                 }
@@ -1742,44 +1792,44 @@
                     const form = document.getElementById(`doc-child-form-${childId}`);
 
                     childItem.classList.toggle('selected');
+                    const isSelected = childItem.classList.contains('selected');
 
                     if (form) {
-                        form.classList.toggle('hidden', !childItem.classList.contains('selected'));
+                        form.classList.toggle('hidden', !isSelected);
                         form.querySelectorAll('input.dokumen_id_input, input.jumlah_doc_child_input')
                             .forEach(input => {
-                                input.disabled = !childItem.classList.contains('selected');
+                                input.disabled = !isSelected;
                             });
                     }
                 }
 
                 // --- 9. Tombol Hapus Dinamis ---
-                // PERBAIKAN: Ubah minItems menjadi 0 agar user bisa menghapus semua
                 const removeAction = (e, wrapperId, itemClass, minItems = 0, alertMsg =
                     'Minimal harus ada 1 form.') => {
                     const wrapper = e.target.closest(wrapperId);
                     if (wrapper.querySelectorAll(itemClass).length > minItems) {
                         e.target.closest(itemClass).remove();
                     } else {
-                        // Jika 0 diizinkan, tidak perlu alert
                         if (minItems > 0) alert(alertMsg);
-                        else e.target.closest(itemClass).remove(); // Hapus item terakhir
+                        else e.target.closest(itemClass).remove();
                     }
                 };
 
                 if (e.target.matches('.removeTicket')) {
-                    removeAction(e, '#ticketWrapper', '.ticket-form', 0); // Boleh hapus semua
+                    removeAction(e, '#ticketWrapper', '.ticket-form', 0);
                 }
                 if (e.target.matches('.remove-transport')) {
-                    removeAction(e, '#new-transport-forms', '.transport-set', 0); // Boleh hapus semua
+                    removeAction(e, '#new-transport-forms', '.transport-set', 0);
                 }
                 if (e.target.matches('.removeHotel')) {
-                    removeAction(e, '#hotelWrapper', '.hotel-form', 0); // Boleh hapus semua
+                    removeAction(e, '#hotelWrapper', '.hotel-form', 0);
                 }
                 if (e.target.matches('.removeBadal')) {
-                    removeAction(e, '#badalWrapper', '.badal-form', 0); // Boleh hapus semua
+                    removeAction(e, '#badalWrapper', '.badal-form', 0);
                 }
 
                 // --- 10. Klik Reyal ---
+                // ▼▼▼ BLOK INI TELAH DIPERBAIKI ▼▼▼
                 const reyalCard = e.target.closest('.card-reyal');
                 if (reyalCard) {
                     document.querySelectorAll('.card-reyal').forEach(c => c.classList.remove('selected'));
@@ -1789,10 +1839,17 @@
                     const type = reyalCard.dataset.reyalType;
                     const radioInput = reyalCard.querySelector('input[type="radio"]');
                     if (radioInput) radioInput.checked = true;
-                    document.getElementById('form-tamis').classList.toggle('hidden', type !== 'tamis');
-                    document.getElementById('form-tumis').classList.toggle('hidden', type !== 'tumis');
-                }
 
+                    const formTamis = document.getElementById('form-tamis');
+                    const formTumis = document.getElementById('form-tumis');
+                    formTamis.classList.toggle('hidden', type !== 'tamis');
+                    formTumis.classList.toggle('hidden', type !== 'tumis');
+
+                    // 💡 PERBAIKAN UTAMA: Nonaktifkan input di form yang tersembunyi
+                    formTamis.querySelectorAll('input').forEach(el => el.disabled = (type !== 'tamis'));
+                    formTumis.querySelectorAll('input').forEach(el => el.disabled = (type !== 'tumis'));
+                }
+                // ▲▲▲ AKHIR BLOK PERBAIKAN ▲▲▲
             });
 
             // --- Kalkulasi Reyal (Sama seperti create) ---
