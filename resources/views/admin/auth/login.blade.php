@@ -42,6 +42,7 @@
                         <i class="fas fa-envelope text-gray-400"></i>
                     </div>
                     <input type="email" id="email" name="email"
+                        value="{{ old('email') }}"
                         class="pl-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none input-focus focus:border-indigo-500"
                         placeholder="Enter your email" required>
                 </div>
