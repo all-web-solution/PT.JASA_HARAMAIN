@@ -226,6 +226,12 @@ class ServicesController extends Controller
 
     public function store(Request $request)
     {
+        // Definisikan kondisi 'required' satu kali agar bersih
+        $transportBusRequired = function () use ($request) {
+            return $request->has('services') && in_array('transportasi', $request->services) &&
+                $request->has('transportation') && in_array('bus', $request->transportation);
+        };
+
         $request->validate([
             'travel' => 'required|exists:pelanggans,id',
             'services' => 'required|array',
@@ -233,37 +239,28 @@ class ServicesController extends Controller
             'tanggal_kepulangan' => 'required|date',
             'total_jamaah' => 'required|integer',
 
-            // --- VALIDASI KONDISIONAL UNTUK TRANSPORTASI DARAT ---
-            // Validasi ini hanya berjalan JIKA 'transportasi' DAN 'bus' dipilih
-            'transportation_id' => [
-                'nullable',
-                Rule::requiredIf(function () use ($request) {
-                    return $request->has('services') && in_array('transportasi', $request->services) &&
-                        $request->has('transportation') && in_array('bus', $request->transportation);
-                }),
-                'array',
-                'min:1'
-            ],
-            // '.*' berarti "setiap item di dalam array"
-            'transportation_id.*' => 'required|exists:transportations,id',
+            // --- VALIDASI KONDISIONAL UNTUK TRANSPORTASI DARAT (SUDAH DIPERBAIKI) ---
 
-            'rute_id' => ['nullable', Rule::requiredIf(function () use ($request) {
-                return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation); }), 'array', 'min:1'],
-            'rute_id.*' => 'required|exists:routes,id',
+            // Aturan untuk array utama
+            'transportation_id' => ['nullable', Rule::requiredIf($transportBusRequired), 'array', 'min:1'],
+            'rute_id' => ['nullable', Rule::requiredIf($transportBusRequired), 'array', 'min:1'],
+            'tanggal_transport' => ['nullable', Rule::requiredIf($transportBusRequired), 'array', 'min:1'],
 
-            'tanggal_transport' => ['nullable', Rule::requiredIf(function () use ($request) {
-                return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation); }), 'array', 'min:1'],
-            'tanggal_transport.*.dari' => 'required|date',
-            'tanggal_transport.*.sampai' => 'required|date|after_or_equal:tanggal_transport.*.dari', // Ini adalah validasi error Anda
+            // Aturan untuk SETIAP ITEM di dalam array (.*)
+            // Ini akan memvalidasi 'transportation_id[0]', 'transportation_id[1]', dst.
+            'transportation_id.*' => ['nullable', Rule::requiredIf($transportBusRequired), 'exists:transportations,id'],
+            'rute_id.*' => ['nullable', Rule::requiredIf($transportBusRequired), 'exists:routes,id'],
+            'tanggal_transport.*.dari' => ['nullable', Rule::requiredIf($transportBusRequired), 'date'],
+            'tanggal_transport.*.sampai' => ['nullable', Rule::requiredIf($transportBusRequired), 'date', 'after_or_equal:tanggal_transport.*.dari'],
 
         ], [
             // --- PESAN ERROR KUSTOM ---
             'transportation_id.required' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
             'transportation_id.min' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
-            'rute_id.*.required' => 'Rute wajib dipilih untuk setiap transportasi darat.',
+            'rute_id.*.required' => 'Rute wajib dipilih untuk setiap transportasi darat.', // Diubah dari rute_id.required
             'tanggal_transport.*.dari.required' => 'Tanggal "Dari" wajib diisi untuk setiap transportasi darat.',
             'tanggal_transport.*.sampai.required' => 'Tanggal "Sampai" wajib diisi untuk setiap transportasi darat.',
-            'tanggal_transport.*.sampai.after_or_equal' => 'Tanggal "Sampai" harus sama atau setelah Tanggal "Dari".' // Pesan untuk error Anda
+            'tanggal_transport.*.sampai.after_or_equal' => 'Tanggal "Sampai" harus sama atau setelah Tanggal "Dari".'
         ]);
 
         $masterPrefix = 'ID';
@@ -1118,6 +1115,11 @@ class ServicesController extends Controller
             /* =====================================================
              * ✅ VALIDASI INPUT
              * ===================================================== */
+            // Definisikan kondisi 'required' satu kali agar bersih
+            $transportBusRequired = function () use ($request) {
+                return $request->has('services') && in_array('transportasi', $request->services) &&
+                       $request->has('transportation_types') && in_array('bus', $request->transportation_types);
+            };
             $request->validate([
                 'travel' => 'required|exists:pelanggans,id',
                 'services' => 'required|array',
@@ -1125,26 +1127,26 @@ class ServicesController extends Controller
                 'tanggal_kepulangan' => 'required|date',
                 'total_jamaah' => 'required|integer',
 
-                'transportation_id' => [
-                    'nullable', // Boleh null JIKA 'bus' tidak dicentang
-                    // 'Wajib ada jika' 'services' mengandung 'transportasi' DAN 'transportation_types' mengandung 'bus'
-                    Rule::requiredIf(function () use ($request) {
-                        return $request->has('services') && in_array('transportasi', $request->services) &&
-                            $request->has('transportation_types') && in_array('bus', $request->transportation_types);
-                    }),
-                    'array',
-                    'min:1' // Minimal harus ada 1 item
+                // Aturan untuk SETIAP ITEM di dalam array (.*)
+                'transportation_id.*' => ['nullable', Rule::requiredIf($transportBusRequired), 'exists:transportations,id'],
+                'rute_id' => [
+                    'nullable',
+                    Rule::requiredIf($transportBusRequired), // Gunakan variabel
+                    'array','min:1'
                 ],
-                'transportation_id.*' => 'required|exists:transportations,id',
-                'rute_id' => ['nullable', Rule::requiredIf(/*...logika yang sama...*/ function () use ($request) {
-                    return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation_types') && in_array('bus', $request->transportation_types); }), 'array', 'min:1'],
-                'rute_id.*' => 'required|exists:routes,id',
-                'transport_dari' => ['nullable', Rule::requiredIf(/*...logika yang sama...*/ function () use ($request) {
-                    return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation_types') && in_array('bus', $request->transportation_types); }), 'array', 'min:1'],
-                'transport_dari.*' => 'required|date',
-                'transport_sampai' => ['nullable', Rule::requiredIf(/*...logika yang sama...*/ function () use ($request) {
-                    return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation_types') && in_array('bus', $request->transportation_types); }), 'array', 'min:1'],
-                'transport_sampai.*' => 'required|date|after_or_equal:transport_dari.*',
+                'rute_id.*' => ['nullable', Rule::requiredIf($transportBusRequired), 'exists:routes,id'],
+                'transport_dari' => [
+                    'nullable',
+                    Rule::requiredIf($transportBusRequired), // Gunakan variabel
+                    'array','min:1'
+                ],
+                'transport_dari.*' => ['nullable', Rule::requiredIf($transportBusRequired), 'date'],
+                'transport_sampai' => [
+                    'nullable',
+                    Rule::requiredIf($transportBusRequired), // Gunakan variabel
+                    'array','min:1'
+                ],
+                'transport_sampai.*' => ['nullable', Rule::requiredIf($transportBusRequired), 'date', 'after_or_equal:transport_dari.*'],
 
             ], [
                 // --- PESAN ERROR KUSTOM ---
@@ -1402,22 +1404,33 @@ class ServicesController extends Controller
             /* =====================================================
              * 🏨 HOTEL
              * ===================================================== */
-            if ($request->has('tanggal_checkin')) {
-                Hotel::where('service_id', $service->id)->delete();
-                foreach ($request->tanggal_checkin as $i => $checkin) {
-                    if (empty($checkin))
-                        continue;
 
-                    Hotel::create([
-                        'service_id' => $service->id,
-                        'tanggal_checkin' => $checkin,
-                        'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
-                        'nama_hotel' => $request->nama_hotel[$i] ?? null,
-                        'jumlah_kamar' => $request->jumlah_kamar[$i] ?? 0,
-                        'type' => $request->type_hotel[$i] ?? 'Standard',
-                        'jumlah_type' => $request->jumlah_type[$i] ?? 0,
-                    ]);
+            if ($request->has('services') && in_array('hotel', $request->services)) {
+
+                if ($request->has('tanggal_checkin')) {
+
+                    Hotel::where('service_id', $service->id)->delete();
+
+                    foreach ($request->tanggal_checkin as $i => $checkin) {
+                        if (empty($checkin))
+                            continue;
+
+                        Hotel::create([
+                            'service_id' => $service->id,
+                            'tanggal_checkin' => $checkin,
+                            'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
+                            'nama_hotel' => $request->nama_hotel[$i] ?? null,
+                            'jumlah_kamar' => $request->jumlah_kamar[$i] ?? 0,
+                            'type' => $request->type_hotel[$i] ?? 'Standard',
+                            'jumlah_type' => $request->jumlah_type[$i] ?? 0,
+                        ]);
+                    }
+                } else {
+                    Hotel::where('service_id', $service->id)->delete();
                 }
+
+            } else {
+                Hotel::where('service_id', $service->id)->delete();
             }
 
             /* =====================================================

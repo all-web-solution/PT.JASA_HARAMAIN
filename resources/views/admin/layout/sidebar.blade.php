@@ -208,7 +208,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('keuangan.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('keuangan.payment*') ? 'active' : '' }}"
                     href="{{ route('keuangan.payment') }}">
                     <i class="bi bi-calculator"></i> PEMBAYARAN
                 </a>

@@ -1505,6 +1505,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.detail-form.hidden').forEach(detailForm => {
+                detailForm.querySelectorAll('input, select, textarea, button').forEach(el => {
+                    if (!el.classList.contains('back-to-services-btn')) {
+                        el.disabled = true;
+                    }
+                });
+            });
             let cart = {};
             const cartSection = document.getElementById("cart-total-price");
             const cartItemsList = document.getElementById("cart-items");
@@ -1609,16 +1616,52 @@
 
 
             // --- Master Service Selection ---
+            // --- Master Service Selection ---
             document.querySelectorAll('.service-item').forEach(item => {
                 item.addEventListener('click', () => {
                     const serviceType = item.dataset.service;
                     const checkbox = item.querySelector('input[type="checkbox"]');
                     const detailForm = document.getElementById(`${serviceType}-details`);
+
+                    // Toggle status
                     item.classList.toggle('selected');
-                    checkbox.checked = item.classList.contains('selected');
+                    const isSelected = item.classList.contains('selected');
+                    checkbox.checked = isSelected;
+
                     if (detailForm) {
-                        detailForm.classList.toggle('hidden');
-                        if (!detailForm.classList.contains('hidden')) {
+                        detailForm.classList.toggle('hidden', !isSelected);
+
+                        // ▼▼▼ PERBAIKAN VALIDASI ▼▼▼
+                        // Nonaktifkan semua input jika service tidak dipilih
+                        detailForm.querySelectorAll('input, select, textarea, button').forEach(
+                        el => {
+                            // JANGAN disable tombol "Kembali ke Atas"
+                            if (!el.classList.contains('back-to-services-btn')) {
+                                el.disabled = !isSelected;
+                            }
+                        });
+
+                        // Jika service dibatalkan (tidak dipilih)
+                        if (!isSelected) {
+                            // Hapus juga centang/seleksi di sub-item
+                            detailForm.querySelectorAll(
+                                '.transport-item, .handling-item, .document-item, .child-item, .pendamping-item, .content-item, .meal-item, .dorongan-item, .wakaf-item, .service-tour'
+                            ).forEach(subItem => {
+                                subItem.classList.remove('selected');
+                                const subCheck = subItem.querySelector(
+                                    'input[type="checkbox"], input[type="radio"]');
+                                if (subCheck) subCheck.checked = false;
+                            });
+                            // Sembunyikan semua sub-form
+                            detailForm.querySelectorAll(
+                                '.form-group[data-transportasi], .form-group[id$="-handling-form"], .document-child-form, .document-base-form, .tour-form, div[id^="form-"]'
+                            ).forEach(subForm => {
+                                subForm.classList.add('hidden');
+                            });
+                        }
+                        // ▲▲▲ AKHIR PERBAIKAN ▲▲▲
+
+                        if (isSelected) {
                             detailForm.scrollIntoView({
                                 behavior: 'smooth',
                                 block: 'start'
@@ -1991,8 +2034,18 @@
                     const isSelected = transportItem.classList.toggle('selected');
                     const checkbox = transportItem.querySelector('input');
                     if (checkbox) checkbox.checked = isSelected;
-                    document.getElementById(type === 'airplane' ? 'pesawat' : 'bis').classList.toggle(
-                        'hidden', !isSelected);
+
+                    const formElement = document.getElementById(type === 'airplane' ? 'pesawat' : 'bis');
+                    if (formElement) {
+                        formElement.classList.toggle('hidden', !isSelected);
+                        formElement.querySelectorAll('input, select, textarea, button').forEach(el => {
+                            if (!el.classList.contains('removeTicket') && !el.classList.contains(
+                                    'remove-transport') && !el.id.includes('addTicket') && !el.id
+                                .includes('add-transport-btn')) {
+                                el.disabled = !isSelected;
+                            }
+                        });
+                    }
                 }
 
                 const handlingItem = e.target.closest('.handling-item');
