@@ -34,6 +34,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const sidebar=document.querySelector('#sidebar');const sidebarOverlay=document.getElementById('sidebarOverlay');const toggleBtn=document.getElementById('sidebarToggle');toggleBtn.addEventListener('click',()=>{sidebar.classList.toggle('show');sidebarOverlay.classList.toggle('show')});sidebarOverlay.addEventListener('click',()=>{sidebar.classList.remove('show');sidebarOverlay.classList.remove('show')})
     </script>
