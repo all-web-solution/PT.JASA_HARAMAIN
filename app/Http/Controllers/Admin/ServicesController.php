@@ -224,46 +224,243 @@ class ServicesController extends Controller
     }
 
 
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'travel' => 'required|exists:pelanggans,id',
+    //         'services' => 'required|array',
+    //         'tanggal_keberangkatan' => 'required|date',
+    //         'tanggal_kepulangan' => 'required|date',
+    //         'total_jamaah' => 'required|integer',
+    //         'transportation_id' => [
+    //             'nullable',
+    //             Rule::requiredIf(function () use ($request) {
+    //                 return $request->has('services') && in_array('transportasi', $request->services) &&
+    //                     $request->has('transportation') && in_array('bus', $request->transportation);
+    //             }),
+    //             'array',
+    //             'min:1'
+    //         ],
+    //         // '.*' berarti "setiap item di dalam array"
+    //         'transportation_id.*' => 'required|exists:transportations,id',
+
+    //         'rute_id' => ['nullable', Rule::requiredIf(function () use ($request) {
+    //             return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation); }), 'array', 'min:1'],
+    //         'rute_id.*' => 'required|exists:routes,id',
+
+    //         'tanggal_transport' => ['nullable', Rule::requiredIf(function () use ($request) {
+    //             return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation); }), 'array', 'min:1'],
+    //         'tanggal_transport.*.dari' => 'required|date',
+    //         'tanggal_transport.*.sampai' => 'required|date|after_or_equal:tanggal_transport.*.dari', // Ini adalah validasi error Anda
+
+    //     ], [
+    //         // --- PESAN ERROR KUSTOM ---
+    //         'transportation_id.required' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
+    //         'transportation_id.min' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
+    //         'rute_id.*.required' => 'Rute wajib dipilih untuk setiap transportasi darat.',
+    //         'tanggal_transport.*.dari.required' => 'Tanggal "Dari" wajib diisi untuk setiap transportasi darat.',
+    //         'tanggal_transport.*.sampai.required' => 'Tanggal "Sampai" wajib diisi untuk setiap transportasi darat.',
+    //         'tanggal_transport.*.sampai.after_or_equal' => 'Tanggal "Sampai" harus sama atau setelah Tanggal "Dari".' // Pesan untuk error Anda
+    //     ]);
+
+    //     $masterPrefix = 'ID';
+    //     $lastService = Service::where('unique_code', 'like', $masterPrefix . '-%')
+    //         ->orderByDesc('id')
+    //         ->first();
+    //     $lastNumber = $lastService ? (int) explode('-', $lastService->unique_code)[1] : 0;
+    //     $uniqueCode = $masterPrefix . '-' . ($lastNumber + 1);
+    //     $status = $request->input('action') === 'nego' ? 'nego' : 'deal';
+
+    //     $service = Service::create([
+    //         'pelanggan_id' => $request->travel,
+    //         'services' => json_encode($request->services),
+    //         'tanggal_keberangkatan' => $request->tanggal_keberangkatan,
+    //         'tanggal_kepulangan' => $request->tanggal_kepulangan,
+    //         'total_jamaah' => $request->total_jamaah,
+    //         'status' => $status,
+    //         'unique_code' => $uniqueCode,
+    //     ]);
+
+    //     $this->processServiceItems($request, $service);
+
+    //     // ----------------------------------------------------
+    //     // 🔒 HITUNG ULANG TOTAL DI SERVER SETELAH ITEM DISIMPAN
+    //     // ----------------------------------------------------
+    //     $serverTotalAmount = 0;
+
+    //     // Muat ulang (refresh) relasi yang baru saja disimpan/diperbarui
+    //     // Ini penting agar kita mendapatkan data yang paling akurat dari database
+    //     $service->load([
+    //         'documents', // Relasi ke CustomerDocument
+    //         'hotels',    // Relasi ke Hotel
+    //         'badals',    // Relasi ke Badal
+    //         'meals',     // Relasi ke MealCustomer (atau nama relasi Anda)
+    //         'guides',    // Relasi ke GuideCustomer (atau nama relasi Anda)
+    //         'tours',     // Relasi ke TourCustomer (atau nama relasi Anda)
+    //         'wakafs',    // Relasi ke WakafCustomer
+    //         'dorongans.dorongan', // Relasi ke DoronganOrder
+    //         'contents',  // Relasi ke ContentCustomer
+    //         // Tambahkan relasi lain yang relevan di sini
+    //     ]);
+
+    //     $service->loadMissing(['transportationItem.transportation', 'transportationItem.route']);
+
+    //     foreach ($service->transportationItem as $item) {
+    //         // Safety check: pastikan relasi & tanggal ada
+    //         if ($item->transportation && $item->route && $item->dari_tanggal && $item->sampai_tanggal) {
+
+    //             try {
+    //                 // 1. Ambil harga dasar per hari dari Tipe Transportasi
+    //                 $hargaPerHari = $item->transportation->harga ?? 0;
+
+    //                 // 2. Ambil harga tambahan rute (jika ada)
+    //                 $hargaRute = $item->route->price ?? 0; // Sesuaikan 'price' jika nama kolomnya beda
+
+    //                 // 3. Hitung jumlah hari penggunaan
+    //                 $tanggalMulai = Carbon::parse($item->dari_tanggal);
+    //                 $tanggalSelesai = Carbon::parse($item->sampai_tanggal);
+
+    //                 // diffInDays menghitung selisih hari. Jika sama, hasilnya 0.
+    //                 // Tambah 1 untuk mendapatkan jumlah hari penggunaan (inklusif).
+    //                 // Cth: 25 Okt - 25 Okt = 0 hari selisih -> jadi 1 hari penggunaan.
+    //                 // Cth: 26 Okt - 25 Okt = 1 hari selisih -> jadi 2 hari penggunaan.
+    //                 $jumlahHari = $tanggalMulai->diffInDays($tanggalSelesai) + 1;
+
+    //                 // 4. Kalkulasi subtotal untuk item ini
+    //                 // (Harga per hari * Jumlah Hari) + Harga Rute (jika ada)
+    //                 $subTotalDarat = (($hargaPerHari * $jumlahHari) + $hargaRute);
+
+    //                 // 5. Tambahkan ke total server
+    //                 $serverTotalAmount += $subTotalDarat;
+
+    //             } catch (\Exception $e) {
+    //                 // Tangani jika format tanggal salah/invalid
+    //                 // info("Error calculating transport cost: " . $e->getMessage());
+    //             }
+    //         }
+    //     }
+
+    //     // Kalkulasi Harga Dokumen
+    //     foreach ($service->documents as $doc) {
+    //         // Asumsi: CustomerDocument punya kolom 'harga' & 'jumlah'
+    //         $serverTotalAmount += ($doc->harga ?? 0) * ($doc->jumlah ?? 0);
+    //     }
+
+    //     foreach ($service->hotels as $hotel) {
+
+    //         // Safety check: pastikan kolom-kolom ada isinya
+    //         if ($hotel->tanggal_checkin && $hotel->tanggal_checkout && $hotel->harga_perkamar > 0 && $hotel->jumlah_type > 0) {
+
+    //             try {
+    //                 // 1. Ubah string tanggal menjadi objek Carbon
+    //                 $checkin = Carbon::parse($hotel->tanggal_checkin);
+    //                 $checkout = Carbon::parse($hotel->tanggal_checkout);
+
+    //                 // 2. Hitung jumlah malam.
+    //                 // diffInDays() adalah cara paling aman. Cth: checkout 25 - checkin 22 = 3 hari
+    //                 $jumlah_malam = $checkin->diffInDays($checkout);
+
+    //                 // 3. Jika jumlah malam adalah 0 (misal checkin/checkout di hari yg sama),
+    //                 // kita anggap itu minimal 1 malam.
+    //                 if ($jumlah_malam <= 0) {
+    //                     $jumlah_malam = 1;
+    //                 }
+
+    //                 // 4. Kalkulasi subtotal untuk baris ini
+    //                 $subTotalHotel = ($hotel->harga_perkamar * $hotel->jumlah_type) * $jumlah_malam;
+
+    //                 // 5. Tambahkan ke total server
+    //                 $serverTotalAmount += $subTotalHotel;
+
+    //             } catch (\Exception $e) {
+    //                 // Tangani jika format tanggal salah/invalid, log error jika perlu
+    //                 // info($e->getMessage());
+    //             }
+    //         }
+    //     }
+
+    //     // Kalkulasi Harga Badal
+    //     foreach ($service->badals as $badal) {
+    //         $serverTotalAmount += $badal->price ?? 0; // Asumsi: Badal punya kolom 'price'
+    //     }
+
+    //     // Kalkulasi Harga Meals
+    //     foreach ($service->meals as $mealCustomer) { // Asumsi relasi namanya 'meals' -> MealCustomer
+    //         // Asumsi: MealCustomer punya relasi 'mealItem' ke MealItem yg punya 'price'
+    //         // dan MealCustomer punya kolom 'jumlah'
+    //         $serverTotalAmount += ($mealCustomer->mealItem->price ?? 0) * ($mealCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    //     }
+
+    //     // Kalkulasi Harga Guides (Pendamping)
+    //     foreach ($service->guides as $guideCustomer) { // Asumsi relasi namanya 'guides' -> GuideCustomer
+    //         // Asumsi: GuideCustomer punya relasi 'guideItem' ke GuideItems yg punya 'harga'
+    //         // dan GuideCustomer punya kolom 'jumlah'
+    //         $serverTotalAmount += ($guideCustomer->guideItem->harga ?? 0) * ($guideCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    //     }
+
+    //     // Kalkulasi Harga Tours
+    //     foreach ($service->tours as $tour) { // $tour adalah instance Model Tour
+    //         // Ambil harga dari relasi (gunakan casting float untuk keamanan)
+    //         $tourPrice = (float) ($tour->tourItem->price ?? 0); // Harga dasar tour (dari TourItem)
+    //         $transportPrice = (float) ($tour->transportation->harga ?? 0); // Harga transport (dari Transportation)
+
+    //         // Tambahkan ke total server
+    //         $serverTotalAmount += ($tourPrice + $transportPrice);
+    //     }
+
+    //     // Kalkulasi Harga Wakaf
+    //     foreach ($service->wakafs as $wakafCustomer) { // Asumsi relasi namanya 'wakafs' -> WakafCustomer
+    //         // Asumsi: WakafCustomer punya relasi 'wakafItem' ke Wakaf yg punya 'harga'
+    //         // dan WakafCustomer punya kolom 'jumlah'
+    //         $serverTotalAmount += ($wakafCustomer->wakaf->harga ?? 0) * ($wakafCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    //     }
+
+    //     // Kalkulasi Harga Dorongan
+    //     foreach ($service->dorongans as $doronganOrder) { // Asumsi relasi namanya 'dorongans' -> DoronganOrder
+    //         // Asumsi: DoronganOrder punya relasi 'doronganItem' ke Dorongan yg punya 'price'
+    //         // dan DoronganOrder punya kolom 'jumlah'
+    //         $serverTotalAmount += ($doronganOrder->dorongan->price ?? 0) * ($doronganOrder->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    //     }
+
+    //     // Kalkulasi Harga Content
+    //     foreach ($service->contents as $contentCustomer) { // Asumsi relasi namanya 'contents' -> ContentCustomer
+    //         // Asumsi: ContentCustomer punya relasi 'contentItem' ke ContentItem yg punya 'price'
+    //         // dan ContentCustomer punya kolom 'jumlah'
+    //         $serverTotalAmount += ($contentCustomer->content->price ?? 0) * ($contentCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
+    //     }
+
+    //     // ... Tambahkan kalkulasi untuk item lain jika ada (misal: Handling, Reyal jika ada biayanya) ...
+
+    //     // ----------------------------------------------------
+    //     // BUAT ORDER DENGAN TOTAL YANG AMAN DARI SERVER
+    //     // ----------------------------------------------------
+    //     // Hapus baris lama: $totalAmount = (float) $request->input('total_amount', 0);
+    //     Order::create([
+    //         'service_id' => $service->id,
+    //         'total_amount' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
+    //         'invoice' => 'INV-' . time(),
+    //         'total_yang_dibayarkan' => 0,
+    //         'sisa_hutang' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
+    //         'status_pembayaran' => $serverTotalAmount == 0 ? 'lunas' : 'belum_bayar',
+    //     ]);
+
+    //     // ... (Redirect seperti sebelumnya) ...
+    //     return redirect()->route('admin.services')->with('success', 'Data service berhasil disimpan.');
+    // }
+
+
+
     public function store(Request $request)
     {
-        // Definisikan kondisi 'required' satu kali agar bersih
-        $transportBusRequired = function () use ($request) {
-            return $request->has('services') && in_array('transportasi', $request->services) &&
-                $request->has('transportation') && in_array('bus', $request->transportation);
-        };
-
         $request->validate([
             'travel' => 'required|exists:pelanggans,id',
             'services' => 'required|array',
             'tanggal_keberangkatan' => 'required|date',
             'tanggal_kepulangan' => 'required|date',
             'total_jamaah' => 'required|integer',
-
-            // --- VALIDASI KONDISIONAL UNTUK TRANSPORTASI DARAT (SUDAH DIPERBAIKI) ---
-
-            // Aturan untuk array utama
-            'transportation_id' => ['nullable', Rule::requiredIf($transportBusRequired), 'array', 'min:1'],
-            'rute_id' => ['nullable', Rule::requiredIf($transportBusRequired), 'array', 'min:1'],
-            'tanggal_transport' => ['nullable', Rule::requiredIf($transportBusRequired), 'array', 'min:1'],
-
-            // Aturan untuk SETIAP ITEM di dalam array (.*)
-            // Ini akan memvalidasi 'transportation_id[0]', 'transportation_id[1]', dst.
-            'transportation_id.*' => ['nullable', Rule::requiredIf($transportBusRequired), 'exists:transportations,id'],
-            'rute_id.*' => ['nullable', Rule::requiredIf($transportBusRequired), 'exists:routes,id'],
-            'tanggal_transport.*.dari' => ['nullable', Rule::requiredIf($transportBusRequired), 'date'],
-            'tanggal_transport.*.sampai' => ['nullable', Rule::requiredIf($transportBusRequired), 'date', 'after_or_equal:tanggal_transport.*.dari'],
-
-        ], [
-            // --- PESAN ERROR KUSTOM ---
-            'transportation_id.required' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
-            'transportation_id.min' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
-            'rute_id.*.required' => 'Rute wajib dipilih untuk setiap transportasi darat.', // Diubah dari rute_id.required
-            'tanggal_transport.*.dari.required' => 'Tanggal "Dari" wajib diisi untuk setiap transportasi darat.',
-            'tanggal_transport.*.sampai.required' => 'Tanggal "Sampai" wajib diisi untuk setiap transportasi darat.',
-            'tanggal_transport.*.sampai.after_or_equal' => 'Tanggal "Sampai" harus sama atau setelah Tanggal "Dari".'
         ]);
 
-        $masterPrefix = 'ID';
+        $masterPrefix = 'TRX';
         $lastService = Service::where('unique_code', 'like', $masterPrefix . '-%')
             ->orderByDesc('id')
             ->first();
@@ -283,190 +480,20 @@ class ServicesController extends Controller
 
         $this->processServiceItems($request, $service);
 
-        // ----------------------------------------------------
-        // 🔒 HITUNG ULANG TOTAL DI SERVER SETELAH ITEM DISIMPAN
-        // ----------------------------------------------------
-        $serverTotalAmount = 0;
-
-        // Muat ulang (refresh) relasi yang baru saja disimpan/diperbarui
-        // Ini penting agar kita mendapatkan data yang paling akurat dari database
-        $service->load([
-            'documents', // Relasi ke CustomerDocument
-            'hotels',    // Relasi ke Hotel
-            'badals',    // Relasi ke Badal
-            'meals',     // Relasi ke MealCustomer (atau nama relasi Anda)
-            'guides',    // Relasi ke GuideCustomer (atau nama relasi Anda)
-            'tours',     // Relasi ke TourCustomer (atau nama relasi Anda)
-            'wakafs',    // Relasi ke WakafCustomer
-            'dorongans.dorongan', // Relasi ke DoronganOrder
-            'contents',  // Relasi ke ContentCustomer
-            // Tambahkan relasi lain yang relevan di sini
-        ]);
-
-        $service->loadMissing(['transportationItem.transportation', 'transportationItem.route']);
-
-        foreach ($service->transportationItem as $item) {
-            // Safety check: pastikan relasi & tanggal ada
-            if ($item->transportation && $item->route && $item->dari_tanggal && $item->sampai_tanggal) {
-
-                try {
-                    // 1. Ambil harga dasar per hari dari Tipe Transportasi
-                    $hargaPerHari = $item->transportation->harga ?? 0;
-
-                    // 2. Ambil harga tambahan rute (jika ada)
-                    $hargaRute = $item->route->price ?? 0; // Sesuaikan 'price' jika nama kolomnya beda
-
-                    // 3. Hitung jumlah hari penggunaan
-                    $tanggalMulai = Carbon::parse($item->dari_tanggal);
-                    $tanggalSelesai = Carbon::parse($item->sampai_tanggal);
-
-                    // diffInDays menghitung selisih hari. Jika sama, hasilnya 0.
-                    // Tambah 1 untuk mendapatkan jumlah hari penggunaan (inklusif).
-                    // Cth: 25 Okt - 25 Okt = 0 hari selisih -> jadi 1 hari penggunaan.
-                    // Cth: 26 Okt - 25 Okt = 1 hari selisih -> jadi 2 hari penggunaan.
-                    $jumlahHari = $tanggalMulai->diffInDays($tanggalSelesai) + 1;
-
-                    // 4. Kalkulasi subtotal untuk item ini
-                    // (Harga per hari * Jumlah Hari) + Harga Rute (jika ada)
-                    $subTotalDarat = (($hargaPerHari * $jumlahHari) + $hargaRute);
-
-                    // 5. Tambahkan ke total server
-                    $serverTotalAmount += $subTotalDarat;
-
-                } catch (\Exception $e) {
-                    // Tangani jika format tanggal salah/invalid
-                    // info("Error calculating transport cost: " . $e->getMessage());
-                }
-            }
-        }
-
-        // Kalkulasi Harga Dokumen
-        foreach ($service->documents as $doc) {
-            // Asumsi: CustomerDocument punya kolom 'harga' & 'jumlah'
-            $serverTotalAmount += ($doc->harga ?? 0) * ($doc->jumlah ?? 0);
-        }
-
-        foreach ($service->hotels as $hotel) {
-
-            // Safety check: pastikan kolom-kolom ada isinya
-            if ($hotel->tanggal_checkin && $hotel->tanggal_checkout && $hotel->harga_perkamar > 0 && $hotel->jumlah_type > 0) {
-
-                try {
-                    // 1. Ubah string tanggal menjadi objek Carbon
-                    $checkin = Carbon::parse($hotel->tanggal_checkin);
-                    $checkout = Carbon::parse($hotel->tanggal_checkout);
-
-                    // 2. Hitung jumlah malam.
-                    // diffInDays() adalah cara paling aman. Cth: checkout 25 - checkin 22 = 3 hari
-                    $jumlah_malam = $checkin->diffInDays($checkout);
-
-                    // 3. Jika jumlah malam adalah 0 (misal checkin/checkout di hari yg sama),
-                    // kita anggap itu minimal 1 malam.
-                    if ($jumlah_malam <= 0) {
-                        $jumlah_malam = 1;
-                    }
-
-                    // 4. Kalkulasi subtotal untuk baris ini
-                    $subTotalHotel = ($hotel->harga_perkamar * $hotel->jumlah_type) * $jumlah_malam;
-
-                    // 5. Tambahkan ke total server
-                    $serverTotalAmount += $subTotalHotel;
-
-                } catch (\Exception $e) {
-                    // Tangani jika format tanggal salah/invalid, log error jika perlu
-                    // info($e->getMessage());
-                }
-            }
-        }
-
-        // Kalkulasi Harga Badal
-        foreach ($service->badals as $badal) {
-            $serverTotalAmount += $badal->price ?? 0; // Asumsi: Badal punya kolom 'price'
-        }
-
-        // Kalkulasi Harga Meals
-        foreach ($service->meals as $mealCustomer) { // Asumsi relasi namanya 'meals' -> MealCustomer
-            // Asumsi: MealCustomer punya relasi 'mealItem' ke MealItem yg punya 'price'
-            // dan MealCustomer punya kolom 'jumlah'
-            $serverTotalAmount += ($mealCustomer->mealItem->price ?? 0) * ($mealCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
-        }
-
-        // Kalkulasi Harga Guides (Pendamping)
-        foreach ($service->guides as $guideCustomer) { // Asumsi relasi namanya 'guides' -> GuideCustomer
-            // Asumsi: GuideCustomer punya relasi 'guideItem' ke GuideItems yg punya 'harga'
-            // dan GuideCustomer punya kolom 'jumlah'
-            $serverTotalAmount += ($guideCustomer->guideItem->harga ?? 0) * ($guideCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
-        }
-
-        // Kalkulasi Harga Tours
-        foreach ($service->tours as $tour) { // $tour adalah instance Model Tour
-            // Ambil harga dari relasi (gunakan casting float untuk keamanan)
-            $tourPrice = (float) ($tour->tourItem->price ?? 0); // Harga dasar tour (dari TourItem)
-            $transportPrice = (float) ($tour->transportation->harga ?? 0); // Harga transport (dari Transportation)
-
-            // Tambahkan ke total server
-            $serverTotalAmount += ($tourPrice + $transportPrice);
-        }
-
-        // Kalkulasi Harga Wakaf
-        foreach ($service->wakafs as $wakafCustomer) { // Asumsi relasi namanya 'wakafs' -> WakafCustomer
-            // Asumsi: WakafCustomer punya relasi 'wakafItem' ke Wakaf yg punya 'harga'
-            // dan WakafCustomer punya kolom 'jumlah'
-            $serverTotalAmount += ($wakafCustomer->wakaf->harga ?? 0) * ($wakafCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
-        }
-
-        // Kalkulasi Harga Dorongan
-        foreach ($service->dorongans as $doronganOrder) { // Asumsi relasi namanya 'dorongans' -> DoronganOrder
-            // Asumsi: DoronganOrder punya relasi 'doronganItem' ke Dorongan yg punya 'price'
-            // dan DoronganOrder punya kolom 'jumlah'
-            $serverTotalAmount += ($doronganOrder->dorongan->price ?? 0) * ($doronganOrder->jumlah ?? 0); // Sesuaikan nama relasi/kolom
-        }
-
-        // Kalkulasi Harga Content
-        foreach ($service->contents as $contentCustomer) { // Asumsi relasi namanya 'contents' -> ContentCustomer
-            // Asumsi: ContentCustomer punya relasi 'contentItem' ke ContentItem yg punya 'price'
-            // dan ContentCustomer punya kolom 'jumlah'
-            $serverTotalAmount += ($contentCustomer->content->price ?? 0) * ($contentCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
-        }
-
-        // ... Tambahkan kalkulasi untuk item lain jika ada (misal: Handling, Reyal jika ada biayanya) ...
-
-        // ----------------------------------------------------
-        // BUAT ORDER DENGAN TOTAL YANG AMAN DARI SERVER
-        // ----------------------------------------------------
-        // Hapus baris lama: $totalAmount = (float) $request->input('total_amount', 0);
+        // Buat order
+        $totalAmount = (float) $request->input('total_amount', 0);
         Order::create([
             'service_id' => $service->id,
-            'total_amount' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
+            'total_amount' => $totalAmount,
             'invoice' => 'INV-' . time(),
             'total_yang_dibayarkan' => 0,
-            'sisa_hutang' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
-            'status_pembayaran' => $serverTotalAmount == 0 ? 'lunas' : 'belum_bayar',
+            'sisa_hutang' => $totalAmount,
+            'status_pembayaran' => $totalAmount == 0 ? 'lunas' : 'belum_bayar',
         ]);
-
-        // ... (Redirect seperti sebelumnya) ...
-        return redirect()->route('admin.services')->with('success', 'Data service berhasil disimpan.');
+        if ($status === 'deal') {
+            return redirect()->route('admin.services')->with('success', 'Data service berhasil disimpan.');
+        }
     }
-
-    // Buat order
-    // $totalAmount = (float) $request->input('total_amount', 0);
-    // Order::create([
-    //     'service_id' => $service->id,
-    //     'total_amount' => $totalAmount,
-    //     'invoice' => 'INV-' . time(),
-    //     'total_yang_dibayarkan' => 0,
-    //     'sisa_hutang' => $totalAmount,
-    //     'status_pembayaran' => $totalAmount == 0 ? 'lunas' : 'belum_bayar',
-    // ]);
-    // if ($status === 'deal') {
-    //     return redirect()->route('service.uploadBerkas', [
-    //         'service_id' => $service->id,
-    //         'total_jamaah' => $request->total_jamaah,
-    //     ])->with('success', 'Data service berhasil disimpan.');
-    // }
-    // return redirect()->route('admin.services')->with('success', 'Data nego berhasil diperbarui.');
-
-
 
 
     public function show($id)
@@ -1115,47 +1142,7 @@ class ServicesController extends Controller
             /* =====================================================
              * ✅ VALIDASI INPUT
              * ===================================================== */
-            // Definisikan kondisi 'required' satu kali agar bersih
-            $transportBusRequired = function () use ($request) {
-                return $request->has('services') && in_array('transportasi', $request->services) &&
-                       $request->has('transportation_types') && in_array('bus', $request->transportation_types);
-            };
-            $request->validate([
-                'travel' => 'required|exists:pelanggans,id',
-                'services' => 'required|array',
-                'tanggal_keberangkatan' => 'required|date',
-                'tanggal_kepulangan' => 'required|date',
-                'total_jamaah' => 'required|integer',
 
-                // Aturan untuk SETIAP ITEM di dalam array (.*)
-                'transportation_id.*' => ['nullable', Rule::requiredIf($transportBusRequired), 'exists:transportations,id'],
-                'rute_id' => [
-                    'nullable',
-                    Rule::requiredIf($transportBusRequired), // Gunakan variabel
-                    'array','min:1'
-                ],
-                'rute_id.*' => ['nullable', Rule::requiredIf($transportBusRequired), 'exists:routes,id'],
-                'transport_dari' => [
-                    'nullable',
-                    Rule::requiredIf($transportBusRequired), // Gunakan variabel
-                    'array','min:1'
-                ],
-                'transport_dari.*' => ['nullable', Rule::requiredIf($transportBusRequired), 'date'],
-                'transport_sampai' => [
-                    'nullable',
-                    Rule::requiredIf($transportBusRequired), // Gunakan variabel
-                    'array','min:1'
-                ],
-                'transport_sampai.*' => ['nullable', Rule::requiredIf($transportBusRequired), 'date', 'after_or_equal:transport_dari.*'],
-
-            ], [
-                // --- PESAN ERROR KUSTOM ---
-                'transportation_id.required' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
-                'transportation_id.min' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
-                'rute_id.required' => 'Rute wajib dipilih untuk setiap transportasi darat.',
-                'transport_dari.required' => 'Tanggal "Dari" wajib diisi untuk setiap transportasi darat.',
-                'transport_sampai.required' => 'Tanggal "Sampai" wajib diisi untuk setiap transportasi darat.',
-            ]);
 
             /* =====================================================
              * 🔁 UPDATE DATA SERVICE UTAMA
@@ -1217,7 +1204,6 @@ class ServicesController extends Controller
                     // Kita hapus semua data Pesawat.
                     Plane::where('service_id', $service->id)->delete();
                 }
-
             } else {
                 // JIKA 'transportasi' TIDAK DIPILIH SAMA SEKALI
                 // Hapus semua data pesawat yang terkait dengan service ini.
@@ -1257,7 +1243,6 @@ class ServicesController extends Controller
                     // Kita hapus semua data Transportasi Darat.
                     TransportationItem::where('service_id', $service->id)->delete();
                 }
-
             } else {
                 // JIKA 'transportasi' TIDAK DIPILIH SAMA SEKALI
                 // Hapus semua data transportasi darat yang terkait dengan service ini.
@@ -1457,6 +1442,8 @@ class ServicesController extends Controller
             'total_jamaah' => $request->total_jamaah,
         ])->with('success', 'Data service dan semua relasinya berhasil diperbarui.');
     }
+
+
 
 
 
@@ -1727,8 +1714,6 @@ class ServicesController extends Controller
                             'muthowif_dari' => $request->tanggal_pendamping[$guideId]["dari"],
                             'muthowif_sampai' => $request->tanggal_pendamping[$guideId]["sampai"],
                         ]);
-
-
                     }
                 }
             }
