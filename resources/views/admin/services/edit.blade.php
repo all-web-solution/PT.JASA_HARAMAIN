@@ -2,7 +2,7 @@
 @section('title', 'Edit Permintaan Service')
 @push('styles')
     <style>
-        :root{--haramain-primary:#1a4b8c;--haramain-secondary:#2a6fdb;--haramain-light:#e6f0fa;--haramain-accent:#3d8bfd;--text-primary:#2d3748;--text-secondary:#4a5568;--border-color:#d1e0f5;--hover-bg:#f0f7ff;--checked-color:#2a6fdb;--success-color:#28a745;--warning-color:#ffc107;--danger-color:#dc3545}.service-create-container{max-width:100vw;margin:0 auto;padding:2rem;background-color:#f8fafd}.card{border-radius:12px;box-shadow:0 4px 12px rgb(0 0 0 / .05);border:1px solid var(--border-color);margin-bottom:2rem;overflow:hidden;transition:transform 0.3s ease,box-shadow 0.3s ease}.card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgb(0 0 0 / .1)}.card-header{background:linear-gradient(135deg,var(--haramain-light) 0%,#ffffff 100%);border-bottom:1px solid var(--border-color);padding:1.5rem;display:flex;align-items:center;justify-content:space-between}.card-title{font-weight:700;color:var(--haramain-primary);margin:0;font-size:1.25rem;display:flex;align-items:center;gap:12px}.card-title i{font-size:1.5rem;color:var(--haramain-secondary)}.card-body{padding:1.5rem}.form-section{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border-color)}.form-section:last-of-type{border-bottom:none;padding-bottom:0;margin-bottom:0}.form-section-title{font-size:1.1rem;color:var(--haramain-primary);margin-bottom:1rem;display:flex;align-items:center;gap:8px}.form-section-title i{color:var(--haramain-secondary)}.form-group{margin-bottom:1.25rem}.form-label{display:block;margin-bottom:.5rem;font-weight:600;color:var(--text-primary)}.form-control,.form-select{width:100%;padding:.75rem 1rem;border:1px solid var(--border-color);border-radius:8px;font-size:1rem;transition:border-color 0.3s ease;background-color:#fff}.form-control:focus,.form-select:focus{outline:none;border-color:var(--haramain-secondary);box-shadow:0 0 0 3px rgb(42 111 219 / .1)}.form-control[readonly]{background-color:#e9ecef}.form-row{display:flex;gap:1rem;margin-bottom:1rem}.form-col{flex:1}.service-grid,.cars,.tours{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}.service-item,.transport-item,.type-item,.service-car,.handling-item,.document-item,.child-item,.content-item,.pendamping-item,.meal-item,.dorongan-item,.wakaf-item,.transport-option,.service-tour{border:2px solid var(--border-color);border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;transition:all 0.3s ease;background-color:#fff}.service-item:hover,.transport-item:hover,.type-item:hover,.service-car:hover,.handling-item:hover,.document-item:hover,.child-item:hover,.content-item:hover,.pendamping-item:hover,.meal-item:hover,.dorongan-item:hover,.wakaf-item:hover,.transport-option:hover,.service-tour:hover{border-color:var(--haramain-secondary);transform:translateY(-5px);box-shadow:0 5px 15px rgb(0 0 0 / .1)}.service-item.selected,.transport-item.selected,.type-item.selected,.handling-item.selected,.service-car.selected,.document-item.selected,.child-item.selected,.content-item.selected,.pendamping-item.selected,.meal-item.selected,.dorongan-item.selected,.wakaf-item.selected,.transport-option.selected,.service-tour.selected{border-color:var(--haramain-secondary);background-color:var(--haramain-light)}.service-icon{font-size:2rem;color:var(--haramain-secondary);margin-bottom:.75rem}.service-name{font-weight:600;color:var(--text-primary);margin-bottom:.25rem}.service-desc{font-size:.875rem;color:var(--text-secondary)}.detail-form{background-color:var(--haramain-light);border-radius:8px;padding:1.5rem;margin-top:1.5rem}.detail-section{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border-color)}.detail-section:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}.detail-title{font-weight:600;color:var(--haramain-primary);margin-bottom:1rem;display:flex;align-items:center;gap:8px}.detail-title i{color:var(--haramain-secondary)}.btn{padding:.75rem 1.5rem;border-radius:8px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:all 0.3s ease;border:none;cursor:pointer}.btn-sm{padding:.5rem 1rem;font-size:.875rem}.btn-danger{background-color:var(--danger-color);color:#fff}.btn-danger:hover{opacity:.85}.btn-primary{background-color:var(--haramain-secondary);color:#fff}.btn-primary:hover{background-color:var(--haramain-primary)}.btn-secondary{background-color:#fff;color:var(--text-secondary);border:1px solid var(--border-color)}.btn-secondary:hover{background-color:#f8f9fa}.form-actions{display:flex;justify-content:flex-end;gap:1rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border-color)}.hidden{display:none!important}.card-reyal.selected{border:2px solid var(--haramain-secondary);background-color:var(--haramain-light)}#backToServicesBtn{visibility:hidden;opacity:0;position:fixed;bottom:20px;right:30px;z-index:99;border-radius:50%;padding:.6rem .9rem;font-size:1.25rem;box-shadow:0 4px 12px rgb(0 0 0 / .15);transition:opacity 0.3s ease,visibility 0.3s ease}#backToServicesBtn.show{visibility:visible;opacity:1}@media (max-width:768px){.form-row{flex-direction:column;gap:0}.service-grid,.cars,.tours{grid-template-columns:1fr}.form-actions{flex-direction:column}.btn{width:100%;justify-content:center}}
+        :root{--haramain-primary:#1a4b8c;--haramain-secondary:#2a6fdb;--haramain-light:#e6f0fa;--haramain-accent:#3d8bfd;--text-primary:#2d3748;--text-secondary:#4a5568;--border-color:#d1e0f5;--hover-bg:#f0f7ff;--checked-color:#2a6fdb;--success-color:#28a745;--warning-color:#ffc107;--danger-color:#dc3545}.service-create-container{max-width:100vw;margin:0 auto;padding:2rem;background-color:#f8fafd}.card{border-radius:12px;box-shadow:0 4px 12px rgb(0 0 0 / .05);border:1px solid var(--border-color);margin-bottom:2rem;overflow:hidden;transition:transform 0.3s ease,box-shadow 0.3s ease}.card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgb(0 0 0 / .1)}.card-header{background:linear-gradient(135deg,var(--haramain-light) 0%,#ffffff 100%);border-bottom:1px solid var(--border-color);padding:1.5rem;display:flex;align-items:center;justify-content:space-between}.card-title{font-weight:700;color:var(--haramain-primary);margin:0;font-size:1.25rem;display:flex;align-items:center;gap:12px}.card-title i{font-size:1.5rem;color:var(--haramain-secondary)}.card-body{padding:1.5rem}.form-section{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border-color)}.form-section:last-of-type{border-bottom:none;padding-bottom:0;margin-bottom:0}.form-section-title{font-size:1.1rem;color:var(--haramain-primary);margin-bottom:1rem;display:flex;align-items:center;gap:8px}.form-section-title i{color:var(--haramain-secondary)}.form-group{margin-bottom:1.25rem}.form-label{display:block;margin-bottom:.5rem;font-weight:600;color:var(--text-primary)}.form-control,.form-select{width:100%;padding:.75rem 1rem;border:1px solid var(--border-color);border-radius:8px;font-size:1rem;transition:border-color 0.3s ease;background-color:#fff}.form-control:focus,.form-select:focus{outline:none;border-color:var(--haramain-secondary);box-shadow:0 0 0 3px rgb(42 111 219 / .1)}.form-control[readonly]{background-color:#e9ecef}.form-row{display:flex;gap:1rem;margin-bottom:1rem}.form-col{flex:1}.service-grid,.cars,.tours{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}.service-item,.transport-item,.type-item,.service-car,.handling-item,.document-item,.child-item,.content-item,.pendamping-item,.meal-item,.dorongan-item,.wakaf-item,.transport-option,.service-tour{border:2px solid var(--border-color);border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;transition:all 0.3s ease;background-color:#fff}.service-item:hover,.transport-item:hover,.type-item:hover,.service-car:hover,.handling-item:hover,.document-item:hover,.child-item:hover,.content-item:hover,.pendamping-item:hover,.meal-item:hover,.dorongan-item:hover,.wakaf-item:hover,.transport-option:hover,.service-tour:hover{border-color:var(--haramain-secondary);transform:translateY(-5px);box-shadow:0 5px 15px rgb(0 0 0 / .1)}.service-item.selected,.transport-item.selected,.type-item.selected,.handling-item.selected,.service-car.selected,.document-item.selected,.child-item.selected,.content-item.selected,.pendamping-item.selected,.meal-item.selected,.dorongan-item.selected,.wakaf-item.selected,.transport-option.selected,.service-tour.selected{border-color:var(--haramain-secondary);background-color:var(--haramain-light)}.service-icon{font-size:2rem;color:var(--haramain-secondary);margin-bottom:.75rem}.service-name{font-weight:600;color:var(--text-primary);margin-bottom:.25rem}.service-desc{font-size:.875rem;color:var(--text-secondary)}.detail-form{background-color:var(--haramain-light);border-radius:8px;padding:1.5rem;margin-top:1.5rem}.detail-section{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border-color)}.detail-section:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}.detail-title{font-weight:600;color:var(--haramain-primary);margin-bottom:1rem;display:flex;align-items:center;gap:8px}.detail-title i{color:var(--haramain-secondary)}.btn{padding:.75rem 1.5rem;border-radius:8px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:all 0.3s ease;border:none;cursor:pointer}.btn-sm{padding:.5rem 1rem;font-size:.875rem}.btn-danger{background-color:var(--danger-color);color:#fff}.btn-danger:hover{opacity:.85}.btn-primary{background-color:var(--haramain-secondary);color:#fff}.btn-primary:hover{background-color:var(--haramain-primary)}.btn-secondary{background-color:#fff;color:var(--text-secondary);border:1px solid var(--border-color)}.btn-secondary:hover{background-color:#f8f9fa}.form-actions{display:flex;justify-content:flex-end;gap:1rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border-color)}.hidden{display:none!important}.card-reyal.selected{border:2px solid var(--haramain-secondary);background-color:var(--haramain-light)}#backToServicesBtn{visibility:hidden;opacity:0;position:fixed;bottom:20px;right:30px;z-index:99;border-radius:50%;padding:.6rem .9rem;font-size:1.25rem;box-shadow:0 4px 12px rgb(0 0 0 / .15);transition:opacity 0.3s ease,visibility 0.3s ease}#backToServicesBtn.show{visibility:visible;opacity:1}@media (max-width:768px){.form-row{flex-direction:column;gap:0}.service-grid,.cars,.tours{grid-template-columns:1fr}.form-actions{flex-direction:column}.form-actions .btn{width:100%;justify-content:center}}
     </style>
 @endpush
 @section('content')
@@ -113,7 +113,6 @@
                         $existingHotels = $service->hotels;
                         $existingBadals = $service->badals;
 
-
                         $oldTransportTypes = old('transportation_types');
                         $isAirplaneSelected = !is_null($oldTransportTypes)
                             ? in_array('airplane', $oldTransportTypes)
@@ -218,10 +217,6 @@
                         {{-- TRANSPORTASI FORM --}}
                         <div class="detail-form {{ in_array('transportasi', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="transportasi-details">
-                            <button type="button" class="btn btn-secondary btn-sm mb-3 back-to-services-btn"
-                                style="float: right;">
-                                <i class="bi bi-arrow-up-circle"></i> Kembali ke Pilihan Layanan
-                            </button>
                             <h6 class="detail-title"><i class="bi bi-airplane"></i> Transportasi</h6>
                             <div style="clear: both;"></div>
 
@@ -280,7 +275,8 @@
                                                                 value="{{ old('keterangan.' . $index) }}">
                                                         </div>
                                                         <div class="col-12"><label class="form-label">Jumlah
-                                                                (Jamaah)</label>
+                                                                (Jamaah)
+                                                            </label>
                                                             <input type="number" class="form-control" name="jumlah[]"
                                                                 value="{{ old('jumlah.' . $index) }}">
                                                         </div>
@@ -316,7 +312,8 @@
                                                                 name="keterangan[]" value="{{ $plane->keterangan }}">
                                                         </div>
                                                         <div class="col-12"><label class="form-label">Jumlah
-                                                                (Jamaah)</label>
+                                                                (Jamaah)
+                                                            </label>
                                                             <input type="number" class="form-control" name="jumlah[]"
                                                                 value="{{ $plane->jumlah_jamaah }}">
                                                         </div>
@@ -381,32 +378,49 @@
                                         @if (is_array(old('transportation_id')))
                                             @foreach (old('transportation_id') as $index => $oldTransportId)
                                                 @php
-                                                    $selectedTransport = $transportations->firstWhere('id', $oldTransportId);
+                                                    $selectedTransport = $transportations->firstWhere(
+                                                        'id',
+                                                        $oldTransportId,
+                                                    );
                                                     $oldRouteId = old('rute_id.' . $index);
                                                 @endphp
-                                                <div class="transport-set card p-3 mt-3" data-index="{{ $index }}">
-                                                    <input type="hidden" name="item_id[]" value="{{ old('item_id.' . $index) }}">
+                                                <div class="transport-set card p-3 mt-3"
+                                                    data-index="{{ $index }}">
+                                                    <input type="hidden" name="item_id[]"
+                                                        value="{{ old('item_id.' . $index) }}">
                                                     <div class="cars">
                                                         @foreach ($transportations as $data)
                                                             <div class="service-car {{ $data->id == $oldTransportId ? 'selected' : '' }}"
-                                                                data-id="{{ $data->id }}" data-routes='@json($data->routes)' data-name="{{ $data->nama }}" data-price="{{ $data->harga }}">
+                                                                data-id="{{ $data->id }}"
+                                                                data-routes='@json($data->routes)'
+                                                                data-name="{{ $data->nama }}"
+                                                                data-price="{{ $data->harga }}">
 
                                                                 <div class="service-name">{{ $data->nama }}</div>
-                                                                <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
-                                                                <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
-                                                                <div class="service-desc">Harga: {{ number_format($data->harga) }}/hari</div>
-                                                                <input type="radio" name="transportation_id[{{ $index }}]" value="{{ $data->id }}" {{ $data->id == $oldTransportId ? 'checked' : '' }}>
+                                                                <div class="service-desc">Kapasitas:
+                                                                    {{ $data->kapasitas }}</div>
+                                                                <div class="service-desc">Fasilitas:
+                                                                    {{ $data->fasilitas }}</div>
+                                                                <div class="service-desc">Harga:
+                                                                    {{ number_format($data->harga) }}/hari</div>
+                                                                <input type="radio"
+                                                                    name="transportation_id[{{ $index }}]"
+                                                                    value="{{ $data->id }}"
+                                                                    {{ $data->id == $oldTransportId ? 'checked' : '' }}>
                                                             </div>
                                                         @endforeach
                                                     </div>
-                                                    <div class="route-select mt-3 {{ $selectedTransport ? '' : 'hidden' }}">
+                                                    <div
+                                                        class="route-select mt-3 {{ $selectedTransport ? '' : 'hidden' }}">
                                                         <label class="form-label">Pilih Rute:</label>
                                                         <select name="rute_id[{{ $index }}]" class="form-select">
                                                             <option value="">-- Pilih Rute --</option>
                                                             @if ($selectedTransport)
                                                                 @foreach ($selectedTransport->routes as $route)
-                                                                    <option value="{{ $route->id }}" {{ $route->id == $oldRouteId ? 'selected' : '' }}>
-                                                                        {{ $route->route }} - Rp. {{ number_format($route->price) }}
+                                                                    <option value="{{ $route->id }}"
+                                                                        {{ $route->id == $oldRouteId ? 'selected' : '' }}>
+                                                                        {{ $route->route }} - Rp.
+                                                                        {{ number_format($route->price) }}
                                                                     </option>
                                                                 @endforeach
                                                             @endif
@@ -415,33 +429,48 @@
                                                     <div class="form-row mt-3">
                                                         <div class="form-col">
                                                             <label class="form-label">Dari Tanggal</label>
-                                                            <input type="date" class="form-control" name="transport_dari[]" value="{{ old('transport_dari.' . $index) }}">
+                                                            <input type="date" class="form-control"
+                                                                name="transport_dari[]"
+                                                                value="{{ old('transport_dari.' . $index) }}">
                                                         </div>
                                                         <div class="form-col">
                                                             <label class="form-label">Sampai Tanggal</label>
-                                                            <input type="date" class="form-control" name="transport_sampai[]" value="{{ old('transport_sampai.' . $index) }}">
+                                                            <input type="date" class="form-control"
+                                                                name="transport_sampai[]"
+                                                                value="{{ old('transport_sampai.' . $index) }}">
                                                         </div>
                                                     </div>
                                                     <div class="mt-2 text-end">
-                                                        <button type="button" class="btn btn-danger btn-sm remove-transport">Hapus</button>
+                                                        <button type="button"
+                                                            class="btn btn-danger btn-sm remove-transport">Hapus</button>
                                                     </div>
                                                 </div>
                                             @endforeach
                                         @else
                                             {{-- Jika tidak ada data 'old', render dari database ($existingTransports) --}}
                                             @forelse($existingTransports as $index => $transport)
-                                                <div class="transport-set card p-3 mt-3" data-index="{{ $index }}">
+                                                <div class="transport-set card p-3 mt-3"
+                                                    data-index="{{ $index }}">
                                                     <input type="hidden" name="item_id[]" value="{{ $transport->id }}">
                                                     <div class="cars">
                                                         @foreach ($transportations as $data)
                                                             <div class="service-car {{ $data->id == $transport->transportation_id ? 'selected' : '' }}"
-                                                                data-id="{{ $data->id }}" data-routes='@json($data->routes)' data-name="{{ $data->nama }}" data-price="{{ $data->harga }}">
+                                                                data-id="{{ $data->id }}"
+                                                                data-routes='@json($data->routes)'
+                                                                data-name="{{ $data->nama }}"
+                                                                data-price="{{ $data->harga }}">
 
                                                                 <div class="service-name">{{ $data->nama }}</div>
-                                                                <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
-                                                                <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
-                                                                <div class="service-desc">Harga: {{ number_format($data->harga) }}/hari</div>
-                                                                <input type="radio" name="transportation_id[{{ $index }}]" value="{{ $data->id }}" {{ $data->id == $transport->transportation_id ? 'checked' : '' }}>
+                                                                <div class="service-desc">Kapasitas:
+                                                                    {{ $data->kapasitas }}</div>
+                                                                <div class="service-desc">Fasilitas:
+                                                                    {{ $data->fasilitas }}</div>
+                                                                <div class="service-desc">Harga:
+                                                                    {{ number_format($data->harga) }}/hari</div>
+                                                                <input type="radio"
+                                                                    name="transportation_id[{{ $index }}]"
+                                                                    value="{{ $data->id }}"
+                                                                    {{ $data->id == $transport->transportation_id ? 'checked' : '' }}>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -450,27 +479,35 @@
                                                         <select name="rute_id[{{ $index }}]" class="form-select">
                                                             @if ($transport->transportation)
                                                                 @foreach ($transport->transportation->routes as $route)
-                                                                    <option value="{{ $route->id }}" {{ $route->id == $transport->route_id ? 'selected' : '' }}>
-                                                                        {{ $route->route }} - Rp. {{ number_format($route->price) }}
+                                                                    <option value="{{ $route->id }}"
+                                                                        {{ $route->id == $transport->route_id ? 'selected' : '' }}>
+                                                                        {{ $route->route }} - Rp.
+                                                                        {{ number_format($route->price) }}
                                                                     </option>
                                                                 @endforeach
                                                             @else
-                                                                <option value="">-- Pilih Tipe Transportasi Dulu --</option>
+                                                                <option value="">-- Pilih Tipe Transportasi Dulu --
+                                                                </option>
                                                             @endif
                                                         </select>
                                                     </div>
                                                     <div class="form-row mt-3">
                                                         <div class="form-col">
                                                             <label class="form-label">Dari Tanggal</label>
-                                                            <input type="date" class="form-control" name="transport_dari[{{ $index }}]" value="{{ $transport->dari_tanggal }}">
+                                                            <input type="date" class="form-control"
+                                                                name="transport_dari[{{ $index }}]"
+                                                                value="{{ $transport->dari_tanggal }}">
                                                         </div>
                                                         <div class="form-col">
                                                             <label class="form-label">Sampai Tanggal</label>
-                                                            <input type="date" class="form-control" name="transport_sampai[{{ $index }}]" value="{{ $transport->sampai_tanggal }}">
+                                                            <input type="date" class="form-control"
+                                                                name="transport_sampai[{{ $index }}]"
+                                                                value="{{ $transport->sampai_tanggal }}">
                                                         </div>
                                                     </div>
                                                     <div class="mt-2 text-end">
-                                                        <button type="button" class="btn btn-danger btn-sm remove-transport">Hapus</button>
+                                                        <button type="button"
+                                                            class="btn btn-danger btn-sm remove-transport">Hapus</button>
                                                     </div>
                                                 </div>
                                             @empty
@@ -479,13 +516,20 @@
                                                     <input type="hidden" name="item_id[]" value="">
                                                     <div class="cars">
                                                         @foreach ($transportations as $data)
-                                                            <div class="service-car" data-id="{{ $data->id }}" data-routes='@json($data->routes)' data-name="{{ $data->nama }}" data-price="{{ $data->harga }}">
+                                                            <div class="service-car" data-id="{{ $data->id }}"
+                                                                data-routes='@json($data->routes)'
+                                                                data-name="{{ $data->nama }}"
+                                                                data-price="{{ $data->harga }}">
 
                                                                 <div class="service-name">{{ $data->nama }}</div>
-                                                                <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
-                                                                <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
-                                                                <div class="service-desc">Harga: {{ number_format($data->harga) }}/hari</div>
-                                                                <input type="radio" name="transportation_id[0]" value="{{ $data->id }}">
+                                                                <div class="service-desc">Kapasitas:
+                                                                    {{ $data->kapasitas }}</div>
+                                                                <div class="service-desc">Fasilitas:
+                                                                    {{ $data->fasilitas }}</div>
+                                                                <div class="service-desc">Harga:
+                                                                    {{ number_format($data->harga) }}/hari</div>
+                                                                <input type="radio" name="transportation_id[0]"
+                                                                    value="{{ $data->id }}">
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -499,15 +543,18 @@
                                                     <div class="form-row mt-3">
                                                         <div class="form-col">
                                                             <label class="form-label">Dari Tanggal</label>
-                                                            <input type="date" class="form-control" name="transport_dari[0]">
+                                                            <input type="date" class="form-control"
+                                                                name="transport_dari[0]">
                                                         </div>
                                                         <div class="form-col">
                                                             <label class="form-label">Sampai Tanggal</label>
-                                                            <input type="date" class="form-control" name="transport_sampai[0]">
+                                                            <input type="date" class="form-control"
+                                                                name="transport_sampai[0]">
                                                         </div>
                                                     </div>
                                                     <div class="mt-2 text-end">
-                                                        <button type="button" class="btn btn-danger btn-sm remove-transport">Hapus</button>
+                                                        <button type="button"
+                                                            class="btn btn-danger btn-sm remove-transport">Hapus</button>
                                                     </div>
                                                 </div>
                                             @endforelse
@@ -520,10 +567,6 @@
                         {{-- HOTEL FORM --}}
                         <div class="detail-form {{ in_array('hotel', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="hotel-details">
-                            <button type="button" class="btn btn-secondary btn-sm mb-3 back-to-services-btn"
-                                style="float: right;">
-                                <i class="bi bi-arrow-up-circle"></i> Kembali ke Pilihan Layanan
-                            </button>
                             <h6 class="detail-title"><i class="bi bi-building"></i> Hotel</h6>
                             <div style="clear: both;"></div>
 
@@ -670,10 +713,6 @@
                         {{-- DOKUMEN FORM --}}
                         <div class="detail-form {{ in_array('dokumen', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="dokumen-details">
-                            <button type="button" class="btn btn-secondary btn-sm mb-3 back-to-services-btn"
-                                style="float: right;">
-                                <i class="bi bi-arrow-up-circle"></i> Kembali ke Pilihan Layanan
-                            </button>
                             <h6 class="detail-title"><i class="bi bi-file-text"></i> Dokumen</h6>
                             <div style="clear: both;"></div>
 
@@ -785,10 +824,6 @@
                         {{-- HANDLING FORM --}}
                         <div class="detail-form {{ in_array('handling', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="handling-details">
-                            <button type="button" class="btn btn-secondary btn-sm mb-3 back-to-services-btn"
-                                style="float: right;">
-                                <i class="bi bi-arrow-up-circle"></i> Kembali ke Pilihan Layanan
-                            </button>
                             <h6 class="detail-title"><i class="bi bi-briefcase"></i> Handling</h6>
                             <div style="clear: both;"></div>
 
@@ -865,10 +900,6 @@
                         {{-- PENDAMPING (MUTHOWIF) FORM --}}
                         <div class="detail-form {{ in_array('pendamping', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="pendamping-details">
-                            <button type="button" class="btn btn-secondary btn-sm mb-3 back-to-services-btn"
-                                style="float: right;">
-                                <i class="bi bi-arrow-up-circle"></i> Kembali ke Pilihan Layanan
-                            </button>
                             <h6 class="detail-title"><i class="bi bi-people"></i> Muthowif</h6>
                             <div style="clear: both;"></div>
 
@@ -927,10 +958,6 @@
                         {{-- KONTEN FORM --}}
                         <div class="detail-form {{ in_array('konten', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="konten-details">
-                            <button type="button" class="btn btn-secondary btn-sm mb-3 back-to-services-btn"
-                                style="float: right;">
-                                <i class="bi bi-arrow-up-circle"></i> Kembali ke Pilihan Layanan
-                            </button>
                             <h6 class="detail-title"><i class="bi bi-camera"></i> Konten</h6>
                             <div style="clear: both;"></div>
 
@@ -976,10 +1003,6 @@
                         {{-- REYAL FORM --}}
                         <div class="detail-form {{ in_array('reyal', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="reyal-details">
-                            <button type="button" class="btn btn-secondary btn-sm mb-3 back-to-services-btn"
-                                style="float: right;">
-                                <i class="bi bi-arrow-up-circle"></i> Kembali ke Pilihan Layanan
-                            </button>
                             <h6 class="detail-title"><i class="bi bi-currency-exchange"></i> Reyal</h6>
                             <div style="clear: both;"></div>
 
@@ -1052,10 +1075,6 @@
                         {{-- TOUR FORM --}}
                         <div class="detail-form {{ in_array('tour', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="tour-details">
-                            <button type="button" class="btn btn-secondary btn-sm mb-3 back-to-services-btn"
-                                style="float: right;">
-                                <i class="bi bi-arrow-up-circle"></i> Kembali ke Pilihan Layanan
-                            </button>
                             <h6 class="detail-title"><i class="bi bi-geo-alt"></i> Tour</h6>
                             <div style="clear: both;"></div>
 
@@ -1120,10 +1139,6 @@
                         {{-- MEALS FORM --}}
                         <div class="detail-form {{ in_array('meals', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="meals-details">
-                            <button type="button" class="btn btn-secondary btn-sm mb-3 back-to-services-btn"
-                                style="float: right;">
-                                <i class="bi bi-arrow-up-circle"></i> Kembali ke Pilihan Layanan
-                            </button>
                             <h6 class="detail-title"><i class="bi bi-egg-fried"></i> Makanan</h6>
                             <div style="clear: both;"></div>
 
@@ -1178,10 +1193,6 @@
                         {{-- DORONGAN FORM --}}
                         <div class="detail-form {{ in_array('dorongan', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="dorongan-details">
-                            <button type="button" class="btn btn-secondary btn-sm mb-3 back-to-services-btn"
-                                style="float: right;">
-                                <i class="bi bi-arrow-up-circle"></i> Kembali ke Pilihan Layanan
-                            </button>
                             <h6 class="detail-title"><i class="bi bi-basket"></i> Dorongan</h6>
                             <div style="clear: both;"></div>
 
@@ -1226,10 +1237,6 @@
                         {{-- WAQAF FORM --}}
                         <div class="detail-form {{ in_array('waqaf', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="waqaf-details">
-                            <button type="button" class="btn btn-secondary btn-sm mb-3 back-to-services-btn"
-                                style="float: right;">
-                                <i class="bi bi-arrow-up-circle"></i> Kembali ke Pilihan Layanan
-                            </button>
                             <h6 class="detail-title"><i class="bi bi-gift"></i> Waqaf</h6>
                             <div style="clear: both;"></div>
 
@@ -1269,10 +1276,6 @@
                         {{-- BADAL UMRAH FORM --}}
                         <div class="detail-form {{ in_array('badal', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="badal-details">
-                            <button type="button" class="btn btn-secondary btn-sm mb-3 back-to-services-btn"
-                                style="float: right;">
-                                <i class="bi bi-arrow-up-circle"></i> Kembali ke Pilihan Layanan
-                            </button>
                             <h6 class="detail-title"><i class="bi bi-gift"></i> Badal Umrah</h6>
                             <div style="clear: both;"></div>
 
@@ -1545,7 +1548,7 @@
                 hotelForm.dataset.index = hotelCounter;
                 // Update name attributes for arrays
                 hotelForm.querySelector('[name="hotel_id[]"]').name =
-                `hotel_id[${hotelCounter}]`; // Nama baru
+                    `hotel_id[${hotelCounter}]`; // Nama baru
                 hotelForm.querySelector('[name="tanggal_checkin[]"]').name =
                     `tanggal_checkin[${hotelCounter}]`;
                 hotelForm.querySelector('[name="tanggal_checkout[]"]').name =
@@ -1584,7 +1587,7 @@
                 });
                 transportSet.querySelector('select').name = `rute_id[${newIndex}]`;
                 transportSet.querySelector('[name="transport_dari[]"]').name =
-                `transport_dari[${newIndex}]`;  // PERBAIKAN: Ganti nama
+                    `transport_dari[${newIndex}]`; // PERBAIKAN: Ganti nama
                 transportSet.querySelector('[name="transport_sampai[]"]').name =
                     `transport_sampai[${newIndex}]`; // PERBAIKAN: Ganti nama
 
@@ -1647,8 +1650,10 @@
                         form.classList.toggle('hidden', !isSelected);
                         // 💡 PERBAIKAN UTAMA: Nonaktifkan input di dalam sub-form
                         form.querySelectorAll('input, select, textarea, button').forEach(el => {
-                             // Jangan disable tombol "Tambah" atau "Hapus"
-                            if (!el.classList.contains('removeTicket') && !el.classList.contains('remove-transport') && !el.id.includes('addTicket') && !el.id.includes('add-transport-btn')) {
+                            // Jangan disable tombol "Tambah" atau "Hapus"
+                            if (!el.classList.contains('removeTicket') && !el.classList.contains(
+                                    'remove-transport') && !el.id.includes('addTicket') && !el.id
+                                .includes('add-transport-btn')) {
                                 el.disabled = !isSelected;
                             }
                         });

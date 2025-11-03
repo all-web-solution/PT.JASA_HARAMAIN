@@ -336,7 +336,7 @@
                 flex-direction: column;
             }
 
-            .btn {
+            .form-actions .btn {
                 width: 100%;
                 justify-content: center;
             }
@@ -1634,12 +1634,12 @@
                         // ▼▼▼ PERBAIKAN VALIDASI ▼▼▼
                         // Nonaktifkan semua input jika service tidak dipilih
                         detailForm.querySelectorAll('input, select, textarea, button').forEach(
-                        el => {
-                            // JANGAN disable tombol "Kembali ke Atas"
-                            if (!el.classList.contains('back-to-services-btn')) {
-                                el.disabled = !isSelected;
-                            }
-                        });
+                            el => {
+                                // JANGAN disable tombol "Kembali ke Atas"
+                                if (!el.classList.contains('back-to-services-btn')) {
+                                    el.disabled = !isSelected;
+                                }
+                            });
 
                         // Jika service dibatalkan (tidak dipilih)
                         if (!isSelected) {
@@ -2244,148 +2244,154 @@
         toggleCheckboxOnClick(".service-tour")
         toggleCheckboxOnClick(".wakaf-item")
     </script>
-<script>
-    // Asumsikan 'cart', 'updateItemInCart', dan 'updateCartUI' sudah didefinisikan.
+    <script>
+        // Asumsikan 'cart', 'updateItemInCart', dan 'updateCartUI' sudah didefinisikan.
 
-    // ==========================================================
-    // 1. Fungsi Utama: Menghitung Total Kamar dalam Satu Hotel Form
-    // ==========================================================
-    /**
-     * Menghitung total jumlah kamar dari semua input kuantitas (qty-input-hotel)
-     * di dalam satu form hotel dan memperbarui input 'Total kamar'.
-     * @param {HTMLElement} hotelForm - Elemen div.hotel-form
-     */
-    function updateJumlahKamarTotal(hotelForm) {
-        let totalKamar = 0;
+        // ==========================================================
+        // 1. Fungsi Utama: Menghitung Total Kamar dalam Satu Hotel Form
+        // ==========================================================
+        /**
+         * Menghitung total jumlah kamar dari semua input kuantitas (qty-input-hotel)
+         * di dalam satu form hotel dan memperbarui input 'Total kamar'.
+         * @param {HTMLElement} hotelForm - Elemen div.hotel-form
+         */
+        function updateJumlahKamarTotal(hotelForm) {
+            let totalKamar = 0;
 
-        // Cari semua input kuantitas di dalam hotelForm
-        const qtyInputs = hotelForm.querySelectorAll('.qty-input-hotel[data-is-qty="true"]');
+            // Cari semua input kuantitas di dalam hotelForm
+            const qtyInputs = hotelForm.querySelectorAll('.qty-input-hotel[data-is-qty="true"]');
 
-        qtyInputs.forEach(input => {
-            // Ambil nilai, pastikan itu adalah angka positif, default ke 0
-            const qty = parseInt(input.value) || 0;
-            totalKamar += Math.max(0, qty); // Pastikan tidak ada nilai negatif
-        });
-
-        // Temukan input 'Total kamar' (jumlah_kamar) dan perbarui nilainya
-        const totalKamarInput = hotelForm.querySelector('input[name^="jumlah_kamar"]');
-        if (totalKamarInput) {
-            totalKamarInput.value = totalKamar;
-        }
-    }
-
-    // ==========================================================
-    // 2. Fungsi Pembantu: Menambahkan Listener pada Input Kuantitas Baru
-    // ==========================================================
-    /**
-     * Menambahkan event listener ke input kuantitas kamar yang baru dibuat.
-     * @param {HTMLElement} newQtyInput - Elemen input kuantitas tipe kamar yang baru.
-     * @param {HTMLElement} hotelForm - Elemen div.hotel-form terkait.
-     */
-    function addQtyChangeListener(newQtyInput, hotelForm) {
-        newQtyInput.addEventListener('input', function() {
-            // Panggil fungsi utama untuk menghitung ulang total kamar
-            updateJumlahKamarTotal(hotelForm);
-
-            // --- Opsional: Perbarui Cart/Keranjang setelah kuantitas berubah ---
-            // Kode untuk update cart, misalnya:
-            const typeId = newQtyInput.dataset.typeId;
-            const hotelIndex = hotelForm.dataset.index;
-            const cartId = `hotel-${hotelIndex}-type-${typeId}`;
-
-            // Dapatkan harga dari input harga (asumsi harga berada di form yang sama)
-            const priceInput = hotelForm.querySelector(`input[name="hotel_data[${hotelIndex}][${typeId}][harga]"]`);
-            const typeNameInput = hotelForm.querySelector(`input[name="hotel_data[${hotelIndex}][${typeId}][type_name]"]`);
-
-            if (priceInput && typeNameInput) {
-                const qty = parseInt(newQtyInput.value) || 0;
-                // Hilangkan format IDR/titik agar bisa diubah jadi angka
-                const priceValue = parseInt(priceInput.value.replace(/\./g, '')) || 0;
-
-                const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value.trim() || `Hotel ${hotelIndex}`;
-
-                if (qty > 0) {
-                    updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${typeNameInput.value}`, qty, priceValue);
-                } else {
-                    delete cart[cartId];
-                }
-                updateCartUI();
-            }
-        });
-    }
-
-    // ==========================================================
-    // 3. Inisialisasi: Melampirkan Listener pada Input yang Sudah Ada
-    // ==========================================================
-    document.addEventListener('DOMContentLoaded', function() {
-        // Tambahkan listener untuk input kuantitas yang sudah ada (dari data 'old' atau form default)
-        document.querySelectorAll('.hotel-form').forEach(hotelForm => {
-            hotelForm.querySelectorAll('.qty-input-hotel[data-is-qty="true"]').forEach(input => {
-                addQtyChangeListener(input, hotelForm);
+            qtyInputs.forEach(input => {
+                // Ambil nilai, pastikan itu adalah angka positif, default ke 0
+                const qty = parseInt(input.value) || 0;
+                totalKamar += Math.max(0, qty); // Pastikan tidak ada nilai negatif
             });
-            // Pastikan total awal dihitung
-            updateJumlahKamarTotal(hotelForm);
-        });
 
-        // ==========================================================
-        // 4. Tambahkan Listener untuk Logika Pilihan Tipe Kamar Anda
-        // ==========================================================
-        document.getElementById('hotelWrapper').addEventListener('click', function(e) {
-            const typeItem = e.target.closest('.type-item');
-            if (typeItem) {
-                const hotelForm = typeItem.closest('.hotel-form');
-                const dynamicContainer = hotelForm.querySelector('.type-input-container');
-                const typeId = typeItem.dataset.typeId;
-                const name = typeItem.dataset.name;
-                // Pastikan harga diambil dengan benar dan bersih
-                const price = parseInt(typeItem.dataset.price) || 0;
-                const cartId = `hotel-${hotelForm.dataset.index}-type-${typeId}`;
-                const existingInputDiv = dynamicContainer.querySelector(`[data-type-id="${typeId}"]`);
-
-                if (existingInputDiv) {
-                    // Logika Hapus
-                    existingInputDiv.remove();
-                    typeItem.classList.remove('selected');
-                    delete cart[cartId];
-                } else {
-                    // Logika Tambah
-                    typeItem.classList.add('selected');
-                    const inputDiv = document.createElement('div');
-                    inputDiv.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border', 'rounded');
-                    inputDiv.dataset.typeId = typeId;
-                    const hotelIndex = hotelForm.dataset.index;
-
-                    // Format harga untuk tampilan (misalnya: 100.000)
-                    const formattedPrice = price.toLocaleString('id-ID');
-
-                    inputDiv.innerHTML =
-                        `<label class="form-label">Jumlah Kamar (${name})</label>` +
-                        `<input type="number" class="form-control qty-input-hotel" name="hotel_data[${hotelIndex}][${typeId}][jumlah]" min="1" data-is-qty="true" data-type-id="${typeId}">` +
-                        `<label class="form-label mt-2">Harga (${name})</label>` +
-                        `<input type="text" class="form-control" name="hotel_data[${hotelIndex}][${typeId}][harga]" value="${formattedPrice}" readonly>` +
-                        `<input type="hidden" name="hotel_data[${hotelIndex}][${typeId}][type_name]" value="${name}">`;
-
-                    dynamicContainer.appendChild(inputDiv);
-
-                    // Tambahkan listener ke input kuantitas yang baru dibuat!
-                    const newQtyInput = inputDiv.querySelector('input[data-is-qty="true"]');
-                    addQtyChangeListener(newQtyInput, hotelForm);
-
-                    // Perbarui Cart (Asumsi)
-                    const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value.trim() || `Hotel ${hotelForm.dataset.index}`;
-                    updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${name}`, 1, price);
-                }
-
-                // Panggil fungsi utama setelah menambah/menghapus
-                updateJumlahKamarTotal(hotelForm);
-                updateCartUI(); // Panggil update cart secara keseluruhan
+            // Temukan input 'Total kamar' (jumlah_kamar) dan perbarui nilainya
+            const totalKamarInput = hotelForm.querySelector('input[name^="jumlah_kamar"]');
+            if (totalKamarInput) {
+                totalKamarInput.value = totalKamar;
             }
-        });
+        }
 
-        // Anda juga perlu memanggil updateJumlahKamarTotal saat form hotel dihapus (removeHotel)
-        // dan saat form hotel baru ditambahkan (addHotel), jika logika tersebut ada.
-    });
-</script>
+        // ==========================================================
+        // 2. Fungsi Pembantu: Menambahkan Listener pada Input Kuantitas Baru
+        // ==========================================================
+        /**
+         * Menambahkan event listener ke input kuantitas kamar yang baru dibuat.
+         * @param {HTMLElement} newQtyInput - Elemen input kuantitas tipe kamar yang baru.
+         * @param {HTMLElement} hotelForm - Elemen div.hotel-form terkait.
+         */
+        function addQtyChangeListener(newQtyInput, hotelForm) {
+            newQtyInput.addEventListener('input', function() {
+                // Panggil fungsi utama untuk menghitung ulang total kamar
+                updateJumlahKamarTotal(hotelForm);
+
+                // --- Opsional: Perbarui Cart/Keranjang setelah kuantitas berubah ---
+                // Kode untuk update cart, misalnya:
+                const typeId = newQtyInput.dataset.typeId;
+                const hotelIndex = hotelForm.dataset.index;
+                const cartId = `hotel-${hotelIndex}-type-${typeId}`;
+
+                // Dapatkan harga dari input harga (asumsi harga berada di form yang sama)
+                const priceInput = hotelForm.querySelector(
+                    `input[name="hotel_data[${hotelIndex}][${typeId}][harga]"]`);
+                const typeNameInput = hotelForm.querySelector(
+                    `input[name="hotel_data[${hotelIndex}][${typeId}][type_name]"]`);
+
+                if (priceInput && typeNameInput) {
+                    const qty = parseInt(newQtyInput.value) || 0;
+                    // Hilangkan format IDR/titik agar bisa diubah jadi angka
+                    const priceValue = parseInt(priceInput.value.replace(/\./g, '')) || 0;
+
+                    const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value.trim() ||
+                        `Hotel ${hotelIndex}`;
+
+                    if (qty > 0) {
+                        updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${typeNameInput.value}`, qty,
+                            priceValue);
+                    } else {
+                        delete cart[cartId];
+                    }
+                    updateCartUI();
+                }
+            });
+        }
+
+        // ==========================================================
+        // 3. Inisialisasi: Melampirkan Listener pada Input yang Sudah Ada
+        // ==========================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tambahkan listener untuk input kuantitas yang sudah ada (dari data 'old' atau form default)
+            document.querySelectorAll('.hotel-form').forEach(hotelForm => {
+                hotelForm.querySelectorAll('.qty-input-hotel[data-is-qty="true"]').forEach(input => {
+                    addQtyChangeListener(input, hotelForm);
+                });
+                // Pastikan total awal dihitung
+                updateJumlahKamarTotal(hotelForm);
+            });
+
+            // ==========================================================
+            // 4. Tambahkan Listener untuk Logika Pilihan Tipe Kamar Anda
+            // ==========================================================
+            document.getElementById('hotelWrapper').addEventListener('click', function(e) {
+                const typeItem = e.target.closest('.type-item');
+                if (typeItem) {
+                    const hotelForm = typeItem.closest('.hotel-form');
+                    const dynamicContainer = hotelForm.querySelector('.type-input-container');
+                    const typeId = typeItem.dataset.typeId;
+                    const name = typeItem.dataset.name;
+                    // Pastikan harga diambil dengan benar dan bersih
+                    const price = parseInt(typeItem.dataset.price) || 0;
+                    const cartId = `hotel-${hotelForm.dataset.index}-type-${typeId}`;
+                    const existingInputDiv = dynamicContainer.querySelector(`[data-type-id="${typeId}"]`);
+
+                    if (existingInputDiv) {
+                        // Logika Hapus
+                        existingInputDiv.remove();
+                        typeItem.classList.remove('selected');
+                        delete cart[cartId];
+                    } else {
+                        // Logika Tambah
+                        typeItem.classList.add('selected');
+                        const inputDiv = document.createElement('div');
+                        inputDiv.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border',
+                        'rounded');
+                        inputDiv.dataset.typeId = typeId;
+                        const hotelIndex = hotelForm.dataset.index;
+
+                        // Format harga untuk tampilan (misalnya: 100.000)
+                        const formattedPrice = price.toLocaleString('id-ID');
+
+                        inputDiv.innerHTML =
+                            `<label class="form-label">Jumlah Kamar (${name})</label>` +
+                            `<input type="number" class="form-control qty-input-hotel" name="hotel_data[${hotelIndex}][${typeId}][jumlah]" min="1" data-is-qty="true" data-type-id="${typeId}">` +
+                            `<label class="form-label mt-2">Harga (${name})</label>` +
+                            `<input type="text" class="form-control" name="hotel_data[${hotelIndex}][${typeId}][harga]" value="${formattedPrice}" readonly>` +
+                            `<input type="hidden" name="hotel_data[${hotelIndex}][${typeId}][type_name]" value="${name}">`;
+
+                        dynamicContainer.appendChild(inputDiv);
+
+                        // Tambahkan listener ke input kuantitas yang baru dibuat!
+                        const newQtyInput = inputDiv.querySelector('input[data-is-qty="true"]');
+                        addQtyChangeListener(newQtyInput, hotelForm);
+
+                        // Perbarui Cart (Asumsi)
+                        const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value
+                            .trim() || `Hotel ${hotelForm.dataset.index}`;
+                        updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${name}`, 1, price);
+                    }
+
+                    // Panggil fungsi utama setelah menambah/menghapus
+                    updateJumlahKamarTotal(hotelForm);
+                    updateCartUI(); // Panggil update cart secara keseluruhan
+                }
+            });
+
+            // Anda juga perlu memanggil updateJumlahKamarTotal saat form hotel dihapus (removeHotel)
+            // dan saat form hotel baru ditambahkan (addHotel), jika logika tersebut ada.
+        });
+    </script>
     <button type="button" id="backToServicesBtn" class="btn btn-primary" title="Kembali ke Pilihan Layanan">
         <i class="bi bi-arrow-up"></i>
     </button>
