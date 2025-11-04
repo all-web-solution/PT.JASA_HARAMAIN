@@ -56,10 +56,13 @@ class ServicesController extends Controller
         // 2. Mulai query
         $query = Service::query()->latest(); // Urutkan terbaru dulu
 
-        // 3. Terapkan Search (jika ada)
+        // 3. Terapkan Search
         if ($searchKeyword) {
             $query->where(function ($q) use ($searchKeyword) {
                 $q->where('unique_code', 'LIKE', '%' . $searchKeyword . '%')
+
+                    ->orWhere('services', 'LIKE', '%' . $searchKeyword . '%')
+
                     ->orWhereHas('pelanggan', function ($subQ) use ($searchKeyword) {
                         $subQ->where('nama_travel', 'LIKE', '%' . $searchKeyword . '%');
                     });
