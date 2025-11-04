@@ -12,7 +12,7 @@
                 <h5 class="card-title" id="text-title">
                     <i class="bi bi-pencil-square"></i> Edit Permintaan Service
                 </h5>
-                <a href="{{ route('admin.services') }}" class="btn btn-secondary">
+                <a href="javascript:history.back()" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
@@ -1783,10 +1783,9 @@
 
                     if (form) {
                         form.classList.toggle('hidden', !isSelected);
-                        form.querySelectorAll('input.dokumen_id_input, input.jumlah_doc_child_input')
-                            .forEach(input => {
-                                input.disabled = !isSelected;
-                            });
+                        form.querySelectorAll('input, select').forEach(input => {
+                            input.disabled = !isSelected;
+                        });
                     }
                 }
 
@@ -1801,10 +1800,9 @@
 
                     if (form) {
                         form.classList.toggle('hidden', !isSelected);
-                        form.querySelectorAll('input.dokumen_id_input, input.jumlah_doc_child_input')
-                            .forEach(input => {
-                                input.disabled = !isSelected;
-                            });
+                        form.querySelectorAll('input, select').forEach(input => {
+                            input.disabled = !isSelected;
+                        });
                     }
                 }
 

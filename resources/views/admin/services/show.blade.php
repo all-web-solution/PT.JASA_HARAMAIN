@@ -1,5 +1,5 @@
 @extends('admin.master')
-
+@section('title', 'Detail Service')
 @push('styles')
     <style>
         :root {
@@ -224,20 +224,28 @@
                 gap: 0;
                 margin-bottom: 0;
             }
-            #title{
+
+            #title {
                 display: none;
             }
-            #action_button{
+
+            #action_button {
                 display: flex;
                 justify-content: space-between;
             }
-            #action_button a:first-child{
+
+            #action_button a:first-child {
                 margin-right: 80px;
             }
-            #travel{
+
+            #travel {
                 display: block;
             }
+        }
 
+        .summary-list .list-group-item.bg-light {
+            background-color: #f8f9fa !important;
+            border-left: 4px solid #0d6efd;
         }
     </style>
 @endpush
@@ -250,7 +258,6 @@
                     <i class="bi bi-file-earmark-text"></i> Detail Permintaan Service
                 </h5>
                 <div id="action_button">
-                    {{-- Tombol Aksi (Edit, Cetak, dll) --}}
                     <a href="{{ route('services.edit', $service->id) }}" class="btn btn-primary">
                         <i class="bi bi-pencil-square"></i>
                     </a>
@@ -324,8 +331,6 @@
                     <h6 class="form-section-title">
                         <i class="bi bi-card-checklist"></i> Rincian Layanan yang Dipesan
                     </h6>
-
-                    {{-- TRANSPORTASI (Sudah Benar, tapi tambahkan null-safe ?) --}}
                     @if ($service->planes?->isNotEmpty() || $service->transportationItem?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-airplane"></i> Transportasi</h6>
@@ -333,7 +338,8 @@
                             @foreach ($service->planes ?? [] as $tiket)
                                 <div class="p-3 mb-2" style="background: var(--haramain-light); border-radius: 8px;">
                                     <strong>Tiket Pesawat: {{ $tiket->maskapai ?? 'N/A' }}
-                                        ({{ $tiket->rute ?? 'N/A' }})</strong>
+                                        ({{ $tiket->rute ?? 'N/A' }})
+                                    </strong>
                                     <div class="detail-item"><span class="detail-label">Tanggal</span><span
                                             class="detail-value">{{ $tiket->tanggal_keberangkatan ? \Carbon\Carbon::parse($tiket->tanggal_keberangkatan)->format('d M Y') : 'N/A' }}</span>
                                     </div>
@@ -394,23 +400,44 @@
                         </div>
                     @endif
 
-                    {{-- DOKUMEN (Sudah Benar) --}}
+                    {{-- DOKUMEN --}}
                     @if ($service->documents?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-file-text"></i> Dokumen</h6>
+
+                            @php
+                                $groupedDocs = $service->documents->groupBy(
+                                    fn($doc) => $doc->document?->id ?? $doc->document_id,
+                                );
+                            @endphp
+
                             <ul class="list-group summary-list">
-                                @foreach ($service->documents as $doc)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            {{-- Pilih nama dari child atau parent --}}
-                                            {{ $doc->documentChild?->name ?? ($doc->document?->name ?? 'Dokumen Tidak Dikenal') }}
-                                            {{-- Tampilkan keterangan jika ada (belum ada di model/controller?) --}}
-                                            {{-- @if ($doc->keterangan)
-                                                <small class="d-block text-muted">Ket: {{ $doc->keterangan }}</small>
-                                            @endif --}}
+                                @foreach ($groupedDocs as $parentId => $docs)
+                                    @php
+                                        $parentName =
+                                            optional($docs->first()->document)->name ?? 'Dokumen Tidak Dikenal';
+                                        $hasChildren = $docs->contains(fn($d) => !is_null($d->document_children_id));
+                                        $totalPax = $docs->sum('jumlah');
+                                    @endphp
+
+                                    <li class="list-group-item bg-light fw-bold">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="fs-6">{{ $parentName }}</span>
+                                            <span class="badge bg-primary rounded-pill">{{ $totalPax }} Pax</span>
                                         </div>
-                                        <span class="badge rounded-pill">{{ $doc->jumlah ?? 0 }} Pax</span>
                                     </li>
+
+                                    @if ($hasChildren)
+                                        @foreach ($docs->whereNotNull('document_children_id') as $child)
+                                            <li
+                                                class="list-group-item d-flex justify-content-between align-items-center ps-4">
+                                                <div class="text-muted">
+                                                    {{ $child->documentChild?->name ?? 'Sub Dokumen Tidak Dikenal' }}
+                                                </div>
+                                                <span class="badge rounded-pill">{{ $child->jumlah ?? 0 }} Pax</span>
+                                            </li>
+                                        @endforeach
+                                    @endif
                                 @endforeach
                             </ul>
                         </div>
@@ -621,12 +648,8 @@
 
                 </div>
 
-                {{-- Total Biaya (Ambil dari Service, bukan Order?) --}}
                 @php
-                    // Coba ambil total amount dari relasi order pertama jika ada,
-                    // fallback ke 0 jika tidak ada order.
-                    // Sesuaikan jika logic total amount Anda berbeda.
-                    $order = $service->orders->first(); // Mengambil order pertama yang terkait
+                    $order = $service->orders->first();
                     $totalAmount = $order ? $order->total_amount : 0;
                 @endphp
                 <div class="form-section p-3" style="background: var(--haramain-light); border-radius: 8px;">
@@ -646,3 +669,29 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    title: 'Gagal!',
+                    text: '{{ session('error') }}',
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            @endif
+        });
+    </script>
+@endpush
