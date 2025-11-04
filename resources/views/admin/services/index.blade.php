@@ -656,6 +656,19 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchForm = document.getElementById('searchFilterForm');
+            let debounceTimer;
+
+            searchInput.addEventListener('keyup', function() {
+                clearTimeout(debounceTimer);
+
+                debounceTimer = setTimeout(function() {
+                    searchForm.submit();
+                }, 500);
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
             // Delete confirmation
             const deleteButtons = document.querySelectorAll('.btn-delete');
 
