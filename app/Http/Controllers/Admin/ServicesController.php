@@ -1252,19 +1252,30 @@ class ServicesController extends Controller
             /* =====================================================
              * 📄 DOKUMEN
              * ===================================================== */
-            if ($request->has('dokumen_id')) {
+
+            // PERIKSA: Apakah 'dokumen' ada di array service utama?
+            if ($request->has('services') && in_array('dokumen', $request->services)) {
+
+                // JIKA YA: Jalankan logika update/create (delete-recreate)
                 CustomerDocument::where('service_id', $service->id)->delete();
 
-                foreach ($request->dokumen_id as $i => $docId) {
-                    if (empty($docId))
-                        continue;
+                if ($request->has('dokumen_id')) { // Cek lagi jika ada data
+                    // Loop berdasarkan 'dokumen_id' yang dikirim
+                    foreach ($request->dokumen_id as $i => $docId) {
+                        if (empty($docId))
+                            continue;
 
-                    CustomerDocument::create([
-                        'service_id' => $service->id,
-                        'dokumen_id' => $docId,
-                        'jumlah' => $request->jumlah_doc_child[$i] ?? 0,
-                    ]);
+                        CustomerDocument::create([
+                            'service_id' => $service->id,
+                            'dokumen_id' => $docId,
+                            'jumlah' => $request->jumlah_doc_child[$i] ?? 0,
+                        ]);
+                    }
                 }
+
+            } else {
+                // JIKA TIDAK: 'dokumen' di-uncheck, HAPUS SEMUA data dokumen
+                CustomerDocument::where('service_id', $service->id)->delete();
             }
 
             /* =====================================================
