@@ -267,7 +267,7 @@
         }
 
         .btn {
-            padding: 0.75rem 1.5rem;
+            padding: .75rem 1.5rem;
             border-radius: 8px;
             font-weight: 600;
             display: inline-flex;
@@ -275,7 +275,7 @@
             gap: 8px;
             transition: all 0.3s ease;
             border: none;
-            cursor: pointer;
+            cursor: pointer
         }
 
         .btn-primary {
@@ -355,7 +355,7 @@
             background-color: var(--haramain-light);
         }
 
-        /* Style untuk error validasi */
+
         .validation-error-message {
             color: var(--danger-color);
             font-size: 0.875rem;
@@ -365,18 +365,14 @@
 
         #backToServicesBtn {
             visibility: hidden;
-            /* Sembunyi by default */
             opacity: 0;
             position: fixed;
             bottom: 20px;
             right: 30px;
             z-index: 99;
             border-radius: 50%;
-            /* Bikin bulat */
             padding: 0.6rem 0.9rem;
-            /* Sesuaikan padding untuk ikon */
             font-size: 1.25rem;
-            /* Besarkan ikon */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
@@ -444,7 +440,6 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Penanggung Jawab</label>
-                                    {{-- Dikelola oleh JS, tapi kita isi 'old' jika JS gagal --}}
                                     <input type="text" class="form-control" readonly id="penanggung"
                                         value="{{ old('penanggung_jawab') }}">
                                 </div>
@@ -473,14 +468,14 @@
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Keberangkatan</label>
                                     <input type="date" class="form-control" name="tanggal_keberangkatan" required
-                                        value="{{ old('tanggal_keberangkatan') }}"> {{-- <-- PERBAIKAN --}}
+                                        value="{{ old('tanggal_keberangkatan') }}">
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Kepulangan</label>
                                     <input type="date" class="form-control" name="tanggal_kepulangan" required
-                                        value="{{ old('tanggal_kepulangan') }}"> {{-- <-- PERBAIKAN --}}
+                                        value="{{ old('tanggal_kepulangan') }}">
                                 </div>
                             </div>
                         </div>
@@ -488,7 +483,7 @@
                         <div class="form-group">
                             <label class="form-label">Jumlah Jamaah</label>
                             <input type="number" class="form-control" name="total_jamaah" min="1" required
-                                value="{{ old('total_jamaah') }}"> {{-- <-- PERBAIKAN --}}
+                                value="{{ old('total_jamaah') }}">
                         </div>
                     </div>
 
@@ -529,7 +524,6 @@
             'waqaf' => ['icon' => 'bi-gift', 'name' => 'Waqaf', 'desc' => 'Sedekah & Waqaf'],
             'badal' => ['icon' => 'bi-gift', 'name' => 'Badal Umrah', 'desc' => 'Umrah Badal'],
         ] as $key => $service)
-                                {{-- PERBAIKAN: Tambahkan class 'selected' dan atribut 'checked' berdasarkan data 'old' --}}
                                 <div class="service-item {{ in_array($key, $oldServices) ? 'selected' : '' }}"
                                     data-service="{{ $key }}">
                                     <div class="service-icon"><i class="bi {{ $service['icon'] }}"></i></div>
@@ -574,7 +568,7 @@
                                 <div class="form-group {{ in_array('airplane', $oldTransportTypes) ? '' : 'hidden' }}"
                                     data-transportasi="airplane" id="pesawat">
                                     <label class="form-label">Tiket Pesawat</label>
-                                    <button type="button" class="btn btn-sm btn-primary" id="addTicket">Tambah
+                                    <button type="button" class="btn btn-sm btn-primary mb-3" id="addTicket">Tambah
                                         Tiket</button>
                                     <div id="ticketWrapper">
                                         {{-- PERBAIKAN: Loop data 'old' untuk tiket pesawat --}}
@@ -805,7 +799,7 @@
                         <div class="detail-form {{ in_array('hotel', $oldServices) ? '' : 'hidden' }}"
                             id="hotel-details">
                             <h6 class="detail-title"><i class="bi bi-building"></i> Hotel</h6>
-                            <button type="button" class="btn btn-sm btn-primary mb-2" id="addHotel">Tambah
+                            <button type="button" class="btn btn-sm btn-primary mb-3" id="addHotel">Tambah
                                 Hotel</button>
                             <div id="hotelWrapper">
                                 {{-- PERBAIKAN: Loop data 'old' untuk hotel --}}
@@ -1430,7 +1424,7 @@
                         <div class="detail-form {{ in_array('badal', $oldServices) ? '' : 'hidden' }}"
                             id="badal-details">
                             <h6 class="detail-title"><i class="bi bi-briefcase"></i> Badal Umrah</h6>
-                            <button type="button" class="btn btn-sm btn-primary mb-2" id="addBadal">Tambah
+                            <button type="button" class="btn btn-sm btn-primary mb-3" id="addBadal">Tambah
                                 Badal</button>
                             <div id="badalWrapper">
                                 {{-- PERBAIKAN: Loop data 'old' untuk badal --}}

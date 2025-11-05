@@ -176,31 +176,30 @@
 
                     @endphp
 
-                    {{-- SECTION: SERVICE SELECTION --}}
-                    <div class="form-section" id="service-selection-grid"> {{-- <-- ID UNTUK BACK TO TOP --}}
+                    <div class="form-section" id="service-selection-grid">
                         <h6 class="form-section-title">
                             <i class="bi bi-list-check"></i> Pilih Layanan yang Dibutuhkan
                         </h6>
                         <div class="service-grid">
                             @foreach ([
-            'transportasi' => ['icon' => 'bi-airplane', 'name' => 'Transportasi'],
-            'hotel' => ['icon' => 'bi-building', 'name' => 'Hotel'],
-            'dokumen' => ['icon' => 'bi-file-text', 'name' => 'Dokumen'],
-            'handling' => ['icon' => 'bi-briefcase', 'name' => 'Handling'],
-            'pendamping' => ['icon' => 'bi-people', 'name' => 'Muthowif'],
-            'konten' => ['icon' => 'bi-camera', 'name' => 'Konten'],
-            'reyal' => ['icon' => 'bi-currency-exchange', 'name' => 'Reyal'],
-            'tour' => ['icon' => 'bi-geo-alt', 'name' => 'Tour'],
-            'meals' => ['icon' => 'bi-egg-fried', 'name' => 'Meals'],
-            'dorongan' => ['icon' => 'bi-basket', 'name' => 'Dorongan'],
-            'waqaf' => ['icon' => 'bi-gift', 'name' => 'Waqaf'],
-            'badal' => ['icon' => 'bi-gift', 'name' => 'Badal Umrah'],
-        ] as $key => $serviceInfo)
-                                {{-- PERBAIKAN: Gunakan $oldOrSelectedServices --}}
+            'transportasi' => ['icon' => 'bi-airplane', 'name' => 'Transportasi', 'desc' => 'Tiket & Transport'],
+            'hotel' => ['icon' => 'bi-building', 'name' => 'Hotel', 'desc' => 'Akomodasi'],
+            'dokumen' => ['icon' => 'bi-file-text', 'name' => 'Dokumen', 'desc' => 'Visa & Administrasi'],
+            'handling' => ['icon' => 'bi-briefcase', 'name' => 'Handling', 'desc' => 'Bandara & Hotel'],
+            'pendamping' => ['icon' => 'bi-people', 'name' => 'Pendamping', 'desc' => 'Tour Leader & Mutawwif'],
+            'konten' => ['icon' => 'bi-camera', 'name' => 'Konten', 'desc' => 'Dokumentasi'],
+            'reyal' => ['icon' => 'bi-currency-exchange', 'name' => 'Reyal', 'desc' => 'Penukaran Mata Uang'],
+            'tour' => ['icon' => 'bi-geo-alt', 'name' => 'Tour', 'desc' => 'City Tour & Ziarah'],
+            'meals' => ['icon' => 'bi-egg-fried', 'name' => 'Meals', 'desc' => 'Makanan'],
+            'dorongan' => ['icon' => 'bi-basket', 'name' => 'Dorongan', 'desc' => 'Bagi penyandang disabilitas'],
+            'waqaf' => ['icon' => 'bi-gift', 'name' => 'Waqaf', 'desc' => 'Sedekah & Waqaf'],
+            'badal' => ['icon' => 'bi-gift', 'name' => 'Badal Umrah', 'desc' => 'Umrah Badal'],
+        ] as $key => $item)
                                 <div class="service-item {{ in_array($key, $oldOrSelectedServices) ? 'selected' : '' }}"
                                     data-service="{{ $key }}">
-                                    <div class="service-icon"><i class="bi {{ $serviceInfo['icon'] }}"></i></div>
-                                    <div class="service-name">{{ $serviceInfo['name'] }}</div>
+                                    <div class="service-icon"><i class="bi {{ $item['icon'] }}"></i></div>
+                                    <div class="service-name">{{ $item['name'] }}</div>
+                                    <div class="service-desc">{{ $item['desc'] }}</div>
                                     <input type="checkbox" name="services[]" value="{{ $key }}" class="d-none"
                                         {{ in_array($key, $oldOrSelectedServices) ? 'checked' : '' }}>
                                 </div>
@@ -724,8 +723,9 @@
                                     @foreach ($documents as $document)
                                         <div class="document-item {{ in_array($document->id, $oldDocParentsChecked) ? 'selected' : '' }}"
                                             data-document-id="{{ $document->id }}"
-                                            data-has-children="{{ $document->childrens->isNotEmpty() ? 'true' : 'false' }}">
-                                            <div class="service-name">{{ $document->nama_dokumen }}</div>
+                                            data-has-children="{{ $document->childrens->isNotEmpty() ? 'true' : 'false' }}"
+                                            data-name="{{ $document->name }}" data-price="{{ $document->price }}">
+                                            <div class="service-name">{{ $document->name }}</div>
                                             <input type="checkbox" name="dokumen_parent_id[]"
                                                 value="{{ $document->id }}"
                                                 {{ in_array($document->id, $oldDocParentsChecked) ? 'checked' : '' }}
@@ -743,7 +743,7 @@
                                     @if ($document->childrens->isNotEmpty())
                                         <div class="form-group {{ in_array($document->id, $oldDocParentsChecked) ? '' : 'hidden' }} document-child-form"
                                             data-parent-id="{{ $document->id }}">
-                                            <label class="form-label fw-bold">{{ $document->nama_dokumen }}</label>
+                                            <label class="form-label fw-bold">{{ $document->name }}</label>
                                             <div class="cars">
                                                 @foreach ($document->childrens as $child)
                                                     @php
@@ -752,9 +752,11 @@
                                                             : array_key_exists($child->id, $selectedDocChildren);
                                                     @endphp
                                                     <div class="child-item {{ $isChildSelected ? 'selected' : '' }}"
-                                                        data-child-id="{{ $child->id }}">
-                                                        <div class="service-name">{{ $child->nama_dokumen }}</div>
-                                                        <div class="service-desc">Rp. {{ number_format($child->harga) }}
+                                                        data-child-id="{{ $child->id }}"
+                                                        data-price="{{ $child->price }}"
+                                                        data-name="{{ $child->name }}">
+                                                        <div class="service-name">{{ $child->name }}</div>
+                                                        <div class="service-desc">Rp. {{ number_format($child->price) }}
                                                         </div>
                                                     </div>
                                                 @endforeach
@@ -777,12 +779,13 @@
                                                         <input type="hidden" class="dokumen_id_input"
                                                             name="dokumen_id[]" value="{{ $child->id }}"
                                                             {{ !$isChildSelected ? 'disabled' : '' }}>
-                                                        <label class="form-label">Jumlah
-                                                            {{ $child->nama_dokumen }}</label>
-                                                        <input type="number" class="form-control jumlah_doc_child_input"
-                                                            name="jumlah_doc_child[]" min="1"
-                                                            value="{{ $oldChildIndex !== false ? old('jumlah_doc_child.' . $oldChildIndex) : $selectedChildData['jumlah'] ?? 1 }}"
-                                                            {{ !$isChildSelected ? 'disabled' : '' }}>
+                                                        <llabel class="form-label">Jumlah
+                                                            {{ $child->name }}</label>
+                                                            <input type="number"
+                                                                class="form-control jumlah_doc_child_input"
+                                                                name="jumlah_doc_child[]" min="1"
+                                                                value="{{ $oldChildIndex !== false ? old('jumlah_doc_child.' . $oldChildIndex) : $selectedChildData['jumlah'] ?? 1 }}"
+                                                                {{ !$isChildSelected ? 'disabled' : '' }}>
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -804,7 +807,7 @@
                                             <input type="hidden" class="dokumen_id_input" name="dokumen_id[]"
                                                 value="{{ $document->id }}" {{ !$isBaseSelected ? 'disabled' : '' }}>
                                             <label class="form-label fw-bold">Jumlah
-                                                {{ $document->nama_dokumen }}</label>
+                                                {{ $document->name }}</label>
                                             <input type="number" class="form-control jumlah_doc_child_input"
                                                 name="jumlah_doc_child[]" min="1"
                                                 value="{{ $oldBaseIndex !== false ? old('jumlah_doc_child.' . $oldBaseIndex) : $selectedBaseData['jumlah'] ?? 1 }}"

@@ -1221,16 +1221,54 @@ class ServicesController extends Controller
                 CustomerDocument::where('service_id', $service->id)->delete();
 
                 if ($request->has('dokumen_id')) { // Cek lagi jika ada data
+
+                    // --- EFFICIENTLY GET ALL DOCUMENT PRICES/IDs ---
+
+                    // 1. Get all base documents (JUST THE IDs)
+                    //    This is the only line that needed fixing.
+                    $baseDocIds = Document::pluck('id', 'id');
+
+                    // 2. Get all child documents and their prices/parent IDs
+                    $childDocs = DocumentChildren::get()->keyBy('id');
+                    // ---------------------------------------------
+
                     // Loop berdasarkan 'dokumen_id' yang dikirim
                     foreach ($request->dokumen_id as $i => $docId) {
                         if (empty($docId))
                             continue;
 
-                        CustomerDocument::create([
+                        $jumlah = $request->jumlah_doc_child[$i] ?? 0;
+                        $priceToSave = 0; // Default price
+
+                        $dataToCreate = [
                             'service_id' => $service->id,
-                            'dokumen_id' => $docId,
-                            'jumlah' => $request->jumlah_doc_child[$i] ?? 0,
-                        ]);
+                            'jumlah' => $jumlah,
+                        ];
+
+                        // Check if the ID from the form is a CHILD ID
+                        if ($childDocs->has($docId)) {
+                            // YES, it's a child ID
+                            $child = $childDocs->get($docId);
+
+                            $dataToCreate['document_id'] = $child->document_id;
+                            $dataToCreate['document_children_id'] = $docId;
+                            $priceToSave = $child->price ?? 0; // Get price from child
+
+                        } else if ($baseDocIds->has($docId)) { // Check if it's a valid base doc ID
+                            // NO, it's a BASE document
+                            $dataToCreate['document_id'] = $docId;
+                            $dataToCreate['document_children_id'] = null;
+                            $priceToSave = 0; // Base documents have no price, so set to 0
+
+                        } else {
+                            // ID not found in either list, skip
+                            continue;
+                        }
+
+                        // Assign the price to the 'harga' column
+                        $dataToCreate['harga'] = $priceToSave;
+
+                        CustomerDocument::create($dataToCreate);
                     }
                 }
 
