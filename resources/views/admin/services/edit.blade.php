@@ -718,7 +718,6 @@
 
                             <div class="detail-section">
                                 <div class="service-grid">
-                                    {{-- PERBAIKAN: Logika 'old' untuk dokumen --}}
                                     @php
                                         $oldDocParentsChecked = old('dokumen_parent_id', $allSelectedDocItems);
                                     @endphp
@@ -742,14 +741,12 @@
                                 @endphp
                                 @foreach ($documents as $document)
                                     @if ($document->childrens->isNotEmpty())
-                                        {{-- Dokumen DENGAN ANAK --}}
                                         <div class="form-group {{ in_array($document->id, $oldDocParentsChecked) ? '' : 'hidden' }} document-child-form"
                                             data-parent-id="{{ $document->id }}">
                                             <label class="form-label fw-bold">{{ $document->nama_dokumen }}</label>
                                             <div class="cars">
                                                 @foreach ($document->childrens as $child)
                                                     @php
-                                                        // Cek 'old' dulu, baru 'existing'
                                                         $isChildSelected = !is_null($oldDocChildIds)
                                                             ? in_array($child->id, $oldDocChildIds)
                                                             : array_key_exists($child->id, $selectedDocChildren);
@@ -769,7 +766,6 @@
                                                             ? in_array($child->id, $oldDocChildIds)
                                                             : array_key_exists($child->id, $selectedDocChildren);
                                                         $selectedChildData = $selectedDocChildren[$child->id] ?? null;
-                                                        // Cari index 'old' (jika ada)
                                                         $oldChildIndex = !is_null($oldDocChildIds)
                                                             ? array_search($child->id, $oldDocChildIds)
                                                             : false;
@@ -792,13 +788,11 @@
                                             </div>
                                         </div>
                                     @else
-                                        {{-- Dokumen BIASA (TANPA ANAK) --}}
                                         @php
                                             $isBaseSelected = !is_null($oldDocChildIds)
                                                 ? in_array($document->id, $oldDocChildIds)
                                                 : array_key_exists($document->id, $selectedBaseDocs);
                                             $selectedBaseData = $selectedBaseDocs[$document->id] ?? null;
-                                            // Cari index 'old' (jika ada)
                                             $oldBaseIndex = !is_null($oldDocChildIds)
                                                 ? array_search($document->id, $oldDocChildIds)
                                                 : false;

@@ -1059,40 +1059,6 @@ class ServicesController extends Controller
 
     public function edit($id)
     {
-        // $service = Service::with([
-        //     'pelanggan',
-        //     'hotels',
-        //     'planes',
-        //     'transportationItem.transportation.routes',
-        //     'transportationItem.route',
-        //     'handlings', // Simplified for clarity
-        //     'meals',
-        //     'guides',
-        //     'tours', // Eager load the tours and their selected transportation
-        //     'documents',
-        //     'wakafs',
-        //     'dorongans',
-        //     'contents',
-        //     'badals'
-        // ])->findOrFail($id);
-
-        // $data = [
-        //     'service' => $service,
-        //     // The selectedServices can be decoded directly from the service object
-        //     'selectedServices' => $service->services ?? [],
-        //     'pelanggans' => Pelanggan::all(),
-        //     'transportations' => Transportation::with('routes')->get(),
-        //     'guides' => Guide::all(),
-        //     'tours' => Tour::all(),
-        //     'meals' => Meal::all(),
-        //     'documents' => DocumentModel::with('childrens')->get(),
-        //     'wakaf' => WakafCustomer::all(),
-        //     'dorongan' => DoronganOrder::all(),
-        //     'contents' => ContentCustomer::all(),
-        //     'types' => TypeHotel::all(),
-        // ];
-
-        // return view('admin.services.edit', $data);
         $service = Service::with([
             'pelanggan',
             'hotels',
@@ -1111,12 +1077,7 @@ class ServicesController extends Controller
 
         $data = [
             'service' => $service,
-
-            // PERBAIKAN: Lakukan decode di sini.
-            // Ini mengubah string JSON dari DB menjadi array PHP.
             'selectedServices' => json_decode($service->services, true) ?? [],
-
-            // Ambil SEMUA data master (sama seperti di create)
             'pelanggans' => Pelanggan::all(),
             'transportations' => Transportation::with('routes')->get(),
             'guides' => GuideItems::all(),
@@ -1131,6 +1092,7 @@ class ServicesController extends Controller
 
         return view('admin.services.edit', $data);
     }
+
     public function update(Request $request, $id)
     {
         $service = Service::findOrFail($id);
