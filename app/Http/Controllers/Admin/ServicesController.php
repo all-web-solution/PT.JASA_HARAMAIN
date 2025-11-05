@@ -56,10 +56,13 @@ class ServicesController extends Controller
         // 2. Mulai query
         $query = Service::query()->latest(); // Urutkan terbaru dulu
 
-        // 3. Terapkan Search (jika ada)
+        // 3. Terapkan Search
         if ($searchKeyword) {
             $query->where(function ($q) use ($searchKeyword) {
                 $q->where('unique_code', 'LIKE', '%' . $searchKeyword . '%')
+
+                    ->orWhere('services', 'LIKE', '%' . $searchKeyword . '%')
+
                     ->orWhereHas('pelanggan', function ($subQ) use ($searchKeyword) {
                         $subQ->where('nama_travel', 'LIKE', '%' . $searchKeyword . '%');
                     });
@@ -491,7 +494,7 @@ class ServicesController extends Controller
             'status_pembayaran' => $totalAmount == 0 ? 'lunas' : 'belum_bayar',
         ]);
         if ($status === 'deal') {
-            return redirect()->route('admin.services')->with('success', 'Data service berhasil disimpan.');
+            return redirect()->route('admin.services.show', $service)->with('success', 'Data service berhasil disimpan.');
         }
     }
 
@@ -586,10 +589,6 @@ class ServicesController extends Controller
 
         return view('admin.services.nego', $data);
     }
-
-
-
-
 
     public function uploadBerkas(Request $request, $service_id)
     {
@@ -1060,40 +1059,6 @@ class ServicesController extends Controller
 
     public function edit($id)
     {
-        // $service = Service::with([
-        //     'pelanggan',
-        //     'hotels',
-        //     'planes',
-        //     'transportationItem.transportation.routes',
-        //     'transportationItem.route',
-        //     'handlings', // Simplified for clarity
-        //     'meals',
-        //     'guides',
-        //     'tours', // Eager load the tours and their selected transportation
-        //     'documents',
-        //     'wakafs',
-        //     'dorongans',
-        //     'contents',
-        //     'badals'
-        // ])->findOrFail($id);
-
-        // $data = [
-        //     'service' => $service,
-        //     // The selectedServices can be decoded directly from the service object
-        //     'selectedServices' => $service->services ?? [],
-        //     'pelanggans' => Pelanggan::all(),
-        //     'transportations' => Transportation::with('routes')->get(),
-        //     'guides' => Guide::all(),
-        //     'tours' => Tour::all(),
-        //     'meals' => Meal::all(),
-        //     'documents' => DocumentModel::with('childrens')->get(),
-        //     'wakaf' => WakafCustomer::all(),
-        //     'dorongan' => DoronganOrder::all(),
-        //     'contents' => ContentCustomer::all(),
-        //     'types' => TypeHotel::all(),
-        // ];
-
-        // return view('admin.services.edit', $data);
         $service = Service::with([
             'pelanggan',
             'hotels',
@@ -1112,12 +1077,7 @@ class ServicesController extends Controller
 
         $data = [
             'service' => $service,
-
-            // PERBAIKAN: Lakukan decode di sini.
-            // Ini mengubah string JSON dari DB menjadi array PHP.
             'selectedServices' => json_decode($service->services, true) ?? [],
-
-            // Ambil SEMUA data master (sama seperti di create)
             'pelanggans' => Pelanggan::all(),
             'transportations' => Transportation::with('routes')->get(),
             'guides' => GuideItems::all(),
@@ -1132,6 +1092,7 @@ class ServicesController extends Controller
 
         return view('admin.services.edit', $data);
     }
+
     public function update(Request $request, $id)
     {
         $service = Service::findOrFail($id);
@@ -1252,19 +1213,30 @@ class ServicesController extends Controller
             /* =====================================================
              * 📄 DOKUMEN
              * ===================================================== */
-            if ($request->has('dokumen_id')) {
+
+            // PERIKSA: Apakah 'dokumen' ada di array service utama?
+            if ($request->has('services') && in_array('dokumen', $request->services)) {
+
+                // JIKA YA: Jalankan logika update/create (delete-recreate)
                 CustomerDocument::where('service_id', $service->id)->delete();
 
-                foreach ($request->dokumen_id as $i => $docId) {
-                    if (empty($docId))
-                        continue;
+                if ($request->has('dokumen_id')) { // Cek lagi jika ada data
+                    // Loop berdasarkan 'dokumen_id' yang dikirim
+                    foreach ($request->dokumen_id as $i => $docId) {
+                        if (empty($docId))
+                            continue;
 
-                    CustomerDocument::create([
-                        'service_id' => $service->id,
-                        'dokumen_id' => $docId,
-                        'jumlah' => $request->jumlah_doc_child[$i] ?? 0,
-                    ]);
+                        CustomerDocument::create([
+                            'service_id' => $service->id,
+                            'dokumen_id' => $docId,
+                            'jumlah' => $request->jumlah_doc_child[$i] ?? 0,
+                        ]);
+                    }
                 }
+
+            } else {
+                // JIKA TIDAK: 'dokumen' di-uncheck, HAPUS SEMUA data dokumen
+                CustomerDocument::where('service_id', $service->id)->delete();
             }
 
             /* =====================================================
@@ -1437,20 +1409,8 @@ class ServicesController extends Controller
         /* =====================================================
          * ✅ REDIRECT SELESAI
          * ===================================================== */
-        return redirect()->route('admin.services', [
-            'service_id' => $service->id,
-            'total_jamaah' => $request->total_jamaah,
-        ])->with('success', 'Data service dan semua relasinya berhasil diperbarui.');
+        return redirect()->route('admin.services.show', $service)->with('success', 'Data service dan semua relasinya berhasil diperbarui.');
     }
-
-
-
-
-
-
-
-
-
 
     private function storeFileIfExists(array $files, int $index, string $path)
     {
@@ -1743,94 +1703,70 @@ class ServicesController extends Controller
 
     private function handleDocumentItems(Request $request, Service $service)
     {
-        // 1. TANGANI UPLOAD FILE (DAN SIMPAN KE SERVICE)
-        // Asumsi: Kolom 'paspor_dokumen' & 'pas_foto_dokumen' ada di tabel 'services'
+        // 1️⃣ Upload file dokumen (paspor & pas foto)
         $fileData = [];
         if ($request->hasFile('paspor_dokumen')) {
-            // Opsional: Hapus file lama jika ada sebelum menyimpan yang baru
             if ($service->paspor_dokumen) {
                 Storage::disk('public')->delete($service->paspor_dokumen);
             }
-            $fileData['paspor_dokumen'] = $request->file('paspor_dokumen')->store('service-docs', 'public'); // Simpan ke folder service-docs
+            $fileData['paspor_dokumen'] = $request->file('paspor_dokumen')->store('service-docs', 'public');
         }
         if ($request->hasFile('pas_foto_dokumen')) {
-            // Opsional: Hapus file lama
             if ($service->pas_foto_dokumen) {
                 Storage::disk('public')->delete($service->pas_foto_dokumen);
             }
-            $fileData['pas_foto_dokumen'] = $request->file('pas_foto_dokumen')->store('service-docs', 'public'); // Simpan ke folder service-docs
+            $fileData['pas_foto_dokumen'] = $request->file('pas_foto_dokumen')->store('service-docs', 'public');
         }
-
-        // Update service HANYA jika ada file baru yang diupload
         if (!empty($fileData)) {
-            $service->update($fileData); // Pastikan kolom ada di $fillable model Service
+            $service->update($fileData);
         }
 
-        // Ini akan menampung semua ID item CustomerDocument yang valid untuk service ini
+        // ID dokumen valid (untuk clean-up)
         $validCustomerDocIds = [];
 
-        // ---------------------------------------------------------------------
-        // 2. PROSES DOKUMEN INDUK (YANG TIDAK PUNYA ANAK)
-        // Memindai semua input request untuk mencari key 'jumlah_doc_{id}'
-        // ---------------------------------------------------------------------
-        foreach ($request->all() as $key => $jumlah) {
-            // Cek jika nama input adalah 'jumlah_doc_' dan nilainya (jumlah) valid
-            if (strpos($key, 'jumlah_doc_') === 0 && $jumlah > 0) {
-                // Ambil ID dari nama input (misal: 'jumlah_doc_12' -> '12')
-                $documentId = substr($key, 11);
-                $document = Document::find($documentId); // Cari dokumen induk
+        // 2️⃣ Ambil hanya dokumen INDUK yang dicentang
+        $selectedParents = $request->input('dokumen_id', []);
+        foreach ($selectedParents as $parentId) {
+            $jumlah = $request->input("jumlah_doc_$parentId", 1);
+            $document = Document::find($parentId);
 
-                if ($document) {
-                    // Simpan (atau update jika sudah ada)
-                    $customerDoc = $service->documents()->updateOrCreate(
-                        [
-                            'document_id' => $documentId,
-                            'document_children_id' => null // Tandai sebagai item induk
-                        ],
-                        [
-                            'jumlah' => $jumlah,
-                            'harga' => $document->price ?? 0, // Ambil harga dari induk, default 0 jika null
-                        ]
-                    );
-                    // Simpan ID yang baru dibuat/diupdate
-                    $validCustomerDocIds[] = $customerDoc->id;
-                }
+            if ($document) {
+                $customerDoc = $service->documents()->updateOrCreate(
+                    [
+                        'document_id' => $parentId,
+                        'document_children_id' => null,
+                    ],
+                    [
+                        'jumlah' => $jumlah,
+                        'harga' => $document->price ?? 0,
+                    ]
+                );
+                $validCustomerDocIds[] = $customerDoc->id;
             }
         }
 
-        // ---------------------------------------------------------------------
-        // 3. PROSES DOKUMEN ANAK (YANG DICENTANG DAN ADA JUMLAHNYA)
-        // ---------------------------------------------------------------------
-        // Cek apakah ada input jumlah_child_doc (array) yang dikirim
-        if ($request->has('jumlah_child_doc') && is_array($request->jumlah_child_doc)) {
-            // Loop melalui array jumlah_child_doc[CHILD_ID] => JUMLAH
-            foreach ($request->jumlah_child_doc as $childId => $jumlah) {
-                // Pastikan jumlah valid dan anak dokumennya ada
-                if ($jumlah > 0) {
-                    $itemChild = DocumentChildren::find($childId);
-                    if ($itemChild) {
-                        // Simpan (atau update jika sudah ada)
-                        $customerDoc = $service->documents()->updateOrCreate(
-                            [
-                                // Cari berdasarkan ID anak
-                                'document_children_id' => $itemChild->id
-                            ],
-                            [
-                                'document_id' => $itemChild->document_id, // Simpan ID induknya dari relasi
-                                'jumlah' => $jumlah, // <-- AMBIL JUMLAH DARI INPUT BARU
-                                'harga' => $itemChild->price ?? 0, // Ambil harga dari anak, default 0 jika null
-                            ]
-                        );
-                        // Simpan ID yang baru dibuat/diupdate
-                        $validCustomerDocIds[] = $customerDoc->id;
-                    }
-                }
+        // 3️⃣ Ambil hanya dokumen ANAK yang dicentang
+        $selectedChildren = $request->input('child_documents', []);
+        foreach ($selectedChildren as $childId) {
+            $jumlah = $request->input("jumlah_child_doc.$childId", 1);
+            $itemChild = DocumentChildren::find($childId);
+
+            if ($itemChild) {
+                $customerDoc = $service->documents()->updateOrCreate(
+                    [
+                        'document_children_id' => $itemChild->id,
+                    ],
+                    [
+                        'document_id' => $itemChild->document_id,
+                        'jumlah' => $jumlah,
+                        'harga' => $itemChild->price ?? 0,
+                    ]
+                );
+                $validCustomerDocIds[] = $customerDoc->id;
             }
         }
 
-        // ---------------------------------------------------------------------
-        // 4. PEMBERSIHAN (Hapus item yang tidak dipilih lagi)
-        // ---------------------------------------------------------------------
+        // 4️⃣ Hapus item yang tidak dipilih
         $service->documents()
             ->whereNotIn('id', $validCustomerDocIds)
             ->delete();

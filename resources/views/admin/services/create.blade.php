@@ -492,19 +492,17 @@
                         </div>
                     </div>
 
-                    {{-- SECTION PILIH LAYANAN --}}
                     @php
-                        // Siapkan array data lama di sini agar lebih bersih
                         $oldServices = old('services', []);
                         $oldTransportTypes = old('transportation', []);
                         $oldHandlingTypes = old('handlings', []);
                         $oldReyalTipe = old('tipe');
                         $oldTourIds = old('tour_ids', []);
-                        $oldDocParents = old('dokumen_id', []); // Untuk dokumen induk
-                        $oldDocChildrenQty = old('jumlah_child_doc', []); // Untuk anak dokumen
+                        $oldDocParents = old('dokumen_id', []);
+                        $oldDocChildrenQty = old('jumlah_child_doc', []);
                         $oldDocBaseQty = collect(request()->old())->filter(
                             fn($val, $key) => str_starts_with($key, 'jumlah_doc_'),
-                        ); // Untuk dokumen base
+                        );
                         $oldPendampingQty = old('jumlah_pendamping', []);
                         $oldKontenQty = old('jumlah_konten', []);
                         $oldMealsQty = old('jumlah_meals', []);
@@ -970,7 +968,6 @@
                             <div class="detail-section">
                                 <div class="service-grid">
                                     @foreach ($documents as $document)
-                                        {{-- PERBAIKAN: Cek 'old' untuk parent dan base --}}
                                         @php
                                             $isParentSelected = in_array($document->id, $oldDocParents);
                                             $isBaseSelected = $oldDocBaseQty->has('jumlah_doc_' . $document->id);
@@ -989,7 +986,6 @@
                             <div id="document-forms-container">
                                 @foreach ($documents as $document)
                                     @if ($document->childrens->isNotEmpty())
-                                        {{-- Dokumen dengan anak --}}
                                         <div class="form-group {{ in_array($document->id, $oldDocParents) ? '' : 'hidden' }} document-child-form"
                                             data-parent-id="{{ $document->id }}">
                                             <label class="form-label">{{ $document->name }}</label>
@@ -1008,7 +1004,6 @@
                                                     </div>
                                                 @endforeach
                                             </div>
-                                            {{-- Render ulang form anak yang sudah diisi --}}
                                             @foreach ($document->childrens as $child)
                                                 <div id="doc-child-form-{{ $child->id }}"
                                                     class="form-group mt-2 bg-white p-3 border rounded {{ array_key_exists($child->id, $oldDocChildrenQty) ? '' : 'hidden' }}">
@@ -1024,7 +1019,6 @@
                                             @endforeach
                                         </div>
                                     @else
-                                        {{-- Dokumen base (tanpa anak) --}}
                                         <div class="form-group {{ $oldDocBaseQty->has('jumlah_doc_' . $document->id) ? '' : 'hidden' }} document-base-form"
                                             id="doc-{{ $document->id }}-form" data-document-id="{{ $document->id }}"
                                             data-price="{{ $document->price }}" data-name="{{ $document->name }}">
@@ -2356,7 +2350,7 @@
                         typeItem.classList.add('selected');
                         const inputDiv = document.createElement('div');
                         inputDiv.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border',
-                        'rounded');
+                            'rounded');
                         inputDiv.dataset.typeId = typeId;
                         const hotelIndex = hotelForm.dataset.index;
 
