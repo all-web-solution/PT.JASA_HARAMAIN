@@ -1,5 +1,5 @@
 @extends('admin.master')
-@section('title', 'Detail Pelanggan') {{-- Tambahkan title --}}
+@section('title', 'Detail Pelanggan')
 
 @push('styles')
     <style>
@@ -503,7 +503,7 @@
                                         <div class="d-flex justify-content-center gap-2 flex-wrap"> {{-- Bungkus tombol --}}
                                             {{-- Sesuaikan nama route Anda --}}
                                             <a href="{{-- route('admin.invoice.print', $order->id) --}}" class="btn btn-sm btn-outline-primary"
-                                                title="Cetak Invoice">
+                                                title="Cetak Invoice" onclick="alert('Under Maintenance'); return false;">
                                                 <i class="bi bi-printer"></i> Cetak
                                             </a>
                                             @if ($order->status_pembayaran !== 'lunas')
