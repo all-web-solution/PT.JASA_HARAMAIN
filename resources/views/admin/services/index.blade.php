@@ -233,10 +233,6 @@
             color: var(--text-primary);
         }
 
-        .btn-view {
-            color: var(--text-primary);
-        }
-
         /* Search and Filter */
         .search-filter-container {
             display: flex;
@@ -301,24 +297,31 @@
             box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
         }
 
-        /* Pagination */
         .pagination-container {
             display: flex;
             justify-content: flex-end;
             padding: 1.5rem;
             border-top: 1px solid var(--border-color);
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--haramain-secondary);
-            border-color: var(--haramain-secondary);
+            gap: 1rem
         }
 
         .pagination .page-link {
+            border-radius: 10px;
+            margin: 0 3px;
             color: var(--haramain-primary);
-            border-radius: 8px;
-            margin: 0 0.25rem;
-            border: 1px solid var(--border-color);
+            border-color: #d9e3f0
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #2f6fed;
+            border-color: #2f6fed;
+            color: #fff
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background-color: #f5f7fa;
+            color: #adb5bd;
+            border-color: #e3e7ec
         }
 
         /* Responsive adjustments */
