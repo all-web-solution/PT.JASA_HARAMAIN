@@ -233,10 +233,6 @@
             color: var(--text-primary);
         }
 
-        .btn-view {
-            color: var(--text-primary);
-        }
-
         /* Search and Filter */
         .search-filter-container {
             display: flex;
