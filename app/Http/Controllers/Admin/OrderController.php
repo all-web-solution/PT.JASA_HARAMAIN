@@ -118,13 +118,6 @@ class OrderController extends Controller
 
         $path = null; // Inisialisasi $path
 
-    try {
-        // 2. Simpan file di dalam subfolder 'payment_proofs'
-        if ($request->hasFile('foto')) {
-            // Ini akan menyimpan file di: storage/app/public/payment_proofs
-            $path = $request->file('foto')->store('payment_proofs', 'public');
-
-        }
         try {
             // 2. Simpan file di dalam subfolder 'payment_proofs'
             if ($request->hasFile('foto')) {
