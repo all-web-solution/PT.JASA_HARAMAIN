@@ -2,7 +2,359 @@
 @section('title', 'Edit Permintaan Service')
 @push('styles')
     <style>
-        :root{--haramain-primary:#1a4b8c;--haramain-secondary:#2a6fdb;--haramain-light:#e6f0fa;--haramain-accent:#3d8bfd;--text-primary:#2d3748;--text-secondary:#4a5568;--border-color:#d1e0f5;--hover-bg:#f0f7ff;--checked-color:#2a6fdb;--success-color:#28a745;--warning-color:#ffc107;--danger-color:#dc3545}.service-create-container{max-width:100vw;margin:0 auto;padding:2rem;background-color:#f8fafd}.card{border-radius:12px;box-shadow:0 4px 12px rgb(0 0 0 / .05);border:1px solid var(--border-color);margin-bottom:2rem;overflow:hidden;transition:transform 0.3s ease,box-shadow 0.3s ease}.card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgb(0 0 0 / .1)}.card-header{background:linear-gradient(135deg,var(--haramain-light) 0%,#ffffff 100%);border-bottom:1px solid var(--border-color);padding:1.5rem;display:flex;align-items:center;justify-content:space-between}.card-title{font-weight:700;color:var(--haramain-primary);margin:0;font-size:1.25rem;display:flex;align-items:center;gap:12px}.card-title i{font-size:1.5rem;color:var(--haramain-secondary)}.card-body{padding:1.5rem}.form-section{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border-color)}.form-section:last-of-type{border-bottom:none;padding-bottom:0;margin-bottom:0}.form-section-title{font-size:1.1rem;color:var(--haramain-primary);margin-bottom:1rem;display:flex;align-items:center;gap:8px}.form-section-title i{color:var(--haramain-secondary)}.form-group{margin-bottom:1.25rem}.form-label{display:block;margin-bottom:.5rem;font-weight:600;color:var(--text-primary)}.form-control,.form-select{width:100%;padding:.75rem 1rem;border:1px solid var(--border-color);border-radius:8px;font-size:1rem;transition:border-color 0.3s ease;background-color:#fff}.form-control:focus,.form-select:focus{outline:none;border-color:var(--haramain-secondary);box-shadow:0 0 0 3px rgb(42 111 219 / .1)}.form-control[readonly]{background-color:#e9ecef}.form-row{display:flex;gap:1rem;margin-bottom:1rem}.form-col{flex:1}.service-grid,.cars,.tours{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}.service-item,.transport-item,.type-item,.service-car,.handling-item,.document-item,.child-item,.content-item,.pendamping-item,.meal-item,.dorongan-item,.wakaf-item,.transport-option,.service-tour{border:2px solid var(--border-color);border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;transition:all 0.3s ease;background-color:#fff}.service-item:hover,.transport-item:hover,.type-item:hover,.service-car:hover,.handling-item:hover,.document-item:hover,.child-item:hover,.content-item:hover,.pendamping-item:hover,.meal-item:hover,.dorongan-item:hover,.wakaf-item:hover,.transport-option:hover,.service-tour:hover{border-color:var(--haramain-secondary);transform:translateY(-5px);box-shadow:0 5px 15px rgb(0 0 0 / .1)}.service-item.selected,.transport-item.selected,.type-item.selected,.handling-item.selected,.service-car.selected,.document-item.selected,.child-item.selected,.content-item.selected,.pendamping-item.selected,.meal-item.selected,.dorongan-item.selected,.wakaf-item.selected,.transport-option.selected,.service-tour.selected{border-color:var(--haramain-secondary);background-color:var(--haramain-light)}.service-icon{font-size:2rem;color:var(--haramain-secondary);margin-bottom:.75rem}.service-name{font-weight:600;color:var(--text-primary);margin-bottom:.25rem}.service-desc{font-size:.875rem;color:var(--text-secondary)}.detail-form{background-color:var(--haramain-light);border-radius:8px;padding:1.5rem;margin-top:1.5rem}.detail-section{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border-color)}.detail-section:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}.detail-title{font-weight:600;color:var(--haramain-primary);margin-bottom:1rem;display:flex;align-items:center;gap:8px}.detail-title i{color:var(--haramain-secondary)}.btn{padding:.75rem 1.5rem;border-radius:8px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:all 0.3s ease;border:none;cursor:pointer}.btn-sm{padding:.5rem 1rem;font-size:.875rem}.btn-danger{background-color:var(--danger-color);color:#fff}.btn-danger:hover{opacity:.85}.btn-primary{background-color:var(--haramain-secondary);color:#fff}.btn-primary:hover{background-color:var(--haramain-primary)}.btn-secondary{background-color:#fff;color:var(--text-secondary);border:1px solid var(--border-color)}.btn-secondary:hover{background-color:#f8f9fa}.form-actions{display:flex;justify-content:flex-end;gap:1rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border-color)}.hidden{display:none!important}.card-reyal.selected{border:2px solid var(--haramain-secondary);background-color:var(--haramain-light)}#backToServicesBtn{visibility:hidden;opacity:0;position:fixed;bottom:20px;right:30px;z-index:99;border-radius:50%;padding:.6rem .9rem;font-size:1.25rem;box-shadow:0 4px 12px rgb(0 0 0 / .15);transition:opacity 0.3s ease,visibility 0.3s ease}#backToServicesBtn.show{visibility:visible;opacity:1}@media (max-width:768px){.form-row{flex-direction:column;gap:0}.service-grid,.cars,.tours{grid-template-columns:1fr}.form-actions{flex-direction:column}.form-actions .btn{width:100%;justify-content:center}}
+        :root {
+            --haramain-primary: #1a4b8c;
+            --haramain-secondary: #2a6fdb;
+            --haramain-light: #e6f0fa;
+            --haramain-accent: #3d8bfd;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border-color: #d1e0f5;
+            --hover-bg: #f0f7ff;
+            --checked-color: #2a6fdb;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545
+        }
+
+        .service-create-container {
+            max-width: 100vw;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f8fafd
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgb(0 0 0 / .05);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgb(0 0 0 / .1)
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--haramain-primary);
+            margin: 0;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: var(--haramain-secondary)
+        }
+
+        .card-body {
+            padding: 1.5rem
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color)
+        }
+
+        .form-section:last-of-type {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0
+        }
+
+        .form-section-title {
+            font-size: 1.1rem;
+            color: var(--haramain-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .form-section-title i {
+            color: var(--haramain-secondary)
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: .5rem;
+            font-weight: 600;
+            color: var(--text-primary)
+        }
+
+        .form-control,
+        .form-select {
+            width: 100%;
+            padding: .75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background-color: #fff
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--haramain-secondary);
+            box-shadow: 0 0 0 3px rgb(42 111 219 / .1)
+        }
+
+        .form-control[readonly] {
+            background-color: #e9ecef
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem
+        }
+
+        .form-col {
+            flex: 1
+        }
+
+        .service-grid,
+        .cars,
+        .tours {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem
+        }
+
+        .service-item,
+        .transport-item,
+        .type-item,
+        .service-car,
+        .handling-item,
+        .document-item,
+        .child-item,
+        .content-item,
+        .pendamping-item,
+        .meal-item,
+        .dorongan-item,
+        .wakaf-item,
+        .transport-option,
+        .service-tour {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #fff
+        }
+
+        .service-item:hover,
+        .transport-item:hover,
+        .type-item:hover,
+        .service-car:hover,
+        .handling-item:hover,
+        .document-item:hover,
+        .child-item:hover,
+        .content-item:hover,
+        .pendamping-item:hover,
+        .meal-item:hover,
+        .dorongan-item:hover,
+        .wakaf-item:hover,
+        .transport-option:hover,
+        .service-tour:hover {
+            border-color: var(--haramain-secondary);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgb(0 0 0 / .1)
+        }
+
+        .service-item.selected,
+        .transport-item.selected,
+        .type-item.selected,
+        .handling-item.selected,
+        .service-car.selected,
+        .document-item.selected,
+        .child-item.selected,
+        .content-item.selected,
+        .pendamping-item.selected,
+        .meal-item.selected,
+        .dorongan-item.selected,
+        .wakaf-item.selected,
+        .transport-option.selected,
+        .service-tour.selected {
+            border-color: var(--haramain-secondary);
+            background-color: var(--haramain-light)
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            color: var(--haramain-secondary);
+            margin-bottom: .75rem
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: .25rem
+        }
+
+        .service-desc {
+            font-size: .875rem;
+            color: var(--text-secondary)
+        }
+
+        .detail-form {
+            background-color: var(--haramain-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem
+        }
+
+        .detail-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color)
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none
+        }
+
+        .detail-title {
+            font-weight: 600;
+            color: var(--haramain-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .detail-title i {
+            color: var(--haramain-secondary)
+        }
+
+        .btn {
+            padding: .75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer
+        }
+
+        .btn-sm {
+            padding: .5rem 1rem;
+            font-size: .875rem
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: #fff
+        }
+
+        .btn-danger:hover {
+            opacity: .85
+        }
+
+        .btn-primary {
+            background-color: var(--haramain-secondary);
+            color: #fff
+        }
+
+        .btn-primary:hover {
+            background-color: var(--haramain-primary)
+        }
+
+        .btn-secondary {
+            background-color: #fff;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color)
+        }
+
+        .btn-secondary:hover {
+            background-color: #f8f9fa
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color)
+        }
+
+        .hidden {
+            display: none !important
+        }
+
+        .card-reyal.selected {
+            border: 2px solid var(--haramain-secondary);
+            background-color: var(--haramain-light)
+        }
+
+        #backToServicesBtn {
+            visibility: hidden;
+            opacity: 0;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            border-radius: 50%;
+            padding: .6rem .9rem;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px rgb(0 0 0 / .15);
+            transition: opacity 0.3s ease, visibility 0.3s ease
+        }
+
+        #backToServicesBtn.show {
+            visibility: visible;
+            opacity: 1
+        }
+
+        @media (max-width:768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0
+            }
+
+            .service-grid,
+            .cars,
+            .tours {
+                grid-template-columns: 1fr
+            }
+
+            .form-actions {
+                flex-direction: column
+            }
+
+            .form-actions .btn {
+                width: 100%;
+                justify-content: center
+            }
+        }
     </style>
 @endpush
 @section('content')
@@ -182,19 +534,19 @@
                         </h6>
                         <div class="service-grid">
                             @foreach ([
-                                'transportasi' => ['icon' => 'bi-airplane', 'name' => 'Transportasi', 'desc' => 'Tiket & Transport'],
-                                'hotel' => ['icon' => 'bi-building', 'name' => 'Hotel', 'desc' => 'Akomodasi'],
-                                'dokumen' => ['icon' => 'bi-file-text', 'name' => 'Dokumen', 'desc' => 'Visa & Administrasi'],
-                                'handling' => ['icon' => 'bi-briefcase', 'name' => 'Handling', 'desc' => 'Bandara & Hotel'],
-                                'pendamping' => ['icon' => 'bi-people', 'name' => 'Pendamping', 'desc' => 'Tour Leader & Mutawwif'],
-                                'konten' => ['icon' => 'bi-camera', 'name' => 'Konten', 'desc' => 'Dokumentasi'],
-                                'reyal' => ['icon' => 'bi-currency-exchange', 'name' => 'Reyal', 'desc' => 'Penukaran Mata Uang'],
-                                'tour' => ['icon' => 'bi-geo-alt', 'name' => 'Tour', 'desc' => 'City Tour & Ziarah'],
-                                'meals' => ['icon' => 'bi-egg-fried', 'name' => 'Meals', 'desc' => 'Makanan'],
-                                'dorongan' => ['icon' => 'bi-basket', 'name' => 'Dorongan', 'desc' => 'Bagi penyandang disabilitas'],
-                                'waqaf' => ['icon' => 'bi-gift', 'name' => 'Waqaf', 'desc' => 'Sedekah & Waqaf'],
-                                'badal' => ['icon' => 'bi-gift', 'name' => 'Badal Umrah', 'desc' => 'Umrah Badal'],
-                            ] as $key => $item)
+            'transportasi' => ['icon' => 'bi-airplane', 'name' => 'Transportasi', 'desc' => 'Tiket & Transport'],
+            'hotel' => ['icon' => 'bi-building', 'name' => 'Hotel', 'desc' => 'Akomodasi'],
+            'dokumen' => ['icon' => 'bi-file-text', 'name' => 'Dokumen', 'desc' => 'Visa & Administrasi'],
+            'handling' => ['icon' => 'bi-briefcase', 'name' => 'Handling', 'desc' => 'Bandara & Hotel'],
+            'pendamping' => ['icon' => 'bi-people', 'name' => 'Pendamping', 'desc' => 'Tour Leader & Mutawwif'],
+            'konten' => ['icon' => 'bi-camera', 'name' => 'Konten', 'desc' => 'Dokumentasi'],
+            'reyal' => ['icon' => 'bi-currency-exchange', 'name' => 'Reyal', 'desc' => 'Penukaran Mata Uang'],
+            'tour' => ['icon' => 'bi-geo-alt', 'name' => 'Tour', 'desc' => 'City Tour & Ziarah'],
+            'meals' => ['icon' => 'bi-egg-fried', 'name' => 'Meals', 'desc' => 'Makanan'],
+            'dorongan' => ['icon' => 'bi-basket', 'name' => 'Dorongan', 'desc' => 'Bagi penyandang disabilitas'],
+            'waqaf' => ['icon' => 'bi-gift', 'name' => 'Waqaf', 'desc' => 'Sedekah & Waqaf'],
+            'badal' => ['icon' => 'bi-gift', 'name' => 'Badal Umrah', 'desc' => 'Umrah Badal'],
+        ] as $key => $item)
                                 <div class="service-item {{ in_array($key, $oldOrSelectedServices) ? 'selected' : '' }}"
                                     data-service="{{ $key }}">
                                     <div class="service-icon"><i class="bi {{ $item['icon'] }}"></i></div>
