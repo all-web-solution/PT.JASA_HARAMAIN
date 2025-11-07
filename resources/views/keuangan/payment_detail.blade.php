@@ -72,7 +72,7 @@
             font-weight: 600;
             padding: 1rem;
             border-bottom: 2px solid var(--border-color);
-            text-align: left;
+            text-align: center;
             font-size: 0.85rem;
         }
 
@@ -89,6 +89,7 @@
         .table tbody td {
             padding: 1.1rem;
             vertical-align: top;
+            text-align: center;
             /* Changed to top for better alignment of long content */
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
@@ -269,29 +270,32 @@
                                 <td data-label="Layanan Dipilih" class="service-details">
                                     @php $hasContent = false; @endphp
 
-                                    {{-- Loop through each service type and display if available --}}
-                                    @if ($order->service->meals->count() > 0)
+                                    {{-- Makanan --}}
+                                    @if ($order->service->meals->isNotEmpty())
                                         @php $hasContent = true; @endphp
                                         <strong>Makanan:</strong><br>
                                         @foreach ($order->service->meals as $meal)
-                                            - {{ $meal->mealItem->name }} (Rp.
-                                            {{ number_format($meal->mealItem->price, 0, ',', '.') }})<br>
+                                            {{-- Asumsi: relasi 'mealItem' dan properti 'name' & 'price' --}}
+                                            - {{ $meal->mealItem?->name ?? 'N/A' }} (Rp.
+                                            {{ number_format($meal->mealItem?->price ?? 0, 0, ',', '.') }})<br>
                                         @endforeach
                                     @endif
 
-                                    @if ($order->service->planes->count() > 0)
+                                    {{-- Transportasi (Udara & Darat) --}}
+                                    @if ($order->service->planes->isNotEmpty() || $order->service->transportationItem->isNotEmpty())
                                         @php $hasContent = true; @endphp
                                         <strong>Transportasi:</strong><br>
                                         @foreach ($order->service->planes as $plane)
                                             - (Udara) {{ $plane->maskapai }} [{{ $plane->rute }}]<br>
                                         @endforeach
                                         @foreach ($order->service->transportationItem as $item)
-                                            - (Darat) {{ $item->transportation->nama }} [{{ $item->route->route }}]<br>
+                                            {{-- Asumsi: relasi 'transportation' & 'route' --}}
+                                            - (Darat) {{ $item->transportation?->nama }} [{{ $item->route?->route }}]<br>
                                         @endforeach
                                     @endif
 
-                                    {{-- Add other services similarly --}}
-                                    @if ($order->service->hotels->count() > 0)
+                                    {{-- Hotel --}}
+                                    @if ($order->service->hotels->isNotEmpty())
                                         @php $hasContent = true; @endphp
                                         <strong>Hotel:</strong><br>
                                         @foreach ($order->service->hotels as $hotel)
@@ -299,10 +303,193 @@
                                         @endforeach
                                     @endif
 
+                                    {{-- Tour --}}
+                                    @if ($order->service->tours->isNotEmpty())
+                                        @php $hasContent = true; @endphp
+                                        <strong>Tour:</strong><br>
+                                        @foreach ($order->service->tours as $tour)
+                                            {{-- Asumsi: properti 'name' --}}
+                                            - {{ $tour->name ?? 'N/A' }}<br>
+                                        @endforeach
+                                    @endif
+
+                                    {{-- Guide --}}
+                                    @if ($order->service->guides->isNotEmpty())
+                                        @php $hasContent = true; @endphp
+                                        <strong>Guide:</strong><br>
+                                        @foreach ($order->service->guides as $guide)
+                                            {{-- Asumsi: properti 'name' --}}
+                                            - {{ $guide->name ?? 'N/A' }}<br>
+                                        @endforeach
+                                    @endif
+
+                                    {{-- Dokumen --}}
+                                    @if ($order->service->documents->isNotEmpty())
+                                        @php $hasContent = true; @endphp
+                                        <strong>Dokumen:</strong><br>
+                                        @foreach ($order->service->documents as $document)
+                                            {{-- Asumsi: relasi 'document' dan properti 'name' --}}
+                                            - {{ $document->document?->name ?? 'N/A' }} ({{ $document->jumlah }} pcs)<br>
+                                        @endforeach
+                                    @endif
+
+                                    {{-- Konten --}}
+                                    @if ($order->service->contents->isNotEmpty())
+                                        @php $hasContent = true; @endphp
+                                        <strong>Konten:</strong><br>
+                                        @foreach ($order->service->contents as $content)
+                                            {{-- Asumsi: relasi 'content' dan properti 'name' --}}
+                                            - {{ $content->content?->name ?? 'N/A' }} ({{ $content->jumlah }} pcs)<br>
+                                        @endforeach
+                                    @endif
+
+                                    {{-- Handling --}}
+                                    @if ($order->service->handlings->isNotEmpty())
+                                        @php $hasContent = true; @endphp
+                                        <strong>Handling:</strong><br>
+                                        @foreach ($order->service->handlings as $handling)
+                                            {{-- Asumsi: properti 'name' atau 'description' --}}
+                                            - {{ $handling->name ?? ($handling->description ?? 'N/A') }}<br>
+                                        @endforeach
+                                    @endif
+
+                                    {{-- Badal --}}
+                                    @if ($order->service->badals->isNotEmpty())
+                                        @php $hasContent = true; @endphp
+                                        <strong>Badal:</strong><br>
+                                        @foreach ($order->service->badals as $badal)
+                                            {{-- Asumsi: properti 'name' --}}
+                                            - {{ $badal->name ?? 'N/A' }}<br>
+                                        @endforeach
+                                    @endif
+
+                                    {{-- Wakaf --}}
+                                    @if ($order->service->wakafs->isNotEmpty())
+                                        @php $hasContent = true; @endphp
+                                        <strong>Wakaf:</strong><br>
+                                        @foreach ($order->service->wakafs as $wakaf)
+                                            {{-- Asumsi: properti 'name' --}}
+                                            - {{ $wakaf->name ?? 'N/A' }}<br>
+                                        @endforeach
+                                    @endif
+
+                                    {{-- Dorongan --}}
+                                    @if ($order->service->dorongans->isNotEmpty())
+                                        @php $hasContent = true; @endphp
+                                        <strong>Dorongan:</strong><br>
+                                        @foreach ($order->service->dorongans as $dorongan)
+                                            {{-- Asumsi: properti 'name' atau 'item_name' --}}
+                                            - {{ $dorongan->name ?? ($dorongan->item_name ?? 'N/A') }}<br>
+                                        @endforeach
+                                    @endif
+
+                                    {{-- Exchange --}}
+                                    @if ($order->service->exchanges->isNotEmpty())
+                                        @php $hasContent = true; @endphp
+                                        <strong>Exchange:</strong><br>
+                                        @foreach ($order->service->exchanges as $exchange)
+                                            - {{ $exchange->amount ?? 0 }} {{ $exchange->currency_from }} ke
+                                            {{ $exchange->currency_to }}<br>
+                                        @endforeach
+                                    @endif
+
+                                    {{-- File --}}
+                                    @if ($order->service->filess->isNotEmpty())
+                                        @php $hasContent = true; @endphp
+                                        <strong>Files:</strong><br>
+                                        @foreach ($order->service->filess as $file)
+                                            {{-- Asumsi: properti 'name' atau 'file_name' --}}
+                                            - {{ $file->name ?? ($file->file_name ?? 'N/A') }}<br>
+                                        @endforeach
+                                    @endif
+
+                                    {{-- Final Check --}}
                                     @if (!$hasContent)
                                         <span>Tidak ada detail layanan.</span>
                                     @endif
-                                    {{-- You can continue this pattern for all other services --}}
+                                </td>
+                                <td>
+                                    @php
+                                        // -------------------------------------------------------------------
+                                        // BAGIAN 1: LOGIC PENGECEKAN STATUS (REVISI)
+                                        // -------------------------------------------------------------------
+                                        $items = $order->service->getAllItemsFromService();
+                                        $totalItems = $items->count();
+
+                                        // HITUNG ITEM YANG BELUM FINAL (statusnya 'nego' atau 'pending_supplier')
+                                        // Asumsi: 'nego' adalah satu-satunya status di mana harga BELUM final.
+                                        // Jika ada status awal lain (spt 'pending_supplier'), tambahkan di sini.
+                                        $itemsBelumFinal = $items->where('status_item', 'nego')->count();
+
+                                        // Hitung item yang SUDAH final (kebalikannya)
+                                        $itemsSudahFinal = $totalItems - $itemsBelumFinal;
+
+                                        // Tombol aktif JIKA SEMUA item sudah TIDAK 'nego' lagi
+                                        $semuaFinal = $totalItems > 0 && $itemsBelumFinal === 0;
+
+                                        // Cek apakah order SUDAH PERNAH dihitung final
+                                        // Asumsi: Kamu punya kolom 'status_harga' di tabel 'orders'
+                                        $hargaSudahFinal = $order->status_harga == 'final';
+                                    @endphp
+
+                                    {{-- ... (HTML lainnya) ... --}}
+
+                                    {{-- ------------------------------------------------------------------- --}}
+                                    {{-- BAGIAN 2: TAMPILKAN STATUS KESIAPAN & TOMBOL KALKULASI (REVISI) --}}
+                                    {{-- ------------------------------------------------------------------- --}}
+                                    <div class="form-section">
+                                        <h6 class="form-section-title">Status Finalisasi Harga</h6>
+
+                                        {{-- Tampilkan Alert Sesuai Status --}}
+                                        @if ($hargaSudahFinal)
+                                            <div class="alert alert-success">
+                                                <i class="bi bi-check2-circle"></i>
+                                                <strong>Harga Sudah Final.</strong>
+                                                Total tagihan telah dikunci.
+                                            </div>
+                                        @elseif (!$semuaFinal && $totalItems > 0)
+                                            <div class="alert alert-warning">
+                                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                                <strong>Menunggu Divisi:</strong>
+                                                Baru **{{ $itemsSudahFinal }}** dari **{{ $totalItems }}** item layanan
+                                                yang harganya sudah final (status bukan 'nego'). Tombol kalkulasi belum
+                                                aktif.
+                                            </div>
+                                        @elseif ($semuaFinal)
+                                            <div class="alert alert-info">
+                                                <i class="bi bi-info-circle-fill"></i>
+                                                <strong>Siap Dihitung:</strong>
+                                                Semua **{{ $totalItems }}** item layanan sudah final (status:
+                                                deal/persiapan/produksi/done). Silakan klik tombol di bawah.
+                                            </div>
+                                        @else
+                                            <div class="alert alert-secondary">
+                                                Belum ada item layanan yang diproses.
+                                            </div>
+                                        @endif
+
+                                        {{-- Form Tombol Kalkulasi --}}
+                                        <form action="{{ route('order.calculateFinal', $order->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+
+                                            <button type="submit" class="btn btn-primary"
+                                                @if (!$semuaFinal || $hargaSudahFinal) disabled @endif>
+                                                <i class="bi bi-calculator"></i>
+                                                @if ($hargaSudahFinal)
+                                                    Total Sudah Final
+                                                @else
+                                                    Hitung & Finalkan Total Tagihan
+                                                @endif
+                                            </button>
+
+                                            @if (!$semuaFinal && !$hargaSudahFinal && $totalItems > 0)
+                                                <small class="text-muted d-block mt-2">Tombol akan aktif setelah
+                                                    **{{ $itemsBelumFinal }}** item lagi (yang masih 'nego') diselesaikan
+                                                    oleh divisi.</small>
+                                            @endif
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @else
@@ -325,60 +512,60 @@
                 </h5>
             </div>
             <div class="table-responsive d-flex" style="padding: 1.5rem;">
-                    @foreach ($order->uploadPayments as $file)
+                @foreach ($order->uploadPayments as $file)
                     <a href="{{ asset('storage/' . $file->payment_proof) }}" target="_blank" class="mx-3">
                         <img src="{{ asset('storage/' . $file->payment_proof) }}" alt="Bukti Pembayaran"
                             style="width: 100px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
                     </a>
-                    @endforeach
-                </div>
+                @endforeach
+            </div>
         </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">
-                        <i class="bi bi-credit-card"></i>
-                        <span>Input Pembayaran</span>
-                    </h5>
-                </div>
-                <div class="payment-form-container">
-                    <form action="{{ route('keuangan.payment.pay', $order) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-group">
-                            <label for="jumlah_dibayarkan" class="form-label">Jumlah yang Dibayarkan (SAR)</label>
-                            <input type="number" step="any" class="form-control" id="jumlah_dibayarkan"
-                                name="jumlah_dibayarkan" placeholder="Contoh: 1500.50" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="jumlah_dibayarkan" class="form-label">Status</label>
-                            <select class="form-control" name="status" id="travel-select" required>
-                                <option value="" >Pilih status</option>
-                                <option value="belum_bayar" >Belum bayar</option>
-                                <option value="belum_lunas" >Belum lunas</option>
-                                <option value="lunas" >Lunas</option>
-
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="foto" class="form-label">Bukti Pembayaran</label>
-                            <input type="file" class="form-control" id="foto" name="bukti_pembayaran" accept="image/*">
-                        </div>
-                        <div class="form-group">
-                            <label for="jumlah_dibayarkan" class="form-label">Status bukti pembayaran</label>
-                            <select class="form-control" name="status_bukti_pembayaran" id="travel-select" required>
-                                <option value="" >Pilih status</option>
-                                <option value="approve" >Approve</option>
-                                <option value="unapprove" >Unapprove</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn-submit">
-                            <i class="bi bi-check-circle"></i> Simpan Pembayaran
-                        </button>
-                    </form>
-                </div>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="bi bi-credit-card"></i>
+                    <span>Input Pembayaran</span>
+                </h5>
             </div>
+            <div class="payment-form-container">
+                <form action="{{ route('keuangan.payment.pay', $order) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="jumlah_dibayarkan" class="form-label">Jumlah yang Dibayarkan (SAR)</label>
+                        <input type="number" step="any" class="form-control" id="jumlah_dibayarkan"
+                            name="jumlah_dibayarkan" placeholder="Contoh: 1500.50" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="jumlah_dibayarkan" class="form-label">Status</label>
+                        <select class="form-control" name="status" id="travel-select" required>
+                            <option value="">Pilih status</option>
+                            <option value="belum_bayar">Belum bayar</option>
+                            <option value="belum_lunas">Belum lunas</option>
+                            <option value="lunas">Lunas</option>
 
-         <div class="card">
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="foto" class="form-label">Bukti Pembayaran</label>
+                        <input type="file" class="form-control" id="foto" name="bukti_pembayaran" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label for="jumlah_dibayarkan" class="form-label">Status bukti pembayaran</label>
+                        <select class="form-control" name="status_bukti_pembayaran" id="travel-select" required>
+                            <option value="">Pilih status</option>
+                            <option value="approve">Approve</option>
+                            <option value="unapprove">Unapprove</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-check-circle"></i> Simpan Pembayaran
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
                     <i class="bi bi-receipt-cutoff"></i>
@@ -410,9 +597,10 @@
                                 <td>{{ $item->created_at->format('d M Y') }}</td>
                                 <td>
                                     @if ($item->bukti_pembayaran)
-                                    <a href="{{ asset('storage/' . $item->bukti_pembayaran) }}">
-                                        <img src="{{ url('storage/' . $item->bukti_pembayaran) }}" alt="bukti" width="100px" height="100px">
-                                    </a>
+                                        <a href="{{ asset('storage/' . $item->bukti_pembayaran) }}">
+                                            <img src="{{ url('storage/' . $item->bukti_pembayaran) }}" alt="bukti"
+                                                width="100px" height="100px">
+                                        </a>
                                     @else
                                         Belum ada bukti pembayaran
                                     @endif

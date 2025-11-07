@@ -1,5 +1,5 @@
 @extends('admin.master')
-@section('title', 'Edit Order Hotel')
+@section('title', 'Edit Handling Hotel')
 
 @push('styles')
     <style>
@@ -90,6 +90,15 @@
             transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
         }
 
+        /* Ubah style input file */
+        .form-control[type="file"] {
+            padding: 0.6rem 1rem;
+        }
+
+        .form-control[type="file"]:focus {
+            box-shadow: none;
+        }
+
         .form-control:focus,
         .form-select:focus {
             border-color: var(--haramain-accent);
@@ -102,11 +111,6 @@
             background-color: #e9ecef;
             opacity: 1;
             cursor: not-allowed;
-        }
-
-        textarea.form-control {
-            min-height: 100px;
-            resize: vertical;
         }
 
         .btn-container {
@@ -170,6 +174,30 @@
         .form-select.is-invalid {
             border-color: var(--danger-color);
         }
+
+        /* Preview Gambar */
+        .image-preview {
+            width: 120px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-top: 0.5rem;
+        }
+
+        .image-preview-placeholder {
+            width: 120px;
+            height: 90px;
+            border-radius: 8px;
+            background-color: var(--hover-bg);
+            border: 1px dashed var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
     </style>
 @endpush
 
@@ -178,15 +206,17 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-building"></i> Edit Order Hotel
+                    <i class="bi bi-building"></i> Edit Handling Hotel
                 </h5>
-                <a href="{{ route('hotel.show', $hotel->id) }}" class="btn btn-secondary">
+                {{-- Arahkan kembali ke detail handling hotel --}}
+                <a href="{{ route('handling.handling.hotel.show', $hotel->id) }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
 
-            {{-- Controller mengirim: $hotel, $services, $statuses --}}
-            <form action="{{ route('hotel.update', $hotel->id) }}" method="POST">
+            {{-- Controller mengirim: $hotel, $handlings, $statuses --}}
+            {{-- PENTING: Tambahkan enctype untuk upload file --}}
+            <form action="{{ route('handling.hotel.update', $hotel->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -203,103 +233,124 @@
                         </div>
                     @endif
 
-                    {{-- BARIS 1: SERVICE & NAMA HOTEL --}}
+                    {{-- BARIS 1: HANDLING ID (Induk) & NAMA HOTEL --}}
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="service_id" class="form-label">Travel</label>
-                                <select id="service_id" name="service_id"
-                                    class="form-select @error('service_id') is-invalid @enderror" disabled>
-                                    <option value="">Travel</option>
-                                    @foreach ($services as $service)
-                                        <option value="{{ $service->id }}"
-                                            {{ old('service_id', $hotel->service_id) == $service->id ? 'selected' : '' }}>
-                                            {{ $service->pelanggan?->nama_travel ?? 'N/A' }}
+                                <label for="nama" class="form-label">Nama Hotel</label>
+                                <input type="text" id="nama" name="nama"
+                                    class="form-control @error('nama') is-invalid @enderror" disabled
+                                    value="{{ old('nama', $hotel->nama) }}">
+                                @error('nama')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="tanggal" class="form-label">Tanggal Check-in</label>
+                                <input type="date" id="tanggal" name="tanggal"
+                                    class="form-control @error('tanggal') is-invalid @enderror"
+                                    value="{{ old('tanggal', \Carbon\Carbon::parse($hotel->tanggal)->format('Y-m-d')) }}"
+                                    disabled>
+                                @error('tanggal')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- BARIS 2: TANGGAL, PAX, & STATUS --}}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="pax" class="form-label">Pax</label>
+                                <input type="number" id="pax" name="pax"
+                                    class="form-control @error('pax') is-invalid @enderror"
+                                    value="{{ old('pax', $hotel->pax) }}">
+                                @error('pax')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status" class="form-label">Status</label>
+                                <select id="status" name="status"
+                                    class="form-select @error('status') is-invalid @enderror">
+                                    @foreach ($statuses as $status)
+                                        <option value="{{ $status }}"
+                                            {{ old('status', $hotel->status) == $status ? 'selected' : '' }}>
+                                            {{ $status }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('service_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="nama_hotel" class="form-label">Nama Hotel</label>
-                                <input type="text" id="nama_hotel" name="nama_hotel"
-                                    class="form-control @error('nama_hotel') is-invalid @enderror"
-                                    value="{{ old('nama_hotel', $hotel->nama_hotel) }}">
-                                @error('nama_hotel')
+                                @error('status')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
                     </div>
 
-                    {{-- BARIS 2: TANGGAL CHECK-IN & CHECK-OUT --}}
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="tanggal_checkin" class="form-label">Tanggal Check-in</label>
-                                <input type="date" id="tanggal_checkin" name="tanggal_checkin"
-                                    class="form-control @error('tanggal_checkin') is-invalid @enderror"
-                                    value="{{ old('tanggal_checkin', \Carbon\Carbon::parse($hotel->tanggal_checkin)->format('Y-m-d')) }}">
-                                @error('tanggal_checkin')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="tanggal_checkout" class="form-label">Tanggal Check-out</label>
-                                <input type="date" id="tanggal_checkout" name="tanggal_checkout"
-                                    class="form-control @error('tanggal_checkout') is-invalid @enderror"
-                                    value="{{ old('tanggal_checkout', \Carbon\Carbon::parse($hotel->tanggal_checkout)->format('Y-m-d')) }}">
-                                @error('tanggal_checkout')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- BARIS 3: JUMLAH KAMAR, HARGA/KAMAR, TIPE --}}
+                    {{-- BARIS 3: FILE UPLOADS --}}
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="type" class="form-label">Tipe Kamar</label>
-                                <input type="text" id="type" name="type"
-                                    class="form-control @error('type') is-invalid @enderror"
-                                    value="{{ old('type', $hotel->type) }}">
-                                @error('type')
+                                <label for="kode_booking" class="form-label">Ganti Foto Kode Booking</label>
+                                <input type="file" id="kode_booking" name="kode_booking"
+                                    class="form-control @error('kode_booking') is-invalid @enderror">
+                                @error('kode_booking')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                @if ($hotel->kode_booking)
+                                    <a href="{{ url('storage/' . $hotel->kode_booking) }}" target="_blank">
+                                        <img src="{{ url('storage/' . $hotel->kode_booking) }}" alt="Kode Booking"
+                                            class="image-preview">
+                                    </a>
+                                @else
+                                    <div class="image-preview-placeholder">No Image</div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="harga_perkamar" class="form-label">Harga / Kamar (Lama)</label>
-                                <input type="number" step="0.01" id="harga_perkamar" name="harga_perkamar"
-                                    class="form-control @error('harga_perkamar') is-invalid @enderror" disabled
-                                    value="{{ old('harga_perkamar', $hotel->harga_perkamar) }}">
-                                @error('harga_perkamar')
+                                <label for="rumlis" class="form-label">Ganti Foto Rumlis</label>
+                                <input type="file" id="rumlis" name="rumlis"
+                                    class="form-control @error('rumlis') is-invalid @enderror">
+                                @error('rumlis')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                @if ($hotel->rumlis)
+                                    <a href="{{ url('storage/' . $hotel->rumlis) }}" target="_blank">
+                                        <img src="{{ url('storage/' . $hotel->rumlis) }}" alt="Rumlis"
+                                            class="image-preview">
+                                    </a>
+                                @else
+                                    <div class="image-preview-placeholder">No Image</div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="jumlah_type" class="form-label">Jumlah Kamar (Sesuai Tipe)</label>
-                                <input type="number" id="jumlah_type" name="jumlah_type"
-                                    class="form-control @error('jumlah_type') is-invalid @enderror"
-                                    value="{{ old('jumlah_type', $hotel->jumlah_type) }}">
-                                @error('jumlah_type')
+                                <label for="identitas_koper" class="form-label">Ganti Identitas Koper</label>
+                                <input type="file" id="identitas_koper" name="identitas_koper"
+                                    class="form-control @error('identitas_koper') is-invalid @enderror">
+                                @error('identitas_koper')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                @if ($hotel->identitas_koper)
+                                    <a href="{{ url('storage/' . $hotel->identitas_koper) }}" target="_blank">
+                                        <img src="{{ url('storage/' . $hotel->identitas_koper) }}" alt="Identitas Koper"
+                                            class="image-preview">
+                                    </a>
+                                @else
+                                    <div class="image-preview-placeholder">No Image</div>
+                                @endif
                             </div>
                         </div>
                     </div>
 
-                    {{-- BARIS 4: SUPPLIER & FINANSIAL (BARU) --}}
+                    {{-- BARIS 4: FINANSIAL & SUPPLIER --}}
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
@@ -336,30 +387,11 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="status" class="form-label">Status</label>
-                                <select id="status" name="status"
-                                    class="form-select @error('status') is-invalid @enderror">
-                                    @foreach ($statuses as $status)
-                                        <option value="{{ $status }}"
-                                            {{ old('status', $hotel->status) == $status ? 'selected' : '' }}>
-                                            {{ $status }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('status')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- BARIS 5: CATATAN --}}
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="catatan" class="form-label">Catatan</label>
-                                <textarea id="catatan" name="catatan" class="form-control @error('catatan') is-invalid @enderror" rows="3">{{ old('catatan', $hotel->catatan) }}</textarea>
-                                @error('catatan')
+                                <label for="harga" class="form-label">Harga (Lama)</label>
+                                <input type="number" step="0.01" id="harga" name="harga"
+                                    class="form-control @error('harga') is-invalid @enderror" disabled
+                                    value="{{ old('harga', $hotel->harga) }}">
+                                @error('harga')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -368,7 +400,7 @@
 
                     {{-- Tombol Aksi --}}
                     <div class="btn-container">
-                        <a href="{{ route('hotel.show', $hotel->id) }}" class="btn btn-secondary">
+                        <a href="{{ route('handling.handling.hotel.show', $hotel->id) }}" class="btn btn-secondary">
                             Batal
                         </a>
                         <button type="submit" class="btn-submit">

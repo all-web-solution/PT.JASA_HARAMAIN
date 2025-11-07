@@ -226,45 +226,45 @@ class ServicesController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'travel' => 'required|exists:pelanggans,id',
-            'services' => 'required|array',
-            'tanggal_keberangkatan' => 'required|date',
-            'tanggal_kepulangan' => 'required|date',
-            'total_jamaah' => 'required|integer',
+        // $request->validate([
+        //     'travel' => 'required|exists:pelanggans,id',
+        //     'services' => 'required|array',
+        //     'tanggal_keberangkatan' => 'required|date',
+        //     'tanggal_kepulangan' => 'required|date',
+        //     'total_jamaah' => 'required|integer',
 
-            // --- VALIDASI KONDISIONAL UNTUK TRANSPORTASI DARAT ---
-            // Validasi ini hanya berjalan JIKA 'transportasi' DAN 'bus' dipilih
-            'transportation_id' => [
-                'nullable',
-                Rule::requiredIf(function () use ($request) {
-                    return $request->has('services') && in_array('transportasi', $request->services) &&
-                        $request->has('transportation') && in_array('bus', $request->transportation);
-                }),
-                'array',
-                'min:1'
-            ],
-            // '.*' berarti "setiap item di dalam array"
-            'transportation_id.*' => 'required|exists:transportations,id',
+        //     // --- VALIDASI KONDISIONAL UNTUK TRANSPORTASI DARAT ---
+        //     // Validasi ini hanya berjalan JIKA 'transportasi' DAN 'bus' dipilih
+        //     'transportation_id' => [
+        //         'nullable',
+        //         Rule::requiredIf(function () use ($request) {
+        //             return $request->has('services') && in_array('transportasi', $request->services) &&
+        //                 $request->has('transportation') && in_array('bus', $request->transportation);
+        //         }),
+        //         'array',
+        //         'min:1'
+        //     ],
+        //     // '.*' berarti "setiap item di dalam array"
+        //     'transportation_id.*' => 'required|exists:transportations,id',
 
-            'rute_id' => ['nullable', Rule::requiredIf(function () use ($request) {
-                return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation); }), 'array', 'min:1'],
-            'rute_id.*' => 'required|exists:routes,id',
+        //     'rute_id' => ['nullable', Rule::requiredIf(function () use ($request) {
+        //         return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation); }), 'array', 'min:1'],
+        //     'rute_id.*' => 'required|exists:routes,id',
 
-            'tanggal_transport' => ['nullable', Rule::requiredIf(function () use ($request) {
-                return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation); }), 'array', 'min:1'],
-            'tanggal_transport.*.dari' => 'required|date',
-            'tanggal_transport.*.sampai' => 'required|date|after_or_equal:tanggal_transport.*.dari', // Ini adalah validasi error Anda
+        //     'tanggal_transport' => ['nullable', Rule::requiredIf(function () use ($request) {
+        //         return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation); }), 'array', 'min:1'],
+        //     'tanggal_transport.*.dari' => 'required|date',
+        //     'tanggal_transport.*.sampai' => 'required|date|after_or_equal:tanggal_transport.*.dari', // Ini adalah validasi error Anda
 
-        ], [
-            // --- PESAN ERROR KUSTOM ---
-            'transportation_id.required' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
-            'transportation_id.min' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
-            'rute_id.*.required' => 'Rute wajib dipilih untuk setiap transportasi darat.',
-            'tanggal_transport.*.dari.required' => 'Tanggal "Dari" wajib diisi untuk setiap transportasi darat.',
-            'tanggal_transport.*.sampai.required' => 'Tanggal "Sampai" wajib diisi untuk setiap transportasi darat.',
-            'tanggal_transport.*.sampai.after_or_equal' => 'Tanggal "Sampai" harus sama atau setelah Tanggal "Dari".' // Pesan untuk error Anda
-        ]);
+        // ], [
+        //     // --- PESAN ERROR KUSTOM ---
+        //     'transportation_id.required' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
+        //     'transportation_id.min' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
+        //     'rute_id.*.required' => 'Rute wajib dipilih untuk setiap transportasi darat.',
+        //     'tanggal_transport.*.dari.required' => 'Tanggal "Dari" wajib diisi untuk setiap transportasi darat.',
+        //     'tanggal_transport.*.sampai.required' => 'Tanggal "Sampai" wajib diisi untuk setiap transportasi darat.',
+        //     'tanggal_transport.*.sampai.after_or_equal' => 'Tanggal "Sampai" harus sama atau setelah Tanggal "Dari".' // Pesan untuk error Anda
+        // ]);
 
         $masterPrefix = 'ID';
         $lastService = Service::where('unique_code', 'like', $masterPrefix . '-%')
@@ -441,10 +441,11 @@ class ServicesController extends Controller
         Order::create([
             'service_id' => $service->id,
             'total_estimasi' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
+            'total_amount' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
             'invoice' => 'INV-' . time(),
             'total_yang_dibayarkan' => 0,
-            'sisa_hutang' => 0, // <-- Gunakan hasil perhitungan server
-            'status_pembayaran' => $serverTotalAmount == 0 ? 'belum bayar' : 'estimasi',
+            'sisa_hutang' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
+            'status_pembayaran' => $serverTotalAmount == 0 ? 'belum_bayar' : 'estimasi',
         ]);
 
         // ... (Redirect seperti sebelumnya) ...

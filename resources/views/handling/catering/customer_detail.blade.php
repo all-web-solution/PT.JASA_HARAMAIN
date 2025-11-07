@@ -1,5 +1,5 @@
 @extends('admin.master')
-@section('title', 'Detail Handling Hotel')
+@section('title', 'Detail Order Makanan')
 
 @push('styles')
     <style>
@@ -68,6 +68,15 @@
         .card-title .title-text {
             font-weight: 600;
             color: var(--haramain-primary);
+        }
+
+        .card-title .subtitle-text {
+            font-weight: 400;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            border-left: 2px solid var(--border-color);
+            padding-left: 10px;
+            margin-left: 2px;
         }
 
         .card-title i {
@@ -179,7 +188,7 @@
             margin-top: 0.25rem;
         }
 
-        /* Grid Info Customer (dari snippet Anda) */
+        /* Grid Info Customer */
         .customer-info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -217,55 +226,6 @@
             background-color: var(--primary-bg);
             color: var(--haramain-secondary);
         }
-
-        /* == CSS TAMBAHAN UNTUK FOTO == */
-        .image-gallery {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .image-item {
-            flex: 1;
-            min-width: 150px;
-        }
-
-        .image-item .label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .image-item img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 4px;
-            background-color: #fff;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        .image-item img:hover {
-            transform: scale(1.05);
-        }
-
-        .image-item .no-image {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100px;
-            background-color: var(--hover-bg);
-            border: 2px dashed var(--border-color);
-            border-radius: 8px;
-            color: var(--text-secondary);
-            font-style: italic;
-            font-size: 0.9rem;
-        }
-
 
         /* Media Query */
         @media (max-width: 992px) {
@@ -316,7 +276,7 @@
 @section('content')
     <div class="service-list-container">
 
-        {{-- Asumsi Controller mengirim variabel $hotel (HandlingHotel) --}}
+        {{-- Asumsi Controller mengirim variabel $meal (Model Meal) --}}
 
         <div class="card">
             <div class="card-header">
@@ -324,18 +284,15 @@
                     <i class="bi bi-person-badge"></i>
                     <span class="title-text">Detail Customer</span>
                 </h5>
-                <a href="{{ route('handling.handling.hotel') }}" class="btn-secondary"> {{-- Sesuaikan nama route --}}
+                <a href="{{ route('catering.customer') }}" class="btn-secondary"> {{-- Ganti dengan route index makanan Anda --}}
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
             <div class="card-body">
-                {{--
-                  Kita akses relasi dari $hotel
-                  Gunakan null-safe operator (?->) untuk keamanan maksimum
-                --}}
-                @if ($hotel->handling?->service?->pelanggan)
+                {{-- Controller Anda sudah me-load 'service.pelanggan' --}}
+                @if ($meal->service?->pelanggan)
                     @php
-                        $service = $hotel->handling->service;
+                        $service = $meal->service;
                         $pelanggan = $service->pelanggan;
                     @endphp
                     <div class="customer-info-grid">
@@ -353,15 +310,15 @@
                         </div>
                         <div class="info-item">
                             <span class="label">Email</span>
-                            <span class="value" style="text-transform: none;">{{ $pelanggan->email ?? '-' }}</span>
+                            <span class="value">{{ $pelanggan->email ?? '-' }}</span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Tanggal Keberangkatan</span>
+                            <span class="label">Tanggal Keberangkatan (Service)</span>
                             <span
                                 class="value">{{ \Carbon\Carbon::parse($service->tanggal_keberangkatan)->isoFormat('D MMM YYYY') }}</span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Tanggal Kepulangan</span>
+                            <span class="label">Tanggal Kepulangan (Service)</span>
                             <span
                                 class="value">{{ \Carbon\Carbon::parse($service->tanggal_kepulangan)->isoFormat('D MMM YYYY') }}</span>
                         </div>
@@ -377,12 +334,12 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-building"></i>
+                    <i class="bi bi-egg-fried"></i>
                     <div>
-                        <span class="title-text">Detail Handling Hotel: {{ $hotel->nama }}</span>
+                        <span class="title-text">Detail Order Makanan: {{ $meal->mealItem?->name ?? 'N/A' }}</span>
                     </div>
                 </h5>
-                <a href="{{ route('handling.hotel.edit', $hotel->id) }}" class="btn-action"> {{-- Ganti # dengan route edit handling hotel --}}
+                <a href="{{ route('catering.customer.edit', $meal->id) }}" class="btn-action"> {{-- Ganti # dengan route 'makanan.edit' --}}
                     <i class="bi bi-pencil-fill"></i>
                     Edit
                 </a>
@@ -390,7 +347,7 @@
 
             {{-- Logika Badge Status --}}
             @php
-                $status = strtolower($hotel->status);
+                $status = strtolower($meal->status);
                 $statusClass = '';
                 if (in_array($status, ['done', 'deal'])) {
                     $statusClass = 'badge-success';
@@ -404,68 +361,41 @@
             @endphp
 
             <div class="card-body">
+
                 <div class="stats-grid">
 
                     <div class="info-card">
-                        <h6 class="info-card-title"><i class="bi bi-info-circle-fill"></i> Info Hotel</h6>
+                        <h6 class="info-card-title"><i class="bi bi-info-circle-fill"></i> Info Makanan</h6>
                         <div class="content">
                             <div class="info-item">
-                                <span class="label">Nama Hotel</span>
-                                <span class="value">{{ $hotel->nama }}</span>
+                                <span class="label">Nama Makanan</span>
+                                <span class="value">{{ $meal->mealItem?->name ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
-                                <span class="label">Tanggal</span>
-                                <span class="value"
-                                    style="text-transform: none;">{{ \Carbon\Carbon::parse($hotel->tanggal)->isoFormat('dddd, D MMMM Y') }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Pax</span>
-                                <span class="value">{{ $hotel->pax }}</span>
+                                <span class="label">Jumlah</span>
+                                <span class="value">{{ $meal->jumlah }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Status</span>
                                 <span class="value status-value">
-                                    <span class="badge {{ $statusClass }}">{{ $hotel->status }}</span>
+                                    <span class="badge {{ $statusClass }}">{{ $meal->status }}</span>
                                 </span>
                             </div>
                         </div>
                     </div>
 
                     <div class="info-card">
-                        <h6 class="info-card-title"><i class="bi bi-images"></i> Foto Dokumen</h6>
+                        <h6 class="info-card-title"><i class="bi bi-calendar-check"></i> Info Jadwal</h6>
                         <div class="content">
-                            <div class="image-gallery">
-                                <div class="image-item">
-                                    <span class="label">Foto Kode Booking</span>
-                                    @if ($hotel->kode_booking)
-                                        <a href="{{ url('storage/' . $hotel->kode_booking) }}" target="_blank">
-                                            <img src="{{ url('storage/' . $hotel->kode_booking) }}" alt="Kode Booking">
-                                        </a>
-                                    @else
-                                        <div class="no-image">No Image</div>
-                                    @endif
-                                </div>
-                                <div class="image-item">
-                                    <span class="label">Foto Rumlis</span>
-                                    @if ($hotel->rumlis)
-                                        <a href="{{ url('storage/' . $hotel->rumlis) }}" target="_blank">
-                                            <img src="{{ url('storage/' . $hotel->rumlis) }}" alt="Rumlis">
-                                        </a>
-                                    @else
-                                        <div class="no-image">No Image</div>
-                                    @endif
-                                </div>
-                                <div class="image-item">
-                                    <span class="label">Identitas Koper</span>
-                                    @if ($hotel->identitas_koper)
-                                        <a href="{{ url('storage/' . $hotel->identitas_koper) }}" target="_blank">
-                                            <img src="{{ url('storage/' . '/' . $hotel->identitas_koper) }}"
-                                                alt="Identitas Koper">
-                                        </a>
-                                    @else
-                                        <div class="no-image">No Image</div>
-                                    @endif
-                                </div>
+                            <div class="info-item">
+                                <span class="label">Dari Tanggal</span>
+                                <span class="value"
+                                    style="text-transform: none;">{{ \Carbon\Carbon::parse($meal->dari_tanggal)->isoFormat('dddd, D MMMM Y') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Sampai Tanggal</span>
+                                <span class="value"
+                                    style="text-transform: none;">{{ \Carbon\Carbon::parse($meal->sampai_tanggal)->isoFormat('dddd, D MMMM Y') }}</span>
                             </div>
                         </div>
                     </div>
@@ -475,30 +405,25 @@
                         <div class="content">
                             <div class="info-item">
                                 <span class="label">Supplier</span>
-                                <span class="value">{{ $hotel->supplier ?? '-' }}</span>
+                                <span class="value">{{ $meal->supplier ?? '-' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Harga Dasar</span>
-                                <span class="value">Rp {{ number_format($hotel->harga_dasar ?? 0, 0, ',', '.') }}</span>
+                                <span class="value">Rp {{ number_format($meal->harga_dasar ?? 0, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Harga Jual</span>
-                                <span class="value">Rp {{ number_format($hotel->harga_jual ?? 0, 0, ',', '.') }}</span>
+                                <span class="value">Rp {{ number_format($meal->harga_jual ?? 0, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Profit</span>
                                 <span class="value" style="color: var(--success-color);">
                                     Rp
-                                    {{ number_format(($hotel->harga_jual ?? 0) - ($hotel->harga_dasar ?? 0), 0, ',', '.') }}
+                                    {{ number_format(($meal->harga_jual ?? 0) - ($meal->harga_dasar ?? 0), 0, ',', '.') }}
                                 </span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Harga Estimasi (dari Admin)</span>
-                                <span class="value">Rp {{ number_format($hotel->harga ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
-
 
                 </div>
 

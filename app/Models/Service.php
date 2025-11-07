@@ -66,10 +66,10 @@ class Service extends Model
         return $this->hasMany(File::class, 'service_id');
     }
     public function exchanges()
-{
-    // Tentukan foreign key 'service_id' secara eksplisit
-    return $this->hasMany(Exchange::class, 'service_id');
-}
+    {
+        // Tentukan foreign key 'service_id' secara eksplisit
+        return $this->hasMany(Exchange::class, 'service_id');
+    }
     public function wakafs()
     {
         return $this->hasMany(WakafCustomer::class, 'service_id');
@@ -102,4 +102,63 @@ class Service extends Model
             ->sum('total_jamaah');
     }
 
+        /**
+     * Daftar nama relasi yang dianggap sebagai 'item layanan'
+     * dan harus dicek status_item & harganya.
+     */
+    public function getItemRelationsList()
+    {
+        return [
+            'planes',
+            'transportationItem',
+            'hotels',
+            'meals',
+            'guides',
+            'tours',
+            'documents',
+            'exchanges',
+            'wakafs',
+            'dorongans',
+            'contents',
+            'badals',
+            // Tambahkan relasi untuk handling
+            'handlings',
+        ];
+    }
+
+    /**
+     * Mengumpulkan semua item layanan dari semua relasi yang relevan
+     * ke dalam satu Collection.
+     * PENTING: Pastikan relasi sudah di-load (eager loaded)
+     * sebelum memanggil fungsi ini.
+     */
+    public function getAllItemsFromService()
+    {
+        $allItems = collect([]);
+
+        // Perlu logic khusus untuk handling karena nested
+        if ($this->relationLoaded('handlings')) {
+            foreach ($this->handlings as $handling) {
+                $allItems = $allItems->merge($handling->handlingHotels); // Asumsi relasi hasMany
+                $allItems = $allItems->merge($handling->handlingPlanes); // Asumsi relasi hasMany
+            }
+        }
+
+        // Loop semua nama relasi lain dari daftar
+        foreach ($this->getItemRelationsList() as $relationName) {
+            // Lewati relasi handling karena sudah diproses
+            if ($relationName === 'handlingHotels' || $relationName === 'handlingPlanes') {
+                continue;
+            }
+
+            if ($this->relationLoaded($relationName)) {
+                $items = $this->$relationName;
+                if ($items) {
+                    $allItems = $allItems->merge($items);
+                }
+            }
+        }
+
+        return $allItems;
+    }
 }

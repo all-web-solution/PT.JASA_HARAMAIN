@@ -6,20 +6,22 @@ use Illuminate\Http\Request;
 use App\Models\Hotel;
 use App\Models\Order;
 use App\Models\Service;
-
+use Illuminate\Support\Facades\Session;
 
 class HotelController extends Controller
 {
- public function index()
-{
-    $hotels = Hotel::with('service')
-        ->select('id', 'service_id', 'tanggal_checkin', 'tanggal_checkout', 'nama_hotel', 'jumlah_kamar', 'harga_perkamar')
-        ->orderBy('service_id', 'asc')
-        ->get()
-        ->unique('service_id'); // hanya satu hotel per service
+    public function index()
+    {
+        // 1. Ambil data Hotel (per item) dan lakukan paginasi
+        $hotels = Hotel::with([
+                        'service.pelanggan', // Untuk Nama Travel
+                    ])
+                    ->latest() // Urutkan berdasarkan yang terbaru
+                    ->paginate(15); // Ambil 15 item per halaman
 
-    return view('hotel.index', compact('hotels'));
-}
+        // 2. Kirim data paginator ke view
+        return view('hotel.index', compact('hotels'));
+    }
 
 
 
@@ -51,61 +53,54 @@ class HotelController extends Controller
     }
 
     // Add other methods like show, edit, update, destroy as needed
-    public function show($id)
+    public function show(Hotel $hotel)
     {
-       // Ambil service beserta seluruh hotelnya
-    $service = Service::with('hotels')->findOrFail($id);
+        // $hotel otomatis ditemukan oleh Laravel
+        $hotel->load('service.pelanggan'); // Load relasi
 
-    return view('hotel.show', compact('service'));
+        return view('hotel.show', compact('hotel'));
     }
 
-    public function edit($id)
+    public function edit(Hotel $hotel)
     {
-        $hotel = Hotel::findOrFail($id);
-        return view('hotel.edit', compact('hotel'));
+        // Ambil data untuk dropdowns
+        $services = Service::with('pelanggan')->get();
+        $statuses = ['nego', 'deal', 'batal', 'done']; // Sesuaikan dengan kebutuhan
+
+        return view('hotel.edit', compact(
+            'hotel',
+            'services',
+            'statuses'
+        ));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Hotel $hotel)
     {
-        // 1. Temukan hotel dan perbarui harganya
-        $hotel = Hotel::findOrFail($id);
-        $hotel->update([
-            'harga_perkamar' => $request->harga,
+        // Validasi data berdasarkan model Hotel
+        $validatedData = $request->validate([
+            'service_id' => 'nullable|exists:services,id',
+            'tanggal_checkin' => 'nullable|date',
+            'tanggal_checkout' => 'nullable|date|after_or_equal:tanggal_checkin',
+            'nama_hotel' => 'nullable|string|max:255',
+            'jumlah_kamar' => 'nullable|integer|min:0',
+            'harga_perkamar' => 'nullable|numeric|min:0',
+            'catatan' => 'nullable|string',
+            'type' => 'nullable|string|max:255',
+            'jumlah_type' => 'nullable|integer|min:0',
+            'status' => 'required|string',
+            // Field Baru
+            'supplier' => 'nullable|string|max:255',
+            'harga_dasar' => 'nullable|numeric|min:0',
+            'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
         ]);
 
-        // 2. Jika hotel terhubung ke layanan (service)
-        if ($hotel->service) {
-            // 3. Dapatkan pelanggan dari layanan hotel ini
-            $pelangganId = $hotel->service->pelanggan_id;
+        // Update data hotel
+        $hotel->update($validatedData);
 
-            // 4. Cari SEMUA layanan (services) yang dimiliki oleh pelanggan ini
-            $allServices = Service::where('pelanggan_id', $pelangganId)->get();
+        Session::flash('success', 'Order hotel berhasil diperbarui.');
 
-            // 5. Inisialisasi total harga
-            $grandTotal = 0;
-
-            // 6. Loop melalui semua layanan pelanggan untuk menghitung total
-            foreach ($allServices as $service) {
-                // Hitung total semua hotel yang terhubung ke layanan ini
-                $totalHotels = $service->hotels()->sum('harga_perkamar');
-
-                // Hitung total semua pesawat yang terhubung ke layanan ini
-                $totalPlanes = $service->planes()->sum('harga');
-
-                // Tambahkan ke total keseluruhan
-                $grandTotal += $totalHotels + $totalPlanes;
-            }
-
-            // 7. Perbarui pesanan (order) yang terhubung ke service yang mana saja untuk pelanggan ini
-            Order::whereHas('service', function ($query) use ($pelangganId) {
-                $query->where('pelanggan_id', $pelangganId);
-            })->update([
-                        'total_amount' => $grandTotal,
-                        'sisa_hutang' => $grandTotal
-                    ]);
-        }
-
-        return redirect()->route('hotel.index')->with('success', 'Harga hotel & total order berhasil diperbarui!');
+        // Redirect kembali ke halaman detail
+        return redirect()->route('hotel.show', $hotel->id);
     }
 
     public function destroy($id)

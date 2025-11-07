@@ -1,5 +1,5 @@
 @extends('admin.master')
-@section('title', 'Edit Order Hotel')
+@section('title', 'Edit Order Reyal')
 
 @push('styles')
     <style>
@@ -97,16 +97,12 @@
             box-shadow: 0 0 0 0.2rem rgba(42, 111, 219, 0.25);
         }
 
+        /* Style untuk input disabled/readonly */
         .form-control[readonly],
         .form-select[disabled] {
             background-color: #e9ecef;
             opacity: 1;
             cursor: not-allowed;
-        }
-
-        textarea.form-control {
-            min-height: 100px;
-            resize: vertical;
         }
 
         .btn-container {
@@ -178,15 +174,16 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-building"></i> Edit Order Hotel
+                    <i class="bi bi-cash-coin"></i> Edit Order Reyal
                 </h5>
-                <a href="{{ route('hotel.show', $hotel->id) }}" class="btn btn-secondary">
+                {{-- Arahkan kembali ke index reyal --}}
+                <a href="{{ route('reyal.index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
 
-            {{-- Controller mengirim: $hotel, $services, $statuses --}}
-            <form action="{{ route('hotel.update', $hotel->id) }}" method="POST">
+            {{-- Pastikan controller mengirim $reyal, $services, $tipeOptions --}}
+            <form action="{{ route('reyal.update', $reyal->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -194,7 +191,7 @@
 
                     @if ($errors->any())
                         <div class="alert alert-danger"
-                            style="background-color: rgba(220, 53, 69, 0.1); color: var(--danger-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                            style="background-color: rgba(220, 53, 69, 0.1); color: var(--danger-color); border: 1px solid var(--danger-color); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
                             <ul style="margin: 0; padding-left: 1.5rem;">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -203,18 +200,18 @@
                         </div>
                     @endif
 
-                    {{-- BARIS 1: SERVICE & NAMA HOTEL --}}
+                    {{-- BARIS 1: SERVICE & TANGGAL PENYERAHAN (Editable) --}}
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="service_id" class="form-label">Travel</label>
                                 <select id="service_id" name="service_id"
                                     class="form-select @error('service_id') is-invalid @enderror" disabled>
-                                    <option value="">Travel</option>
+                                    <option value="">Pilih Pelanggan</option>
                                     @foreach ($services as $service)
                                         <option value="{{ $service->id }}"
-                                            {{ old('service_id', $hotel->service_id) == $service->id ? 'selected' : '' }}>
-                                            {{ $service->pelanggan?->nama_travel ?? 'N/A' }}
+                                            {{ old('service_id', $reyal->service_id) == $service->id ? 'selected' : '' }}>
+                                            {{ $service->pelanggan?->nama_travel ?? 'N/A' }} ({{ $service->unique_code }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -223,125 +220,82 @@
                                 @enderror
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="nama_hotel" class="form-label">Nama Hotel</label>
-                                <input type="text" id="nama_hotel" name="nama_hotel"
-                                    class="form-control @error('nama_hotel') is-invalid @enderror"
-                                    value="{{ old('nama_hotel', $hotel->nama_hotel) }}">
-                                @error('nama_hotel')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <label for="tipe" class="form-label">Tipe</label>
+                                <select id="tipe" name="tipe_display" class="form-select" disabled>
+                                    @foreach ($tipeOptions as $tipe)
+                                        <option value="{{ $tipe }}"
+                                            {{ old('tipe', $reyal->tipe) == $tipe ? 'selected' : '' }}>
+                                            {{ $tipe }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                {{-- Input tersembunyi untuk mengirim data, karena 'disabled' tidak dikirim --}}
+                                <input type="hidden" name="tipe" value="{{ $reyal->tipe }}">
                             </div>
                         </div>
                     </div>
 
-                    {{-- BARIS 2: TANGGAL CHECK-IN & CHECK-OUT --}}
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="tanggal_checkin" class="form-label">Tanggal Check-in</label>
-                                <input type="date" id="tanggal_checkin" name="tanggal_checkin"
-                                    class="form-control @error('tanggal_checkin') is-invalid @enderror"
-                                    value="{{ old('tanggal_checkin', \Carbon\Carbon::parse($hotel->tanggal_checkin)->format('Y-m-d')) }}">
-                                @error('tanggal_checkin')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="tanggal_checkout" class="form-label">Tanggal Check-out</label>
-                                <input type="date" id="tanggal_checkout" name="tanggal_checkout"
-                                    class="form-control @error('tanggal_checkout') is-invalid @enderror"
-                                    value="{{ old('tanggal_checkout', \Carbon\Carbon::parse($hotel->tanggal_checkout)->format('Y-m-d')) }}">
-                                @error('tanggal_checkout')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- BARIS 3: JUMLAH KAMAR, HARGA/KAMAR, TIPE --}}
+                    {{-- BARIS 2: TIPE & JUMLAH INPUT (Read-Only) --}}
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="type" class="form-label">Tipe Kamar</label>
-                                <input type="text" id="type" name="type"
-                                    class="form-control @error('type') is-invalid @enderror"
-                                    value="{{ old('type', $hotel->type) }}">
-                                @error('type')
+                                <label for="jumlah_input" class="form-label">Jumlah Input</label>
+                                <input type="number" id="jumlah_input" name="jumlah_input"
+                                    class="form-control @error('jumlah_input') is-invalid @enderror"
+                                    value="{{ old('jumlah_input', $reyal->jumlah_input) }}" readonly>
+                                @error('jumlah_input')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="harga_perkamar" class="form-label">Harga / Kamar (Lama)</label>
-                                <input type="number" step="0.01" id="harga_perkamar" name="harga_perkamar"
-                                    class="form-control @error('harga_perkamar') is-invalid @enderror" disabled
-                                    value="{{ old('harga_perkamar', $hotel->harga_perkamar) }}">
-                                @error('harga_perkamar')
+                                <label for="kurs" class="form-label">Kurs</label>
+                                <input type="number" step="0.01" id="kurs" name="kurs"
+                                    class="form-control @error('kurs') is-invalid @enderror"
+                                    value="{{ old('kurs', $reyal->kurs) }}" readonly>
+                                @error('kurs')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="jumlah_type" class="form-label">Jumlah Kamar (Sesuai Tipe)</label>
-                                <input type="number" id="jumlah_type" name="jumlah_type"
-                                    class="form-control @error('jumlah_type') is-invalid @enderror"
-                                    value="{{ old('jumlah_type', $hotel->jumlah_type) }}">
-                                @error('jumlah_type')
+                                <label for="hasil" class="form-label">Hasil</label>
+                                <input type="number" step="0.01" id="hasil" name="hasil"
+                                    class="form-control @error('hasil') is-invalid @enderror"
+                                    value="{{ old('hasil', $reyal->hasil) }}" readonly>
+                                @error('hasil')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
                     </div>
 
-                    {{-- BARIS 4: SUPPLIER & FINANSIAL (BARU) --}}
+                    {{-- BARIS 3: KURS & HASIL (Read-Only) --}}
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="supplier" class="form-label">Supplier</label>
-                                <input type="text" id="supplier" name="supplier"
-                                    class="form-control @error('supplier') is-invalid @enderror"
-                                    value="{{ old('supplier', $hotel->supplier) }}">
-                                @error('supplier')
+                                <label for="tanggal_penyerahan" class="form-label">Tanggal Penyerahan</label>
+                                <input type="date" id="tanggal_penyerahan" name="tanggal_penyerahan"
+                                    class="form-control @error('tanggal_penyerahan') is-invalid @enderror"
+                                    value="{{ old('tanggal_penyerahan', \Carbon\Carbon::parse($reyal->tanggal_penyerahan)->format('Y-m-d')) }}">
+                                @error('tanggal_penyerahan')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="harga_dasar" class="form-label">Harga Dasar</label>
-                                <input type="number" step="0.01" id="harga_dasar" name="harga_dasar"
-                                    class="form-control @error('harga_dasar') is-invalid @enderror"
-                                    value="{{ old('harga_dasar', $hotel->harga_dasar) }}">
-                                @error('harga_dasar')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="harga_jual" class="form-label">Harga Jual</label>
-                                <input type="number" step="0.01" id="harga_jual" name="harga_jual"
-                                    class="form-control @error('harga_jual') is-invalid @enderror"
-                                    value="{{ old('harga_jual', $hotel->harga_jual) }}">
-                                @error('harga_jual')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="status" class="form-label">Status</label>
                                 <select id="status" name="status"
                                     class="form-select @error('status') is-invalid @enderror">
                                     @foreach ($statuses as $status)
                                         <option value="{{ $status }}"
-                                            {{ old('status', $hotel->status) == $status ? 'selected' : '' }}>
+                                            {{ old('status', $reyal->status) == $status ? 'selected' : '' }}>
                                             {{ $status }}
                                         </option>
                                     @endforeach
@@ -353,13 +307,37 @@
                         </div>
                     </div>
 
-                    {{-- BARIS 5: CATATAN --}}
+                    {{-- BARIS 4: SUPPLIER, HARGA DASAR, HARGA JUAL (Editable) --}}
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-4">
                             <div class="form-group">
-                                <label for="catatan" class="form-label">Catatan</label>
-                                <textarea id="catatan" name="catatan" class="form-control @error('catatan') is-invalid @enderror" rows="3">{{ old('catatan', $hotel->catatan) }}</textarea>
-                                @error('catatan')
+                                <label for="supplier" class="form-label">Supplier</label>
+                                <input type="text" id="supplier" name="supplier"
+                                    class="form-control @error('supplier') is-invalid @enderror"
+                                    value="{{ old('supplier', $reyal->supplier) }}">
+                                @error('supplier')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="harga_dasar" class="form-label">Harga Dasar</label>
+                                <input type="number" step="0.01" id="harga_dasar" name="harga_dasar"
+                                    class="form-control @error('harga_dasar') is-invalid @enderror"
+                                    value="{{ old('harga_dasar', $reyal->harga_dasar) }}">
+                                @error('harga_dasar')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="harga_jual" class="form-label">Harga Jual</label>
+                                <input type="number" step="0.01" id="harga_jual" name="harga_jual"
+                                    class="form-control @error('harga_jual') is-invalid @enderror"
+                                    value="{{ old('harga_jual', $reyal->harga_jual) }}">
+                                @error('harga_jual')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -368,7 +346,7 @@
 
                     {{-- Tombol Aksi --}}
                     <div class="btn-container">
-                        <a href="{{ route('hotel.show', $hotel->id) }}" class="btn btn-secondary">
+                        <a href="{{ route('reyal.detail', $reyal->id) }}" class="btn btn-secondary">
                             Batal
                         </a>
                         <button type="submit" class="btn-submit">

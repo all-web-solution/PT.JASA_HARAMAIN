@@ -11,12 +11,12 @@ class WakafCustomer extends Model
 
     public function service()
     {
-        return $this->belongsTo(Service::class, 'id');
+        return $this->belongsTo(Service::class, 'service_id');
     }
 
     public function wakaf()
     {
-        return $this->belongsTo(Wakaf::class);
+        return $this->belongsTo(Wakaf::class, 'wakaf_id');
     }
 }
 

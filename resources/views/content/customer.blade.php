@@ -180,6 +180,26 @@
             background-color: var(--primary-bg);
             color: var(--haramain-secondary);
         }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: flex-end;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--haramain-secondary);
+            border-color: var(--haramain-secondary);
+        }
+
+        .pagination .page-link {
+            color: var(--haramain-primary);
+            border-radius: 8px;
+            margin: 0 0.25rem;
+            border: 1px solid var(--border-color);
+        }
     </style>
 @endpush
 @section('content')
@@ -214,7 +234,7 @@
                                 $statusClass = '';
                                 if (in_array($status, ['done', 'deal'])) {
                                     $statusClass = 'badge-success';
-                                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan', 'tahap produksi'])) {
+                                } elseif (in_array($status, ['nego', 'tahap persiapan', 'tahap produksi'])) {
                                     $statusClass = 'badge-warning';
                                 } elseif (in_array($status, ['cancelled', 'batal'])) {
                                     $statusClass = 'badge-danger';
@@ -264,6 +284,30 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {{-- Previous Page Link --}}
+                        <li class="page-item {{ $customers->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $customers->previousPageUrl() ?? '#' }}"
+                                tabindex="-1">&laquo;</a>
+                        </li>
+
+                        {{-- Page Number Links --}}
+                        @foreach ($customers->getUrlRange(1, $customers->lastPage()) as $page => $url)
+                            <li class="page-item {{ $customers->currentPage() == $page ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        <li class="page-item {{ !$customers->hasMorePages() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $customers->nextPageUrl() ?? '#' }}">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

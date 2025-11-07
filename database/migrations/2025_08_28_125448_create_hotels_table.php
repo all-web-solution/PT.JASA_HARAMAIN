@@ -28,6 +28,9 @@ return new class extends Migration
             $table->string('type');
             $table->string('jumlah_type');
             $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'])->default('nego');
+            $table->string('supplier')->nullable();
+            $table->string('harga_dasar')->nullable();
+            $table->string('harga_jual')->nullable();
             $table->timestamps();
         });
     }

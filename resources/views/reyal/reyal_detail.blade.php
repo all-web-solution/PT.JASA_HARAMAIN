@@ -1,9 +1,9 @@
 @extends('admin.master')
-@section('title', 'Detail Order Wakaf')
+@section('title', 'Detail Order Reyal')
 
 @push('styles')
     <style>
-        /* == CSS UTAMA (Disalin dari style referensi) == */
+        /* == CSS UTAMA (Disalin dari style Anda) == */
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;
@@ -70,15 +70,6 @@
             color: var(--haramain-primary);
         }
 
-        .card-title .subtitle-text {
-            font-weight: 400;
-            color: var(--text-secondary);
-            font-size: 1rem;
-            border-left: 2px solid var(--border-color);
-            padding-left: 10px;
-            margin-left: 2px;
-        }
-
         .card-title i {
             font-size: 1.5rem;
             color: var(--haramain-secondary);
@@ -126,7 +117,7 @@
         /* == DESAIN GRID == */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
         }
 
@@ -135,8 +126,6 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
         }
 
         .info-card-title {
@@ -159,7 +148,6 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            flex-grow: 1;
         }
 
         .info-item {
@@ -180,60 +168,13 @@
             font-weight: 600;
             font-size: 1rem;
             text-transform: capitalize;
-            word-break: break-word;
-            /* Mencegah email/teks panjang overflow */
-        }
-
-        .info-item .status-value {
-            margin-top: 0.25rem;
-        }
-
-        /* Grid Info Customer */
-        .customer-info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.25rem;
-        }
-
-        /* Badge Status */
-        .badge {
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-transform: capitalize;
-        }
-
-        .badge-success {
-            background-color: var(--success-bg);
-            color: var(--success-color);
-        }
-
-        .badge-warning {
-            background-color: var(--warning-bg);
-            color: var(--warning-color);
-        }
-
-        .badge-danger {
-            background-color: var(--danger-bg);
-            color: var(--danger-color);
-        }
-
-        .badge-primary {
-            background-color: var(--primary-bg);
-            color: var(--haramain-secondary);
+            /* Membuat 'tamis' jadi 'Tamis' */
         }
 
         /* Media Query */
         @media (max-width: 992px) {
-
-            .stats-grid,
-            .customer-info-grid {
+            .stats-grid {
                 grid-template-columns: 1fr 1fr;
-                /* 2 kolom di tablet */
             }
         }
 
@@ -242,10 +183,8 @@
                 padding: 1rem;
             }
 
-            .stats-grid,
-            .customer-info-grid {
+            .stats-grid {
                 grid-template-columns: 1fr;
-                /* 1 kolom di HP */
             }
 
             .card-header {
@@ -276,138 +215,117 @@
 @section('content')
     <div class="service-list-container">
 
-        {{-- Asumsi Controller mengirim variabel $wakaf (Model WakafCustomer) --}}
+        {{-- Asumsi Controller mengirim variabel $reyal (instance dari Exchange) --}}
 
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-person-badge"></i>
-                    <span class="title-text">Detail Customer</span>
-                </h5>
-                <a href="{{ route('wakaf.index') }}" class="btn-secondary"> {{-- Ganti dengan route index wakaf Anda --}}
-                    <i class="bi bi-arrow-left"></i> Kembali
-                </a>
-            </div>
-            <div class="card-body">
-                {{-- Controller Anda sudah me-load 'service.pelanggan' --}}
-                @if ($wakaf->service?->pelanggan)
-                    @php
-                        $service = $wakaf->service;
-                        $pelanggan = $service->pelanggan;
-                    @endphp
-                    <div class="customer-info-grid">
-                        <div class="info-item">
-                            <span class="label">Nama Travel</span>
-                            <span class="value">{{ $pelanggan->nama_travel ?? '-' }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Penanggung Jawab</span>
-                            <span class="value">{{ $pelanggan->penanggung_jawab ?? '-' }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Nomor Telepon</span>
-                            <span class="value">{{ $pelanggan->phone ?? '-' }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">ID Service</span>
-                            <span class="value">{{ $service->unique_code ?? '-' }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Tanggal Keberangkatan (Service)</span>
-                            <span
-                                class="value">{{ \Carbon\Carbon::parse($service->tanggal_keberangkatan)->isoFormat('D MMM YYYY') }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Tanggal Kepulangan (Service)</span>
-                            <span
-                                class="value">{{ \Carbon\Carbon::parse($service->tanggal_kepulangan)->isoFormat('D MMM YYYY') }}</span>
-                        </div>
-                    </div>
-                @else
-                    <p style="color: var(--text-secondary); text-align: center; padding: 1rem;">
-                        Data customer atau service tidak terhubung.
-                    </p>
-                @endif
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">
-                    <i class="bi bi-bank"></i>
+                    <i class="bi bi-cash-coin"></i>
                     <div>
-                        <span class="title-text">Detail Order Wakaf: {{ $wakaf->wakaf?->name ?? 'N/A' }}</span>
+                        <span class="title-text">
+                            Detail Penukaran Reyal
+                        </span>
                     </div>
                 </h5>
-                <a href="{{ route('wakaf.customer.edit', $wakaf->id) }}" class="btn-action"> {{-- Ganti # dengan route 'wakaf.edit' --}}
-                    <i class="bi bi-pencil-fill"></i>
-                    Edit
-                </a>
+                <div>
+                    {{-- Ganti 'reyal.index' dengan route index reyal Anda --}}
+                    <a href="{{ route('reyal.index') }}" class="btn-secondary">
+                        <i class="bi bi-arrow-left"></i>
+                        Kembali
+                    </a>
+                    {{-- Ganti 'reyal.edit' dengan route edit reyal Anda --}}
+                    <a href="{{ route('reyal.edit', $reyal->id) }}" class="btn-action">
+                        <i class="bi bi-pencil-fill"></i>
+                        Edit
+                    </a>
+                </div>
             </div>
-
-            {{-- Logika Badge Status --}}
-            @php
-                $status = strtolower($wakaf->status);
-                $statusClass = '';
-                if (in_array($status, ['done', 'deal'])) {
-                    $statusClass = 'badge-success';
-                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan'])) {
-                    $statusClass = 'badge-warning';
-                } elseif (in_array($status, ['cancelled', 'batal'])) {
-                    $statusClass = 'badge-danger';
-                } else {
-                    $statusClass = 'badge-primary';
-                }
-            @endphp
 
             <div class="card-body">
 
                 <div class="stats-grid">
 
                     <div class="info-card">
-                        <h6 class="info-card-title"><i class="bi bi-info-circle-fill"></i> Info Wakaf</h6>
+                        <h6 class="info-card-title"><i class="bi bi-person-badge"></i> Info Pelanggan</h6>
                         <div class="content">
                             <div class="info-item">
-                                <span class="label">Nama Item Wakaf</span>
-                                <span class="value">{{ $wakaf->wakaf?->nama ?? 'N/A' }}</span>
+                                <span class="label">Nama Travel</span>
+                                <span class="value">{{ $reyal->service?->pelanggan?->nama_travel ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
-                                <span class="label">Jumlah</span>
-                                <span class="value">{{ $wakaf->jumlah }}</span>
+                                <span class="label">Penanggung Jawab</span>
+                                <span class="value">{{ $reyal->service?->pelanggan?->penanggung_jawab ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
-                                <span class="label">Status</span>
-                                <span class="value status-value">
-                                    <span class="badge {{ $statusClass }}">{{ $wakaf->status }}</span>
-                                </span>
+                                <span class="label">Email</span>
+                                <span class="value">{{ $reyal->service?->pelanggan?->email ?? 'N/A' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">No. Telepon</span>
+                                <span class="value">{{ $reyal->service?->pelanggan?->phone ?? 'N/A' }}</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="info-card">
-                        <h6 class="info-card-title"><i class="bi bi-cash-coin"></i> Info Finansial</h6>
+                        <h6 class="info-card-title"><i class="bi bi-arrow-repeat"></i> Info Penukaran</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Tipe</span>
+                                <span class="value">{{ $reyal->tipe }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Tanggal Penyerahan</span>
+                                <span class="value"
+                                    style="text-transform: none;">{{ \Carbon\Carbon::parse($reyal->tanggal_penyerahan)->isoFormat('D MMM YYYY') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Jumlah Input</span>
+                                <span class="value"
+                                    style="text-transform: none;">{{ number_format($reyal->jumlah_input, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Kurs</span>
+                                <span class="value"
+                                    style="text-transform: none;">{{ number_format($reyal->kurs, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Hasil Konversi</span>
+                                <span class="value"
+                                    style="text-transform: none;">{{ number_format($reyal->hasil, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Status Pengerjaan</span>
+                                <span class="value">{{ $reyal->status }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h6 class="info-card-title"><i class="bi bi-briefcase-fill"></i> Info Finansial</h6>
                         <div class="content">
                             <div class="info-item">
                                 <span class="label">Supplier</span>
-                                <span class="value">{{ $wakaf->supplier ?? '-' }}</span>
+                                <span class="value">{{ $reyal->supplier ?? '-' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Harga Dasar</span>
-                                <span class="value">Rp {{ number_format($wakaf->harga_dasar ?? 0, 0, ',', '.') }}</span>
+                                <span class="value">Rp {{ number_format($reyal->harga_dasar ?? 0, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Harga Jual</span>
-                                <span class="value">Rp {{ number_format($wakaf->harga_jual ?? 0, 0, ',', '.') }}</span>
+                                <span class="value">Rp {{ number_format($reyal->harga_jual ?? 0, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Profit</span>
                                 <span class="value" style="color: var(--success-color);">
                                     Rp
-                                    {{ number_format(($wakaf->harga_jual ?? 0) - ($wakaf->harga_dasar ?? 0), 0, ',', '.') }}
+                                    {{ number_format(($reyal->harga_jual ?? 0) - ($reyal->harga_dasar ?? 0), 0, ',', '.') }}
                                 </span>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
             </div>
