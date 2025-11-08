@@ -1,194 +1,422 @@
 @extends('admin.master')
-@section('title', 'Detail Customer Tour')
+@section('title', 'Detail Order Tour')
+
 @push('styles')
-{{-- ... (Seluruh CSS Anda tetap sama) ... --}}
-<style>
-    :root {
-        --haramain-primary: #1a4b8c;
-        --haramain-secondary: #2a6fdb;
-        --haramain-light: #e6f0fa;
-        --haramain-accent: #3d8bfd;
-        --text-primary: #2d3748;
-        --text-secondary: #4a5568;
-        --border-color: #d1e0f5;
-        --hover-bg: #f0f7ff;
-        --background-light: #f8fafd;
-    }
+    <style>
+        /* == CSS UTAMA (Disalin dari style referensi) == */
+        :root {
+            --haramain-primary: #1a4b8c;
+            --haramain-secondary: #2a6fdb;
+            --haramain-light: #e6f0fa;
+            --haramain-accent: #3d8bfd;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border-color: #d1e0f5;
+            --hover-bg: #f0f7ff;
+            --background-light: #f8fafd;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-bg: rgba(40, 167, 69, 0.1);
+            --warning-bg: rgba(255, 193, 7, 0.1);
+            --danger-bg: rgba(220, 53, 69, 0.1);
+            --primary-bg: var(--haramain-light);
+        }
 
-    .tour-detail-container {
-        max-width: 900px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background-color: white;
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
+        .service-list-container {
+            max-width: 100vw;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--background-light);
+            min-height: 100vh;
+        }
 
-    .tour-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 2px solid var(--border-color);
-        padding-bottom: 1rem;
-        margin-bottom: 1.5rem;
-    }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-    .tour-header h4 {
-        color: var(--haramain-primary);
-        font-weight: 700;
-    }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
 
-    .tour-info {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-    }
+        .card-header {
+            background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-    .info-item {
-        background-color: var(--haramain-light);
-        padding: 1rem;
-        border-radius: 8px;
-    }
+        .card-title {
+            font-weight: 700;
+            color: var(--haramain-primary);
+            margin: 0;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    .info-item strong {
-        color: var(--haramain-primary);
-        display: block;
-        margin-bottom: 0.5rem;
-    }
+        .card-title .title-text {
+            font-weight: 600;
+            color: var(--haramain-primary);
+        }
 
-    .section-title {
-        font-weight: 600;
-        color: var(--haramain-secondary);
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-    }
+        .card-title .subtitle-text {
+            font-weight: 400;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            border-left: 2px solid var(--border-color);
+            padding-left: 10px;
+            margin-left: 2px;
+        }
 
-    table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 0.5rem;
-    }
+        .card-title i {
+            font-size: 1.5rem;
+            color: var(--haramain-secondary);
+        }
 
-    table th {
-        background-color: var(--haramain-light);
-        color: var(--haramain-primary);
-        font-weight: 600;
-        padding: 0.75rem;
-        text-align: left;
-    }
+        .card-body {
+            padding: 1.5rem;
+        }
 
-    table td {
-        background-color: #fff;
-        padding: 0.75rem;
-        border: 1px solid var(--border-color);
-    }
+        /* Tombol Aksi */
+        .btn-action,
+        .btn-secondary {
+            background-color: var(--haramain-secondary);
+            color: white;
+            border-radius: 8px;
+            padding: 0.625rem 1.25rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
 
-    table tr:hover {
-        background-color: var(--hover-bg);
-    }
+        .btn-action:hover {
+            background-color: var(--haramain-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
+        }
 
-    table td:first-child, table th:first-child {
-        border-top-left-radius: 8px;
-        border-bottom-left-radius: 8px;
-    }
-    table td:last-child, table th:last-child {
-        border-top-right-radius: 8px;
-        border-bottom-right-radius: 8px;
-    }
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
 
-    .btn-back {
-        background-color: var(--haramain-secondary);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        text-decoration: none;
-        display: inline-block;
-        margin-top: 1.5rem;
-        transition: background 0.3s ease;
-    }
+        .btn-secondary:hover {
+            background-color: var(--hover-bg);
+            border-color: var(--haramain-secondary);
+            color: var(--haramain-secondary);
+        }
 
-    .btn-back:hover {
-        background-color: var(--haramain-primary);
-    }
-</style>
+        /* == DESAIN GRID == */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--haramain-primary);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-card-title i {
+            color: var(--haramain-secondary);
+        }
+
+        .info-card .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex-grow: 1;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.9rem;
+        }
+
+        .info-item .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-item .value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: capitalize;
+            word-break: break-word;
+            /* Mencegah email/teks panjang overflow */
+        }
+
+        .info-item .status-value {
+            margin-top: 0.25rem;
+        }
+
+        /* Grid Info Customer (dari snippet Anda) */
+        .customer-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+        }
+
+        /* Badge Status */
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: capitalize;
+        }
+
+        .badge-success {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+        }
+
+        .badge-warning {
+            background-color: var(--warning-bg);
+            color: var(--warning-color);
+        }
+
+        .badge-danger {
+            background-color: var(--danger-bg);
+            color: var(--danger-color);
+        }
+
+        .badge-primary {
+            background-color: var(--primary-bg);
+            color: var(--haramain-secondary);
+        }
+
+        /* Media Query */
+        @media (max-width: 992px) {
+
+            .stats-grid,
+            .customer-info-grid {
+                grid-template-columns: 1fr 1fr;
+                /* 2 kolom di tablet */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .service-list-container {
+                padding: 1rem;
+            }
+
+            .stats-grid,
+            .customer-info-grid {
+                grid-template-columns: 1fr;
+                /* 1 kolom di HP */
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .card-header div:last-child {
+                display: flex;
+                width: 100%;
+                gap: 0.75rem;
+            }
+
+            .btn-action,
+            .btn-secondary {
+                flex-grow: 1;
+                justify-content: center;
+            }
+        }
+    </style>
 @endpush
 
 @section('content')
-<div class="tour-detail-container">
-    <div class="tour-header">
-        <h4><i class="bi bi-geo-alt-fill"></i> Detail Customer Tour</h4>
-        <a href="{{ route('handling.tour.customer') }}" class="btn-back">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a>
+    <div class="service-list-container">
+
+        {{-- Asumsi Controller mengirim variabel $tour (Model Tour) --}}
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="bi bi-person-badge"></i>
+                    <span class="title-text">Detail Customer</span>
+                </h5>
+                <a href="{{ route('handling.tour.customer') }}" class="btn-secondary"> {{-- Ganti dengan route index tour Anda --}}
+                    <i class="bi bi-arrow-left"></i> Kembali
+                </a>
+            </div>
+            <div class="card-body">
+                {{-- Controller Anda sudah me-load 'service.pelanggan' --}}
+                @if ($tour->service?->pelanggan)
+                    @php
+                        $service = $tour->service;
+                        $pelanggan = $service->pelanggan;
+                    @endphp
+                    <div class="customer-info-grid">
+                        <div class="info-item">
+                            <span class="label">Nama Travel</span>
+                            <span class="value">{{ $pelanggan->nama_travel ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Penanggung Jawab</span>
+                            <span class="value">{{ $pelanggan->penanggung_jawab ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Nomor Telepon</span>
+                            <span class="value">{{ $pelanggan->phone ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Email</span>
+                            <span class="value">{{ $pelanggan->email ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Tanggal Keberangkatan</span>
+                            <span
+                                class="value">{{ \Carbon\Carbon::parse($service->tanggal_keberangkatan)->isoFormat('D MMM YYYY') }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Tanggal Kepulangan</span>
+                            <span
+                                class="value">{{ \Carbon\Carbon::parse($service->tanggal_kepulangan)->isoFormat('D MMM YYYY') }}</span>
+                        </div>
+                    </div>
+                @else
+                    <p style="color: var(--text-secondary); text-align: center; padding: 1rem;">
+                        Data customer atau service tidak terhubung.
+                    </p>
+                @endif
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="bi bi-map-fill"></i>
+                    <div>
+                        <span class="title-text">Detail Order Tour</span>
+                    </div>
+                </h5>
+                <a href="{{ route('tour.customer.edit', $tour->id) }}" class="btn-action"> {{-- Ganti # dengan route 'tour.edit' --}}
+                    <i class="bi bi-pencil-fill"></i>
+                    Edit
+                </a>
+            </div>
+
+            {{-- Logika Badge Status --}}
+            @php
+                $status = strtolower($tour->status);
+                $statusClass = '';
+                if (in_array($status, ['done', 'deal'])) {
+                    $statusClass = 'badge-success';
+                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan'])) {
+                    $statusClass = 'badge-warning';
+                } elseif (in_array($status, ['cancelled', 'batal'])) {
+                    $statusClass = 'badge-danger';
+                } else {
+                    $statusClass = 'badge-primary';
+                }
+            @endphp
+
+            <div class="card-body">
+
+                <div class="stats-grid">
+
+                    <div class="info-card">
+                        <h6 class="info-card-title"><i class="bi bi-info-circle-fill"></i> Info Tour</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Nama Tour</span>
+                                <span class="value">{{ $tour->tourItem?->name ?? 'N/A' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Transportasi</span>
+                                <span class="value">{{ $tour->transportation?->nama ?? 'N/A' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Tanggal Keberangkatan Tour</span>
+                                <span class="value"
+                                    style="text-transform: none;">{{ \Carbon\Carbon::parse($tour->tanggal_keberangkatan)->isoFormat('dddd, D MMMM Y') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Status</span>
+                                <span class="value status-value">
+                                    <span class="badge {{ $statusClass }}">{{ $tour->status }}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h6 class="info-card-title"><i class="bi bi-cash-coin"></i> Info Finansial & Supplier</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Supplier</span>
+                                <span class="value">{{ $tour->supplier ?? '-' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Harga Dasar</span>
+                                <span class="value">Rp {{ number_format($tour->harga_dasar ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Harga Jual</span>
+                                <span class="value">Rp {{ number_format($tour->harga_jual ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Profit</span>
+                                <span class="value" style="color: var(--success-color);">
+                                    Rp
+                                    {{ number_format(($tour->harga_jual ?? 0) - ($tour->harga_dasar ?? 0), 0, ',', '.') }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
     </div>
-
-    {{--
-      PERBAIKAN:
-      Sekarang $service adalah variabel yang valid dan bisa diakses.
-      Nama customer diambil dari relasi $service->pelanggan.
-      Tanggal diformat agar lebih rapi.
-    --}}
-    <div class="tour-info">
-        <div class="info-item">
-            <strong>Nama Customer</strong>
-            <span>{{ $service->pelanggan->nama_travel }}</span>
-        </div>
-        <div class="info-item">
-            <strong>Tanggal Keberangkatan</strong>
-            <span>{{ $service->tanggal_keberangkatan ? \Carbon\Carbon::parse($service->tanggal_keberangkatan)->format('d F Y') : '-' }}</span>
-        </div>
-        <div class="info-item">
-            <strong>Tanggal Kepulangan</strong>
-            <span>{{ $service->tanggal_kepulangan ? \Carbon\Carbon::parse($service->tanggal_kepulangan)->format('d F Y') : '-' }}</span>
-        </div>
-        <div class="info-item">
-            <strong>Status</strong>
-            <span>{{ ucfirst($service->status ?? '-') }}</span>
-        </div>
-    </div>
-
-    <h5 class="section-title"><i class="bi bi-people-fill"></i> Detail Tour</h5>
-
-    <table>
-        <thead>
-            <tr>
-                {{-- Ganti 'ID' menjadi 'No.' untuk $loop->iteration --}}
-                <th style="width: 50px;">No.</th>
-                <th>Nama Transportasi</th>
-                <th>Nama Tour</th>
-                <th>Tanggal Keberangkatan</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{--
-              PERBAIKAN:
-              Gunakan @forelse untuk menangani kasus jika tidak ada data tour.
-              Isi <td> yang kosong dengan $loop->iteration.
-              Gunakan null-safe operator (?? '-') untuk relasi.
-            --}}
-            @forelse ($tour as $item)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->transportation->nama ?? 'N/A' }}</td>
-                <td>{{ $item->tourItem->name ?? 'N/A' }}</td>
-                <td>{{ $item->tanggal_keberangkatan ? \Carbon\Carbon::parse($item->tanggal_keberangkatan)->format('d F Y') : '-' }}</td>
-
-                <td data-label="Aksi">
-                                        <a href="{{ route('tour.supplier.show', $item->id) }}" class="btn btn-primary">
-                                            Supplier
-                                        </a>
-                                    </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="4" style="text-align: center; padding: 1rem;">
-                    Tidak ada data tour yang ditemukan untuk service ini.
-                </td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
 @endsection

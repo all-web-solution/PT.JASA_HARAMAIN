@@ -13,6 +13,7 @@ class Tour extends Model
         'tanggal_keberangkatan',
         'supplier',
         'harga_dasar',
+        'harga_jual',
         'status'
     ];
 
