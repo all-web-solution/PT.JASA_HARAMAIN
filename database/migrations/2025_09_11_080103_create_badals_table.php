@@ -25,6 +25,7 @@ return new class extends Migration
             $table->date('tanggal_pelaksanaan');
             $table->string('supplier')->nullable();
             $table->string('harga_dasar')->nullable();
+            $table->string('harga_jual')->nullable();
             $table->timestamps();
         });
     }

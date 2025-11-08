@@ -3,37 +3,66 @@
 namespace App\Http\Controllers;
 
 use App\Models\Badal;
+use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class BadalController extends Controller
 {
     public function index()
     {
-        $AllBadal = \App\Models\Badal::all();
-        $wakaf = $AllBadal->unique('service_id');
-        return view('palugada.badal', compact('wakaf'));
+        $badals = Badal::with('service.pelanggan') // Eager load
+                        ->latest()
+                        ->paginate(15);
+
+        // Asumsi nama view handling.badal.index
+        return view('palugada.badal', compact('badals'));
     }
 
-    public function show($id)
+    public function show(Badal $badal)
     {
-       // 1. Cari satu item Badal yang di-klik (untuk dapat service_id-nya)
-    // Kita juga load relasi service dan pelanggan-nya
-    $satuBadal = \App\Models\Badal::with('service.pelanggan')->findOrFail($id);
+        // $badal otomatis ditemukan oleh Laravel
+        $badal->load('service.pelanggan'); // Load relasi
 
-    // 2. Ambil objek Service-nya
-    // Objek $service ini sudah berisi info pelanggan (karena di-load di atas)
-    $service = $satuBadal->service;
+        // Asumsi nama view handling.badal.show
+        return view('palugada.badal_detail', compact('badal'));
+    }
 
-    // 3. Ambil SEMUA item Badal yang punya service_id yang sama
-    // Kita bisa load dari relasi di $service (jika sudah didefinisikan)
-    // Asumsi di model Service ada relasi: public function badals() { return $this->hasMany(Badal::class); }
-    $semuaItemBadal = $service->badals;
+    public function edit(Badal $badal)
+    {
+        // Ambil data untuk dropdowns
+        $services = Service::with('pelanggan')->get();
+        $statuses = ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'];
 
-    // ATAU jika relasi belum ada, query manual:
-    // $semuaItemBadal = \App\Models\Badal::where('service_id', $service->id)->get();
+        // Asumsi nama view handling.badal.edit
+        return view('palugada.badal_edit', compact(
+            'badal',
+            'services',
+            'statuses'
+        ));
+    }
 
-    // 4. Kirim data service (untuk info customer) dan semuaItemBadal (untuk list) ke view
-    return view('palugada.badal_detail', compact('service', 'semuaItemBadal'));
+    public function update(Request $request, Badal $badal)
+    {
+        // Validasi data berdasarkan model Badal
+        $validatedData = $request->validate([
+            // 'service_id' => 'required|exists:services,id',
+            // 'name' => 'required|string|max:255',
+            // 'price' => 'nullable|numeric|min:0', // 'price' adalah harga lama/estimasi
+            // 'tanggal_pelaksanaan' => 'required|date',
+            'status' => 'required|in:nego,deal,batal,tahap persiapan,tahap produksi,done',
+            'supplier' => 'nullable|string|max:255',
+            'harga_dasar' => 'nullable|numeric|min:0',
+            'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
+        ]);
+
+        // Update data badal
+        $badal->update($validatedData);
+
+        Session::flash('success', 'Order badal berhasil diperbarui.');
+
+        // Redirect kembali ke halaman detail
+        return redirect()->route('badal.show', $badal->id);
     }
 
     public function supplier($id){
