@@ -13,16 +13,13 @@ use App\Models\Service;
 
 class TransportationController extends Controller
 {
-    public function index()
+   public function index()
     {
-        // 1. Ambil semua data pesawat
-        $allPlanes = Plane::all();
+        // 1. Mulai query, JANGAN panggil all()
+        $allPlanes = Plane::query();
 
-        // 2. Filter koleksi untuk mendapatkan hanya satu data per 'service_id'
-        //    Ini akan mengambil data *pertama* yang ditemui untuk setiap service_id unik.
-        $planes = $allPlanes->unique('service_id');
+        $planes = $allPlanes->latest()->paginate(10);
 
-        // 3. Kirim data yang sudah unik ke view
         return view('transportasi.pesawat.index', compact('planes'));
     }
     public function indexCar()
@@ -87,7 +84,7 @@ class TransportationController extends Controller
 
     public function detailCar($id)
     {
-        $transportation = Transportation::findOrFail($id);
+        $transportation = TransportationItem    ::findOrFail($id);
         $routes = Route::where('transportation_id', $transportation->id)->get();
 
         return view('transportasi.mobil.detail', compact('transportation', 'routes'));
@@ -147,10 +144,65 @@ public function detail($id)
     return view('transportasi.pesawat.detail', compact('plane'));
 }
 
-public function detailCustomer($id)
-{
-    $transportationItem = TransportationItem::with('service.pelanggan')->findOrFail($id);
+    public function detailCustomer($id)
+    {
+        // Temukan item transportasi yang diklik
+        $transportationItem = TransportationItem::findOrFail($id);
 
-    return view('transportasi.mobil.detail_customer', compact('transportationItem'));
-}
+        // Ambil service_id dari item tersebut
+        $service_id = $transportationItem->service_id;
+
+        // Load SEMUA data service yang relevan
+        // Ini adalah cara terbaik untuk mendapatkan semua data untuk view
+        $service = Service::with([
+            'pelanggan', // Untuk kartu detail customer
+            'transportationItem.transportation', // Untuk tabel (nama mobil)
+            'transportationItem.route'           // Untuk tabel (nama rute)
+        ])->find($service_id);
+
+
+        // Kirim 'service' (yang berisi semua data) dan 'transportationItem' (item spesifik)
+        return view('transportasi.mobil.detail_customer', compact('service', 'transportationItem'));
+    }
+
+    public function editCustomer(TransportationItem $item)
+    {
+        // $item adalah instance TransportationItem yang ingin diedit
+        // (Otomatis ditemukan oleh Route Model Binding)
+
+        // Ambil data untuk dropdowns
+        $services = Service::with('pelanggan')->get();
+        $transportations = Transportation::all();
+        $routes = Route::all();
+
+        // Asumsi status diambil dari model atau enum
+        // (Jika 'status' tidak ada di model Anda, hapus baris ini dan dropdown-nya)
+        $statuses = ['nego', 'deal', 'batal', 'done']; // Sesuaikan dengan kebutuhan
+
+        return view('transportasi.mobil.customer_edit', compact(
+            'item', // Mengirim data dengan nama $item
+            'services',
+            'transportations',
+            'routes',
+            'statuses'
+        ));
+    }
+
+    public function updateCustomer(Request $request, TransportationItem $item)
+    {
+        // Validasi data berdasarkan model
+        $validatedData = $request->validate([
+            'status' => 'required|string', // Sesuaikan aturan validasi status
+            'supplier' => 'nullable|string|max:255',
+            'harga_dasar' => 'nullable|numeric|min:0',
+            'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
+        ]);
+
+        // Update data
+        $item->update($validatedData);
+
+        // Redirect kembali ke halaman detail customer
+        return redirect()->route('transportation.car.detail.customer', $item->id)
+                         ->with('success', 'Order transportasi berhasil diperbarui!');
+    }
 }
