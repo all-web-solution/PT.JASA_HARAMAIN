@@ -24,7 +24,9 @@ return new class extends Migration
             $table->string('keterangan');
             $table->string('jumlah_jamaah');
             $table->enum('status', ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done']);
-
+            $table->string('supplier')->nullable();
+            $table->string('harga_dasar')->nullable();
+            $table->string('harga_jual')->nullable();
             $table->timestamps();
         });
     }
