@@ -1,6 +1,9 @@
 @extends('admin.master')
+@section('title', 'Daftar Order Makanan')
+
 @push('styles')
     <style>
+        /* == CSS Dari Referensi 'index dokumen' == */
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;
@@ -11,15 +14,16 @@
             --border-color: #d1e0f5;
             --hover-bg: #f0f7ff;
             --background-light: #f8fafd;
-            --success-bg: #e9f7ec;
-            --success-text: #28a745;
-            --warning-bg: #fff8e1;
-            --warning-text: #ffc107;
-            --danger-bg: #fbe9e9;
-            --danger-text: #dc3545;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-bg: rgba(40, 167, 69, 0.1);
+            --warning-bg: rgba(255, 193, 7, 0.1);
+            --danger-bg: rgba(220, 53, 69, 0.1);
+            --primary-bg: var(--haramain-light);
         }
 
-        .customer-meal-container {
+        .service-list-container {
             max-width: 100vw;
             margin: 0 auto;
             padding: 2rem;
@@ -58,35 +62,20 @@
             color: var(--haramain-secondary);
         }
 
-        .card-body {
-            padding: 2rem;
-        }
-
-        .filter-container {
-            margin-bottom: 1.5rem;
-        }
-
-        .filter-container .form-control {
-            border-radius: 8px;
-            border-color: var(--border-color);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .filter-container .form-control:focus {
-            border-color: var(--haramain-accent);
-            box-shadow: 0 0 0 3px rgba(61, 139, 253, 0.2);
-        }
-
         /* Table Styles */
         .table-responsive {
-            overflow-x: auto;
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .card-body {
+            padding: 0;
+            /* Hapus padding dari card-body */
         }
 
         .table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0 0.75rem;
-            margin-top: -0.75rem;
         }
 
         .table thead th {
@@ -95,7 +84,8 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
-            text-align: left;
+            text-align: center;
+            /* Sesuai referensi */
             white-space: nowrap;
         }
 
@@ -114,7 +104,8 @@
         .table tbody td {
             padding: 1.25rem;
             vertical-align: middle;
-            border: 1px solid transparent;
+            text-align: center;
+            /* Sesuai referensi */
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -131,107 +122,213 @@
             border-bottom-right-radius: 8px;
         }
 
-        /* Status Badge */
-        .status-badge {
-            padding: 0.3em 0.8em;
-            border-radius: 12px;
-            font-weight: 600;
+        /* Action Buttons */
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.25rem;
+            transition: all 0.3s ease;
+            border: none;
+            background-color: transparent;
+        }
+
+        .btn-action:hover {
+            background-color: var(--haramain-light);
+        }
+
+        .btn-action i {
+            font-size: 1rem;
+        }
+
+        .btn-edit {
+            color: var(--haramain-secondary);
+        }
+
+        .btn-view {
+            color: var(--text-secondary);
+        }
+
+        .btn-delete {
+            color: var(--danger-color);
+        }
+
+        /* Badge Status */
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 700;
             font-size: 0.8rem;
-            white-space: nowrap;
+            text-transform: capitalize;
         }
 
-        .status-selesai {
+        .badge-success {
             background-color: var(--success-bg);
-            color: var(--success-text);
+            color: var(--success-color);
         }
 
-        .status-proses {
+        .badge-warning {
             background-color: var(--warning-bg);
-            color: #b98900;
+            color: var(--warning-color);
         }
 
-        .status-cancel {
+        .badge-danger {
             background-color: var(--danger-bg);
-            color: var(--danger-text);
+            color: var(--danger-color);
+        }
+
+        .badge-primary {
+            background-color: var(--primary-bg);
+            color: var(--haramain-secondary);
+        }
+
+        /* Pagination */
+        .pagination-container {
+            padding: 0 1.5rem 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--haramain-secondary);
+            border-color: var(--haramain-secondary);
+        }
+
+        .pagination .page-link {
+            color: var(--haramain-primary);
+            border-radius: 8px;
+            margin: 0 0.25rem;
+            border: 1px solid var(--border-color);
         }
     </style>
 @endpush
 
 @section('content')
-    <div class="customer-meal-container">
+    <div class="service-list-container">
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-people-fill"></i> Daftar Pesanan Customer
+                    <i class="bi bi-egg-fried"></i>Daftar Order Makanan
                 </h5>
-                <a href="{{ route('catering.index') }}" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Kembali
-                </a>
+                {{-- <a href="{{ route('makanan.create') }}" class="btn-add-new">...</a> --}}
             </div>
 
             <div class="card-body">
-                <div class="filter-container">
-                    <form method="GET" action="{{ route('catering.customer') }}">
-                        <div class="d-flex">
-                            <select name="status" class="form-control" style="max-width: 250px;"
-                                onchange="this.form.submit()">
-                                <option value="">Semua Status</option>
-                                <option value="proses" {{ request()->get('status') == 'proses' ? 'selected' : '' }}>Proses
-                                </option>
-                                <option value="cancel" {{ request()->get('status') == 'cancel' ? 'selected' : '' }}>Cancel
-                                </option>
-                                <option value="selesai" {{ request()->get('status') == 'selesai' ? 'selected' : '' }}>
-                                    Selesai</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama Customer</th>
-                                <th>Nama Menu</th>
-                                {{-- <th>Harga</th> --}}
+                                <th>Nama Pelanggan</th>
+                                <th>Nama Makanan</th>
                                 <th>Jumlah</th>
-                                {{-- <th>Total Harga</th> --}}
-                                {{-- <th>PJ</th> --}}
-                                <th>Dari tanggal</th>
-                                <th>Sampai tanggal</th>
+                                <th>Tanggal</th>
+                                <th>Supplier</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($customerMeal as $item)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item->service->pelanggan->nama_travel }}</td>
-                                    <td>{{ $item->mealItem->name }}</td>
-                                    {{-- <td>Rp {{ number_format($item->mealItem->price, 0, ',', '.') }}</td> --}}
-                                    <td>{{ $item->jumlah }}</td>
-                                    {{-- <td>Rp {{ number_format($item->total_price, 0, ',', '.') }}</td> --}}
-                                    <td>{{ $item->dari_tanggal }}</td>
-                                    <td>{{ $item->sampai_tanggal }}</td>
-                                    <td>{{ $item->status }}</td>
+                            {{-- $meals adalah Paginator dari controller --}}
+                            @forelse ($meals as $meal)
+                                {{-- $meal adalah satu instance Model Meal --}}
 
+                                @php
+                                    $status = strtolower($meal->status);
+                                    $statusClass = '';
+                                    if (in_array($status, ['done', 'deal'])) {
+                                        $statusClass = 'badge-success';
+                                    } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan'])) {
+                                        $statusClass = 'badge-warning';
+                                    } elseif (in_array($status, ['cancelled', 'batal'])) {
+                                        $statusClass = 'badge-danger';
+                                    } else {
+                                        $statusClass = 'badge-primary';
+                                    }
+                                @endphp
+                                <tr>
+                                    {{-- Nomor urut paginasi --}}
+                                    <td>{{ ($meals->currentPage() - 1) * $meals->perPage() + $loop->iteration }}</td>
+
+                                    {{-- Kolom Nama Pelanggan --}}
                                     <td>
-                                        <a href="{{ route('catering.show', $item->id) }}" class="btn btn-info btn-sm">
-                                            <i class="bi bi-eye"></i> Detail
+                                        {{ $meal->service?->pelanggan?->nama_travel ?? 'N/A' }}
+                                    </td>
+
+                                    {{-- Kolom Nama Makanan --}}
+                                    <td>{{ $meal->mealItem?->name ?? 'N/A' }}</td>
+
+                                    {{-- Kolom Jumlah --}}
+                                    <td>{{ $meal->jumlah }}</td>
+
+                                    {{-- Kolom Tanggal --}}
+                                    <td>
+                                        @if ($meal->dari_tanggal && $meal->sampai_tanggal)
+                                            {{ \Carbon\Carbon::parse($meal->dari_tanggal)->isoFormat('D MMM Y') }}
+                                            -
+                                            {{ \Carbon\Carbon::parse($meal->sampai_tanggal)->isoFormat('D MMM Y') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+
+                                    {{-- Kolom Harga Jual --}}
+                                    <td>{{ $meal->supplier ?? '-' }}</td>
+
+                                    {{-- Kolom Status --}}
+                                    <td>
+                                        <span class="badge {{ $statusClass }}">{{ $meal->status }}</span>
+                                    </td>
+
+                                    {{-- Kolom Aksi --}}
+                                    <td>
+                                        {{-- Ganti 'makanan.show' & 'makanan.edit' dengan nama route Anda --}}
+                                        <a href="{{ route('catering.customer.show', $meal->id) }}"
+                                            class="btn-action btn-view" title="View"> {{-- route('makanan.show', $meal->id) --}}
+                                            <i class="bi bi-eye-fill"></i>
                                         </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" style="text-align:center; padding: 2rem;">
-                                        Tidak ada data pesanan yang ditemukan.
+                                    <td colspan="8" style="text-align: center; padding: 2rem;">
+                                        Belum ada data order makanan.
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            {{-- Previous Page Link --}}
+                            <li class="page-item {{ $meals->onFirstPage() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ $meals->previousPageUrl() ?? '#' }}"
+                                    tabindex="-1">&laquo;</a>
+                            </li>
+
+                            {{-- Page Number Links --}}
+                            @foreach ($meals->getUrlRange(1, $meals->lastPage()) as $page => $url)
+                                <li class="page-item {{ $meals->currentPage() == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                </li>
+                            @endforeach
+
+                            {{-- Next Page Link --}}
+                            <li class="page-item {{ !$meals->hasMorePages() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ $meals->nextPageUrl() ?? '#' }}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
 
             </div>
