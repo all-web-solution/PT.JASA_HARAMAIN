@@ -16,15 +16,15 @@ class Hotel extends Model
         'catatan',
         'type',
         'jumlah_type',
-        'type_custom_special_room',
-        'jumlah_kasur',
-        'harga_type_custom_special_room',
-        'status'
+        'status',
+        'supplier',
+        'harga_dasar',
+        'harga_jual'
     ];
 
     public function service()
     {
-        return $this->belongsTo(Service::class, 'id');
+        return $this->belongsTo(Service::class, 'service_id');
     }
     public function pelanggan()
     {
