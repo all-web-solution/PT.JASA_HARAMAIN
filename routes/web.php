@@ -81,12 +81,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 Route::middleware(['auth', 'hotel'])->group(function () {
     // Routes untuk hotel
-    Route::get('/hotel', [HotelController::class, 'index'])->name('hotel.index');
-    Route::get('/hotel/create', [HotelController::class, 'create'])->name('hotel.create');
-    Route::post('/hotel', [HotelController::class, 'store'])->name('hotel.store');
-    Route::get('hotel/{id}/edit', [HotelController::class, 'edit'])->name('hotel.edit');
-    Route::get('hotel/{id}', [HotelController::class, 'show'])->name('hotel.show');
-    Route::put('hotel/{id}/update', [HotelController::class, 'update'])->name('hotel.update');
+    Route::get('/hotel-customer', [HotelController::class, 'index'])->name('hotel.index');
+    Route::get('/hotel-customer/{hotel}', [HotelController::class, 'show'])->name('hotel.show');
+    Route::get('/hotel-customer/{hotel}/edit', [HotelController::class, 'edit'])->name('hotel.edit');
+    Route::put('/hotel-customer/{hotel}', [HotelController::class, 'update'])->name('hotel.update');
     Route::delete('hotel/{id}/delete', [HotelController::class, 'destroy'])->name('hotel.destroy');
     // Routes untuk Price List
     Route::get('/price', [PriceListHotelController::class, 'index'])->name('hotel.price.index');
@@ -114,6 +112,9 @@ Route::middleware(['auth', 'handling'])->group(function () {
         Route::put('update/{id}', [CateringController::class, 'update'])->name('catering.update');
         Route::delete('/delete/{id}', [CateringController::class, 'destroy'])->name('catering.delete');
         Route::get('/customer', [CateringController::class, 'customer'])->name('catering.customer');
+        Route::get('/detail/{meal}', [CateringController::class, 'showCustomer'])->name('catering.customer.show');
+        Route::get('/makanan/{meal}/edit', [CateringController::class, 'editCustomer'])->name('catering.customer.edit');
+        Route::put('/makanan/{meal}', [CateringController::class, 'updateCustomer'])->name('catering.customer.update');
         Route::get('/supplier/{id}', [CateringController::class, 'showSupplier'])->name('catering.supplier.show');
         Route::get('/supplier/{id}/create', [CateringController::class, 'createSupplier'])->name('catering.supplier.create');
         Route::put('/supplier/{id}/store', [CateringController::class, 'storeSupplier'])->name('catering.supplier.store');
@@ -121,8 +122,12 @@ Route::middleware(['auth', 'handling'])->group(function () {
     Route::group(['prefix' => 'handling'], function () {
         Route::get('/', [HandlingController::class, 'index'])->name('handling.handling.index');
         Route::get('/hotel', [HandlingController::class, 'hotel'])->name('handling.handling.hotel');
-        Route::get('/hotel/{id}', [HandlingController::class, 'show'])->name('handling.handling.hotel.show');
+        Route::get('/hotel/{id}', [HandlingController::class, 'showCustomerHotel'])->name('handling.handling.hotel.show');
+        Route::get('/hotel/{hotel}/edit', [HandlingController::class, 'editCustomerHotel'])->name('handling.hotel.edit');
+        Route::put('/hotel/{hotel}', [HandlingController::class, 'updateCustomerHotel'])->name('handling.hotel.update');
         Route::get('/plane/{id}', [HandlingController::class, 'plane'])->name('handling.handling.plane.show');
+        Route::get('/handling-pesawat/{plane}/edit', [HandlingController::class, 'editCustomerPlane'])->name('handling.pesawat.edit');
+        Route::put('/handling-pesawat/{plane}', [HandlingController::class, 'updateCustomerPlane'])->name('handling.pesawat.update');
     });
     Route::group(['prefix' => 'pendamping'], function () {
         Route::get('/', [PendampingController::class, 'index'])->name('handling.pendamping.index');
@@ -134,6 +139,8 @@ Route::middleware(['auth', 'handling'])->group(function () {
         Route::get('/customer', [PendampingController::class, 'customer'])->name('handling.pendamping.customer');
         Route::get('/customer/{id}/detail', [PendampingController::class, 'showCustomer'])->name('pendamping.customer.show');
         Route::get('/supplier/{id}', [PendampingController::class, 'showSupplier'])->name('pendamping.supplier.show');
+        Route::get('/pendamping/edit/{guide}', [PendampingController::class, 'editGuideOrder'])->name('pendamping.edit');
+        Route::put('/pendamping/{guide}', [PendampingController::class, 'updateGuideOrder'])->name('pendamping.update');
         Route::get('/supplier/{id}/create', [PendampingController::class, 'createSupplier'])->name('pendamping.supplier.create');
         Route::put('/supplier/{id}/store', [PendampingController::class, 'storeSupplier'])->name('pendamping.supplier.store');
 
@@ -146,7 +153,9 @@ Route::middleware(['auth', 'handling'])->group(function () {
         Route::put('/update/{id}', [TourController::class, 'update'])->name('handling.tour.update');
         Route::delete('/delete/{id}', [TourController::class, 'destroy'])->name('handling.tour.destroy');
         Route::get('/customer', [TourController::class, 'customer'])->name('handling.tour.customer');
-        Route::get('/tour/customer/{id}', [TourController::class, 'show'])->name('tour.customer.show');
+        Route::get('/detail/{tour}', [TourController::class, 'showCustomerTour'])->name('tour.customer.show'); // Nama route ya
+        Route::get('/{tour}/edit', [TourController::class, 'editCustomerTour'])->name('tour.customer.edit');
+        Route::put('/{tour}', [TourController::class, 'updateCustomerTour'])->name('tour.customer.update');
         Route::get('/supplier/{id}', [TourController::class, 'showSupplier'])->name('tour.supplier.show');
         Route::get('/supplier/{id}/create', [TourController::class, 'createSupplier'])->name('tour.supplier.create');
         Route::put('/supplier/{id}/store', [TourController::class, 'storeSupplier'])->name('tour.supplier.store');
@@ -183,6 +192,8 @@ Route::middleware(['auth', 'transportation'])->group(function () {
         Route::put('/route/id/{id}', [RouteController::class, 'update'])->name('transportation.car.detail.route.update');
         Route::delete('/route/delete/{id}', [RouteController::class, 'destroy'])->name('transportation.car.detail.route.delete');
         Route::get('/transportation/detail/{id}/customer', [TransportationController::class, 'detailCustomer'])->name('transportation.car.detail.customer');
+        Route::get('/{item}/edit', [TransportationController::class, 'editCustomer'])->name('transportasi.customer.edit');
+        Route::put('/transportasi-item/{item}', [TransportationController::class, 'updateCustomer'])->name('transportasi.customer.update');
     });
     Route::get('/customer/transportation', [TransportationController::class, 'TransportationCustomer'])->name('transportation.customer');
 });
@@ -202,6 +213,8 @@ Route::middleware(['auth', 'visa'])->group(function () {
     Route::delete('/document/{id}/detail/delete', [DocumentController::class, 'createDocumentDelete'])->name('visa.document.show.delete');
     Route::get('/document/customer', [DocumentController::class, 'customer'])->name('visa.document.customer');
     Route::get('/document/customer/{id}/detail', [DocumentController::class, 'detail'])->name('visa.document.customer.detail');
+    Route::get('/document-customer/{document}/edit', [DocumentController::class, 'editDocumentCustomer'])->name('document.customer.edit');
+    Route::put('/document-customer/{document}', [DocumentController::class, 'updateDocumentCustomer'])->name('document.customer.update');
     Route::get('/document/supplier/{id}', [DocumentController::class, 'supplier'])->name('visa.document.customer.detail.supplier');
     Route::get('/document/supplier/{id}/create', [DocumentController::class, 'supplier_create'])->name('visa.document.customer.detail.supplier.create');
     Route::put('/document/supplier/{id}/store', [DocumentController::class, 'supplier_store'])->name('visa.document.customer.detail.supplier.store');
@@ -217,6 +230,9 @@ Route::group(['middleware' => 'guest'], function () {
 
 Route::post('/sign-out', [AuthController::class, 'sign_out'])->name('sign_out');
 Route::get('/reyal', [ReyalController::class, 'index'])->name('reyal.index')->middleware('auth', 'reyal');
+Route::get('/reyal/{reyal}', [ReyalController::class, 'showReyal'])->name('reyal.detail');
+Route::get('/reyal/{reyal}/edit', [ReyalController::class, 'editReyal'])->name('reyal.edit');
+Route::put('/reyal/{reyal}', [ReyalController::class, 'updateReyal'])->name('reyal.update');
 Route::get('/reyal/supplier/{id}', [ReyalController::class, 'supplier'])->name('reyal.supplier.index')->middleware('auth', 'reyal');
 Route::get('/reyal/supplier/{id}/create', [ReyalController::class, 'createSupplier'])->name('reyal.supplier.create')->middleware('auth', 'reyal');
 Route::put('/reyal/supplier/{id}/create', [ReyalController::class, 'createSupplierStore'])->name('reyal.supplier.create.store')->middleware('auth', 'reyal');
@@ -228,7 +244,9 @@ Route::middleware(['auth', 'palugada'])->group(function () {
     Route::put('wakaf/update/{id}', [WakafController::class, 'update'])->name('wakaf.update');
     Route::delete('wakaf/delete/{id}', [WakafController::class, 'destroy'])->name('wakaf.destroy');
     Route::get('wakaf/customer', [WakafController::class, 'customer'])->name('wakaf.customer');
-    Route::get('wakaf/customer/detail/{id}', [WakafController::class, 'customer_detail'])->name('wakaf.customer.detail');
+    Route::get('/wakaf/{wakaf}/detail', [WakafController::class, 'customerDetail'])->name('wakaf.customer.show');
+    Route::get('/wakaf/{wakaf}/edit', [WakafController::class, 'editCustomer'])->name('wakaf.customer.edit');
+    Route::put('/wakaf/{wakaf}', [WakafController::class, 'updateCustomer'])->name('wakaf.customer.update');
     Route::get('/supplier/{id}/wakaf', [WakafController::class, 'showSupplier'])->name('wakaf.supplier.show');
     Route::get('/supplier/{id}/wakaf/create', [WakafController::class, 'createSupplier'])->name('wakaf.supplier.create');
     Route::put('/supplier/{id}/wakaf/store', [WakafController::class, 'storeSupplier'])->name('wakaf.supplier.store');
@@ -240,13 +258,17 @@ Route::middleware(['auth', 'palugada'])->group(function () {
     Route::put('dorongan/update/{id}', [DoronganController::class, 'update'])->name('dorongan.update');
     Route::delete('dorongan/delete/{id}', [DoronganController::class, 'destroy'])->name('dorongan.destroy');
     Route::get('dorongan/customer', [DoronganController::class, 'customer'])->name('dorongan.customer');
-    Route::get('dorongan/customer/{id}', [DoronganController::class, 'customer_detail'])->name('dorongan.customer.detail');
+    Route::get('/dorongan-customer/{dorongan}', [DoronganController::class, 'showCustomer'])->name('dorongan.customer.show');
+    Route::get('/dorongan-customer/{dorongan}/edit', [DoronganController::class, 'editCustomer'])->name('dorongan.customer.edit');
+    Route::put('/dorongan-customer/{dorongan}', [DoronganController::class, 'updateCustomer'])->name('dorongan.customer.update');
     Route::get('/supplier/{id}', [DoronganController::class, 'showSupplier'])->name('dorongan.supplier.show');
     Route::get('/supplier/{id}/create', [DoronganController::class, 'createSupplier'])->name('dorongan.supplier.create');
     Route::put('/supplier/{id}/store', [DoronganController::class, 'storeSupplier'])->name('dorongan.supplier.store');
 
     Route::get('/badal', [App\Http\Controllers\BadalController::class, 'index'])->name('palugada.badal');
-    Route::get('/badal/{id}/show', [App\Http\Controllers\BadalController::class, 'show'])->name('palugada.badal.show');
+    Route::get('/badal-customer/{badal}', [App\Http\Controllers\BadalController::class, 'show'])->name('badal.show');
+    Route::get('/badal-customer/{badal}/edit', [App\Http\Controllers\BadalController::class, 'edit'])->name('badal.edit');
+    Route::put('/badal-customer/{badal}', [App\Http\Controllers\BadalController::class, 'update'])->name('badal.update');
     Route::get('/badal/{id}/supplier', [App\Http\Controllers\BadalController::class, 'supplier'])->name('palugada.badal.supplier.show');
     Route::get('/badal/{id}/supplier/create', [App\Http\Controllers\BadalController::class, 'supplierCreate'])->name('palugada.badal.supplier.create');
     Route::put('/badal/{id}/supplier/store', [App\Http\Controllers\BadalController::class, 'supplierStore'])->name('palugada.badal.supplier.store');
@@ -259,6 +281,9 @@ Route::middleware(['auth', 'content'])->group(function () {
     Route::put('/content/update/{id}', [ContentController::class, 'update'])->name('content.update');
     Route::delete('/content/delete/{id}', [ContentController::class, 'destroy'])->name('content.destroy');
     Route::get('/content/customer', [ContentController::class, 'customer'])->name('content.customer');
+    Route::get('/content-customer/detail/{id}', [ContentController::class, 'showContentItemDetail'])->name('content.customer.detail');
+    Route::get('/customers/{contentCustomer}/edit', [ContentController::class, 'editCustomer'])->name('customer.edit');
+    Route::put('/customers/{contentCustomer}', [ContentController::class, 'updateCustomer'])->name('customer.update');
     Route::get('/content/supplier/{id}', [ContentController::class, 'showSupplier'])->name('content.supplier');
     Route::get('/content/supplier/{id}/create', [ContentController::class, 'createSupplier'])->name('content.supplier.create');
     Route::put('/content/supplier/{id}/create', [ContentController::class, 'storeSupplier'])->name('content.supplier.store');
@@ -274,5 +299,5 @@ Route::middleware(['auth', 'keuangan'])->group(function () {
     Route::get('/keuangan', [App\Http\Controllers\KeuanganController::class, 'index'])->name('keuangan.index');
     Route::get('/payment', [App\Http\Controllers\KeuanganController::class, 'payment'])->name('keuangan.payment');
     Route::get('/payment/detail/{id}', [App\Http\Controllers\KeuanganController::class, 'payment_detail'])->name('keuangan.payment.detail');
-    Route::post('/payment/{order}/pay', [App\Http\Controllers\KeuanganController::class, 'pay'])->name('keuangan.payment.pay');
+    Route::post('/payment/pay/{service_id}', [App\Http\Controllers\KeuanganController::class, 'pay'])->name('keuangan.payment.pay');
 });
