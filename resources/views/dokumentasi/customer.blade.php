@@ -78,6 +78,7 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
+            text-align: center;
         }
 
         .table tbody tr {
@@ -94,6 +95,7 @@
         .table tbody td {
             padding: 1.25rem;
             vertical-align: middle;
+            text-align: center;
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -389,6 +391,9 @@
                         <tr>
                             <th>No</th>
                             <th>Nama pelanggan</th>
+                            <th>Jenis konten</th>
+                            <th>Tanggal Pelaksanaan</th>
+                            <th>Supplier</th>
                             <th>Status</th>
                             <th>Aksi</th>
 
@@ -398,12 +403,17 @@
                     <tbody>
                         @foreach ($customers as $item)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->nama_travel }}</td>
-                                <td>{{ $item->all_statuses }}</td>
+                                <td>{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}</td>
+                                <td>{{ $item->service?->pelanggan?->nama_travel ?? 'N/A' }}</td>
+                                <td>{{ $item->content?->name ?? 'N/A' }}</td>
+                                <td>{{ $item->tanggal_pelaksanaan }}</td>
+                                <td>{{ $item->supplier ?? '-' }}</td>
+                                <td>{{ $item->status }}</td>
                                 <td>
-                                    <a href="{{ route('customer.detail', $item->id) }}">
-                                        <button class="btn btn-primary">Detail</button>
+                                    <a href="{{ route('content.customer.detail', $item->id) }}"> <button
+                                            class="btn-action btn-view" title="view">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </button>
                                     </a>
                                 </td>
                             </tr>
@@ -415,19 +425,23 @@
             <!-- Pagination -->
             <div class="pagination-container">
                 <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
+                    <ul class="pagination justify-content-center">
+                        {{-- Previous Page Link --}}
+                        <li class="page-item {{ $customers->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $customers->previousPageUrl() ?? '#' }}"
+                                tabindex="-1">&laquo;</a>
                         </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
+
+                        {{-- Page Number Links --}}
+                        @foreach ($customers->getUrlRange(1, $customers->lastPage()) as $page => $url)
+                            <li class="page-item {{ $customers->currentPage() == $page ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        <li class="page-item {{ !$customers->hasMorePages() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $customers->nextPageUrl() ?? '#' }}">&raquo;</a>
                         </li>
                     </ul>
                 </nav>

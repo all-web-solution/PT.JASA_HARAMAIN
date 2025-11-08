@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ContentCustomer;
 use App\Models\ContentItem;
 use App\Models\Pelanggan;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 class ContentController extends Controller
@@ -14,9 +15,11 @@ class ContentController extends Controller
         $contents = ContentItem::all();
         return view('dokumentasi.index', compact('contents'));
     }
+
     public function create(){
         return view('dokumentasi.create');
     }
+
     public function store(Request $request){
         ContentItem::create([
             'name' => $request->nama,
@@ -26,10 +29,12 @@ class ContentController extends Controller
 
 
     }
+
     public function edit($id){
         $content = ContentItem::find($id);
         return view('dokumentasi.edit', compact('content'));
     }
+
     public function update($id, Request $request){
         $content = ContentItem::find($id);
         $content->update([
@@ -38,45 +43,89 @@ class ContentController extends Controller
         ]);
          return redirect()->route('content.index');
     }
+
     public function destroy($id){
         $content = ContentItem::find($id);
         $content->delete();
          return redirect()->route('content.index');
     }
- public function customer()
-{
-    $customers = \App\Models\Pelanggan::query()
-        ->join('services', 'pelanggans.id', '=', 'services.pelanggan_id')
-        ->join('content_customers', 'services.id', '=', 'content_customers.service_id')
-        ->join('content_items', 'content_customers.content_id', '=', 'content_items.id')
-        ->selectRaw('
-            pelanggans.id,
-            pelanggans.nama_travel,
 
-            /* Gunakan GROUP_CONCAT untuk menggabungkan semua status */
-            GROUP_CONCAT(DISTINCT content_customers.status SEPARATOR ", ") as all_statuses,
+    public function customer()
+    {
+        $customers = ContentCustomer::query()
 
-            SUM(content_customers.jumlah) as total_jumlah,
-            GROUP_CONCAT(content_items.name SEPARATOR ", ") as all_contents,
-            GROUP_CONCAT(IFNULL(content_customers.keterangan, "Tidak ada") SEPARATOR "; ") as all_keterangan
-        ')
-        // Anda perlu menambahkan 'status' ke group by jika tidak menggunakan agregat
-        ->groupBy('pelanggans.id', 'pelanggans.nama_travel')
-        ->paginate(10);
+            // 2. Gunakan "Eager Loading" untuk mengambil relasi
+            ->with([
+                'content',          // <-- Mengambil data dari ContentItem (relasi content())
+                'service.pelanggan' // <-- Mengambil data Service, DAN data Pelanggan-nya
+            ])
 
-    return view('dokumentasi.customer', compact('customers'));
-}
- public function showCustomerDetail($id)
+            // 3. Urutkan berdasarkan data terbaru (opsional)
+            ->latest()
+
+            // 4. Gunakan pagination
+            ->paginate(10); // (Anda bisa ganti 15 dengan jumlah item per halaman)
+
+        return view('dokumentasi.customer', compact('customers'));
+    }
+
+    public function showCustomerDetail($id)
     {
         $customer = Pelanggan::findOrFail($id);
         // Eager load relasi yang dibutuhkan agar tidak terjadi query N+1
         // Memuat services, lalu contents (pivot), lalu detail content (dari content_items)
         $customer->load('services.contents.content');
 
-        return view('dokumentasi.customer-detail', compact('customer'));
+        return view('dokumentasi.customer_detail', compact('customer'));
     }
 
+    public function showContentItemDetail($id)
+    {
+        // Cari ContentCustomer berdasarkan ID-nya,
+        // lalu load relasinya agar efisien (Eager Loading)
+        $contentCustomer = ContentCustomer::with(['service.pelanggan', 'content'])->findOrFail($id);
 
+        // Kirim data ke view detail (yang sudah kita buat di chat sebelumnya)
+        // Asumsi nama file: resources/views/dokumentasi/content/detail.blade.php
+        return view('dokumentasi.content_detail', [
+            'contentCustomer' => $contentCustomer
+        ]);
+    }
+
+    public function editCustomer(ContentCustomer $contentCustomer) // Gunakan Route-Model Binding
+    {
+        // Ambil data untuk dropdown
+        $services = Service::with('pelanggan')->get();
+        $contentItems = ContentItem::all();
+
+        $statuses = ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'];
+
+        return view('dokumentasi.customer_edit', compact(
+            'contentCustomer',
+            'services',
+            'contentItems',
+            'statuses'
+        ));
+    }
+
+    public function updateCustomer(Request $request, ContentCustomer $contentCustomer)
+    {
+        // 1. Validasi
+        $validated = $request->validate([
+            'keterangan' => 'nullable|string',
+            'status' => 'required|string',
+            'supplier' => 'nullable|string|max:255',
+            'harga_dasar' => 'required|numeric|min:0',
+            'harga_jual' => 'required|numeric|min:0|gte:harga_dasar', // gte = greater than or equal
+        ]);
+
+        // 2. Update data
+        $contentCustomer->update($validated);
+
+        // 3. Redirect kembali ke index dengan pesan sukses
+        return redirect()->route('content.customer') // Asumsi 'customer.index' adalah nama route index Anda
+                         ->with('success', 'Order Konten berhasil diperbarui!');
+    }
 
      public function setStatusPending(Pelanggan $customer)
     {
