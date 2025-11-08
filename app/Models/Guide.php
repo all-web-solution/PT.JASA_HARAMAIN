@@ -15,6 +15,7 @@ class Guide extends Model
         'muthowif_sampai',
         'supplier',
         'harga_dasar',
+        'harga_jual',
         'status'
     ];
 
