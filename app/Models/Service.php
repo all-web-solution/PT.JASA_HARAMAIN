@@ -66,10 +66,10 @@ class Service extends Model
         return $this->hasMany(File::class, 'service_id');
     }
     public function exchanges()
-{
-    // Tentukan foreign key 'service_id' secara eksplisit
-    return $this->hasMany(Exchange::class, 'service_id');
-}
+    {
+        // Tentukan foreign key 'service_id' secara eksplisit
+        return $this->hasMany(Exchange::class, 'service_id');
+    }
     public function wakafs()
     {
         return $this->hasMany(WakafCustomer::class, 'service_id');
@@ -101,5 +101,4 @@ class Service extends Model
             ->whereYear('tanggal_keberangkatan', Carbon::now()->year)
             ->sum('total_jamaah');
     }
-
 }
