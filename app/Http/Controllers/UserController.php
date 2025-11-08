@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class UserController extends Controller
@@ -18,51 +19,26 @@ class UserController extends Controller
         return view('admin.users.create');
     }
 
-    public function destroy($id)
-    {
-        $user = User::findOrFail($id);
-        $user->delete();
-
-        return redirect()->route('user.index')->with('success', 'User deleted successfully.');
-    }
-
-    public function show($id)
-    {
-        // Logic to show a specific user
-    }
-
-    public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-
-        // Validate the request data
-
-
-        // Update the user
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'full_name' => $request->full_name,
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'role' => $request->role,
-        ]);
-
-        return redirect()->route('user.index')->with('success', 'User updated successfully.');
-    }
-
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'name' => 'required|string|max:50',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
+            'full_name' => 'nullable|string|max:100',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+            'role' => 'required|string|in:admin,hotel,handling,transportasi & tiket,visa dan acara,reyal,palugada,konten dan dokumentasi,keuangan',
+        ]);
 
-        // Create the user
         User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'full_name' => $request->full_name,
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'role' => $request->role,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'full_name' => $validated['full_name'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'role' => $validated['role'],
         ]);
 
         return redirect()->route('user.index')->with('success', 'User created successfully.');
@@ -72,5 +48,50 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         return view('admin.users.edit', compact('user'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:50',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8',
+            'full_name' => 'nullable|string|max:100',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+            'role' => 'required|string|in:admin,hotel,handling,transportasi & tiket,visa dan acara,reyal,palugada,konten dan dokumentasi,keuangan',
+        ]);
+
+        $updateData = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'full_name' => $validated['full_name'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'role' => $validated['role'],
+        ];
+
+        if (!empty($validated['password'])) {
+            $updateData['password'] = Hash::make($validated['password']);
+        }
+
+        $user->update($updateData);
+
+        return redirect()->route('user.index')->with('success', 'User updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+
+        if (auth()->id() === $user->id) {
+            return redirect()->route('user.index')->with('error', 'You cannot delete your own account.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('user.index')->with('success', 'User deleted successfully.');
     }
 }

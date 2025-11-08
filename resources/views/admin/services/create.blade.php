@@ -267,7 +267,7 @@
         }
 
         .btn {
-            padding: 0.75rem 1.5rem;
+            padding: .75rem 1.5rem;
             border-radius: 8px;
             font-weight: 600;
             display: inline-flex;
@@ -275,7 +275,7 @@
             gap: 8px;
             transition: all 0.3s ease;
             border: none;
-            cursor: pointer;
+            cursor: pointer
         }
 
         .btn-primary {
@@ -336,7 +336,7 @@
                 flex-direction: column;
             }
 
-            .btn {
+            .form-actions .btn {
                 width: 100%;
                 justify-content: center;
             }
@@ -355,7 +355,7 @@
             background-color: var(--haramain-light);
         }
 
-        /* Style untuk error validasi */
+
         .validation-error-message {
             color: var(--danger-color);
             font-size: 0.875rem;
@@ -365,18 +365,14 @@
 
         #backToServicesBtn {
             visibility: hidden;
-            /* Sembunyi by default */
             opacity: 0;
             position: fixed;
             bottom: 20px;
             right: 30px;
             z-index: 99;
             border-radius: 50%;
-            /* Bikin bulat */
             padding: 0.6rem 0.9rem;
-            /* Sesuaikan padding untuk ikon */
             font-size: 1.25rem;
-            /* Besarkan ikon */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
@@ -444,7 +440,6 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Penanggung Jawab</label>
-                                    {{-- Dikelola oleh JS, tapi kita isi 'old' jika JS gagal --}}
                                     <input type="text" class="form-control" readonly id="penanggung"
                                         value="{{ old('penanggung_jawab') }}">
                                 </div>
@@ -473,14 +468,14 @@
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Keberangkatan</label>
                                     <input type="date" class="form-control" name="tanggal_keberangkatan" required
-                                        value="{{ old('tanggal_keberangkatan') }}"> {{-- <-- PERBAIKAN --}}
+                                        value="{{ old('tanggal_keberangkatan') }}">
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Kepulangan</label>
                                     <input type="date" class="form-control" name="tanggal_kepulangan" required
-                                        value="{{ old('tanggal_kepulangan') }}"> {{-- <-- PERBAIKAN --}}
+                                        value="{{ old('tanggal_kepulangan') }}">
                                 </div>
                             </div>
                         </div>
@@ -488,23 +483,21 @@
                         <div class="form-group">
                             <label class="form-label">Jumlah Jamaah</label>
                             <input type="number" class="form-control" name="total_jamaah" min="1" required
-                                value="{{ old('total_jamaah') }}"> {{-- <-- PERBAIKAN --}}
+                                value="{{ old('total_jamaah') }}">
                         </div>
                     </div>
 
-                    {{-- SECTION PILIH LAYANAN --}}
                     @php
-                        // Siapkan array data lama di sini agar lebih bersih
                         $oldServices = old('services', []);
                         $oldTransportTypes = old('transportation', []);
                         $oldHandlingTypes = old('handlings', []);
                         $oldReyalTipe = old('tipe');
                         $oldTourIds = old('tour_ids', []);
-                        $oldDocParents = old('dokumen_id', []); // Untuk dokumen induk
-                        $oldDocChildrenQty = old('jumlah_child_doc', []); // Untuk anak dokumen
+                        $oldDocParents = old('dokumen_id', []);
+                        $oldDocChildrenQty = old('jumlah_child_doc', []);
                         $oldDocBaseQty = collect(request()->old())->filter(
                             fn($val, $key) => str_starts_with($key, 'jumlah_doc_'),
-                        ); // Untuk dokumen base
+                        );
                         $oldPendampingQty = old('jumlah_pendamping', []);
                         $oldKontenQty = old('jumlah_konten', []);
                         $oldMealsQty = old('jumlah_meals', []);
@@ -518,20 +511,19 @@
                         </h6>
                         <div class="service-grid">
                             @foreach ([
-            'transportasi' => ['icon' => 'bi-airplane', 'name' => 'Transportasi', 'desc' => 'Tiket & Transport'],
-            'hotel' => ['icon' => 'bi-building', 'name' => 'Hotel', 'desc' => 'Akomodasi'],
-            'dokumen' => ['icon' => 'bi-file-text', 'name' => 'Dokumen', 'desc' => 'Visa & Administrasi'],
-            'handling' => ['icon' => 'bi-briefcase', 'name' => 'Handling', 'desc' => 'Bandara & Hotel'],
-            'pendamping' => ['icon' => 'bi-people', 'name' => 'Pendamping', 'desc' => 'Tour Leader & Mutawwif'],
-            'konten' => ['icon' => 'bi-camera', 'name' => 'Konten', 'desc' => 'Dokumentasi'],
-            'reyal' => ['icon' => 'bi-currency-exchange', 'name' => 'Reyal', 'desc' => 'Penukaran Mata Uang'],
-            'tour' => ['icon' => 'bi-geo-alt', 'name' => 'Tour', 'desc' => 'City Tour & Ziarah'],
-            'meals' => ['icon' => 'bi-egg-fried', 'name' => 'Meals', 'desc' => 'Makanan'],
-            'dorongan' => ['icon' => 'bi-basket', 'name' => 'Dorongan', 'desc' => 'Bagi penyandang disabilitas'],
-            'waqaf' => ['icon' => 'bi-gift', 'name' => 'Waqaf', 'desc' => 'Sedekah & Waqaf'],
-            'badal' => ['icon' => 'bi-gift', 'name' => 'Badal Umrah', 'desc' => 'Umrah Badal'],
-        ] as $key => $service)
-                                {{-- PERBAIKAN: Tambahkan class 'selected' dan atribut 'checked' berdasarkan data 'old' --}}
+                                'transportasi' => ['icon' => 'bi-airplane', 'name' => 'Transportasi', 'desc' => 'Tiket & Transport'],
+                                'hotel' => ['icon' => 'bi-building', 'name' => 'Hotel', 'desc' => 'Akomodasi'],
+                                'dokumen' => ['icon' => 'bi-file-text', 'name' => 'Dokumen', 'desc' => 'Visa & Administrasi'],
+                                'handling' => ['icon' => 'bi-briefcase', 'name' => 'Handling', 'desc' => 'Bandara & Hotel'],
+                                'pendamping' => ['icon' => 'bi-people', 'name' => 'Pendamping', 'desc' => 'Tour Leader & Mutawwif'],
+                                'konten' => ['icon' => 'bi-camera', 'name' => 'Konten', 'desc' => 'Dokumentasi'],
+                                'reyal' => ['icon' => 'bi-currency-exchange', 'name' => 'Reyal', 'desc' => 'Penukaran Mata Uang'],
+                                'tour' => ['icon' => 'bi-geo-alt', 'name' => 'Tour', 'desc' => 'City Tour & Ziarah'],
+                                'meals' => ['icon' => 'bi-egg-fried', 'name' => 'Meals', 'desc' => 'Makanan'],
+                                'dorongan' => ['icon' => 'bi-basket', 'name' => 'Dorongan', 'desc' => 'Bagi penyandang disabilitas'],
+                                'waqaf' => ['icon' => 'bi-gift', 'name' => 'Waqaf', 'desc' => 'Sedekah & Waqaf'],
+                                'badal' => ['icon' => 'bi-gift', 'name' => 'Badal Umrah', 'desc' => 'Umrah Badal'],
+                            ] as $key => $service)
                                 <div class="service-item {{ in_array($key, $oldServices) ? 'selected' : '' }}"
                                     data-service="{{ $key }}">
                                     <div class="service-icon"><i class="bi {{ $service['icon'] }}"></i></div>
@@ -576,7 +568,7 @@
                                 <div class="form-group {{ in_array('airplane', $oldTransportTypes) ? '' : 'hidden' }}"
                                     data-transportasi="airplane" id="pesawat">
                                     <label class="form-label">Tiket Pesawat</label>
-                                    <button type="button" class="btn btn-sm btn-primary" id="addTicket">Tambah
+                                    <button type="button" class="btn btn-sm btn-primary mb-3" id="addTicket">Tambah
                                         Tiket</button>
                                     <div id="ticketWrapper">
                                         {{-- PERBAIKAN: Loop data 'old' untuk tiket pesawat --}}
@@ -807,7 +799,7 @@
                         <div class="detail-form {{ in_array('hotel', $oldServices) ? '' : 'hidden' }}"
                             id="hotel-details">
                             <h6 class="detail-title"><i class="bi bi-building"></i> Hotel</h6>
-                            <button type="button" class="btn btn-sm btn-primary mb-2" id="addHotel">Tambah
+                            <button type="button" class="btn btn-sm btn-primary mb-3" id="addHotel">Tambah
                                 Hotel</button>
                             <div id="hotelWrapper">
                                 {{-- PERBAIKAN: Loop data 'old' untuk hotel --}}
@@ -970,7 +962,6 @@
                             <div class="detail-section">
                                 <div class="service-grid">
                                     @foreach ($documents as $document)
-                                        {{-- PERBAIKAN: Cek 'old' untuk parent dan base --}}
                                         @php
                                             $isParentSelected = in_array($document->id, $oldDocParents);
                                             $isBaseSelected = $oldDocBaseQty->has('jumlah_doc_' . $document->id);
@@ -989,7 +980,6 @@
                             <div id="document-forms-container">
                                 @foreach ($documents as $document)
                                     @if ($document->childrens->isNotEmpty())
-                                        {{-- Dokumen dengan anak --}}
                                         <div class="form-group {{ in_array($document->id, $oldDocParents) ? '' : 'hidden' }} document-child-form"
                                             data-parent-id="{{ $document->id }}">
                                             <label class="form-label">{{ $document->name }}</label>
@@ -1008,7 +998,6 @@
                                                     </div>
                                                 @endforeach
                                             </div>
-                                            {{-- Render ulang form anak yang sudah diisi --}}
                                             @foreach ($document->childrens as $child)
                                                 <div id="doc-child-form-{{ $child->id }}"
                                                     class="form-group mt-2 bg-white p-3 border rounded {{ array_key_exists($child->id, $oldDocChildrenQty) ? '' : 'hidden' }}">
@@ -1024,7 +1013,6 @@
                                             @endforeach
                                         </div>
                                     @else
-                                        {{-- Dokumen base (tanpa anak) --}}
                                         <div class="form-group {{ $oldDocBaseQty->has('jumlah_doc_' . $document->id) ? '' : 'hidden' }} document-base-form"
                                             id="doc-{{ $document->id }}-form" data-document-id="{{ $document->id }}"
                                             data-price="{{ $document->price }}" data-name="{{ $document->name }}">
@@ -1436,7 +1424,7 @@
                         <div class="detail-form {{ in_array('badal', $oldServices) ? '' : 'hidden' }}"
                             id="badal-details">
                             <h6 class="detail-title"><i class="bi bi-briefcase"></i> Badal Umrah</h6>
-                            <button type="button" class="btn btn-sm btn-primary mb-2" id="addBadal">Tambah
+                            <button type="button" class="btn btn-sm btn-primary mb-3" id="addBadal">Tambah
                                 Badal</button>
                             <div id="badalWrapper">
                                 {{-- PERBAIKAN: Loop data 'old' untuk badal --}}
@@ -1505,6 +1493,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.detail-form.hidden').forEach(detailForm => {
+                detailForm.querySelectorAll('input, select, textarea, button').forEach(el => {
+                    if (!el.classList.contains('back-to-services-btn')) {
+                        el.disabled = true;
+                    }
+                });
+            });
             let cart = {};
             const cartSection = document.getElementById("cart-total-price");
             const cartItemsList = document.getElementById("cart-items");
@@ -1614,11 +1609,46 @@
                     const serviceType = item.dataset.service;
                     const checkbox = item.querySelector('input[type="checkbox"]');
                     const detailForm = document.getElementById(`${serviceType}-details`);
+
+                    // Toggle status
                     item.classList.toggle('selected');
-                    checkbox.checked = item.classList.contains('selected');
+                    const isSelected = item.classList.contains('selected');
+                    checkbox.checked = isSelected;
+
                     if (detailForm) {
-                        detailForm.classList.toggle('hidden');
-                        if (!detailForm.classList.contains('hidden')) {
+                        detailForm.classList.toggle('hidden', !isSelected);
+
+                        // ▼▼▼ PERBAIKAN VALIDASI ▼▼▼
+                        // Nonaktifkan semua input jika service tidak dipilih
+                        detailForm.querySelectorAll('input, select, textarea, button').forEach(
+                            el => {
+                                // JANGAN disable tombol "Kembali ke Atas"
+                                if (!el.classList.contains('back-to-services-btn')) {
+                                    el.disabled = !isSelected;
+                                }
+                            });
+
+                        // Jika service dibatalkan (tidak dipilih)
+                        if (!isSelected) {
+                            // Hapus juga centang/seleksi di sub-item
+                            detailForm.querySelectorAll(
+                                '.transport-item, .handling-item, .document-item, .child-item, .pendamping-item, .content-item, .meal-item, .dorongan-item, .wakaf-item, .service-tour'
+                            ).forEach(subItem => {
+                                subItem.classList.remove('selected');
+                                const subCheck = subItem.querySelector(
+                                    'input[type="checkbox"], input[type="radio"]');
+                                if (subCheck) subCheck.checked = false;
+                            });
+                            // Sembunyikan semua sub-form
+                            detailForm.querySelectorAll(
+                                '.form-group[data-transportasi], .form-group[id$="-handling-form"], .document-child-form, .document-base-form, .tour-form, div[id^="form-"]'
+                            ).forEach(subForm => {
+                                subForm.classList.add('hidden');
+                            });
+                        }
+                        // ▲▲▲ AKHIR PERBAIKAN ▲▲▲
+
+                        if (isSelected) {
                             detailForm.scrollIntoView({
                                 behavior: 'smooth',
                                 block: 'start'
@@ -1796,43 +1826,7 @@
                     });
                 }
 
-                const typeItem = e.target.closest('.type-item');
-                if (typeItem) {
-                    const hotelForm = typeItem.closest('.hotel-form');
-                    const dynamicContainer = hotelForm.querySelector('.type-input-container');
-                    const typeId = typeItem.dataset.typeId;
-                    const name = typeItem.dataset.name;
-                    const price = parseInt(typeItem.dataset.price) || 0;
-                    const cartId = `hotel-${hotelForm.dataset.index}-type-${typeId}`;
-                    const existingInputDiv = dynamicContainer.querySelector(`[data-type-id="${typeId}"]`);
 
-                    if (existingInputDiv) {
-                        existingInputDiv.remove();
-                        typeItem.classList.remove('selected');
-                        delete cart[cartId];
-                    } else {
-                        typeItem.classList.add('selected');
-                        const inputDiv = document.createElement('div');
-                        inputDiv.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border',
-                            'rounded');
-                        inputDiv.dataset.typeId = typeId;
-                        const hotelIndex = hotelForm.dataset.index;
-                        inputDiv.innerHTML =
-                            `<label class="form-label">Jumlah Kamar (${name})</label>` +
-                            `<input type="number" class="form-control qty-input-hotel" name="hotel_data[${hotelIndex}][${typeId}][jumlah]" min="1" value="1" data-is-qty="true" data-type-id="${typeId}">` +
-                            `<label class="form-label mt-2">Harga (${name})</label>` +
-                            `<input type="text" class="form-control" name="hotel_data[${hotelIndex}][${typeId}][harga]" value="${price.toLocaleString('id-ID')}" readonly>` +
-                            `<input type="hidden" name="hotel_data[${hotelIndex}][${typeId}][type_name]" value="${name}">`;
-                        dynamicContainer.appendChild(inputDiv);
-                        const newQtyInput = inputDiv.querySelector('input[data-is-qty="true"]');
-                        addQtyChangeListener(newQtyInput, hotelForm);
-                        const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value
-                            .trim() || `Hotel ${hotelForm.dataset.index}`;
-                        updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${name}`, 1, price);
-                    }
-                    updateJumlahKamarTotal(hotelForm);
-                    updateCartUI();
-                }
 
                 const documentItem = e.target.closest('.document-item');
                 if (documentItem) {
@@ -1991,8 +1985,18 @@
                     const isSelected = transportItem.classList.toggle('selected');
                     const checkbox = transportItem.querySelector('input');
                     if (checkbox) checkbox.checked = isSelected;
-                    document.getElementById(type === 'airplane' ? 'pesawat' : 'bis').classList.toggle(
-                        'hidden', !isSelected);
+
+                    const formElement = document.getElementById(type === 'airplane' ? 'pesawat' : 'bis');
+                    if (formElement) {
+                        formElement.classList.toggle('hidden', !isSelected);
+                        formElement.querySelectorAll('input, select, textarea, button').forEach(el => {
+                            if (!el.classList.contains('removeTicket') && !el.classList.contains(
+                                    'remove-transport') && !el.id.includes('addTicket') && !el.id
+                                .includes('add-transport-btn')) {
+                                el.disabled = !isSelected;
+                            }
+                        });
+                    }
                 }
 
                 const handlingItem = e.target.closest('.handling-item');
@@ -2227,7 +2231,154 @@
         toggleCheckboxOnClick(".service-tour")
         toggleCheckboxOnClick(".wakaf-item")
     </script>
+    <script>
+        // Asumsikan 'cart', 'updateItemInCart', dan 'updateCartUI' sudah didefinisikan.
 
+        // ==========================================================
+        // 1. Fungsi Utama: Menghitung Total Kamar dalam Satu Hotel Form
+        // ==========================================================
+        /**
+         * Menghitung total jumlah kamar dari semua input kuantitas (qty-input-hotel)
+         * di dalam satu form hotel dan memperbarui input 'Total kamar'.
+         * @param {HTMLElement} hotelForm - Elemen div.hotel-form
+         */
+        function updateJumlahKamarTotal(hotelForm) {
+            let totalKamar = 0;
+
+            // Cari semua input kuantitas di dalam hotelForm
+            const qtyInputs = hotelForm.querySelectorAll('.qty-input-hotel[data-is-qty="true"]');
+
+            qtyInputs.forEach(input => {
+                // Ambil nilai, pastikan itu adalah angka positif, default ke 0
+                const qty = parseInt(input.value) || 0;
+                totalKamar += Math.max(0, qty); // Pastikan tidak ada nilai negatif
+            });
+
+            // Temukan input 'Total kamar' (jumlah_kamar) dan perbarui nilainya
+            const totalKamarInput = hotelForm.querySelector('input[name^="jumlah_kamar"]');
+            if (totalKamarInput) {
+                totalKamarInput.value = totalKamar;
+            }
+        }
+
+        // ==========================================================
+        // 2. Fungsi Pembantu: Menambahkan Listener pada Input Kuantitas Baru
+        // ==========================================================
+        /**
+         * Menambahkan event listener ke input kuantitas kamar yang baru dibuat.
+         * @param {HTMLElement} newQtyInput - Elemen input kuantitas tipe kamar yang baru.
+         * @param {HTMLElement} hotelForm - Elemen div.hotel-form terkait.
+         */
+        function addQtyChangeListener(newQtyInput, hotelForm) {
+            newQtyInput.addEventListener('input', function() {
+                // Panggil fungsi utama untuk menghitung ulang total kamar
+                updateJumlahKamarTotal(hotelForm);
+
+                // --- Opsional: Perbarui Cart/Keranjang setelah kuantitas berubah ---
+                // Kode untuk update cart, misalnya:
+                const typeId = newQtyInput.dataset.typeId;
+                const hotelIndex = hotelForm.dataset.index;
+                const cartId = `hotel-${hotelIndex}-type-${typeId}`;
+
+                // Dapatkan harga dari input harga (asumsi harga berada di form yang sama)
+                const priceInput = hotelForm.querySelector(
+                    `input[name="hotel_data[${hotelIndex}][${typeId}][harga]"]`);
+                const typeNameInput = hotelForm.querySelector(
+                    `input[name="hotel_data[${hotelIndex}][${typeId}][type_name]"]`);
+
+                if (priceInput && typeNameInput) {
+                    const qty = parseInt(newQtyInput.value) || 0;
+                    // Hilangkan format IDR/titik agar bisa diubah jadi angka
+                    const priceValue = parseInt(priceInput.value.replace(/\./g, '')) || 0;
+
+                    const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value.trim() ||
+                        `Hotel ${hotelIndex}`;
+
+                    if (qty > 0) {
+                        updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${typeNameInput.value}`, qty,
+                            priceValue);
+                    } else {
+                        delete cart[cartId];
+                    }
+                    updateCartUI();
+                }
+            });
+        }
+
+        // ==========================================================
+        // 3. Inisialisasi: Melampirkan Listener pada Input yang Sudah Ada
+        // ==========================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tambahkan listener untuk input kuantitas yang sudah ada (dari data 'old' atau form default)
+            document.querySelectorAll('.hotel-form').forEach(hotelForm => {
+                hotelForm.querySelectorAll('.qty-input-hotel[data-is-qty="true"]').forEach(input => {
+                    addQtyChangeListener(input, hotelForm);
+                });
+                // Pastikan total awal dihitung
+                updateJumlahKamarTotal(hotelForm);
+            });
+
+            // ==========================================================
+            // 4. Tambahkan Listener untuk Logika Pilihan Tipe Kamar Anda
+            // ==========================================================
+            document.getElementById('hotelWrapper').addEventListener('click', function(e) {
+                const typeItem = e.target.closest('.type-item');
+                if (typeItem) {
+                    const hotelForm = typeItem.closest('.hotel-form');
+                    const dynamicContainer = hotelForm.querySelector('.type-input-container');
+                    const typeId = typeItem.dataset.typeId;
+                    const name = typeItem.dataset.name;
+                    // Pastikan harga diambil dengan benar dan bersih
+                    const price = parseInt(typeItem.dataset.price) || 0;
+                    const cartId = `hotel-${hotelForm.dataset.index}-type-${typeId}`;
+                    const existingInputDiv = dynamicContainer.querySelector(`[data-type-id="${typeId}"]`);
+
+                    if (existingInputDiv) {
+                        // Logika Hapus
+                        existingInputDiv.remove();
+                        typeItem.classList.remove('selected');
+                        delete cart[cartId];
+                    } else {
+                        // Logika Tambah
+                        typeItem.classList.add('selected');
+                        const inputDiv = document.createElement('div');
+                        inputDiv.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border',
+                            'rounded');
+                        inputDiv.dataset.typeId = typeId;
+                        const hotelIndex = hotelForm.dataset.index;
+
+                        // Format harga untuk tampilan (misalnya: 100.000)
+                        const formattedPrice = price.toLocaleString('id-ID');
+
+                        inputDiv.innerHTML =
+                            `<label class="form-label">Jumlah Kamar (${name})</label>` +
+                            `<input type="number" class="form-control qty-input-hotel" name="hotel_data[${hotelIndex}][${typeId}][jumlah]" min="1" data-is-qty="true" data-type-id="${typeId}">` +
+                            `<label class="form-label mt-2">Harga (${name})</label>` +
+                            `<input type="text" class="form-control" name="hotel_data[${hotelIndex}][${typeId}][harga]" value="${formattedPrice}" readonly>` +
+                            `<input type="hidden" name="hotel_data[${hotelIndex}][${typeId}][type_name]" value="${name}">`;
+
+                        dynamicContainer.appendChild(inputDiv);
+
+                        // Tambahkan listener ke input kuantitas yang baru dibuat!
+                        const newQtyInput = inputDiv.querySelector('input[data-is-qty="true"]');
+                        addQtyChangeListener(newQtyInput, hotelForm);
+
+                        // Perbarui Cart (Asumsi)
+                        const hotelName = hotelForm.querySelector('input[data-field="nama_hotel"]').value
+                            .trim() || `Hotel ${hotelForm.dataset.index}`;
+                        updateItemInCart(cartId, `Hotel ${hotelName} - Tipe ${name}`, 1, price);
+                    }
+
+                    // Panggil fungsi utama setelah menambah/menghapus
+                    updateJumlahKamarTotal(hotelForm);
+                    updateCartUI(); // Panggil update cart secara keseluruhan
+                }
+            });
+
+            // Anda juga perlu memanggil updateJumlahKamarTotal saat form hotel dihapus (removeHotel)
+            // dan saat form hotel baru ditambahkan (addHotel), jika logika tersebut ada.
+        });
+    </script>
     <button type="button" id="backToServicesBtn" class="btn btn-primary" title="Kembali ke Pilihan Layanan">
         <i class="bi bi-arrow-up"></i>
     </button>

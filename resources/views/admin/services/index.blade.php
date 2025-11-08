@@ -233,10 +233,6 @@
             color: var(--text-primary);
         }
 
-        .btn-view {
-            color: var(--text-primary);
-        }
-
         /* Search and Filter */
         .search-filter-container {
             display: flex;
@@ -301,24 +297,31 @@
             box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
         }
 
-        /* Pagination */
         .pagination-container {
             display: flex;
             justify-content: flex-end;
             padding: 1.5rem;
             border-top: 1px solid var(--border-color);
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--haramain-secondary);
-            border-color: var(--haramain-secondary);
+            gap: 1rem
         }
 
         .pagination .page-link {
+            border-radius: 10px;
+            margin: 0 3px;
             color: var(--haramain-primary);
-            border-radius: 8px;
-            margin: 0 0.25rem;
-            border: 1px solid var(--border-color);
+            border-color: #d9e3f0
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #2f6fed;
+            border-color: #2f6fed;
+            color: #fff
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background-color: #f5f7fa;
+            color: #adb5bd;
+            border-color: #e3e7ec
         }
 
         /* Responsive adjustments */
@@ -489,23 +492,34 @@
                 /* Paginasi di tengah */
             }
         }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spin {
+            display: inline-block;
+            animation: spin 3s linear infinite;
+        }
     </style>
 @endpush
 @section('content')
     <div class="service-list-container">
-        <div class="row g-3 mb-4 p-1"> {{-- Assuming you use a Bootstrap row --}}
-            <x-card-component class="col-xl-3 col-md-6" title="Total Nego" :count="$totalNegoOverall" {{-- Use variable from controller --}}
-                icon="bi bi-hourglass-split" {{-- Example icon --}} iconColor="var(--haramain-primary)" textColor="text-primary"
-                desc="Menunggu konfirmasi" />
-            <x-card-component class="col-xl-3 col-md-6" title="Persiapan" :count="$totalPersiapanOverall" {{-- Use variable from controller --}}
-                icon="bi bi-box-seam" {{-- Example icon --}} iconColor="var(--haramain-primary)" textColor="text-primary"
-                desc="Sedang dipersiapkan" />
-            <x-card-component class="col-xl-3 col-md-6" title="Tahap Produksi" :count="$totalProduksiOverall" {{-- Use variable from controller --}}
-                icon="bi bi-gear-fill" {{-- Example icon --}} iconColor="var(--haramain-primary)" textColor="text-primary"
-                desc="Sedang dikerjakan" />
-            <x-card-component class="col-xl-3 col-md-6" title="Selesai (Done)" :count="$totalDoneOverall" {{-- Use variable from controller --}}
-                icon="bi bi-check2-circle" {{-- Example icon --}} iconColor="var(--haramain-primary)"
-                textColor="text-primary" desc="Layanan telah selesai" />
+        <div class="row g-3 mb-4 p-1">
+            <x-card-component class="col-xl-3 col-md-6" title="Total Nego" :count="$totalNegoOverall" icon="bi bi-hourglass-split spin"
+                iconColor="var(--haramain-primary)" textColor="text-primary" desc="Menunggu konfirmasi" />
+            <x-card-component class="col-xl-3 col-md-6" title="Persiapan" :count="$totalPersiapanOverall" icon="bi bi-box-seam"
+                iconColor="var(--haramain-primary)" textColor="text-primary" desc="Sedang dipersiapkan" />
+            <x-card-component class="col-xl-3 col-md-6" title="Tahap Produksi" :count="$totalProduksiOverall" icon="bi bi-gear-fill spin"
+                iconColor="var(--haramain-primary)" textColor="text-primary" desc="Sedang dikerjakan" />
+            <x-card-component class="col-xl-3 col-md-6" title="Selesai (Done)" :count="$totalDoneOverall" icon="bi bi-check2-circle"
+                iconColor="var(--haramain-primary)" textColor="text-primary" desc="Layanan telah selesai" />
         </div>
 
         <!-- Services List -->
@@ -519,19 +533,17 @@
                 </a>
             </div>
 
-            <!-- Search and Filter -->
+            <!-- Search -->
             <div class="search-filter-container">
-                {{-- Ganti SELURUH <div class="filter-group"> lama dengan ini --}}
                 <div class="filter-group">
                     <form method="GET" action="{{ route('admin.services') }}" id="searchFilterForm"
                         class="d-flex flex-grow-1 gap-2">
-                        {{-- Kotak Pencarian --}}
                         <div class="search-box flex-grow-1 position-relative">
                             <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                             <input type="text" name="search" id="searchInput" class="form-control ps-5"
                                 placeholder="Cari customer/Jenis layanan..." value="{{ request('search') }}">
                         </div>
-                    </form> {{-- Akhir dari form UTAMA --}}
+                    </form>
                 </div>
             </div>
 
@@ -624,20 +636,17 @@
             <div class="pagination-container">
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
-                        {{-- Previous Page Link --}}
                         <li class="page-item {{ $services->onFirstPage() ? 'disabled' : '' }}">
                             <a class="page-link" href="{{ $services->previousPageUrl() ?? '#' }}"
                                 tabindex="-1">&laquo;</a>
                         </li>
 
-                        {{-- Page Number Links --}}
                         @foreach ($services->getUrlRange(1, $services->lastPage()) as $page => $url)
                             <li class="page-item {{ $services->currentPage() == $page ? 'active' : '' }}">
                                 <a class="page-link" href="{{ $url }}">{{ $page }}</a>
                             </li>
                         @endforeach
 
-                        {{-- Next Page Link --}}
                         <li class="page-item {{ !$services->hasMorePages() ? 'disabled' : '' }}">
                             <a class="page-link" href="{{ $services->nextPageUrl() ?? '#' }}">&raquo;</a>
                         </li>
@@ -649,30 +658,19 @@
 @endsection
 @push('scripts')
     <script>
-        // Search functionality
         document.addEventListener('DOMContentLoaded', function() {
-            // Improved Search Functionality
             const searchInput = document.getElementById('searchInput');
-            const tableBody = document.getElementById('userTableBody');
-            const rows = tableBody.getElementsByTagName('tr');
+            const searchForm = document.getElementById('searchFilterForm');
+            let debounceTimer;
 
             searchInput.addEventListener('keyup', function() {
-                const searchTerm = this.value.toLowerCase();
+                clearTimeout(debounceTimer);
 
-                for (let i = 0; i < rows.length; i++) {
-                    const row = rows[i];
-                    // Get all text content from the row, not just specific cells
-                    const rowText = row.textContent.toLowerCase();
-
-                    if (rowText.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                }
+                debounceTimer = setTimeout(function() {
+                    searchForm.submit();
+                }, 500);
             });
         });
-
         document.addEventListener('DOMContentLoaded', function() {
             // Delete confirmation
             const deleteButtons = document.querySelectorAll('.btn-delete');
@@ -692,7 +690,6 @@
             });
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))
