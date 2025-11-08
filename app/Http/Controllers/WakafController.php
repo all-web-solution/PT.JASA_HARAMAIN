@@ -42,16 +42,6 @@ class WakafController extends Controller
         return redirect()->route('wakaf.index');
     }
 
-    public function customer()
-    {
-
-        $AllData = WakafCustomer::with('wakaf')->get();
-
-        $data = $AllData->unique('service_id');
-
-        return view('palugada.wakaf.customer', compact('data'));
-    }
-
     public function edit(string $id)
     {
         $wakaf = Wakaf::findOrFail($id);
@@ -86,10 +76,78 @@ class WakafController extends Controller
 
         return redirect()->route('wakaf.index');
     }
-    public function customer_detail($id)
+
+    public function customer()
     {
-        $wakafCustomers = WakafCustomer::with('service.pelanggan')->findOrFail($id);
-        return view('palugada.wakaf.customer_detail', compact('wakafCustomers'));
+        // 1. Ambil data WakafCustomer (per item) dan lakukan paginasi
+        $wakafCustomers = WakafCustomer::with([
+                        'service.pelanggan', // Untuk Nama Travel
+                        'wakaf'              // Untuk Nama Item Wakaf
+                    ])
+                    ->latest() // Urutkan berdasarkan yang terbaru
+                    ->paginate(10); // Ambil 15 item per halaman
+
+        // 2. Kirim data paginator ke view
+        return view('palugada.wakaf.customer', compact('wakafCustomers'));
+    }
+
+    public function customerDetail(WakafCustomer $wakaf)
+    {
+        $wakaf->load('service.pelanggan', 'wakaf');
+
+        // Asumsi nama view Anda adalah 'wakaf.show'
+        return view('palugada.wakaf.customer_detail', [
+            'wakaf' => $wakaf // Mengirim variabel $wakaf
+        ]);
+    }
+
+    public function editCustomer(WakafCustomer $wakaf)
+    {
+        // $wakaf adalah instance WakafCustomer yang ingin diedit
+        // (Otomatis ditemukan oleh Route Model Binding)
+
+        // Ambil data untuk dropdowns
+        $services = Service::with('pelanggan')->get();
+        $wakafItems = Wakaf::all(); // Ambil master data wakaf
+
+        // Asumsi status (sesuai model lain)
+        $statuses = ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'];
+
+        return view('palugada.wakaf.customer_edit', compact(
+            'wakaf',
+            'services',
+            'wakafItems',
+            'statuses'
+        ));
+    }
+
+    /**
+     * Menyimpan perubahan untuk order Wakaf.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Models\WakafCustomer $wakaf
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateCustomer(Request $request, WakafCustomer $wakaf)
+    {
+        // Validasi data berdasarkan model WakafCustomer
+        $validatedData = $request->validate([
+            // 'service_id' => 'required|exists:services,id',
+            // 'wakaf_id' => 'required|exists:wakafs,id', // Pastikan tabel 'wakafs'
+            // 'jumlah' => 'required|integer|min:0',
+            'status' => 'required|in:nego,deal,batal,tahap persiapan,tahap produksi,done',
+            'supplier' => 'nullable|string|max:255',
+            'harga_dasar' => 'nullable|numeric|min:0',
+            'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
+        ]);
+
+        // Update data wakaf
+        $wakaf->update($validatedData);
+
+        Session::flash('success', 'Order wakaf berhasil diperbarui.');
+
+        // Redirect kembali ke halaman detail
+        return redirect()->route('wakaf.customer.show', $wakaf->id);
     }
 
     public function showSupplier($id)
