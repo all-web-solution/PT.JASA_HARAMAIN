@@ -76,6 +76,7 @@
             background-color: var(--haramain-light);
             color: var(--haramain-primary);
             font-weight: 600;
+            text-align: center;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
         }
@@ -94,6 +95,7 @@
         .table tbody td {
             padding: 1.25rem;
             vertical-align: middle;
+            text-align: center;
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -371,59 +373,6 @@
         }
     </style>
 
-    {{-- <div class="service-list-container">
-        <!-- Services List -->
-        <div class="card">
-            <!-- Services Table -->
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Customer/Travel</th>
-                            <th>Tipe</th>
-                            <th>Jumlah</th>
-                            <th>Kurs</th>
-                            <th>Hasil</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($reyals as $item)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->service->pelanggan->nama_travel }}</td>
-                            <td>{{ $item->tipe }}</td>
-                            <td>{{ $item->jumlah_input }}</td>
-                            <td>{{ $item->kurs }}</td>
-                            <td>{{ $item->hasil }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination-container">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </div> --}}
     <div class="service-list-container">
         <!-- Services List -->
         <div class="card">
@@ -442,37 +391,78 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Kode unik</th>
-                            <th>Customer/Travel</th>
+                            <th>No</th>
+                            <th>Travel</th>
                             <th>Tipe</th>
                             <th>Jumlah</th>
                             <th>Kurs</th>
                             <th>Hasil</th>
                             <th>Tanggal penyerahan</th>
+                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($reyals as $item)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->service->pelanggan->nama_travel }}</td>
-                            <td>{{ $item->tipe }}</td>
-                            <td>{{ $item->jumlah_input }}</td>
-                            <td>{{ $item->kurs }}</td>
-                            <td>{{ $item->hasil }}</td>
-                            <td>{{ $item->tanggal_penyerahan }}</td>
-                            <td>
-                                <a href="{{ route('reyal.supplier.index', $item->id) }}">
-                                    <button class="btn btn-primary">
-                                        Supplier
-                                    </button>
-                                </a>
-                            </td>
-                        </tr>
+                            @php
+                                $status = strtolower($item->status);
+                                $statusClass = '';
+                                if (in_array($status, ['done', 'deal'])) {
+                                    $statusClass = 'badge-success';
+                                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan', 'tahap produksi'])) {
+                                    $statusClass = 'badge-warning';
+                                } elseif (in_array($status, ['cancelled', 'batal'])) {
+                                    $statusClass = 'badge-danger';
+                                } else {
+                                    $statusClass = 'badge-primary';
+                                }
+                            @endphp
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->service->pelanggan->nama_travel }}</td>
+                                <td>{{ $item->tipe }}</td>
+                                <td>{{ $item->jumlah_input }}</td>
+                                <td>{{ $item->kurs }}</td>
+                                <td>{{ $item->hasil }}</td>
+                                <td>{{ $item->tanggal_penyerahan }}</td>
+                                <td>
+                                    <span class="badge {{ $statusClass }}">{{ $item->status }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ route('reyal.detail', $item->id) }}"> <button class="btn-action btn-view"
+                                            title="view">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {{-- Previous Page Link --}}
+                        <li class="page-item {{ $reyals->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $reyals->previousPageUrl() ?? '#' }}" tabindex="-1">&laquo;</a>
+                        </li>
+
+                        {{-- Page Number Links --}}
+                        @foreach ($reyals->getUrlRange(1, $reyals->lastPage()) as $page => $url)
+                            <li class="page-item {{ $reyals->currentPage() == $page ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        <li class="page-item {{ !$reyals->hasMorePages() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $reyals->nextPageUrl() ?? '#' }}">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
 
 
