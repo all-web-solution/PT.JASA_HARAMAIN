@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DoronganOrder;
 use Illuminate\Http\Request;
 use App\Models\Dorongan;
+use App\Models\Service;
 use Illuminate\Support\Facades\Session;
 
 class DoronganController extends Controller
@@ -39,19 +40,6 @@ class DoronganController extends Controller
         return redirect()->route('dorongan.index');
     }
 
-    public function customer()
-    {
-        $AllData = DoronganOrder::with('dorongan')->get();
-        $data = $AllData->unique('service_id');
-
-        return view('palugada.dorongan.customer', compact('data'));
-    }
-    public function customer_detail($id)
-    {
-       $doronganOrders = DoronganOrder::with('dorongan', 'service.pelanggan')->findOrFail($id);
-       return view('palugada.dorongan.customer_detail', compact('doronganOrders'));
-    }
-
     public function edit(string $id)
     {
         $item = Dorongan::findOrFail($id);
@@ -84,6 +72,76 @@ class DoronganController extends Controller
         Session::flash('success', 'Dorongan deleted successfully!');
 
         return redirect()->route('dorongan.index');
+    }
+
+    public function customer()
+    {
+        // 1. Ambil data DoronganOrder (per item) dan lakukan paginasi
+        $doronganOrders = DoronganOrder::with([
+                        'service.pelanggan', // Untuk Nama Travel
+                        'dorongan'           // Untuk Nama Item Dorongan
+                    ])
+                    ->latest() // Urutkan berdasarkan yang terbaru
+                    ->paginate(15); // Ambil 15 item per halaman
+
+        // 2. Kirim data paginator ke view
+        return view('palugada.dorongan.customer', compact('doronganOrders'));
+    }
+
+    public function showCustomer(DoronganOrder $dorongan)
+    {
+        // $dorongan otomatis ditemukan oleh Laravel (Route Model Binding)
+
+        // Load relasi yang dibutuhkan oleh view
+        $dorongan->load('service.pelanggan', 'dorongan');
+
+        // Asumsi nama view Anda adalah 'handling.dorongan.show'
+        return view('palugada.dorongan.customer_detail', [
+            'dorongan' => $dorongan // Mengirim variabel $dorongan
+        ]);
+    }
+
+    public function editCustomer(DoronganOrder $dorongan)
+    {
+        // $dorongan adalah instance DoronganOrder yang ingin diedit
+        // (Otomatis ditemukan oleh Route Model Binding)
+
+        // Ambil data untuk dropdowns
+        $services = Service::with('pelanggan')->get();
+        $doronganItems = Dorongan::all(); // Ambil master data dorongan
+
+        // Asumsi status (sesuai model lain)
+        $statuses = ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'];
+
+        return view('palugada.dorongan.customer_edit', compact(
+            'dorongan',
+            'services',
+            'doronganItems',
+            'statuses'
+        ));
+    }
+
+    public function updateCustomer(Request $request, DoronganOrder $dorongan)
+    {
+        // Validasi data berdasarkan model DoronganOrder
+        $validatedData = $request->validate([
+            // 'service_id' => 'required|exists:services,id',
+            // 'dorongan_id' => 'required|exists:dorongans,id', // Pastikan tabel 'dorongans'
+            'jumlah' => 'nullable|integer|min:0',
+            // 'tanggal_pelaksanaan' => 'required|date',
+            'status' => 'required|in:nego,deal,batal,tahap persiapan,tahap produksi,done',
+            'supplier' => 'nullable|string|max:255',
+            'harga_dasar' => 'nullable|numeric|min:0',
+            'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
+        ]);
+
+        // Update data dorongan
+        $dorongan->update($validatedData);
+
+        Session::flash('success', 'Order dorongan berhasil diperbarui.');
+
+        // Redirect kembali ke halaman detail
+        return redirect()->route('dorongan.customer.show', $dorongan->id);
     }
 
     public function showSupplier($id)

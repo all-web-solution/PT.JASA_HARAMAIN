@@ -1,7 +1,9 @@
 @extends('admin.master')
-@section('title', 'Daftar Pesanan Dorongan')
+@section('title', 'Daftar Order Dorongan')
+
 @push('styles')
     <style>
+        /* == CSS Dari Referensi 'index dokumen' == */
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;
@@ -12,6 +14,13 @@
             --border-color: #d1e0f5;
             --hover-bg: #f0f7ff;
             --background-light: #f8fafd;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-bg: rgba(40, 167, 69, 0.1);
+            --warning-bg: rgba(255, 193, 7, 0.1);
+            --danger-bg: rgba(220, 53, 69, 0.1);
+            --primary-bg: var(--haramain-light);
         }
 
         .service-list-container {
@@ -53,27 +62,20 @@
             color: var(--haramain-secondary);
         }
 
-        .card-body {
-            padding: 2rem;
-        }
-
         /* Table Styles */
         .table-responsive {
-            /* padding: 0 1.5rem 1.5rem; */
-            /* Optional padding if card-body is not used */
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .card-body {
+            padding: 0;
+            /* Hapus padding dari card-body */
         }
 
         .table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0 0.75rem;
-            margin-top: -0.75rem;
-        }
-
-        /* Padding inside responsive div */
-        .table-responsive>.table {
-            margin-top: 0;
-            margin-bottom: 0;
         }
 
         .table thead th {
@@ -82,7 +84,7 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
-            text-align: left;
+            text-align: center;
             white-space: nowrap;
         }
 
@@ -101,12 +103,11 @@
         .table tbody td {
             padding: 1.25rem;
             vertical-align: middle;
-            border: 1px solid transparent;
+            text-align: center;
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
 
-        /* Apply border radius to first and last cell of a row */
         .table tbody tr td:first-child {
             border-left: 1px solid var(--border-color);
             border-top-left-radius: 8px;
@@ -118,45 +119,208 @@
             border-top-right-radius: 8px;
             border-bottom-right-radius: 8px;
         }
+
+        /* Action Buttons */
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.25rem;
+            transition: all 0.3s ease;
+            border: none;
+            background-color: transparent;
+        }
+
+        .btn-action:hover {
+            background-color: var(--haramain-light);
+        }
+
+        .btn-action i {
+            font-size: 1rem;
+        }
+
+        .btn-edit {
+            color: var(--haramain-secondary);
+        }
+
+        .btn-view {
+            color: var(--text-secondary);
+        }
+
+        .btn-delete {
+            color: var(--danger-color);
+        }
+
+        /* Badge Status */
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: capitalize;
+        }
+
+        .badge-success {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+        }
+
+        .badge-warning {
+            background-color: var(--warning-bg);
+            color: var(--warning-color);
+        }
+
+        .badge-danger {
+            background-color: var(--danger-bg);
+            color: var(--danger-color);
+        }
+
+        .badge-primary {
+            background-color: var(--primary-bg);
+            color: var(--haramain-secondary);
+        }
+
+        /* Pagination */
+        .pagination-container {
+            padding: 0 1.5rem 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--haramain-secondary);
+            border-color: var(--haramain-secondary);
+        }
+
+        .pagination .page-link {
+            color: var(--haramain-primary);
+            border-radius: 8px;
+            margin: 0 0.25rem;
+            border: 1px solid var(--border-color);
+        }
     </style>
 @endpush
+
 @section('content')
     <div class="service-list-container">
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-list-check"></i>Daftar Pesanan Dorongan
+                    <i class="bi bi-cart"></i>Daftar Order Dorongan
                 </h5>
+                {{-- <a href="{{ route('dorongan.create') }}" class="btn-add-new">...</a> --}}
             </div>
-            <div class="table-responsive p-4">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Customer</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($data as $item)
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->service->pelanggan->nama_travel }}</td>
-                                <td>
-                                    <a href="{{ route('dorongan.customer.detail', $item->id) }}">
-                                        <button class="btn btn-primary">Detail</button>
-                                    </a>
-                                </td>
+                                <th>No</th>
+                                <th>Nama Pelanggan</th>
+                                <th>Nama Item</th>
+                                <th>Jumlah</th>
+                                <th>Tanggal</th>
+                                <th>Harga Jual</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" style="text-align:center; padding: 2rem;">
-                                    Belum ada data pesanan dorongan.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {{-- $doronganOrders adalah Paginator dari controller --}}
+                            @forelse ($doronganOrders as $item)
+                                {{-- $item adalah satu instance Model DoronganOrder --}}
+
+                                @php
+                                    $status = strtolower($item->status);
+                                    $statusClass = '';
+                                    if (in_array($status, ['done', 'deal'])) {
+                                        $statusClass = 'badge-success';
+                                    } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan'])) {
+                                        $statusClass = 'badge-warning';
+                                    } elseif (in_array($status, ['cancelled', 'batal'])) {
+                                        $statusClass = 'badge-danger';
+                                    } else {
+                                        $statusClass = 'badge-primary';
+                                    }
+                                @endphp
+                                <tr>
+                                    {{-- Nomor urut paginasi --}}
+                                    <td>{{ ($doronganOrders->currentPage() - 1) * $doronganOrders->perPage() + $loop->iteration }}
+                                    </td>
+
+                                    {{-- Kolom Nama Pelanggan --}}
+                                    <td>
+                                        {{ $item->service?->pelanggan?->nama_travel ?? 'N/A' }}
+                                    </td>
+
+                                    {{-- Kolom Nama Item Dorongan --}}
+                                    <td>{{ $item->dorongan?->name ?? 'N/A' }}</td> {{-- Asumsi 'name' di model Dorongan --}}
+
+                                    {{-- Kolom Jumlah --}}
+                                    <td>{{ $item->jumlah }}</td>
+
+                                    {{-- Kolom Tanggal Pelaksanaan --}}
+                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_pelaksanaan)->isoFormat('D MMM Y') }}</td>
+
+                                    {{-- Kolom Harga Jual --}}
+                                    <td>{{ number_format($item->harga_jual ?? 0, 0, ',', '.') }}</td>
+
+                                    {{-- Kolom Status --}}
+                                    <td>
+                                        <span class="badge {{ $statusClass }}">{{ $item->status }}</span>
+                                    </td>
+
+                                    {{-- Kolom Aksi --}}
+                                    <td>
+                                        <a href="{{ route('dorongan.customer.show', $item->id) }}"
+                                            class="btn-action btn-view" title="View">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 2rem;">
+                                        Belum ada data order dorongan.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            {{-- Previous Page Link --}}
+                            <li class="page-item {{ $doronganOrders->onFirstPage() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ $doronganOrders->previousPageUrl() ?? '#' }}"
+                                    tabindex="-1">&laquo;</a>
+                            </li>
+
+                            {{-- Page Number Links --}}
+                            @foreach ($doronganOrders->getUrlRange(1, $doronganOrders->lastPage()) as $page => $url)
+                                <li class="page-item {{ $doronganOrders->currentPage() == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                </li>
+                            @endforeach
+
+                            {{-- Next Page Link --}}
+                            <li class="page-item {{ !$doronganOrders->hasMorePages() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ $doronganOrders->nextPageUrl() ?? '#' }}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
             </div>
         </div>
     </div>
