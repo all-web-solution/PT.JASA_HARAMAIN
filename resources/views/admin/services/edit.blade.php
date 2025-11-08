@@ -1128,16 +1128,17 @@
                                                         class="form-group mt-2 bg-white p-3 border rounded {{ $isChildSelected ? '' : 'hidden' }}">
                                                         <input type="hidden" name="customer_document_id[]"
                                                             value="{{ $oldChildIndex !== false ? old('customer_document_id.' . $oldChildIndex) : $selectedChildData['id'] ?? '' }}">
+                                                        {{-- (PERUBAHAN 1) Ganti 'name' agar spesifik untuk 'child' --}}
                                                         <input type="hidden" class="dokumen_id_input"
-                                                            name="dokumen_id[]" value="{{ $child->id }}"
+                                                            name="child_documents[]" value="{{ $child->id }}"
                                                             {{ !$isChildSelected ? 'disabled' : '' }}>
-                                                        <llabel class="form-label">Jumlah
+                                                        <label class="form-label">Jumlah
                                                             {{ $child->name }}</label>
-                                                            <input type="number"
-                                                                class="form-control jumlah_doc_child_input"
-                                                                name="jumlah_doc_child[]" min="1"
-                                                                value="{{ $oldChildIndex !== false ? old('jumlah_doc_child.' . $oldChildIndex) : $selectedChildData['jumlah'] ?? 1 }}"
-                                                                {{ !$isChildSelected ? 'disabled' : '' }}>
+                                                        {{-- (PERUBAHAN 2) Ganti 'name' menjadi array asosiatif [ID => jumlah] --}}
+                                                        <input type="number" class="form-control jumlah_doc_child_input"
+                                                            name="jumlah_child_doc[{{ $child->id }}]" min="1"
+                                                            value="{{ $oldChildIndex !== false ? old('jumlah_doc_child.' . $oldChildIndex) : $selectedChildData['jumlah'] ?? 1 }}"
+                                                            {{ !$isChildSelected ? 'disabled' : '' }}>
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -1156,12 +1157,14 @@
                                             id="doc-{{ $document->id }}-form" data-document-id="{{ $document->id }}">
                                             <input type="hidden" name="customer_document_id[]"
                                                 value="{{ $oldBaseIndex !== false ? old('customer_document_id.' . $oldBaseIndex) : $selectedBaseData['id'] ?? '' }}">
-                                            <input type="hidden" class="dokumen_id_input" name="dokumen_id[]"
+                                            {{-- (PERUBAHAN 1) Ganti 'name' agar spesifik untuk 'base' --}}
+                                            <input type="hidden" class="dokumen_id_input" name="base_documents[]"
                                                 value="{{ $document->id }}" {{ !$isBaseSelected ? 'disabled' : '' }}>
                                             <label class="form-label fw-bold">Jumlah
                                                 {{ $document->name }}</label>
+                                            {{-- (PERUBAHAN 2) Ganti 'name' menjadi array asosiatif [ID => jumlah] --}}
                                             <input type="number" class="form-control jumlah_doc_child_input"
-                                                name="jumlah_doc_child[]" min="1"
+                                                name="jumlah_base_doc[{{ $document->id }}]" min="1"
                                                 value="{{ $oldBaseIndex !== false ? old('jumlah_doc_child.' . $oldBaseIndex) : $selectedBaseData['jumlah'] ?? 1 }}"
                                                 {{ !$isBaseSelected ? 'disabled' : '' }}>
                                         </div>

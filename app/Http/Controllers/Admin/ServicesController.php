@@ -1217,58 +1217,64 @@ class ServicesController extends Controller
             // PERIKSA: Apakah 'dokumen' ada di array service utama?
             if ($request->has('services') && in_array('dokumen', $request->services)) {
 
-                // JIKA YA: Jalankan logika update/create (delete-recreate)
+                // JIKA YA: Hapus data lama untuk diganti dengan data baru
                 CustomerDocument::where('service_id', $service->id)->delete();
 
-                if ($request->has('dokumen_id')) { // Cek lagi jika ada data
+                // --- (FIX) Ambil data master ---
+                $childDocs = DocumentChildren::get()->keyBy('id');
 
-                    // --- EFFICIENTLY GET ALL DOCUMENT PRICES/IDs ---
+                // --- (FIX) PROSES BASE DOCUMENTS (Siskopatuh, dll) ---
+                // Kita baca array 'base_documents[]' yang baru kita buat di view
+                if ($request->has('base_documents')) {
+                    // Ambil array asosiatif [ID => jumlah]
+                    $baseDocumentQuantities = $request->input('jumlah_base_doc', []);
 
-                    // 1. Get all base documents (JUST THE IDs)
-                    //    This is the only line that needed fixing.
-                    $baseDocIds = Document::pluck('id', 'id');
-
-                    // 2. Get all child documents and their prices/parent IDs
-                    $childDocs = DocumentChildren::get()->keyBy('id');
-                    // ---------------------------------------------
-
-                    // Loop berdasarkan 'dokumen_id' yang dikirim
-                    foreach ($request->dokumen_id as $i => $docId) {
-                        if (empty($docId))
+                    foreach ($request->base_documents as $baseDocId) {
+                        if (empty($baseDocId))
                             continue;
 
-                        $jumlah = $request->jumlah_doc_child[$i] ?? 0;
-                        $priceToSave = 0; // Default price
+                        // Ambil jumlah dari array asosiatif
+                        $jumlah = $baseDocumentQuantities[$baseDocId] ?? 0;
 
-                        $dataToCreate = [
-                            'service_id' => $service->id,
-                            'jumlah' => $jumlah,
-                        ];
-
-                        // Check if the ID from the form is a CHILD ID
-                        if ($childDocs->has($docId)) {
-                            // YES, it's a child ID
-                            $child = $childDocs->get($docId);
-
-                            $dataToCreate['document_id'] = $child->document_id;
-                            $dataToCreate['document_children_id'] = $docId;
-                            $priceToSave = $child->price ?? 0; // Get price from child
-
-                        } else if ($baseDocIds->has($docId)) { // Check if it's a valid base doc ID
-                            // NO, it's a BASE document
-                            $dataToCreate['document_id'] = $docId;
-                            $dataToCreate['document_children_id'] = null;
-                            $priceToSave = 0; // Base documents have no price, so set to 0
-
-                        } else {
-                            // ID not found in either list, skip
-                            continue;
+                        if ($jumlah > 0) {
+                            CustomerDocument::create([
+                                'service_id' => $service->id,
+                                'jumlah' => $jumlah,
+                                'document_id' => $baseDocId, // ID Parent (Misal: Siskopatuh)
+                                'document_children_id' => null, // Ini adalah dokumen dasar, jadi null
+                                'harga' => 0, // Asumsi base doc tidak ada harga
+                            ]);
                         }
+                    }
+                }
 
-                        // Assign the price to the 'harga' column
-                        $dataToCreate['harga'] = $priceToSave;
+                // --- (FIX) PROSES CHILD DOCUMENTS (Visa Ziarah, dll) ---
+                // Kita baca array 'child_documents[]' yang baru kita buat di view
+                if ($request->has('child_documents')) {
+                    // Ambil array asosiatif [ID => jumlah]
+                    $childDocumentQuantities = $request->input('jumlah_child_doc', []);
 
-                        CustomerDocument::create($dataToCreate);
+                    foreach ($request->child_documents as $childDocId) {
+                        if (empty($childDocId))
+                            continue;
+
+                        // Ambil data child dari collection
+                        $child = $childDocs->get($childDocId);
+
+                        if ($child) { // Pastikan child-nya ada
+                            // Ambil jumlah dari array asosiatif
+                            $jumlah = $childDocumentQuantities[$childDocId] ?? 0;
+
+                            if ($jumlah > 0) {
+                                CustomerDocument::create([
+                                    'service_id' => $service->id,
+                                    'jumlah' => $jumlah,
+                                    'document_id' => $child->document_id, // ID Parent (Misal: Visa)
+                                    'document_children_id' => $childDocId, // ID Child (Misal: Visa Ziarah)
+                                    'harga' => $child->price ?? 0,
+                                ]);
+                            }
+                        }
                     }
                 }
 
@@ -1444,10 +1450,8 @@ class ServicesController extends Controller
             }
         });
 
-        /* =====================================================
-         * ✅ REDIRECT SELESAI
-         * ===================================================== */
-        return redirect()->route('admin.services.show', $service)->with('success', 'Data service dan semua relasinya berhasil diperbarui.');
+        return redirect()->route('admin.services.show', $service)
+            ->with('success', 'Data service dan seluruh relasinya berhasil diperbarui.');
     }
 
     private function storeFileIfExists(array $files, int $index, string $path)
