@@ -17,6 +17,7 @@ class HandlingHotel extends Model
         'identitas_koper',
         'status',
         'harga_dasar',
+        'harga_jual',
         'supplier',
     ];
 

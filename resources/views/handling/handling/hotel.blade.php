@@ -75,7 +75,7 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
-            text-align: left;
+            text-align: center;
             white-space: nowrap;
             text-transform: uppercase;
             font-size: 0.8rem;
@@ -98,6 +98,7 @@
             padding: 1rem;
             /* Adjusted padding for image cells */
             vertical-align: middle;
+            text-align: center;
             border: 1px solid transparent;
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
@@ -135,6 +136,26 @@
             font-style: italic;
             font-size: 0.9rem;
         }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: flex-end;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--haramain-secondary);
+            border-color: var(--haramain-secondary);
+        }
+
+        .pagination .page-link {
+            color: var(--haramain-primary);
+            border-radius: 8px;
+            margin: 0 0.25rem;
+            border: 1px solid var(--border-color);
+        }
     </style>
 @endpush
 
@@ -163,19 +184,22 @@
                                 <th>Nama Hotel</th>
                                 <th>Tanggal</th>
                                 <th>Harga</th>
-                                <th>Pax</th>
+                                <th>Supplier</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($hotels as $hotel)
-                                <tr style="cursor: pointer;" onclick="window.location='{{ route('handling.handling.hotel.show', $hotel->id) }}'">
+                                <tr style="cursor: pointer;"
+                                    onclick="window.location='{{ route('handling.handling.hotel.show', $hotel->id) }}'">
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $hotel->handling->service->pelanggan->nama_travel ?? '-' }}</td>
                                     <td>{{ $hotel->nama }}</td>
                                     <td>{{ \Carbon\Carbon::parse($hotel->tanggal)->translatedFormat('l, d F Y') }}</td>
-                                    <td><strong>Harga:</strong> Rp {{ $hotel->harga }}</td>
-                                    <td>{{ $hotel->pax }}</td>
+                                    <td>{{ $hotel->harga }}</td>
+                                    <td>{{ $hotel->supplier ?? '-' }}</td>
+                                    <td>{{ $hotel->status }}</td>
                                     <td>
                                         <a href="{{ route('handling.handling.hotel.show', $hotel->id) }}">
                                             <i class="bi bi-eye-fill"></i>
@@ -191,6 +215,30 @@
                             @endforelse
                         </tbody>
                     </table>
+                    <!-- Pagination -->
+                    <div class="pagination-container">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                {{-- Previous Page Link --}}
+                                <li class="page-item {{ $hotels->onFirstPage() ? 'disabled' : '' }}">
+                                    <a class="page-link" href="{{ $hotels->previousPageUrl() ?? '#' }}"
+                                        tabindex="-1">&laquo;</a>
+                                </li>
+
+                                {{-- Page Number Links --}}
+                                @foreach ($hotels->getUrlRange(1, $hotels->lastPage()) as $page => $url)
+                                    <li class="page-item {{ $hotels->currentPage() == $page ? 'active' : '' }}">
+                                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                    </li>
+                                @endforeach
+
+                                {{-- Next Page Link --}}
+                                <li class="page-item {{ !$hotels->hasMorePages() ? 'disabled' : '' }}">
+                                    <a class="page-link" href="{{ $hotels->nextPageUrl() ?? '#' }}">&raquo;</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
 
             </div>
