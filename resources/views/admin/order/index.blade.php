@@ -425,6 +425,15 @@
                                         {{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}
                                     </td>
                                     <td data-label="Sisa">{{ number_format($order->sisa_hutang, 0, ',', '.') }}</td>
+                                    <td data-label="Status">
+                                        @if ($order->status_pembayaran === 'lunas')
+                                            <span class="badge bg-success text-white">Lunas</span>
+                                        @elseif ($order->status_pembayaran === 'sudah_bayar')
+                                            <span class="badge bg-info text-dark">Sudah Bayar</span>
+                                        @else
+                                            <span class="badge bg-danger text-white">Belum Bayar</span>
+                                        @endif
+                                    </td>
                                     <td data-label="Aksi">
                                         <a href="{{ route('payment.proff', $order->id) }}" class="btn btn-primary">
                                             Bukti transfer

@@ -105,40 +105,40 @@ class OrderController extends Controller
     }
 
 
- // Baik untuk debugging
+    // Baik untuk debugging
 
-public function payment_proff_store(Request $request, Order $order)
-{
-    // 1. Validasi Input (WAJIB)
-    // Ini memperbaiki bug 'Undefined variable' dan mengamankan upload
-    $validated = $request->validate([
-        'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Wajib, harus gambar, max 2MB
-    ]);
-
-    $path = null; // Inisialisasi $path
-
-    try {
-        // 2. Simpan file di dalam subfolder 'payment_proofs'
-        if ($request->hasFile('foto')) {
-            // Ini akan menyimpan file di: storage/app/public/payment_proofs
-            $path = $request->file('foto')->store('payment_proofs', 'public');
-
-        }
-
-        // 3. Buat entri database
-        // Gunakan nama kolom yang konsisten.
-        // Di Blade Anda sebelumnya: payment_proff
-        // Di sini (dan sepertinya lebih benar): payment_proof
-        $order->uploadPayments()->create([
-            'payment_proof' => $path,
+    public function payment_proff_store(Request $request, Order $order)
+    {
+        // 1. Validasi Input (WAJIB)
+        // Ini memperbaiki bug 'Undefined variable' dan mengamankan upload
+        $validated = $request->validate([
+            'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Wajib, harus gambar, max 2MB
         ]);
 
-        return redirect()->route('payment.proff', $order->id)->with('success', 'Bukti pembayaran berhasil ditambahkan');
+        $path = null; // Inisialisasi $path
 
-    } catch (\Exception $e) {
-        // Jika terjadi error saat simpan database atau file
-        Log::error('Gagal upload bukti bayar: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Terjadi kesalahan. Gagal menambahkan bukti pembayaran.');
+        try {
+            // 2. Simpan file di dalam subfolder 'payment_proofs'
+            if ($request->hasFile('foto')) {
+                // Ini akan menyimpan file di: storage/app/public/payment_proofs
+                $path = $request->file('foto')->store('payment_proofs', 'public');
+
+            }
+
+            // 3. Buat entri database
+            // Gunakan nama kolom yang konsisten.
+            // Di Blade Anda sebelumnya: payment_proff
+            // Di sini (dan sepertinya lebih benar): payment_proof
+            $order->uploadPayments()->create([
+                'payment_proof' => $path,
+            ]);
+
+            return redirect()->route('payment.proff', $order->id)->with('success', 'Bukti pembayaran berhasil ditambahkan');
+
+        } catch (\Exception $e) {
+            // Jika terjadi error saat simpan database atau file
+            Log::error('Gagal upload bukti bayar: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan. Gagal menambahkan bukti pembayaran.');
+        }
     }
-}
 }
