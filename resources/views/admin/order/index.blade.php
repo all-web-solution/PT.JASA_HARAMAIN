@@ -401,6 +401,7 @@
                             <th>Tagihan</th>
                             <th>Dibayar</th>
                             <th>Sisa</th>
+                            <th>status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
