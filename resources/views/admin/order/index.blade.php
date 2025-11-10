@@ -421,7 +421,7 @@
                                     <td data-label="Invoice">{{ $order->invoice }}</td>
                                     <td data-label="Nama Pelanggan">{{ $order->service?->pelanggan?->nama_travel ?? '-' }}
                                     </td>
-                                    <td data-label="Total">{{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                                    <td data-label="Total">{{ number_format($order->total_amount_final, 0, ',', '.') }}</td>
                                     <td data-label="Dibayar">
                                         {{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}
                                     </td>
@@ -438,6 +438,9 @@
                                     <td data-label="Aksi">
                                         <a href="{{ route('payment.proff', $order->id) }}" class="btn btn-primary">
                                             Bukti transfer
+                                        </a>
+                                        <a href="{{ route('order.show', $order->id) }}" class="btn btn-primary">
+                                            Detail
                                         </a>
                                     </td>
                                 </tr>
