@@ -286,6 +286,10 @@
                                             title="View"> {{-- route('wakaf.show', $item->id) --}}
                                             <i class="bi bi-eye-fill"></i>
                                         </a>
+                                        <a href="{{ route('wakaf.customer.edit', $item->id) }}" class="btn-action">
+                                            {{-- Ganti # dengan route 'wakaf.edit' --}}
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @empty
