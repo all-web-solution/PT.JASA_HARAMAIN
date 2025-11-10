@@ -440,11 +440,13 @@ class ServicesController extends Controller
         // Hapus baris lama: $totalAmount = (float) $request->input('total_amount', 0);
         Order::create([
             'service_id' => $service->id,
-            'total_amount' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
             'invoice' => 'INV-' . time(),
+            'total_estimasi' => $serverTotalAmount,     // Simpan hasil hitung ke estimasi
+            'total_amount_final' => null,             // Harga final masih KOSONG
             'total_yang_dibayarkan' => 0,
-            'sisa_hutang' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
-            'status_pembayaran' => $serverTotalAmount == 0 ? 'lunas' : 'belum_bayar',
+            'sisa_hutang' => $serverTotalAmount,      // Sisa hutang = estimasi awal
+            'status_pembayaran' => 'belum_bayar',
+            'status_harga' => 'provisional'
         ]);
 
         // ... (Redirect seperti sebelumnya) ...
