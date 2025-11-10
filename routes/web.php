@@ -10,14 +10,9 @@ use App\Http\Controllers\HotelController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WakafController;
-use Illuminate\Routing\RouteGroup;
 use Illuminate\Support\Facades\Route;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentController;
-use App\Http\Controllers\Content\SiskopaturController;
-use App\Http\Controllers\Content\VisaController;
-use App\Http\Controllers\Content\VaccineController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\Handling\CateringController;
 use App\Http\Controllers\Handling\HandlingController;
@@ -27,11 +22,8 @@ use App\Http\Controllers\PriceListHotelController;
 use App\Http\Controllers\PriceListTicket;
 use App\Http\Controllers\ReyalController;
 use App\Http\Controllers\TransportationController;
-use App\Models\PriceListHotel;
 use App\Http\Controllers\TypeController;
-use Symfony\Component\HttpKernel\DependencyInjection\ServicesResetter;
 use App\Http\Controllers\InvoiceController;
-use App\Models\Dorongan;
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.index');
@@ -71,11 +63,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/service/files/{id}', [ServicesController::class, 'showFile'])->name('admin.service.file');
     Route::post('{order}/payment', [ServicesController::class, 'payment'])->name('orders.payment');
     Route::get('{order}/bayar', [ServicesController::class, 'bayar'])->name('orders.bayar');
+    Route::get('/order/bayar/{order}', [OrderController::class, 'show'])->name('order.show');
+    Route::put('/order/{order}/calculate-final', [OrderController::class, 'calculateFinalTotal'])->name('order.calculateFinal');
     Route::get('/invoice/{service}', [InvoiceController::class, 'show'])->name('invoice.show');
     Route::get('/invoice/{service}/download', [InvoiceController::class, 'download'])->name('invoice.download');
     Route::get('/invoice/{id}/cetak', [InvoiceController::class, 'cetak'])->name('invoice.cetak');
     Route::get('/payment_proff/{order}', [OrderController::class, 'payment_proff'])->name('payment.proff');
-    Route::get('/payment_proff/{order}/create', [OrderController::class, 'payment_proff_create'])->name('payment.proff.create');
+    // Route::get('/payment_proff/{order}/create', [OrderController::class, 'payment_proff_create'])->name('payment.proff.create');
     Route::post('/payment_proff/{order}/create', [OrderController::class, 'payment_proff_store'])->name('payment.proff.store');
 });
 
