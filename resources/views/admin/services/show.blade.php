@@ -676,10 +676,9 @@
             @if (session('success'))
                 Swal.fire({
                     title: 'Berhasil!',
-                    text: '{{ session('success') }}',
+                    html: '<strong>{{ session('success') }}</strong><br><small> Mohon periksa kembali data yang telah Anda input untuk memastikan tidak ada kesalahan.</small>',
                     icon: 'success',
-                    showConfirmButton: false,
-                    timer: 2000
+                    confirmButtonText: 'Oke'
                 });
             @endif
 
