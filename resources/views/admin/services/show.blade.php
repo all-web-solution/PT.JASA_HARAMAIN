@@ -650,7 +650,7 @@
 
                 @php
                     $order = $service->orders->first();
-                    $totalAmount = $order ? $order->total_amount : 0;
+                    $totalAmount = $order ? $order->total_amount_final : 0;
                 @endphp
                 <div class="form-section p-3" style="background: var(--haramain-light); border-radius: 8px;">
                     <h6 class="form-section-title">
