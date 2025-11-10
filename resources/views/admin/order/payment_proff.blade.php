@@ -1,4 +1,5 @@
 @extends('admin.master')
+@section('title', 'Bukti Pembayaran: ' . $order->service->pelanggan->nama_travel)
 
 @push('styles')
     <style>
@@ -15,13 +16,15 @@
             --success-color: #28a745;
             --warning-color: #ffc107;
             --danger-color: #dc3545;
+            --background-light: #f8fafd;
+            /* Ditambahkan dari style lain */
         }
 
         .service-list-container {
             max-width: 100vw;
             margin: 0 auto;
             padding: 2rem;
-            background-color: #f8fafd;
+            background-color: var(--background-light);
         }
 
         .card {
@@ -45,8 +48,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap; /* Tambahkan untuk responsif */
-            gap: 1rem; /* Tambahkan jarak jika wrap */
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .card-title {
@@ -64,9 +67,85 @@
             color: var(--haramain-secondary);
         }
 
-        /* Table Styles */
+        .card-body {
+            padding: 2rem;
+            /* Style untuk form */
+        }
+
+        /* == Form Styles (Dari referensi edit) == */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .form-control[type="file"] {
+            padding: 0.6rem 1rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--haramain-accent);
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(42, 111, 219, 0.25);
+        }
+
+        .btn-submit {
+            background-color: var(--haramain-secondary);
+            color: white;
+            border-radius: 8px;
+            padding: 0.625rem 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--haramain-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
+        }
+
+        .invalid-feedback {
+            color: var(--danger-color);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--danger-color);
+        }
+
+        /* == Table Styles == */
         .table-responsive {
-            padding: 0 1.5rem;
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .table-card-body {
+            padding: 0;
+            /* Hapus padding untuk tabel */
         }
 
         .table {
@@ -81,7 +160,7 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
-            text-align: left; /* Pastikan rata kiri */
+            text-align: left;
         }
 
         .table tbody tr {
@@ -114,8 +193,6 @@
             border-bottom-right-radius: 8px;
         }
 
-        /* ... [CSS Anda yang lain seperti .badge, .customer-info, dll] ... */
-
         .customer-info {
             display: flex;
             align-items: center;
@@ -132,7 +209,7 @@
             margin-right: 1rem;
             color: var(--haramain-secondary);
             font-size: 1.25rem;
-            flex-shrink: 0; /* Agar avatar tidak menyusut */
+            flex-shrink: 0;
         }
 
         .customer-details {
@@ -153,57 +230,32 @@
             display: inline-block;
         }
 
-        /* ... [CSS Anda yang lain] ... */
-
-        .btn-add-new {
-            background-color: var(--haramain-secondary);
-            color: white;
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 0.625rem 1.5rem;
+            padding: 0.625rem 1.25rem;
             font-weight: 600;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s ease;
-            border: none;
-            text-decoration: none; /* Tambahkan untuk link <a> */
-            white-space: nowrap; /* Agar teks tidak terpotong */
+            text-decoration: none;
         }
 
-        .btn-add-new:hover {
-            background-color: var(--haramain-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
-        }
-
-        /* Pagination */
-        .pagination-container {
-            display: flex;
-            justify-content: flex-end;
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--haramain-secondary);
+        .btn-secondary:hover {
+            background-color: var(--hover-bg);
             border-color: var(--haramain-secondary);
-            color: white; /* Pastikan teksnya putih */
+            color: var(--haramain-secondary);
         }
 
-        .pagination .page-link {
-            color: var(--haramain-primary);
-            border-radius: 8px;
-            margin: 0 0.25rem;
-            border: 1px solid var(--border-color);
-        }
-
-        /* Responsive adjustments - BLOK GABUNGAN */
+        /* ... [CSS Responsif dari file index Anda] ... */
         @media (max-width: 768px) {
             .service-list-container {
                 padding: 1rem;
             }
 
-            .card-header, .search-filter-container {
+            .card-header {
                 flex-direction: column;
                 align-items: stretch;
                 gap: 1rem;
@@ -211,26 +263,7 @@
 
             .card-title {
                 font-size: 1.1rem;
-                text-align: center;
                 justify-content: center;
-            }
-
-            .btn-add-new {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            .filter-group {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-
-            .filter-select {
-                width: 100%;
             }
 
             .table thead {
@@ -278,80 +311,117 @@
                 border-bottom-left-radius: 8px;
                 border-bottom-right-radius: 8px;
             }
-
-            .pagination-container {
-                justify-content: center;
-            }
         }
     </style>
 @endpush
 
 @section('content')
     <div class="service-list-container">
+
+        {{-- Tampilkan Pesan Sukses atau Error --}}
+        @if (session('success'))
+            <div class="alert"
+                style="background-color: var(--success-bg, #d1e7dd); border-color: var(--success-color, #a3cfbb); color: var(--success-color, #0f5132); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="alert"
+                style="background-color: var(--danger-bg, #f8d7da); border-color: var(--danger-color, #f5c2c7); color: var(--danger-color, #842029); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="bi bi-plus-circle"></i> Tambah Bukti Pembayaran Baru
+                </h5>
+                <a href="{{ route('admin.order') }}" class="btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Kembali ke Detail Payment
+                </a>
+            </div>
+            <div class="card-body">
+                {{-- Form dari file create --}}
+                <form action="{{ route('payment.proff.store', $order->id) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+
+                    <div class="form-group">
+                        <label for="foto" class="form-label">Upload Bukti Transfer</label>
+                        <input type="file" class="form-control @error('foto') is-invalid @enderror" id="foto"
+                            name="foto" accept="image/*" required>
+                        @error('foto')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn-submit">
+                            <i class="bi bi-save me-1"></i> Simpan Bukti
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title" id="text-title">
                     <i class="bi bi-list-check"></i>
-                    {{-- Periksa apakah relasi ada sebelum mengaksesnya --}}
-                    Daftar Bukti transfer {{ $order->service->pelanggan->nama_travel ?? 'Customer' }}
+                    Daftar Bukti Transfer {{ $order->service->pelanggan->nama_travel ?? 'Customer' }}
                 </h5>
-                <a href="{{ route('payment.proff.create', $order->id) }}" class="btn-add-new">
-                    <i class="bi bi-plus-circle"></i> Tambah bukti pembayaran
-                </a>
+                {{-- Tombol 'Tambah' di sini dihapus karena form sudah di atas --}}
             </div>
 
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Customer</th>
-                            <th>Nomor Telepon</th>
-                            <th>Bukti Pembayaran</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{-- Gunakan @forelse untuk menangani kasus data kosong --}}
-                        @forelse ($paymentPreff as $payment)
+            <div class="card-body table-card-body"> {{-- Ganti class card-body --}}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td data-label="No.">{{ $loop->iteration }}</td>
-                                <td data-label="Customer">
-                                    <div class="customer-info">
-                                        <div class="customer-avatar">
-                                            <i class="bi bi-person-fill"></i>
-                                        </div>
-                                        <div class="customer-details">
-                                            <div class="customer-name">{{ $order->service->pelanggan->nama_travel ?? '-' }}</div>
-                                            <div class="customer-type">{{ $order->service->pelanggan->penanggung_jawab ?? '-' }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td data-label="Nomor telepon">{{ $order->service->pelanggan->phone ?? '-' }}</td>
-                                <td data-label="Bukti pembayaran">
-                                    {{-- Gunakan helper asset() untuk path storage --}}
-                                    <a href="{{ url('storage/' . $payment->payment_proof) }}" target="_blank">
-                                        <img src="{{ asset('storage/' . $payment->payment_proof) }}" alt="Bukti Pembayaran"
-                                            style="max-width: 100px; max-height: 100px; border-radius: 8px;">
-                                    </a>
-                                </td>
+                                <th>No.</th>
+                                <th>Customer</th>
+                                <th>Nomor Telepon</th>
+                                <th>Bukti Pembayaran</th>
                             </tr>
-                        @empty
-                            <tr>
-                                {{-- Sesuaikan jumlah kolom (colspan) dengan header tabel Anda --}}
-                                <td colspan="4" style="text-align: center; padding: 2rem; border-radius: 8px;">
-                                    Belum ada bukti pembayaran yang diupload.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @forelse ($paymentPreff as $payment)
+                                <tr>
+                                    <td data-label="No.">{{ $loop->iteration }}</td>
+                                    <td data-label="Customer">
+                                        <div class="customer-info">
+                                            <div class="customer-avatar">
+                                                <i class="bi bi-person-fill"></i>
+                                            </div>
+                                            <div class="customer-details">
+                                                <div class="customer-name">
+                                                    {{ $order->service->pelanggan->nama_travel ?? '-' }}</div>
+                                                <div class="customer-type">
+                                                    {{ $order->service->pelanggan->penanggung_jawab ?? '-' }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td data-label="Nomor telepon">{{ $order->service->pelanggan->phone ?? '-' }}</td>
+                                    <td data-label="Bukti pembayaran">
+                                        <a href="{{ url('storage/' . $payment->payment_proof) }}" target="_blank">
+                                            <img src="{{ asset('storage/' . $payment->payment_proof) }}"
+                                                alt="Bukti Pembayaran"
+                                                style="max-width: 100px; max-height: 100px; border-radius: 8px;">
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" style="text-align: center; padding: 2rem; border-radius: 8px;">
+                                        Belum ada bukti pembayaran yang diupload.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
-
-            {{-- Tampilkan pagination hanya jika ada lebih dari 1 halaman --}}
-
 
         </div>
     </div>
 @endsection
-
-
