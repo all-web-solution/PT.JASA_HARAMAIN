@@ -415,6 +415,11 @@
                                             <i class="bi bi-eye-fill"></i>
                                         </button>
                                     </a>
+                                    <a href="{{ route('customer.edit', $item->id) }}">
+                                        <button class="btn-action btn-edit" title="Edit">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach
