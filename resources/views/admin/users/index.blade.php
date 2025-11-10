@@ -46,8 +46,8 @@
                                     <div class="customer-info">
                                         <div class="customer-avatar">{{ strtoupper(substr($user->name, 0, 2)) }}</div>
                                         <div class="customer-details">
-                                            <span class="customer-name">{{ $user->name }}</span>
-                                            <span class="customer-type">{{ $user->role }}</span>
+                                            <span class="customer-name">{{ $user->name }}</span><br>
+                                            <span class="badge bg-primary bg-opacity-10 text-primary">{{ $user->role }}</span>
                                         </div>
                                     </div>
                                 </td>
