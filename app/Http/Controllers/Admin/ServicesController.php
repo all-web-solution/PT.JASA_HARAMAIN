@@ -1558,20 +1558,32 @@ class ServicesController extends Controller
             }
 
             /* =====================================================
-             * 🕋 BADAL
+             * 🕋 BADAL - PERBAIKAN
              * ===================================================== */
-            if ($request->has('nama_badal')) {
+            // Cek apakah service 'badal' (layanan utama) masih aktif
+            if ($request->has('services') && in_array('badal', $request->services)) {
+
+                // Ya, service aktif. Hapus semua data badal lama.
                 Badal::where('service_id', $service->id)->delete();
-                foreach ($request->nama_badal as $i => $nama) {
-                    if (empty($nama))
-                        continue;
-                    Badal::create([
-                        'service_id' => $service->id,
-                        'name' => $nama,
-                        'price' => $request->harga_badal[$i] ?? 0,
-                        'tanggal_pelaksanaan' => $request->tanggal_badal[$i]
-                    ]);
+
+                // Buat ulang data dari form, HANYA JIKA 'nama_badal' dikirim
+                if ($request->has('nama_badal')) {
+                    foreach ($request->nama_badal as $i => $nama) {
+                        if (empty($nama))
+                            continue;
+
+                        Badal::create([
+                            'service_id' => $service->id,
+                            'name' => $nama,
+                            'price' => $request->harga_badal[$i] ?? 0,
+                            'tanggal_pelaksanaan' => $request->tanggal_badal[$i] ?? null,
+                        ]);
+                    }
                 }
+
+            } else {
+                // Tidak, service 'badal' di-uncheck. Hapus semua data badal.
+                Badal::where('service_id', $service->id)->delete();
             }
 
             /* =====================================================
