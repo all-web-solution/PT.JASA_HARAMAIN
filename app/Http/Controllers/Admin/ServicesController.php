@@ -247,12 +247,24 @@ class ServicesController extends Controller
             // '.*' berarti "setiap item di dalam array"
             'transportation_id.*' => 'required|exists:transportations,id',
 
-            'rute_id' => ['nullable', Rule::requiredIf(function () use ($request) {
-                return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation); }), 'array', 'min:1'],
+            'rute_id' => [
+                'nullable',
+                Rule::requiredIf(function () use ($request) {
+                    return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation);
+                }),
+                'array',
+                'min:1'
+            ],
             'rute_id.*' => 'required|exists:routes,id',
 
-            'tanggal_transport' => ['nullable', Rule::requiredIf(function () use ($request) {
-                return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation); }), 'array', 'min:1'],
+            'tanggal_transport' => [
+                'nullable',
+                Rule::requiredIf(function () use ($request) {
+                    return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation);
+                }),
+                'array',
+                'min:1'
+            ],
             'tanggal_transport.*.dari' => 'required|date',
             'tanggal_transport.*.sampai' => 'required|date|after_or_equal:tanggal_transport.*.dari', // Ini adalah validasi error Anda
 
@@ -447,8 +459,7 @@ class ServicesController extends Controller
             'status_pembayaran' => $serverTotalAmount == 0 ? 'lunas' : 'belum_bayar',
         ]);
 
-        // ... (Redirect seperti sebelumnya) ...
-        return redirect()->route('admin.services')->with('success', 'Data service berhasil disimpan.');
+        return redirect()->route('admin.services.show', $service)->with('success', 'Data service berhasil disimpan.');
     }
 
     public function show($id)
