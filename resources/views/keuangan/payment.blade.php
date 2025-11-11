@@ -246,15 +246,12 @@
                 </h5>
             </div>
 
-
-
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Invoice</th>
                             <th>Nama Pelanggan</th>
-
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -264,7 +261,7 @@
                                 <td data-label="Invoice">{{ $item->invoice }}</td>
                                 <td data-label="Nama Pelanggan">{{ $item->service->pelanggan->nama_travel }}</td>
                                 <td data-label="Aksi">
-                                    <a href="{{ route('keuangan.payment.detail', $item->id) }}"
+                                    <a href="{{ route('keuangan.payment.detail', $item->service_id) }}"
                                         class="btn btn-primary btn-sm">
                                         Lihat Detail
                                     </a>
