@@ -515,41 +515,121 @@
                         </div>
                     @endif
 
-                    {{-- REYAL (Perbaikan - HasMany) --}}
-                    @if ($service->reyals?->isNotEmpty())
-                        @php $reyal = $service->reyals->first(); @endphp {{-- Ambil data pertama jika ada --}}
-                        <div class="service-detail-block">
-                            <h6 class="service-detail-title"><i class="bi bi-currency-exchange"></i> Penukaran Reyal</h6>
-                            <div class="p-3" style="background: var(--haramain-light); border-radius: 8px;">
-                                <strong>Tipe: {{ ucfirst($reyal->tipe ?? 'N/A') }}
-                                    ({{ $reyal->tipe == 'tamis' ? 'Rupiah → Reyal' : ($reyal->tipe == 'tumis' ? 'Reyal → Rupiah' : 'N/A') }})</strong>
-                                @if ($reyal->tipe == 'tamis')
-                                    <div class="detail-item"><span class="detail-label">Jumlah (Rp)</span><span
-                                            class="detail-value">Rp
-                                            {{ number_format($reyal->jumlah_input ?? 0) }}</span></div>
-                                    <div class="detail-item"><span class="detail-label">Kurs (Rp)</span><span
-                                            class="detail-value">Rp {{ number_format($reyal->kurs ?? 0) }}</span>
+                    {{-- ===================================================== --}}
+                    {{-- 💸 DETAIL PENUKARAN REYAL (Versi blok per item) --}}
+                    {{-- ===================================================== --}}
+                    @if ($service->exchanges?->isNotEmpty())
+                        @foreach ($service->exchanges as $exchange)
+                            <div class="service-detail-block">
+                                <h6 class="service-detail-title">
+                                    <i class="bi bi-currency-exchange"></i> Penukaran Reyal
+                                </h6>
+                                <div class="p-3 mb-3" style="background: var(--haramain-light); border-radius: 8px;">
+                                    <strong>
+                                        Tipe: {{ ucfirst($exchange->tipe ?? 'N/A') }}
+                                        ({{ $exchange->tipe == 'tamis' ? 'Rupiah → Reyal' : ($exchange->tipe == 'tumis' ? 'Reyal → Rupiah' : 'N/A') }})
+                                    </strong>
+
+                                    @if ($exchange->tipe == 'tamis')
+                                        <div class="detail-item">
+                                            <span class="detail-label">Jumlah (Rp)</span>
+                                            <span class="detail-value">
+                                                Rp {{ number_format($exchange->jumlah_input ?? 0, 2, ',', '.') }}
+                                            </span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Kurs (Rp)</span>
+                                            <span class="detail-value">
+                                                Rp {{ number_format($exchange->kurs ?? 0, 2, ',', '.') }}
+                                            </span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Hasil (SAR)</span>
+                                            <span class="detail-value">
+                                                {{ number_format($exchange->hasil ?? 0, 2, ',', '.') }} SAR
+                                            </span>
+                                        </div>
+                                    @elseif ($exchange->tipe == 'tumis')
+                                        <div class="detail-item">
+                                            <span class="detail-label">Jumlah (SAR)</span>
+                                            <span class="detail-value">
+                                                {{ number_format($exchange->jumlah_input ?? 0, 2, ',', '.') }} SAR
+                                            </span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Kurs (Rp)</span>
+                                            <span class="detail-value">
+                                                Rp {{ number_format($exchange->kurs ?? 0, 2, ',', '.') }}
+                                            </span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Hasil (Rp)</span>
+                                            <span class="detail-value">
+                                                Rp {{ number_format($exchange->hasil ?? 0, 2, ',', '.') }}
+                                            </span>
+                                        </div>
+                                    @endif
+
+                                    <div class="detail-item">
+                                        <span class="detail-label">Tgl Penyerahan</span>
+                                        <span class="detail-value">
+                                            {{ $exchange->tanggal_penyerahan
+                                                ? \Carbon\Carbon::parse($exchange->tanggal_penyerahan)->format('d M Y')
+                                                : 'N/A' }}
+                                        </span>
                                     </div>
-                                    <div class="detail-item"><span class="detail-label">Hasil (SAR)</span><span
-                                            class="detail-value">{{ number_format($reyal->hasil ?? 0, 2) }} SAR</span>
-                                    </div>
-                                @elseif ($reyal->tipe == 'tumis')
-                                    <div class="detail-item"><span class="detail-label">Jumlah (SAR)</span><span
-                                            class="detail-value">{{ number_format($reyal->jumlah_input ?? 0) }}
-                                            SAR</span></div>
-                                    <div class="detail-item"><span class="detail-label">Kurs (Rp)</span><span
-                                            class="detail-value">Rp {{ number_format($reyal->kurs ?? 0) }}</span>
-                                    </div>
-                                    <div class="detail-item"><span class="detail-label">Hasil (Rp)</span><span
-                                            class="detail-value">Rp {{ number_format($reyal->hasil ?? 0, 2) }}</span>
-                                    </div>
-                                @endif
-                                <div class="detail-item"><span class="detail-label">Tgl Penyerahan</span><span
-                                        class="detail-value">{{ $reyal->tanggal_penyerahan ? \Carbon\Carbon::parse($reyal->tanggal_penyerahan)->format('d M Y') : 'N/A' }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    @endif
+
+                    {{-- ===================================================== --}}
+                    {{-- 💸 DETAIL REYAL (versi berbentuk table) --}}
+                    {{-- ===================================================== --}}
+                    {{-- @if ($service->exchanges->isNotEmpty())
+                        <div class="card mt-4">
+                            <div class="card-header" style="background-color: #f8f9fa;">
+                                <h5 class="card-title mb-0" style="color: #1a4b8c;">
+                                    <i class="bi bi-currency-exchange"></i> Detail Penukaran Reyal
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Tipe</th>
+                                                <th>Tanggal Penyerahan</th>
+                                                <th>Jumlah Input</th>
+                                                <th>Kurs</th>
+                                                <th>Hasil</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($service->exchanges as $exchange)
+                                                <tr>
+                                                    <td style="text-transform: uppercase;">
+                                                        <strong>{{ $exchange->tipe }}</strong>
+                                                    </td>
+                                                    <td>{{ \Carbon\Carbon::parse($exchange->tanggal_penyerahan)->format('d M Y') }}
+                                                    </td>
+                                                    <td>
+                                                        <strong>{{ $exchange->tipe == 'tamis' ? 'Rp' : 'SAR' }}</strong>
+                                                        {{ number_format($exchange->jumlah_input, 2, ',', '.') }}
+                                                    </td>
+                                                    <td>{{ number_format($exchange->kurs, 2, ',', '.') }}</td>
+                                                    <td>
+                                                        <strong>{{ $exchange->tipe == 'tamis' ? 'SAR' : 'Rp' }}</strong>
+                                                        {{ number_format($exchange->hasil, 2, ',', '.') }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                    @endif
+                    @endif --}}
 
                     {{-- TOUR (Perbaikan - Bukan Pivot) --}}
                     @if ($service->tours?->isNotEmpty())
