@@ -1512,6 +1512,51 @@ class ServicesController extends Controller
             }
 
             /* =====================================================
+             * 💸 REYAL - PERBAIKAN BARU
+             * ===================================================== */
+            // Cek apakah service 'reyal' aktif
+            if ($request->has('services') && in_array('reyal', $request->services)) {
+
+                // Ya, service aktif. Hapus data lama (jika ada)
+                Exchange::where('service_id', $service->id)->delete();
+
+                // Validasi data baru (diambil dari 'handleReyalItems')
+                $validatedData = $request->validate([
+                    'tipe' => 'required|in:tamis,tumis',
+                    'tanggal_penyerahan' => 'required|date',
+                    'jumlah_rupiah' => 'required_if:tipe,tamis|nullable|numeric|min:0',
+                    'kurs_tamis' => 'required_if:tipe,tamis|nullable|numeric|min:0',
+                    'hasil_tamis' => 'required_if:tipe,tamis|nullable|numeric|min:0',
+                    'jumlah_reyal' => 'required_if:tipe,tumis|nullable|numeric|min:0',
+                    'kurs_tumis' => 'required_if:tipe,tumis|nullable|numeric|min:0',
+                    'hasil_tumis' => 'required_if:tipe,tumis|nullable|numeric|min:0',
+                ]);
+
+                // Buat data Reyal yang baru
+                if ($validatedData['tipe'] === 'tamis') {
+                    $service->exchanges()->create([
+                        'tipe' => 'tamis',
+                        'jumlah_input' => $validatedData['jumlah_rupiah'],
+                        'kurs' => $validatedData['kurs_tamis'],
+                        'hasil' => $validatedData['hasil_tamis'],
+                        'tanggal_penyerahan' => $validatedData['tanggal_penyerahan'],
+                    ]);
+                } else if ($validatedData['tipe'] === 'tumis') {
+                    $service->exchanges()->create([
+                        'tipe' => 'tumis',
+                        'jumlah_input' => $validatedData['jumlah_reyal'],
+                        'kurs' => $validatedData['kurs_tumis'],
+                        'hasil' => $validatedData['hasil_tumis'],
+                        'tanggal_penyerahan' => $validatedData['tanggal_penyerahan'],
+                    ]);
+                }
+
+            } else {
+                // Tidak, service 'reyal' di-uncheck. Hapus semua data Reyal.
+                Exchange::where('service_id', $service->id)->delete();
+            }
+
+            /* =====================================================
              * 🕋 BADAL
              * ===================================================== */
             if ($request->has('nama_badal')) {
