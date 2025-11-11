@@ -24,32 +24,57 @@ use App\Models\WakafCustomer;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
     public function index(Request $request)
     {
+        // --- DAPATKAN ID ORDER UTAMA ---
+        // 1. Dapatkan ID order paling LAMA (MIN(id)) untuk setiap 'service_id'
+        //    Ini kita anggap sebagai "Order Utama"
+        $mainOrderIds = Order::select(DB::raw('MAX(id) as id'))
+                            ->groupBy('service_id')
+                            ->pluck('id');
 
-        $query = Order::query();
+        // --- QUERY UNTUK TABEL (HANYA ORDER UTAMA) ---
+        // 2. Buat query utama HANYA untuk ID-ID order utama tersebut
+        $query = Order::with('service.pelanggan')
+                    ->whereIn('id', $mainOrderIds);
 
-        // Filter berdasarkan bulan
+        // --- QUERY UNTUK STATS (HANYA ORDER UTAMA) ---
+        // 3. Buat query terpisah untuk statistik agar sesuai dengan filter
+        //    (Kita kloning query dasar sebelum filter tanggal)
+        $statsQueryBase = Order::whereIn('id', $mainOrderIds);
+
+        // Terapkan Filter Tanggal (Kode Anda sudah benar)
         if ($request->filled('bulan')) {
             $query->whereMonth('created_at', $request->bulan);
+            $statsQueryBase->whereMonth('created_at', $request->bulan); // Terapkan juga di stats
         }
-
-        // Filter berdasarkan tahun
         if ($request->filled('tahun')) {
             $query->whereYear('created_at', $request->tahun);
+            $statsQueryBase->whereYear('created_at', $request->tahun); // Terapkan juga di stats
         }
-
-        // Filter berdasarkan tanggal spesifik
         if ($request->filled('tanggal')) {
             $query->whereDate('created_at', $request->tanggal);
+            $statsQueryBase->whereDate('created_at', $request->tanggal); // Terapkan juga di stats
         }
 
+        // 4. Hitung Statistik (Sekarang sudah efisien dan terfilter)
+        $stats = [
+            'total' => $statsQueryBase->clone()->count(),
+            'belum_bayar' => $statsQueryBase->clone()->where('status_pembayaran', 'belum_bayar')->count(),
+            'belum_lunas' => $statsQueryBase->clone()->where('status_pembayaran', 'belum_lunas')->count(),
+            'lunas' => $statsQueryBase->clone()->where('status_pembayaran', 'lunas')->count()
+        ];
+
+        // 5. Paginasi hasil query utama
         $orders = $query->latest()->paginate(10);
-        return view('admin.order.index', compact('orders'));
+
+        // 6. Kirim data ke view
+        return view('admin.order.index', compact('orders', 'stats'));
     }
 
     public function create()
