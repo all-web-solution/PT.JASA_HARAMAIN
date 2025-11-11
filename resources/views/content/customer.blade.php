@@ -273,6 +273,9 @@
                                             <i class="bi bi-eye-fill"></i>
                                         </button>
                                     </a>
+                                    <a href="{{ route('document.customer.edit', $item->id) }}" class="btn-action">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
                                 </td>
                             </tr>
                         @empty

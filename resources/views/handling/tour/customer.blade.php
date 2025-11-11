@@ -282,6 +282,10 @@
                                         title="View">
                                         <i class="bi bi-eye-fill"></i>
                                     </a>
+                                    <a href="{{ route('tour.customer.edit', $tour->id) }}" class="btn-action">
+                                        {{-- Ganti # dengan route 'tour.edit' --}}
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
                                 </td>
                             </tr>
                         @empty
