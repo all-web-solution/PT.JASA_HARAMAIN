@@ -177,7 +177,7 @@
                     <i class="bi bi-pencil-square"></i> Edit Order Dokumen
                 </h5>
                 {{-- Arahkan kembali ke index dokumen --}}
-                <a href="{{ route('content.customer') }}" class="btn btn-secondary">
+                <a href="{{ route('visa.document.customer') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
