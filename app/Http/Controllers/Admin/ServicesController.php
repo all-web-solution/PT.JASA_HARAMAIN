@@ -1384,71 +1384,131 @@ class ServicesController extends Controller
             }
 
             /* =====================================================
-             * 👥 PENDAMPING, 📸 KONTEN, 🍱 MEALS, 💸 DORONGAN, 💰 WAKAF
+             * 👥 PENDAMPING (GUIDES) - PERBAIKAN
              * ===================================================== */
-            if ($request->has('jumlah_pendamping')) {
-                foreach ($request->jumlah_pendamping as $id => $jumlah) {
-                    if ($jumlah !== null && $jumlah !== '') {
-                        $pendamping = Guide::where('service_id', $service->id)
-                            ->where('guide_id', $id)
-                            ->first();
-                        if ($pendamping) {
-                            $pendamping->update(['jumlah' => $jumlah]);
+            // Cek apakah service 'pendamping' aktif
+            if ($request->has('services') && in_array('pendamping', $request->services)) {
+                // Ya, service aktif. Hapus data lama.
+                Guide::where('service_id', $service->id)->delete();
+
+                // Buat ulang data dari form
+                if ($request->has('jumlah_pendamping')) {
+                    foreach ($request->jumlah_pendamping as $id => $jumlah) {
+                        // Hanya buat jika jumlah lebih dari 0 dan datanya dikirim (tidak disabled)
+                        if ($jumlah !== null && $jumlah > 0) {
+                            Guide::create([
+                                'service_id' => $service->id,
+                                'guide_id' => $id,
+                                'jumlah' => $jumlah,
+                                'muthowif_dari' => $request->pendamping_dari[$id] ?? null,
+                                'muthowif_sampai' => $request->pendamping_sampai[$id] ?? null,
+                            ]);
                         }
                     }
                 }
+            } else {
+                // Tidak, service 'pendamping' di-uncheck. Hapus semua.
+                Guide::where('service_id', $service->id)->delete();
             }
 
-            if ($request->has('jumlah_konten')) {
-                foreach ($request->jumlah_konten as $id => $jumlah) {
-                    if ($jumlah !== null && $jumlah !== '') {
-                        $konten = ContentCustomer::where('service_id', $service->id)
-                            ->where('content_id', $id)
-                            ->first();
-                        if ($konten) {
-                            $konten->update(['jumlah' => $jumlah]);
+            /* =====================================================
+             * 📸 KONTEN (CONTENT) - PERBAIKAN
+             * ===================================================== */
+            if ($request->has('services') && in_array('konten', $request->services)) {
+                // Service aktif, hapus data lama
+                ContentCustomer::where('service_id', $service->id)->delete();
+
+                // Buat ulang dari form
+                if ($request->has('jumlah_konten')) {
+                    foreach ($request->jumlah_konten as $id => $jumlah) {
+                        if ($jumlah !== null && $jumlah > 0) {
+                            ContentCustomer::create([
+                                'service_id' => $service->id,
+                                'content_id' => $id,
+                                'jumlah' => $jumlah,
+                                'tanggal_pelaksanaan' => $request->konten_tanggal[$id] ?? null,
+                            ]);
                         }
                     }
                 }
+            } else {
+                // Service tidak aktif, hapus semua
+                ContentCustomer::where('service_id', $service->id)->delete();
             }
 
-            if ($request->has('jumlah_meals')) {
-                foreach ($request->jumlah_meals as $id => $jumlah) {
-                    if ($jumlah !== null && $jumlah !== '') {
-                        $meal = Meal::where('service_id', $service->id)
-                            ->where('meal_id', $id)
-                            ->first();
-                        if ($meal) {
-                            $meal->update(['jumlah' => $jumlah]);
+            /* =====================================================
+             * 🍱 MEALS - PERBAIKAN
+             * ===================================================== */
+            if ($request->has('services') && in_array('meals', $request->services)) {
+                // Service aktif, hapus data lama
+                Meal::where('service_id', $service->id)->delete();
+
+                // Buat ulang dari form
+                if ($request->has('jumlah_meals')) {
+                    foreach ($request->jumlah_meals as $id => $jumlah) {
+                        if ($jumlah !== null && $jumlah > 0) {
+                            Meal::create([
+                                'service_id' => $service->id,
+                                'meal_id' => $id,
+                                'jumlah' => $jumlah,
+                                'dari_tanggal' => $request->meals_dari[$id] ?? null,
+                                'sampai_tanggal' => $request->meals_sampai[$id] ?? null,
+                            ]);
                         }
                     }
                 }
+            } else {
+                // Service tidak aktif, hapus semua
+                Meal::where('service_id', $service->id)->delete();
             }
 
-            if ($request->has('jumlah_dorongan')) {
-                foreach ($request->jumlah_dorongan as $id => $jumlah) {
-                    if ($jumlah !== null && $jumlah !== '') {
-                        $dorongan = DoronganOrder::where('service_id', $service->id)
-                            ->where('dorongan_id', $id)
-                            ->first();
-                        if ($dorongan) {
-                            $dorongan->update(['jumlah' => $jumlah]);
+            /* =====================================================
+             * 💸 DORONGAN - PERBAIKAN
+             * ===================================================== */
+            if ($request->has('services') && in_array('dorongan', $request->services)) {
+                // Service aktif, hapus data lama
+                DoronganOrder::where('service_id', $service->id)->delete();
+
+                // Buat ulang dari form
+                if ($request->has('jumlah_dorongan')) {
+                    foreach ($request->jumlah_dorongan as $id => $jumlah) {
+                        if ($jumlah !== null && $jumlah > 0) {
+                            DoronganOrder::create([
+                                'service_id' => $service->id,
+                                'dorongan_id' => $id,
+                                'jumlah' => $jumlah,
+                                'tanggal_pelaksanaan' => $request->dorongan_tanggal[$id] ?? null,
+                            ]);
                         }
                     }
                 }
+            } else {
+                // Service tidak aktif, hapus semua
+                DoronganOrder::where('service_id', $service->id)->delete();
             }
 
-            if ($request->has('jumlah_wakaf')) {
-                foreach ($request->jumlah_wakaf as $id => $jumlah) {
-                    if ($jumlah !== null && $jumlah !== '') {
-                        $wakaf = WakafCustomer::where('service_id', $service->id)
-                            ->where('wakaf_id', $id)
-                            ->first();
-                        if ($wakaf) {
-                            $wakaf->update(['jumlah' => $jumlah]);
+            /* =====================================================
+             * 💰 WAKAF - PERBAIKAN
+             * ===================================================== */
+            if ($request->has('services') && in_array('waqaf', $request->services)) {
+                // Service aktif, hapus data lama
+                WakafCustomer::where('service_id', $service->id)->delete();
+
+                // Buat ulang dari form
+                if ($request->has('jumlah_wakaf')) {
+                    foreach ($request->jumlah_wakaf as $id => $jumlah) {
+                        if ($jumlah !== null && $jumlah > 0) {
+                            WakafCustomer::create([
+                                'service_id' => $service->id,
+                                'wakaf_id' => $id,
+                                'jumlah' => $jumlah,
+                            ]);
                         }
                     }
                 }
+            } else {
+                // Service tidak aktif, hapus semua
+                WakafCustomer::where('service_id', $service->id)->delete();
             }
 
             /* =====================================================
