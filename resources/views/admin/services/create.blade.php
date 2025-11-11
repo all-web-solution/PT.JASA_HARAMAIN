@@ -671,7 +671,7 @@
                                         <div class="validation-error-message">{{ $message }}</div>
                                     @enderror
 
-                                    <button type="button" class="btn btn-submit" id="add-transport-btn">Tambah
+                                    <button type="button" class="btn btn-sm btn-primary mb-3" id="add-transport-btn">Tambah
                                         Transportasi</button>
 
                                     <div id="new-transport-forms">
