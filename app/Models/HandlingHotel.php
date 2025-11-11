@@ -20,6 +20,10 @@ class HandlingHotel extends Model
         'supplier',
     ];
 
+    protected $casts = [
+        'tanggal' => 'date',
+    ];
+
     public function handling()
     {
         return $this->belongsTo(Handling::class, 'id');

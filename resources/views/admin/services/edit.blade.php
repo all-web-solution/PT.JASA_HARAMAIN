@@ -1,4 +1,7 @@
 @extends('admin.master')
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
 @section('title', 'Edit Permintaan Service')
 @push('styles')
     <style>
@@ -1176,6 +1179,28 @@
                         {{-- HANDLING FORM --}}
                         <div class="detail-form {{ in_array('handling', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="handling-details">
+                            @php
+                                // (1) Ambil data handling yang sudah ada
+                                $hotelHandling = $service->handlings->firstWhere('name', 'hotel');
+                                $existingHotelHandling = $hotelHandling?->handlingHotels;
+
+                                $planeHandling = $service->handlings->firstWhere('name', 'bandara');
+                                $existingPlaneHandling = $planeHandling?->handlingPlanes;
+
+                                // (2) Cek 'old' input jika ada error validasi
+                                $oldHandlingTypes = old('handlings');
+
+                                // (3) TENTUKAN APAKAH CHECKBOX HARUS AKTIF
+                                if (!is_null($oldHandlingTypes)) {
+                                    // Jika ada 'old' input, gunakan itu
+                                    $isHandlingHotelSelected = in_array('hotel', $oldHandlingTypes);
+                                    $isHandlingPlaneSelected = in_array('bandara', $oldHandlingTypes);
+                                } else {
+                                    // Jika tidak ada 'old' input, cek dari data database
+                                    $isHandlingHotelSelected = !is_null($existingHotelHandling);
+                                    $isHandlingPlaneSelected = !is_null($existingPlaneHandling);
+                                }
+                            @endphp
                             <h6 class="detail-title"><i class="bi bi-briefcase"></i> Handling</h6>
                             <div style="clear: both;"></div>
 
@@ -1198,53 +1223,108 @@
                             <div class="form-group {{ $isHandlingHotelSelected ? '' : 'hidden' }}"
                                 id="hotel-handling-form">
                                 <input type="hidden" name="handling_hotel_id"
-                                    value="{{ $service->handlingHotel?->id }}">
+                                    value="{{ $existingHotelHandling?->id }}">
                                 <div class="form-row">
                                     <div class="form-col"><label class="form-label">Nama Hotel</label><input
                                             type="text" class="form-control" name="nama_hotel_handling"
-                                            value="{{ old('nama_hotel_handling', $service->handlingHotel?->nama) }}">
+                                            value="{{ old('nama_hotel_handling', $existingHotelHandling?->nama) }}">
                                     </div>
                                     <div class="form-col"><label class="form-label">Tanggal</label><input type="date"
                                             class="form-control" name="tanggal_hotel_handling"
-                                            value="{{ old('tanggal_hotel_handling', $service->handlingHotel?->tanggal?->format('Y-m-d')) }}">
+                                            value="{{ old('tanggal_hotel_handling', $existingHotelHandling?->tanggal?->format('Y-m-d')) }}">
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-col"><label class="form-label">Harga</label><input type="text"
                                             class="form-control" name="harga_hotel_handling"
-                                            value="{{ old('harga_hotel_handling', $service->handlingHotel?->harga) }}">
+                                            value="{{ old('harga_hotel_handling', $existingHotelHandling?->harga) }}">
                                     </div>
                                     <div class="form-col"><label class="form-label">Pax</label><input type="text"
                                             class="form-control" name="pax_hotel_handling"
-                                            value="{{ old('pax_hotel_handling', $service->handlingHotel?->pax) }}"></div>
+                                            value="{{ old('pax_hotel_handling', $existingHotelHandling?->pax) }}"></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <label class="form-label">Kode Booking</label>
+                                        <input type="file" class="form-control" name="kode_booking_hotel_handling">
+                                        @if ($existingHotelHandling?->kode_booking)
+                                            <small class="d-block mt-1">File saat ini:
+                                                <a href="{{ Storage::url($existingHotelHandling->kode_booking) }}"
+                                                    target="_blank">Lihat File</a>
+                                            </small>
+                                        @endif
+                                    </div>
+                                    <div class="form-col">
+                                        <label class="form-label">Rumlis</label>
+                                        <input type="file" class="form-control" name="rumlis_hotel_handling">
+                                        @if ($existingHotelHandling?->rumlis)
+                                            <small class="d-block mt-1">File saat ini:
+                                                <a href="{{ Storage::url($existingHotelHandling->rumlis) }}"
+                                                    target="_blank">Lihat File</a>
+                                            </small>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Identitas Koper</label>
+                                    <input type="file" class="form-control" name="identitas_hotel_handling">
+                                    @if ($existingHotelHandling?->identitas_koper)
+                                        <small class="d-block mt-1">File saat ini:
+                                            <a href="{{ Storage::url($existingHotelHandling->identitas_koper) }}"
+                                                target="_blank">Lihat File</a>
+                                        </small>
+                                    @endif
                                 </div>
                             </div>
                             <div class="form-group {{ $isHandlingPlaneSelected ? '' : 'hidden' }}"
                                 id="bandara-handling-form">
                                 <input type="hidden" name="handling_bandara_id"
-                                    value="{{ $service->handlingPlanes?->id }}">
+                                    value="{{ $existingPlaneHandling?->id }}">
                                 <div class="form-row">
                                     <div class="form-col"><label class="form-label">Nama Bandara</label><input
                                             type="text" class="form-control" name="nama_bandara_handling"
-                                            value="{{ old('nama_bandara_handling', $service->handlingPlanes?->nama_bandara) }}">
+                                            value="{{ old('nama_bandara_handling', $existingPlaneHandling?->nama_bandara) }}">
                                     </div>
                                     <div class="form-col"><label class="form-label">Jumlah Jamaah</label><input
                                             type="text" class="form-control" name="jumlah_jamaah_handling"
-                                            value="{{ old('jumlah_jamaah_handling', $service->handlingPlanes?->jumlah_jamaah) }}">
+                                            value="{{ old('jumlah_jamaah_handling', $existingPlaneHandling?->jumlah_jamaah) }}">
                                     </div>
                                     <div class="form-col"><label class="form-label">Harga</label><input type="text"
                                             class="form-control" name="harga_bandara_handling"
-                                            value="{{ old('harga_bandara_handling', $service->handlingPlanes?->harga) }}">
+                                            value="{{ old('harga_bandara_handling', $existingPlaneHandling?->harga) }}">
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-col"><label class="form-label">Kedatangan Jamaah</label><input
                                             type="date" class="form-control" name="kedatangan_jamaah_handling"
-                                            value="{{ old('kedatangan_jamaah_handling', $service->handlingPlanes?->kedatangan_jamaah?->format('Y-m-d')) }}">
+                                            value="{{ old('kedatangan_jamaah_handling', $existingPlaneHandling?->kedatangan_jamaah?->format('Y-m-d')) }}">
                                     </div>
                                     <div class="form-col"><label class="form-label">Nama Sopir</label><input
                                             type="text" class="form-control" name="nama_supir"
-                                            value="{{ old('nama_supir', $service->handlingPlanes?->nama_supir) }}"></div>
+                                            value="{{ old('nama_supir', $existingPlaneHandling?->nama_supir) }}"></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <label class="form-label">Paket Info</label>
+                                        <input type="file" class="form-control" name="paket_info">
+                                        @if ($existingPlaneHandling?->paket_info)
+                                            <small class="d-block mt-1">File saat ini:
+                                                <a href="{{ Storage::url($existingPlaneHandling->paket_info) }}"
+                                                    target="_blank">Lihat File</a>
+                                            </small>
+                                        @endif
+                                    </div>
+                                    <div class="form-col">
+                                        <label class="form-label">Identitas Koper</label>
+                                        <input type="file" class="form-control"
+                                            name="identitas_koper_bandara_handling">
+                                        @if ($existingPlaneHandling?->identitas_koper)
+                                            <small class="d-block mt-1">File saat ini:
+                                                <a href="{{ Storage::url($existingPlaneHandling->identitas_koper) }}"
+                                                    target="_blank">Lihat File</a>
+                                            </small>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>

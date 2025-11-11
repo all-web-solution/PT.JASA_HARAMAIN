@@ -1064,7 +1064,8 @@ class ServicesController extends Controller
             'hotels',
             'planes',
             'transportationItem',
-            'handlings',
+            'handlings.handlingHotels',
+            'handlings.handlingPlanes',
             'meals',
             'guides',
             'tours',
@@ -1284,37 +1285,139 @@ class ServicesController extends Controller
             }
 
             /* =====================================================
-             * 🏨 HANDLING HOTEL
+             * 🏨 HANDLING HOTEL & 🛬 HANDLING BANDARA
              * ===================================================== */
-            if ($request->filled('nama_hotel_handling')) {
-                $handling = HandlingHotel::find($request->handling_hotel_id) ?? new HandlingHotel();
-                $handling->updateOrCreate(
-                    ['id' => $request->handling_hotel_id],
-                    [
-                        'service_id' => $service->id,
+
+            if ($request->has('services') && in_array('handling', $request->services)) {
+
+                // (PERBAIKAN) Cek sub-item 'hotel'
+                if ($request->has('handlings') && in_array('hotel', $request->handlings)) {
+
+                    // Cari parent 'Handling' dulu, atau buat baru
+                    $handlingModel = $service->handlings()->firstOrCreate(['name' => 'hotel']);
+
+                    // Cari HandlingHotel, atau buat baru
+                    $handlingHotel = $handlingModel->handlingHotels()->first() ?? new HandlingHotel();
+
+                    // Siapkan data
+                    $hotelData = [
                         'nama' => $request->nama_hotel_handling,
                         'tanggal' => $request->tanggal_hotel_handling,
                         'harga' => $request->harga_hotel_handling,
                         'pax' => $request->pax_hotel_handling,
-                    ]
-                );
-            }
+                    ];
 
-            /* =====================================================
-             * 🛬 HANDLING BANDARA
-             * ===================================================== */
-            if ($request->filled('nama_bandara_handling')) {
-                HandlingPlanes::updateOrCreate(
-                    ['id' => $request->handling_bandara_id],
-                    [
-                        'service_id' => $service->id,
+                    // Handle file uploads
+                    if ($request->hasFile('kode_booking_hotel_handling')) {
+                        if ($handlingHotel->kode_booking) {
+                            Storage::disk('public')->delete($handlingHotel->kode_booking);
+                        }
+                        $hotelData['kode_booking'] = $request->file('kode_booking_hotel_handling')->store('handling/hotel', 'public');
+                    }
+                    if ($request->hasFile('rumlis_hotel_handling')) {
+                        if ($handlingHotel->rumlis) {
+                            Storage::disk('public')->delete($handlingHotel->rumlis);
+                        }
+                        $hotelData['rumlis'] = $request->file('rumlis_hotel_handling')->store('handling/hotel', 'public');
+                    }
+                    if ($request->hasFile('identitas_hotel_handling')) {
+                        if ($handlingHotel->identitas_koper) {
+                            Storage::disk('public')->delete($handlingHotel->identitas_koper);
+                        }
+                        $hotelData['identitas_koper'] = $request->file('identitas_hotel_handling')->store('handling/hotel', 'public');
+                    }
+
+                    // Simpan data
+                    $handlingModel->handlingHotels()->updateOrCreate(['id' => $handlingHotel->id], $hotelData);
+
+                } else {
+                    // 'hotel' tidak dicentang, hapus datanya
+                    $handlingModel = $service->handlings()->where('name', 'hotel')->first();
+                    if ($handlingModel) {
+                        // Hapus file terkait sebelum menghapus record
+                        if ($handlingModel->handlingHotels) {
+                            if ($handlingModel->handlingHotels->kode_booking)
+                                Storage::disk('public')->delete($handlingModel->handlingHotels->kode_booking);
+                            if ($handlingModel->handlingHotels->rumlis)
+                                Storage::disk('public')->delete($handlingModel->handlingHotels->rumlis);
+                            if ($handlingModel->handlingHotels->identitas_koper)
+                                Storage::disk('public')->delete($handlingModel->handlingHotels->identitas_koper);
+                        }
+                        $handlingModel->handlingHotels()->delete(); // Hapus child
+                        $handlingModel->delete(); // Hapus parent
+                    }
+                }
+
+                // Cek sub-item 'bandara'
+                if ($request->has('handlings') && in_array('bandara', $request->handlings)) {
+
+                    $handlingModel = $service->handlings()->firstOrCreate(['name' => 'bandara']);
+                    $handlingPlanes = $handlingModel->handlingPlanes()->first() ?? new HandlingPlanes();
+
+                    $planeData = [
                         'nama_bandara' => $request->nama_bandara_handling,
                         'jumlah_jamaah' => $request->jumlah_jamaah_handling,
                         'harga' => $request->harga_bandara_handling,
                         'kedatangan_jamaah' => $request->kedatangan_jamaah_handling,
                         'nama_supir' => $request->nama_supir,
-                    ]
-                );
+                    ];
+
+                    // Handle file uploads
+                    if ($request->hasFile('paket_info')) {
+                        if ($handlingPlanes->paket_info) {
+                            Storage::disk('public')->delete($handlingPlanes->paket_info);
+                        }
+                        $planeData['paket_info'] = $request->file('paket_info')->store('handling/bandara', 'public');
+                    }
+                    if ($request->hasFile('identitas_koper_bandara_handling')) {
+                        if ($handlingPlanes->identitas_koper) {
+                            Storage::disk('public')->delete($handlingPlanes->identitas_koper);
+                        }
+                        $planeData['identitas_koper'] = $request->file('identitas_koper_bandara_handling')->store('handling/bandara', 'public');
+                    }
+
+                    // Simpan data
+                    $handlingModel->handlingPlanes()->updateOrCreate(['id' => $handlingPlanes->id], $planeData);
+
+                } else {
+                    // 'bandara' tidak dicentang, hapus datanya
+                    $handlingModel = $service->handlings()->where('name', 'bandara')->first();
+                    if ($handlingModel) {
+                        // Hapus file terkait sebelum menghapus record
+                        if ($handlingModel->handlingPlanes) {
+                            if ($handlingModel->handlingPlanes->paket_info)
+                                Storage::disk('public')->delete($handlingModel->handlingPlanes->paket_info);
+                            if ($handlingModel->handlingPlanes->identitas_koper)
+                                Storage::disk('public')->delete($handlingModel->handlingPlanes->identitas_koper);
+                        }
+                        $handlingModel->handlingPlanes()->delete(); // Hapus child
+                        $handlingModel->delete(); // Hapus parent
+                    }
+                }
+
+            } else {
+                // 'handling' utama tidak dicentang, hapus semua
+                $service->handlings()->each(function ($handling) {
+                    // Hapus semua file terkait
+                    if ($handling->handlingHotels) {
+                        if ($handling->handlingHotels->kode_booking)
+                            Storage::disk('public')->delete($handling->handlingHotels->kode_booking);
+                        if ($handling->handlingHotels->rumlis)
+                            Storage::disk('public')->delete($handling->handlingHotels->rumlis);
+                        if ($handling->handlingHotels->identitas_koper)
+                            Storage::disk('public')->delete($handling->handlingHotels->identitas_koper);
+                    }
+                    if ($handling->handlingPlanes) {
+                        if ($handling->handlingPlanes->paket_info)
+                            Storage::disk('public')->delete($handling->handlingPlanes->paket_info);
+                        if ($handling->handlingPlanes->identitas_koper)
+                            Storage::disk('public')->delete($handling->handlingPlanes->identitas_koper);
+                    }
+
+                    $handling->handlingHotels()->delete();
+                    $handling->handlingPlanes()->delete();
+                    $handling->delete();
+                });
             }
 
             /* =====================================================
