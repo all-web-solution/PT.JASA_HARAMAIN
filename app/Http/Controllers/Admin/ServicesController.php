@@ -1607,18 +1607,42 @@ class ServicesController extends Controller
             }
 
             /* =====================================================
-             * 🗺️ TOUR
+             * 🗺️ TOUR - PERBAIKAN
              * ===================================================== */
-            if ($request->has('tour_id')) {
-                $tour = Tour::find($request->id_tour);
-                if ($tour && $request->has('tour_transport')) {
-                    foreach ($request->tour_transport as $transport) {
-                        $tour->update([
-                            'transportation_id' => $transport,
-                            'tour_id' => $request->tour_id,
-                        ]);
+            // Cek apakah service 'tour' (layanan utama) masih aktif
+            if ($request->has('services') && in_array('tour', $request->services)) {
+
+                // Ya, service aktif. Hapus semua data tour lama.
+                Tour::where('service_id', $service->id)->delete();
+
+                // Buat ulang data dari form, HANYA JIKA ada tour_id yang dikirim
+                // tour_id adalah array checkbox yang dicentang di view
+                if ($request->has('tour_id') && is_array($request->tour_id)) {
+
+                    // Loop SEMUA tour_id yang dicentang
+                    foreach ($request->tour_id as $tourItemId) {
+                        if (empty($tourItemId))
+                            continue; // Lewati jika ada nilai kosong
+
+                        // Ambil data transport & tanggal yang sesuai dari array asosiatif
+                        $transportId = $request->input("tour_transport.$tourItemId") ?? null;
+                        $tanggal = $request->input("tour_tanggal.$tourItemId") ?? null;
+
+                        // Hanya simpan jika tanggal diisi (sesuai logika 'create')
+                        if ($tanggal) {
+                            Tour::create([
+                                'service_id' => $service->id,
+                                'tour_id' => $tourItemId, // Ini adalah ID dari master tour_items
+                                'transportation_id' => $transportId,
+                                'tanggal_keberangkatan' => $tanggal,
+                            ]);
+                        }
                     }
                 }
+
+            } else {
+                // Tidak, service 'tour' di-uncheck. Hapus semua data tour.
+                Tour::where('service_id', $service->id)->delete();
             }
         });
 

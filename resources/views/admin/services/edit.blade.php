@@ -1557,6 +1557,12 @@
                                                 data-tour-id="{{ $tour->id }}"
                                                 data-trans-id="{{ $trans->id }}">
                                                 <div class="service-name">{{ $trans->nama }}</div>
+                                                <div class="service-desc">Kapasitas: {{ $trans->kapasitas ?? 'N/A' }}
+                                                </div>
+                                                <div class="service-desc">Fasilitas: {{ $trans->fasilitas ?? 'N/A' }}
+                                                </div>
+                                                <div class="service-desc">Harga: Rp {{ number_format($trans->harga) }}
+                                                </div>
                                                 <input type="radio" name="tour_transport[{{ $tour->id }}]"
                                                     value="{{ $trans->id }}" class="d-none"
                                                     {{ $selectedTourTransportId == $trans->id ? 'checked' : '' }}>
