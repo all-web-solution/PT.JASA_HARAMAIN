@@ -440,7 +440,6 @@
         $totalItems = $items->count();
 
         // Hitung item yang BELUM final (statusnya 'nego')
-        // PENTING: Asumsi semua item punya kolom 'status'
         $itemsBelumFinal = $items->where('status', 'nego')->count();
 
         // Hitung item yang SUDAH final (status BUKAN 'nego')
@@ -449,9 +448,24 @@
         // Tombol aktif JIKA SEMUA item sudah TIDAK 'nego' lagi
         $semuaFinal = $totalItems > 0 && $itemsBelumFinal === 0;
 
-        // Cek apakah order SUDAH PERNAH dihitung final
-        // PENTING: Asumsi tabel 'orders' punya kolom 'status_harga'
-        $hargaSudahFinal = $order->status_harga == 'final';
+        // --- LOGIKA BARU UNTUK KALKULASI TOTAL ---
+        // $orders adalah SEMUA tagihan (termasuk cicilan) untuk service_id ini
+
+        // 1. Total Tagihan Induk (ambil dari order paling LAMA)
+        $orderInduk = $orders->last(); // .last() karena controller sort by desc
+        $totalTagihanInduk = $orderInduk->total_amount_final ?? ($orderInduk->total_estimasi ?? 0);
+
+        // 2. Total Dibayar Akumulatif (jumlahkan semua pembayaran)
+        $totalDibayarAkumulatif = $orders->sum('total_yang_dibayarkan');
+
+        // 3. Sisa Hutang Saat Ini (ambil dari order paling BARU)
+        $orderAktif = $orders->first(); // .first() karena controller sort by desc
+        $sisaHutangSaatIni = $orderAktif->sisa_hutang ?? 0;
+        $statusPembayaranSaatIni = $orderAktif->status_pembayaran ?? 'estimasi';
+
+        // === PERBAIKAN DI SINI ===
+        // Cek status harga pada ORDER INDUK (Tagihan Pertama), bukan order saat ini
+        $hargaSudahFinal = $orderInduk->status_harga == 'final';
     @endphp
 
     <div class="service-list-container">
@@ -527,11 +541,14 @@
                     $statusClass = '';
                     if (in_array($status, ['lunas'])) {
                         $statusClass = 'badge-success';
-                    } elseif (in_array($status, ['belum_bayar', 'belum_lunas'])) {
+                    } elseif (in_array($status, ['belum_bayar'])) {
                         $statusClass = 'badge-danger';
+                    } elseif (in_array($status, ['belum_lunas'])) {
+                        $statusClass = 'badge-info';
                     } else {
+                        // 'estimasi'
                         $statusClass = 'badge-warning';
-                    } // 'estimasi'
+                    }
                 @endphp
                 <div class="stats-grid">
                     <div class="info-card">
@@ -540,11 +557,12 @@
                             <div class="info-item">
                                 <span class="label">Total Amount (Final)</span>
                                 <span class="value value-large">Rp
-                                    {{ number_format($order->total_amount_final ?? 0, 0, ',', '.') }}</span>
+                                    {{ number_format($totalTagihanInduk, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Total Estimasi (Awal)</span>
-                                <span class="value">Rp {{ number_format($order->total_estimasi ?? 0, 0, ',', '.') }}</span>
+                                <span class="value">Rp
+                                    {{ number_format($orderInduk->total_estimasi ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
@@ -554,7 +572,7 @@
                             <div class="info-item">
                                 <span class="label">Sudah Dibayar</span>
                                 <span class="value value-large">Rp
-                                    {{ number_format($order->total_yang_dibayarkan ?? 0, 0, ',', '.') }}</span>
+                                    {{ number_format($totalDibayarAkumulatif ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
@@ -564,7 +582,7 @@
                             <div class="info-item">
                                 <span class="label">Sisa Hutang</span>
                                 <span class="value value-large">Rp
-                                    {{ number_format($order->sisa_hutang ?? 0, 0, ',', '.') }}</span>
+                                    {{ number_format($sisaHutangSaatIni ?? 0, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Status Pembayaran</span>
