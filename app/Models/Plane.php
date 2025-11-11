@@ -16,7 +16,10 @@ class Plane extends Model
         'visa',
         'tiket_berangkat',
         'tiket_pulang',
-        'jumlah_jamaah'
+        'jumlah_jamaah',
+        'status',
+        'harga_dasar',
+        'harga_jual'
     ];
 
     public function service(){

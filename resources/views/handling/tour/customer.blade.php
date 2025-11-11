@@ -1,7 +1,9 @@
 @extends('admin.master')
-@section('title', 'Customer Tour')
+@section('title', 'Daftar Order Tour Customer')
+
 @push('styles')
     <style>
+        /* == CSS Dari Referensi 'index dokumen' == */
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;
@@ -12,9 +14,16 @@
             --border-color: #d1e0f5;
             --hover-bg: #f0f7ff;
             --background-light: #f8fafd;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-bg: rgba(40, 167, 69, 0.1);
+            --warning-bg: rgba(255, 193, 7, 0.1);
+            --danger-bg: rgba(220, 53, 69, 0.1);
+            --primary-bg: var(--haramain-light);
         }
 
-        .customer-tour-container {
+        .service-list-container {
             max-width: 100vw;
             margin: 0 auto;
             padding: 2rem;
@@ -53,19 +62,15 @@
             color: var(--haramain-secondary);
         }
 
-        .card-body {
-            padding: 2rem;
-        }
-
+        /* Table Styles */
         .table-responsive {
-            overflow-x: auto;
+            padding: 0 1.5rem 1.5rem;
         }
 
         .table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0 0.75rem;
-            margin-top: -0.75rem;
         }
 
         .table thead th {
@@ -74,7 +79,8 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
-            text-align: left;
+            text-align: center;
+            /* Sesuai referensi */
             white-space: nowrap;
         }
 
@@ -93,7 +99,8 @@
         .table tbody td {
             padding: 1.25rem;
             vertical-align: middle;
-            border: 1px solid transparent;
+            text-align: center;
+            /* Sesuai referensi */
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -109,55 +116,207 @@
             border-top-right-radius: 8px;
             border-bottom-right-radius: 8px;
         }
+
+        /* Action Buttons */
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.25rem;
+            transition: all 0.3s ease;
+            border: none;
+            background-color: transparent;
+        }
+
+        .btn-action:hover {
+            background-color: var(--haramain-light);
+        }
+
+        .btn-action i {
+            font-size: 1rem;
+        }
+
+        .btn-edit {
+            color: var(--haramain-secondary);
+        }
+
+        .btn-view {
+            color: var(--text-secondary);
+        }
+
+        .btn-delete {
+            color: var(--danger-color);
+        }
+
+        /* Badge Status */
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: capitalize;
+        }
+
+        .badge-success {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+        }
+
+        .badge-warning {
+            background-color: var(--warning-bg);
+            color: var(--warning-color);
+        }
+
+        .badge-danger {
+            background-color: var(--danger-bg);
+            color: var(--danger-color);
+        }
+
+        .badge-primary {
+            background-color: var(--primary-bg);
+            color: var(--haramain-secondary);
+        }
+
+        /* Pagination */
+        .pagination-container {
+            padding: 0 1.5rem 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--haramain-secondary);
+            border-color: var(--haramain-secondary);
+        }
+
+        .pagination .page-link {
+            color: var(--haramain-primary);
+            border-radius: 8px;
+            margin: 0 0.25rem;
+            border: 1px solid var(--border-color);
+        }
     </style>
 @endpush
 
 @section('content')
-    <div class="customer-tour-container">
+    <div class="service-list-container">
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-geo-alt-fill"></i> Customer Tour List
+                    {{-- Ganti Icon dan Judul --}}
+                    <i class="bi bi-map-fill"></i>Daftar Order Tour
                 </h5>
+                {{-- <a href="{{ route('tour.create') }}" class="btn-add-new">...</a> --}}
             </div>
 
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nama Customer</th>
+            {{-- Ganti padding <table> dari referensi --}}
+            <div class.table-responsive" style="padding: 0 1.5rem 1.5rem;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Travel</th>
+                            <th>Nama Tour</th>
+                            <th>Transportasi</th>
+                            <th>Tgl Keberangkatan</th>
+                            <th>Supplier</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{-- Ganti variabel $tours menjadi $tours --}}
+                        @forelse ($tours as $tour)
+                            {{-- $tour adalah instance dari Model Tour --}}
 
-                                <th>Aksi</th>
+                            @php
+                                $status = strtolower($tour->status);
+                                $statusClass = '';
+                                if (in_array($status, ['done', 'deal'])) {
+                                    $statusClass = 'badge-success';
+                                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan'])) {
+                                    $statusClass = 'badge-warning';
+                                } elseif (in_array($status, ['cancelled', 'batal'])) {
+                                    $statusClass = 'badge-danger';
+                                } else {
+                                    $statusClass = 'badge-primary';
+                                }
+                            @endphp
+
+                            <tr>
+                                {{-- Nomor Paginasi --}}
+                                <td>{{ ($tours->currentPage() - 1) * $tours->perPage() + $loop->iteration }}</td>
+
+                                {{-- Kolom Nama Pelanggan --}}
+                                <td>
+                                    {{ $tour->service?->pelanggan?->nama_travel ?? 'N/A' }}
+                                </td>
+
+                                {{-- Kolom Nama Tour --}}
+                                <td>{{ $tour->tourItem?->name ?? 'N/A' }}</td>
+
+                                {{-- Kolom Transportasi --}}
+                                <td>{{ $tour->transportation?->nama ?? '-' }}</td>
+
+                                {{-- Kolom Tanggal Keberangkatan --}}
+                                <td>{{ \Carbon\Carbon::parse($tour->tanggal_keberangkatan)->isoFormat('D MMM Y') }}</td>
+
+                                {{-- Kolom Harga Jual --}}
+                                <td>{{ $tour->supplier ?? '-        ' }}</td>
+
+                                {{-- Kolom Status --}}
+                                <td>
+                                    <span class="badge {{ $statusClass }}">{{ $tour->status }}</span>
+                                </td>
+
+                                {{-- Kolom Aksi --}}
+                                <td>
+                                    {{-- Ganti 'tour.show' & 'tour.edit' dengan nama route Anda --}}
+                                    <a href="{{ route('tour.customer.show', $tour->id) }}" class="btn-action btn-view"
+                                        title="View">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($tours as $serviceId => $group)
-                                @php
-                                    $firstTour = $group->first();
-                                    $service = $firstTour->service;
-                                    $pelanggan = $service?->pelanggan;
-                                @endphp
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $pelanggan->nama_travel ?? '-' }}</td>
-                                    <td>
-                                        <a href="{{ route('tour.customer.show', $firstTour->id) }}">
-                                            <button class="btn btn-primary btn-sm">
-                                                <i class="bi bi-eye"></i> Lihat Detail
-                                            </button>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="text-center py-4">Belum ada data customer tour.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                        @empty
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 2rem;">
+                                    Tidak ada data order tour ditemukan.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {{-- Previous Page Link --}}
+                        <li class="page-item {{ $tours->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $tours->previousPageUrl() ?? '#' }}" tabindex="-1">&laquo;</a>
+                        </li>
+
+                        {{-- Page Number Links --}}
+                        @foreach ($tours->getUrlRange(1, $tours->lastPage()) as $page => $url)
+                            <li class="page-item {{ $tours->currentPage() == $page ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        <li class="page-item {{ !$tours->hasMorePages() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $tours->nextPageUrl() ?? '#' }}">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

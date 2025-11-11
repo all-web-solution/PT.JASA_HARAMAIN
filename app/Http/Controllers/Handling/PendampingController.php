@@ -86,6 +86,43 @@ class PendampingController extends Controller
         return view('handling.pendamping.detail', compact('service'));
     }
 
+    public function editGuideOrder(Guide $guide)
+    {
+        // $guide adalah instance Guide yang ingin diedit,
+        // otomatis ditemukan oleh Route Model Binding
+
+        // Ambil data untuk dropdowns
+        $services = Service::with('pelanggan')->get();
+        $guideItems = GuideItems::all();
+        $statuses = ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'];
+
+        return view('handling.pendamping.customer_edit', compact(
+            'guide',
+            'services',
+            'guideItems',
+            'statuses'
+        ));
+    }
+
+    public function updateGuideOrder(Request $request, Guide $guide)
+    {
+        // Validasi data berdasarkan model Guide
+        $validatedData = $request->validate([
+            'keterangan' => 'nullable|string',
+            'supplier' => 'nullable|string|max:255',
+            'harga_dasar' => 'nullable|numeric|min:0',
+            'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
+            'status' => 'required|in:nego,deal,batal,tahap persiapan,tahap produksi,done',
+        ]);
+
+        // Update data guide
+        $guide->update($validatedData);
+
+        Session::flash('success', 'Order pendamping berhasil diperbarui.');
+
+        return redirect()->route('pendamping.customer.show', $guide->service_id);
+    }
+
     public function showSupplier($id)
     {
         $guide = Guide::findOrFail($id);

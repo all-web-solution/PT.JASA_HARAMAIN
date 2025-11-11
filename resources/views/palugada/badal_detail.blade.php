@@ -1,109 +1,416 @@
 @extends('admin.master')
+@section('title', 'Detail Order Badal')
+
+@push('styles')
+    <style>
+        /* == CSS UTAMA (Disalin dari style referensi) == */
+        :root {
+            --haramain-primary: #1a4b8c;
+            --haramain-secondary: #2a6fdb;
+            --haramain-light: #e6f0fa;
+            --haramain-accent: #3d8bfd;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border-color: #d1e0f5;
+            --hover-bg: #f0f7ff;
+            --background-light: #f8fafd;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-bg: rgba(40, 167, 69, 0.1);
+            --warning-bg: rgba(255, 193, 7, 0.1);
+            --danger-bg: rgba(220, 53, 69, 0.1);
+            --primary-bg: var(--haramain-light);
+        }
+
+        .service-list-container {
+            max-width: 100vw;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--background-light);
+            min-height: 100vh;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--haramain-primary);
+            margin: 0;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title .title-text {
+            font-weight: 600;
+            color: var(--haramain-primary);
+        }
+
+        .card-title .subtitle-text {
+            font-weight: 400;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            border-left: 2px solid var(--border-color);
+            padding-left: 10px;
+            margin-left: 2px;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: var(--haramain-secondary);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Tombol Aksi */
+        .btn-action,
+        .btn-secondary {
+            background-color: var(--haramain-secondary);
+            color: white;
+            border-radius: 8px;
+            padding: 0.625rem 1.25rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-action:hover {
+            background-color: var(--haramain-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--hover-bg);
+            border-color: var(--haramain-secondary);
+            color: var(--haramain-secondary);
+        }
+
+        /* == DESAIN GRID == */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--haramain-primary);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-card-title i {
+            color: var(--haramain-secondary);
+        }
+
+        .info-card .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex-grow: 1;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.9rem;
+        }
+
+        .info-item .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-item .value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: capitalize;
+            word-break: break-word;
+        }
+
+        .info-item .status-value {
+            margin-top: 0.25rem;
+        }
+
+        .customer-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+        }
+
+        /* Badge Status */
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: capitalize;
+        }
+
+        .badge-success {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+        }
+
+        .badge-warning {
+            background-color: var(--warning-bg);
+            color: var(--warning-color);
+        }
+
+        .badge-danger {
+            background-color: var(--danger-bg);
+            color: var(--danger-color);
+        }
+
+        .badge-primary {
+            background-color: var(--primary-bg);
+            color: var(--haramain-secondary);
+        }
+
+        /* Media Query */
+        @media (max-width: 992px) {
+
+            .stats-grid,
+            .customer-info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .service-list-container {
+                padding: 1rem;
+            }
+
+            .stats-grid,
+            .customer-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .card-header div:last-child {
+                display: flex;
+                width: 100%;
+                gap: 0.75rem;
+            }
+
+            .btn-action,
+            .btn-secondary {
+                flex-grow: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+@endpush
+
 @section('content')
+    <div class="service-list-container">
 
-<div class="container mt-4">
-    <h2 class="mb-4">Detail Customer Terkait</h2>
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">Informasi Customer</h5>
-        </div>
-        <div class="card-body">
-            {{-- BAGIAN INI: Gunakan variabel $service --}}
-            <dl class="row g-3">
-                <dt class="col-sm-3">ID Service</dt>
-                <dd class="col-sm-9">: {{ $service->unique_code }}</dd>
+        {{-- Asumsi Controller mengirim variabel $badal (Model Badal) --}}
 
-                <dt class="col-sm-3">Nama Travel</dt>
-                <dd class="col-sm-9">: {{ $service->pelanggan->nama_travel }}</dd>
-
-                <dt class="col-sm-3">Penanggung Jawab</dt>
-                <dd class="col-sm-9">: {{ $service->pelanggan->penanggung_jawab }}</dd>
-
-                <dt class="col-sm-3">Alamat</dt>
-                <dd class="col-sm-9">: {{ $service->pelanggan->alamat }}</dd>
-
-                <dt class="col-sm-3">Email</dt>
-                <dd class="col-sm-9">: {{ $service->pelanggan->email }}</dd>
-
-                <dt class="col-sm-3">Kontak</dt>
-                <dd class="col-sm-9">: {{ $service->pelanggan->phone }}</dd>
-
-                <dt class="col-sm-3">Nomor KTP</dt>
-                <dd class="col-sm-9">: {{ $service->pelanggan->no_ktp }}</dd>
-
-                <dt class="col-sm-3">Produk/Layanan</dt>
-                <dd class="col-sm-9">: {{ $service->services }}</dd>
-
-                <dt class="col-sm-3">Status Customer</dt>
-                <dd class="col-sm-9">
-                    @php
-                        // Ganti 'status' dengan field yang sesuai
-                        $status = $service->pelanggan->status ?? 'Aktif';
-                        $badgeClass = $status === 'Aktif' ? 'bg-success' : 'bg-secondary';
-                    @endphp
-                    : <span class="badge {{ $badgeClass }}">{{ $status }}</span>
-                </dd>
-            </dl>
-        </div>
-    </div>
-
-    <h2 class="mb-4 mt-5">Daftar Badal untuk Service ini</h2>
-
-    {{--
-        BAGIAN INI: Loop menggunakan $semuaItemBadal.
-        $item sekarang adalah satu objek Badal (bukan string).
-        Anda harus memanggil field/property-nya (misal: $item->nama_dibadalkan, $item->jumlah, dll)
-    --}}
-    @forelse ($semuaItemBadal as $item)
-        <div class="card mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="bi bi-person-badge"></i>
+                    <span class="title-text">Detail Customer</span>
+                </h5>
+                <a href="{{ route('palugada.badal') }}" class="btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Kembali
+                </a>
+            </div>
             <div class="card-body">
-
-                {{-- Ganti 'nama_dibadalkan' dengan field yang sesuai di tabel badal Anda --}}
-                <h5 class="card-title">{{ $item->nama_dibadalkan ?? 'Data Badal' }}</h5>
-
-                <dl class="row">
-
-                    {{-- Ganti 'jumlah' dengan field yang sesuai --}}
-                    <dt class="col-sm-3">Nama badal</dt>
-                    <dd class="col-sm-9">: {{ $item->name ?? "Belum ada nama" }}</dd>
-                    <dt class="col-sm-3">Harga badal</dt>
-                    <dd class="col-sm-9">: {{ $item->price ?? 0 }}</dd>
-
-                    {{-- Ganti 'tanggal_pelaksanaan' dengan field yang sesuai --}}
-                    <dt class="col-sm-3">Tanggal pelaksanaan</dt>
-                    <dd class="col-sm-9">: {{ $item->tanggal_pelaksanaan ? \Carbon\Carbon::parse($item->tanggal_pelaksanaan)->format('d M Y') : '-' }}</dd>
-
-                    {{-- Ganti 'status' dengan field yang sesuai --}}
-                    <dt class="col-sm-3">Status Item</dt>
-                    <dd class="col-sm-9">
-                        @php
-                            $itemStatus = $item->status ?? 'Pending'; // Ambil dari field 'status'
-                            $itemBadge = 'bg-secondary';
-                            if ($itemStatus === 'Completed' || $itemStatus === 'Selesai') $itemBadge = 'bg-success';
-                            if ($itemStatus === 'Pending' || $itemStatus === 'Proses') $itemBadge = 'bg-warning text-dark';
-                        @endphp
-                        : <span class="badge {{ $itemBadge }}">{{ $itemStatus }}</span>
-                    </dd>
-                    {{-- Ganti 'status' dengan field yang sesuai --}}
-                    <dt class="col-sm-3">Supplier </dt>
-                    <dd class="col-sm-9">
-                        :
-                        <a href="{{ route('palugada.badal.supplier.show', $item->id) }}">
-                            <span class="badge bg-warning text-dark">
-                                Supplier
-                            </span>
-                        </a>
-
-                    </dd>
-
-                </dl>
+                @if ($badal->service?->pelanggan)
+                    @php
+                        $service = $badal->service;
+                        $pelanggan = $service->pelanggan;
+                    @endphp
+                    <div class="customer-info-grid">
+                        <div class="info-item">
+                            <span class="label">Nama Travel</span>
+                            <span class="value">{{ $pelanggan->nama_travel ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Penanggung Jawab</span>
+                            <span class="value">{{ $pelanggan->penanggung_jawab ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Nomor Telepon</span>
+                            <span class="value">{{ $pelanggan->phone ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Email</span>
+                            <span class="value">{{ $pelanggan->email ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Tanggal Keberangkatan (Service)</span>
+                            <span
+                                class="value">{{ \Carbon\Carbon::parse($service->tanggal_keberangkatan)->isoFormat('D MMM YYYY') }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Tanggal Kepulangan (Service)</span>
+                            <span
+                                class="value">{{ \Carbon\Carbon::parse($service->tanggal_kepulangan)->isoFormat('D MMM YYYY') }}</span>
+                        </div>
+                    </div>
+                @else
+                    <p style="color: var(--text-secondary); text-align: center; padding: 1rem;">
+                        Data customer atau service tidak terhubung.
+                    </p>
+                @endif
             </div>
         </div>
-    @empty
-        <div class="alert alert-info">
-            Belum ada data badal yang dipilih untuk service ini.
-        </div>
-    @endforelse
 
-</div>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="bi bi-person-check-fill"></i>
+                    <div>
+                        <span class="title-text">Detail Order Badal: {{ $badal->name }}</span>
+                    </div>
+                </h5>
+                <a href="{{ route('badal.edit', $badal->id) }}" class="btn-action">
+                    <i class="bi bi-pencil-fill"></i>
+                    Edit
+                </a>
+            </div>
+
+            {{-- Logika Badge Status --}}
+            @php
+                $status = strtolower($badal->status);
+                $statusClass = '';
+                if (in_array($status, ['done', 'deal'])) {
+                    $statusClass = 'badge-success';
+                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan'])) {
+                    $statusClass = 'badge-warning';
+                } elseif (in_array($status, ['cancelled', 'batal'])) {
+                    $statusClass = 'badge-danger';
+                } else {
+                    $statusClass = 'badge-primary';
+                }
+            @endphp
+
+            <div class="card-body">
+
+                <div class="stats-grid">
+
+                    <div class="info-card">
+                        <h6 class="info-card-title"><i class="bi bi-info-circle-fill"></i> Info Order</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Nama (yang dibadalkan)</span>
+                                <span class="value">{{ $badal->name }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Tanggal Pelaksanaan</span>
+                                <span class="value"
+                                    style="text-transform: none;">{{ \Carbon\Carbon::parse($badal->tanggal_pelaksanaan)->isoFormat('dddd, D MMMM Y') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Status</span>
+                                <span class="value status-value">
+                                    <span class="badge {{ $statusClass }}">{{ $badal->status }}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h6 class="info-card-title"><i class="bi bi-cash-coin"></i> Info Finansial</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Supplier</span>
+                                <span class="value">{{ $badal->supplier ?? '-' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Harga Dasar</span>
+                                <span class="value">Rp {{ number_format($badal->harga_dasar ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Harga Jual</span>
+                                <span class="value">Rp {{ number_format($badal->harga_jual ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Profit</span>
+                                <span class="value" style="color: var(--success-color);">
+                                    Rp
+                                    {{ number_format(($badal->harga_jual ?? 0) - ($badal->harga_dasar ?? 0), 0, ',', '.') }}
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Harga (Lama/Estimasi)</span>
+                                <span class="value">Rp {{ number_format($badal->price ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection

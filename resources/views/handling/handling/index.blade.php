@@ -76,7 +76,7 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
-            text-align: left;
+            text-align: center;
             white-space: nowrap;
             text-transform: uppercase;
             font-size: 0.8rem;
@@ -98,6 +98,7 @@
         .table tbody td {
             padding: 1.25rem;
             vertical-align: middle;
+            text-align: center;
             border: 1px solid transparent;
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
@@ -153,12 +154,14 @@
                                     <td>{{ $plane->handling->service->pelanggan->nama_travel ?? '-' }}</td>
                                     <td>{{ $plane->nama_bandara }}</td>
                                     <td>{{ $plane->jumlah_jamaah }}</td>
-                                    <td>Rp {{ $plane->harga }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($plane->kedatangan_jamaah)->translatedFormat('l, d F Y') }}
+                                    <td>{{ $plane->harga }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($plane->kedatangan_jamaah)->translatedFormat('d F Y') }}
                                     </td>
                                     <td>
-                                        <a href="{{ route('handling.handling.plane.show', $plane->id) }}"
-                                            class="btn btn-info btn-sm">Detail</a>
+                                        <a
+                                            href="{{ route('handling.handling.plane.show', $plane->id) }}"class="btn btn-info btn-sm">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @empty

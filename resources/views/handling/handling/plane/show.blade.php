@@ -1,87 +1,503 @@
 @extends('admin.master')
-@section('title', 'Detail Handling Pesawat') {{-- Changed title for better context --}}
-@section('content')
+@section('title', 'Detail Handling Pesawat')
 
-    <div class="plane-handling-container p-4"> {{-- Added some padding class --}}
-        <div class="card shadow-sm"> {{-- Added shadow for better visual separation --}}
-            <div class="card-header bg-primary text-white"> {{-- Added color for a prominent header --}}
-                <h2 class="card-title mb-0"> {{-- Removed bottom margin for tight fit --}}
-                    <i class="fas fa-plane me-2"></i> {{-- Added margin to the right of the icon --}}
-                    Detail Handling Pesawat - {{ $plane->handling->service->pelanggan->nama_pelanggan }}
-                </h2>
+@push('styles')
+    <style>
+        /* == CSS UTAMA (Disalin dari style referensi) == */
+        :root {
+            --haramain-primary: #1a4b8c;
+            --haramain-secondary: #2a6fdb;
+            --haramain-light: #e6f0fa;
+            --haramain-accent: #3d8bfd;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border-color: #d1e0f5;
+            --hover-bg: #f0f7ff;
+            --background-light: #f8fafd;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-bg: rgba(40, 167, 69, 0.1);
+            --warning-bg: rgba(255, 193, 7, 0.1);
+            --danger-bg: rgba(220, 53, 69, 0.1);
+            --primary-bg: var(--haramain-light);
+        }
+
+        .service-list-container {
+            max-width: 100vw;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--background-light);
+            min-height: 100vh;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--haramain-primary);
+            margin: 0;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title .title-text {
+            font-weight: 600;
+            color: var(--haramain-primary);
+        }
+
+        .card-title .subtitle-text {
+            font-weight: 400;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            border-left: 2px solid var(--border-color);
+            padding-left: 10px;
+            margin-left: 2px;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: var(--haramain-secondary);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Tombol Aksi */
+        .btn-action,
+        .btn-secondary {
+            background-color: var(--haramain-secondary);
+            color: white;
+            border-radius: 8px;
+            padding: 0.625rem 1.25rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-action:hover {
+            background-color: var(--haramain-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--hover-bg);
+            border-color: var(--haramain-secondary);
+            color: var(--haramain-secondary);
+        }
+
+        /* == DESAIN GRID == */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--haramain-primary);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-card-title i {
+            color: var(--haramain-secondary);
+        }
+
+        .info-card .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex-grow: 1;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.9rem;
+        }
+
+        .info-item .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-item .value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: capitalize;
+            word-break: break-word;
+            /* Mencegah email/teks panjang overflow */
+        }
+
+        .info-item .status-value {
+            margin-top: 0.25rem;
+        }
+
+        /* Grid Info Customer (dari snippet Anda) */
+        .customer-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+        }
+
+        /* Badge Status */
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: capitalize;
+        }
+
+        .badge-success {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+        }
+
+        .badge-warning {
+            background-color: var(--warning-bg);
+            color: var(--warning-color);
+        }
+
+        .badge-danger {
+            background-color: var(--danger-bg);
+            color: var(--danger-color);
+        }
+
+        .badge-primary {
+            background-color: var(--primary-bg);
+            color: var(--haramain-secondary);
+        }
+
+        /* == CSS TAMBAHAN UNTUK FOTO == */
+        .image-gallery {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .image-item {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .image-item .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 4px;
+            background-color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .image-item img:hover {
+            transform: scale(1.05);
+        }
+
+        .image-item .no-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            background-color: var(--hover-bg);
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* Media Query */
+        @media (max-width: 992px) {
+
+            .stats-grid,
+            .customer-info-grid {
+                grid-template-columns: 1fr 1fr;
+                /* 2 kolom di tablet */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .service-list-container {
+                padding: 1rem;
+            }
+
+            .stats-grid,
+            .customer-info-grid {
+                grid-template-columns: 1fr;
+                /* 1 kolom di HP */
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .card-header div:last-child {
+                display: flex;
+                width: 100%;
+                gap: 0.75rem;
+            }
+
+            .btn-action,
+            .btn-secondary {
+                flex-grow: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+@endpush
+
+@section('content')
+    <div class="service-list-container">
+
+        {{-- Asumsi Controller mengirim variabel $plane (HandlingPlanes) --}}
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="bi bi-person-badge"></i>
+                    <span class="title-text">Detail Customer</span>
+                </h5>
+                <a href="{{ route('handling.handling.index') }}" class="btn-secondary"> {{-- Ganti # dengan route index handling pesawat --}}
+                    <i class="bi bi-arrow-left"></i> Kembali
+                </a>
             </div>
             <div class="card-body">
-                <div class="table-responsive"> {{-- Added responsive wrapper for better mobile view --}}
-                    <table class="table table-bordered table-striped"> {{-- Added table-striped for better readability --}}
-                        <tbody>
-                            <tr>
-                                <th style="width: 30%;">Nama Bandara</th>
-                                <td>{{ $plane->nama_bandara }}</td>
-                            </tr>
-                            <tr>
-                                <th>Jumlah Jamaah</th>
-                                <td>{{ number_format($plane->jumlah_jamaah, 0, ',', '.') }} orang</td> {{-- Formatted number --}}
-                            </tr>
-                            <tr>
-                                <th>Harga</th>
-                                <td>
-                                    Rp {{ $plane->harga }} {{-- Correctly formatted as Indonesian Rupiah --}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Kedatangan Jamaah</th>
-                                {{-- Assuming Carbon is available and $plane->kedatangan_jamaah is a valid date/datetime --}}
-                                <td>{{ \Carbon\Carbon::parse($plane->kedatangan_jamaah)->translatedFormat('l, d F Y') }}</td>
-                            </tr>
-                            <tr>
-                                <th>Nama Supir</th>
-                                <td>{{ $plane->nama_supir }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <a href="{{ route('handling.handling.index') }}" class="btn btn-secondary mt-3">
-                    <i class="fas fa-arrow-left me-2"></i> Kembali
-                </a>
+                {{-- Controller Anda sudah me-load 'handling.service.pelanggan' --}}
+                @if ($plane->handling?->service?->pelanggan)
+                    @php
+                        $service = $plane->handling->service;
+                        $pelanggan = $service->pelanggan;
+                    @endphp
+                    <div class="customer-info-grid">
+                        <div class="info-item">
+                            <span class="label">Nama Travel</span>
+                            <span class="value">{{ $pelanggan->nama_travel ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Penanggung Jawab</span>
+                            <span class="value">{{ $pelanggan->penanggung_jawab ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Nomor Telepon</span>
+                            <span class="value">{{ $pelanggan->phone ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">ID Service</span>
+                            <span class="value">{{ $service->unique_code ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Tanggal Keberangkatan</span>
+                            <span
+                                class="value">{{ \Carbon\Carbon::parse($service->tanggal_keberangkatan)->isoFormat('D MMM YYYY') }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Tanggal Kepulangan</span>
+                            <span
+                                class="value">{{ \Carbon\Carbon::parse($service->tanggal_kepulangan)->isoFormat('D MMM YYYY') }}</span>
+                        </div>
+                    </div>
+                @else
+                    <p style="color: var(--text-secondary); text-align: center; padding: 1rem;">
+                        Data customer atau service tidak terhubung.
+                    </p>
+                @endif
             </div>
         </div>
 
-        ---
-
-        <div class="card mt-4 shadow-sm">
+        <div class="card">
             <div class="card-header">
-                <h3 class="card-title mb-0">Dokumentasi</h3>
+                <h5 class="card-title">
+                    <i class="bi bi-airplane-fill"></i>
+                    <div>
+                        <span class="title-text">Detail Handling Pesawat</span>
+                    </div>
+                </h5>
+                <a href="{{ route('handling.pesawat.edit', $plane->id) }}" class="btn-action"> {{-- Ganti # dengan route edit handling pesawat --}}
+                    <i class="bi bi-pencil-fill"></i>
+                    Edit
+                </a>
             </div>
+
+            {{-- Logika Badge Status --}}
+            @php
+                $status = strtolower($plane->status);
+                $statusClass = '';
+                if (in_array($status, ['done', 'deal'])) {
+                    $statusClass = 'badge-success';
+                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan'])) {
+                    $statusClass = 'badge-warning';
+                } elseif (in_array($status, ['cancelled', 'batal'])) {
+                    $statusClass = 'badge-danger';
+                } else {
+                    $statusClass = 'badge-primary';
+                }
+            @endphp
+
             <div class="card-body">
-                <div class="row">
-                    {{-- Foto Paket Info Section --}}
-                    <div class="col-md-6 mb-3"> {{-- Use col-md-6 for two columns on medium screens and up --}}
-                        <div class="form-group">
-                            <label class="form-label fw-bold">Foto Paket Info</label> {{-- Added fw-bold for emphasis --}}
-                            @if ($plane->paket_info)
-                                <a href="{{ url('storage/' . $plane->paket_info) }}" target="_blank"> {{-- Made image a link to view full size --}}
-                                    <img src="{{ url('storage/' . $plane->paket_info) }}" alt="Foto Paket Info" class="img-fluid border rounded" style="max-height: 300px; object-fit: cover; width: 100%;"> {{-- Added style for max height and border --}}
-                                </a>
-                            @else
-                                <p class="text-muted">No Image Available</p> {{-- Changed to <p> for better styling --}}
-                            @endif
+                <div class="stats-grid">
+
+                    <div class="info-card">
+                        <h6 class="info-card-title"><i class="bi bi-info-circle-fill"></i> Info Handling</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Nama Bandara</span>
+                                <span class="value">{{ $plane->nama_bandara }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Kedatangan Jamaah</span>
+                                <span class="value"
+                                    style="text-transform: none;">{{ \Carbon\Carbon::parse($plane->kedatangan_jamaah)->isoFormat('dddd, D MMMM Y') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Jumlah Jamaah</span>
+                                <span class="value">{{ $plane->jumlah_jamaah }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Nama Supir</span>
+                                <span class="value">{{ $plane->nama_supir ?? '-' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Status</span>
+                                <span class="value status-value">
+                                    <span class="badge {{ $statusClass }}">{{ $plane->status }}</span>
+                                </span>
+                            </div>
                         </div>
                     </div>
 
-                    {{-- Identitas Koper Section --}}
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <label class="form-label fw-bold">Identitas Koper</label>
-                            @if ($plane->identitas_koper)
-                                <a href="{{ url('storage/' . $plane->identitas_koper) }}" target="_blank"> {{-- Made image a link to view full size --}}
-                                    <img src="{{ url('storage/' . $plane->identitas_koper) }}" alt="Identitas Koper" class="img-fluid border rounded" style="max-height: 300px; object-fit: cover; width: 100%;">
-                                </a>
-                            @else
-                                <p class="text-muted">No Image Available</p>
-                            @endif
+                    <div class="info-card">
+                        <h6 class="info-card-title"><i class="bi bi-images"></i> Foto Dokumen</h6>
+                        <div class="content">
+                            <div class="image-gallery">
+                                <div class="image-item">
+                                    <span class="label">Foto Paket Info</span>
+                                    @if ($plane->paket_info)
+                                        <a href="{{ url('storage/' . $plane->paket_info) }}" target="_blank">
+                                            <img src="{{ url('storage/' . $plane->paket_info) }}" alt="Paket Info">
+                                        </a>
+                                    @else
+                                        <div class="no-image">No Image</div>
+                                    @endif
+                                </div>
+                                <div class="image-item">
+                                    <span class="label">Identitas Koper</span>
+                                    @if ($plane->identitas_koper)
+                                        <a href="{{ url('storage/' . $plane->identitas_koper) }}" target="_blank">
+                                            <img src="{{ url('storage/' . $plane->identitas_koper) }}"
+                                                alt="Identitas Koper">
+                                        </a>
+                                    @else
+                                        <div class="no-image">No Image</div>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="info-card">
+                        <h6 class="info-card-title"><i class="bi bi-cash-coin"></i> Info Finansial & Supplier</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Supplier</span>
+                                <span class="value">{{ $plane->supplier ?? '-' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Harga Dasar</span>
+                                <span class="value">Rp {{ number_format($plane->harga_dasar ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Harga Jual</span>
+                                <span class="value">Rp {{ number_format($plane->harga_jual ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Profit</span>
+                                <span class="value" style="color: var(--success-color);">
+                                    Rp
+                                    {{ number_format(($plane->harga_jual ?? 0) - ($plane->harga_dasar ?? 0), 0, ',', '.') }}
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Harga (Lama/Estimasi)</span>
+                                <span class="value">Rp {{ number_format($plane->harga ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

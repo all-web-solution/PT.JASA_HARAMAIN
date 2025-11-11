@@ -6,6 +6,7 @@ use App\Models\CustomerDocument;
 use Illuminate\Http\Request;
 use App\Models\Document as DocumentModel;
 use App\Models\DocumentChildren;
+use App\Models\Service;
 use Illuminate\Support\Facades\Session;
 
 class DocumentController extends Controller
@@ -126,14 +127,69 @@ class DocumentController extends Controller
 
     public function customer()
     {
-        $AllCustomers = CustomerDocument::all();
-        $customers = $AllCustomers->unique('service_id');
+       // 1. Query model CustomerDocument, BUKAN ContentCustomer
+        $customers = CustomerDocument::query()
+
+            // 2. Load relasi yang dibutuhkan
+            ->with([
+                'service.pelanggan', // Untuk mengambil Nama Travel
+                'document'           // Untuk mengambil Nama Dokumen
+            ])
+
+            // 3. Urutkan dan paginasi
+            ->latest()
+            ->paginate(10);
+
+        // 4. Kirim ke view
+        // Pastikan path view-nya benar (misal: 'dokumentasi.document.index')
         return view('content.customer', compact('customers'));
     }
     public function detail($id)
     {
         $customerDocument = CustomerDocument::with('service.pelanggan', 'document', 'documentChild')->findOrFail($id);
         return view('content.customer_detail', compact('customerDocument'));
+    }
+
+    public function editDocumentCustomer(CustomerDocument $document)
+    {
+        // Ambil data untuk dropdowns
+        $services = Service::with('pelanggan')->get();
+        $documents = DocumentModel::all();
+        $documentChildrens = DocumentChildren::all();
+
+        // Ambil status enum dari migrasi
+        $statuses = ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'];
+
+        return view('content.customer_edit', [
+            'document'          => $document, // Nama variabel diubah jadi 'document'
+            'services'          => $services,
+            'documents'         => $documents,
+            'documentChildrens' => $documentChildrens,
+            'statuses'          => $statuses
+        ]);
+    }
+
+    /**
+     * Memproses update untuk CustomerDocument.
+     */
+    public function updateDocumentCustomer(Request $request, CustomerDocument $document)
+    {
+        // Validasi data (sesuai migrasi)
+        // (Saya asumsikan kolom harga & jumlah seharusnya numeric)
+        $validatedData = $request->validate([
+            'status' => 'required|in:nego,deal,batal,tahap persiapan,tahap produksi,done',
+            'supplier' => 'nullable|string|max:255',
+            'harga_dasar' => 'nullable|numeric|min:0',
+            'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
+        ]);
+
+        // Update data
+        $document->update($validatedData);
+
+        // Redirect kembali ke halaman index dokumen
+        // (Asumsi 'content.customer' adalah route index dokumen Anda)
+        return redirect()->route('visa.document.customer')
+                         ->with('success', 'Order Dokumen berhasil diperbarui!');
     }
 
     public function supplier($id)

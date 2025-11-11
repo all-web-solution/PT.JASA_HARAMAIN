@@ -14,6 +14,7 @@ class TransportationItem extends Model
         "sampai_tanggal",
         'status',
         'harga_dasar',
+        'harga_jual',
         'supplier',
     ];
 

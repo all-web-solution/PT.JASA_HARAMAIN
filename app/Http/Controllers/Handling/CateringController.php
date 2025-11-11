@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Meal;
 use App\Models\MealItem;
 use App\Models\Service;
+use Illuminate\Support\Facades\Session;
 
 class CateringController extends Controller
 {
@@ -80,20 +81,68 @@ class CateringController extends Controller
         return redirect()->route('catering.index')->with('success', 'Menu berhasil dihapus!');
     }
 
-    public function show($id)
-    {
-        $meal = Meal::findOrFail($id);
-        $service = Service::with('meals.mealItem')->findOrFail($meal->service_id);
-
-        return view('handling.catering.show', compact('service'));
-    }
-
     public function customer(Request $request)
     {
-        $data = Meal::all();
-        $customerMeal = $data->unique('service_id');
+        $meals = Meal::with([
+                        'service.pelanggan', // Untuk mengambil Nama Travel
+                        'mealItem'           // Untuk mengambil Nama Makanan
+                    ])
+                    ->latest() // Urutkan berdasarkan yang terbaru
+                    ->paginate(10);
 
-        return view('handling.catering.customer', compact('customerMeal'));
+        return view('handling.catering.customer', compact('meals'));
+    }
+
+    public function showCustomer(Meal $meal)
+    {
+        // $meal otomatis ditemukan oleh Laravel (Route Model Binding)
+
+        // Load relasi yang dibutuhkan oleh view
+        $meal->load('service.pelanggan', 'mealItem');
+
+        // Asumsi nama view Anda adalah 'makanan.show'
+        return view('handling.catering.customer_detail', [
+            'meal' => $meal // Mengirim variabel $meal
+        ]);
+    }
+
+    public function editCustomer(Meal $meal)
+    {
+        // $meal adalah instance Meal yang ingin diedit
+        // (Otomatis ditemukan oleh Route Model Binding)
+
+        // Ambil data untuk dropdowns
+        $services = Service::with('pelanggan')->get();
+        $mealItems = MealItem::all(); // Ambil master data makanan
+
+        // Asumsi status (sesuai model lain)
+        $statuses = ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'];
+
+        return view('handling.catering.customer_edit', compact(
+            'meal',
+            'services',
+            'mealItems',
+            'statuses'
+        ));
+    }
+
+    public function updateCustomer(Request $request, Meal $meal)
+    {
+        // Validasi data berdasarkan model Meal
+        $validatedData = $request->validate([
+            'status' => 'required|in:nego,deal,batal,tahap persiapan,tahap produksi,done',
+            'supplier' => 'nullable|string|max:255',
+            'harga_dasar' => 'nullable|numeric|min:0',
+            'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
+        ]);
+
+        // Update data meal
+        $meal->update($validatedData);
+
+        Session::flash('success', 'Order makanan berhasil diperbarui.');
+
+        // Redirect kembali ke halaman detail
+        return redirect()->route('catering.customer.show', $meal->id); // Asumsi 'makanan.show' adalah route detail
     }
 
 

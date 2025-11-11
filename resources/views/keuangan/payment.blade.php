@@ -159,9 +159,10 @@
 
         /* ✅ Responsive untuk layar kecil (≤ 320px) */
         @media (max-width: 320px) {
-            #filter{
+            #filter {
                 display: none;
             }
+
             .service-list-container {
                 padding: 1rem;
             }
@@ -263,7 +264,8 @@
                                 <td data-label="Invoice">{{ $item->invoice }}</td>
                                 <td data-label="Nama Pelanggan">{{ $item->service->pelanggan->nama_travel }}</td>
                                 <td data-label="Aksi">
-                                    <a href="{{ route('keuangan.payment.detail', $item->id) }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ route('keuangan.payment.detail', $item->id) }}"
+                                        class="btn btn-primary btn-sm">
                                         Lihat Detail
                                     </a>
                                 </td>

@@ -1,99 +1,441 @@
 @extends('admin.master')
+@section('title', 'Detail Order Hotel')
+
+@push('styles')
+    <style>
+        /* == CSS UTAMA (Disalin dari style referensi) == */
+        :root {
+            --haramain-primary: #1a4b8c;
+            --haramain-secondary: #2a6fdb;
+            --haramain-light: #e6f0fa;
+            --haramain-accent: #3d8bfd;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border-color: #d1e0f5;
+            --hover-bg: #f0f7ff;
+            --background-light: #f8fafd;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-bg: rgba(40, 167, 69, 0.1);
+            --warning-bg: rgba(255, 193, 7, 0.1);
+            --danger-bg: rgba(220, 53, 69, 0.1);
+            --primary-bg: var(--haramain-light);
+        }
+
+        .service-list-container {
+            max-width: 100vw;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--background-light);
+            min-height: 100vh;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--haramain-primary);
+            margin: 0;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title .title-text {
+            font-weight: 600;
+            color: var(--haramain-primary);
+        }
+
+        .card-title .subtitle-text {
+            font-weight: 400;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            border-left: 2px solid var(--border-color);
+            padding-left: 10px;
+            margin-left: 2px;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: var(--haramain-secondary);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .btn-action,
+        .btn-secondary {
+            background-color: var(--haramain-secondary);
+            color: white;
+            border-radius: 8px;
+            padding: 0.625rem 1.25rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-action:hover {
+            background-color: var(--haramain-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--hover-bg);
+            border-color: var(--haramain-secondary);
+            color: var(--haramain-secondary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--haramain-primary);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-card-title i {
+            color: var(--haramain-secondary);
+        }
+
+        .info-card .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex-grow: 1;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.9rem;
+        }
+
+        .info-item .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-item .value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: capitalize;
+            word-break: break-word;
+        }
+
+        .info-item .status-value {
+            margin-top: 0.25rem;
+        }
+
+        .customer-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: capitalize;
+        }
+
+        .badge-success {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+        }
+
+        .badge-warning {
+            background-color: var(--warning-bg);
+            color: var(--warning-color);
+        }
+
+        .badge-danger {
+            background-color: var(--danger-bg);
+            color: var(--danger-color);
+        }
+
+        .badge-primary {
+            background-color: var(--primary-bg);
+            color: var(--haramain-secondary);
+        }
+
+        .keterangan-card {
+            grid-column: 1 / -1;
+        }
+
+        .keterangan-body {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        @media (max-width: 992px) {
+
+            .stats-grid,
+            .customer-info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .service-list-container {
+                padding: 1rem;
+            }
+
+            .stats-grid,
+            .customer-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .card-header div:last-child {
+                display: flex;
+                width: 100%;
+                gap: 0.75rem;
+            }
+
+            .btn-action,
+            .btn-secondary {
+                flex-grow: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+@endpush
 
 @section('content')
-<div class="container-fluid p-3">
+    <div class="service-list-container">
 
-    <!-- Detail Customer -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-white">
-            <h5 class="fw-bold" style="color: var(--haramain-primary);">
-                <i class="bi bi-person-badge me-2"></i>Detail Customer
-            </h5>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="bi bi-person-badge"></i>
+                    <span class="title-text">Detail Customer</span>
+                </h5>
+                <a href="{{ route('hotel.index') }}" class="btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Kembali
+                </a>
+            </div>
+            <div class="card-body">
+                @if ($hotel->service?->pelanggan)
+                    @php
+                        $service = $hotel->service;
+                        $pelanggan = $service->pelanggan;
+                    @endphp
+                    <div class="customer-info-grid">
+                        <div class="info-item">
+                            <span class="label">Nama Travel</span>
+                            <span class="value">{{ $pelanggan->nama_travel ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Penanggung Jawab</span>
+                            <span class="value">{{ $pelanggan->penanggung_jawab ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Nomor Telepon</span>
+                            <span class="value">{{ $pelanggan->phone ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Email</span>
+                            <span class="value">{{ $pelanggan->email ?? '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Tanggal Keberangkatan (Service)</span>
+                            <span
+                                class="value">{{ \Carbon\Carbon::parse($service->tanggal_keberangkatan)->isoFormat('D MMM YYYY') }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Tanggal Kepulangan (Service)</span>
+                            <span
+                                class="value">{{ \Carbon\Carbon::parse($service->tanggal_kepulangan)->isoFormat('D MMM YYYY') }}</span>
+                        </div>
+                    </div>
+                @else
+                    <p style="color: var(--text-secondary); text-align: center; padding: 1rem;">
+                        Data customer atau service tidak terhubung.
+                    </p>
+                @endif
+            </div>
         </div>
 
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <strong>ID Service:</strong><br> {{ $service->unique_code }}
-                </div>
-                <div class="col-md-4">
-                    <strong>Travel:</strong><br> {{ $service->pelanggan->nama_travel ?? '-' }}
-                </div>
-                <div class="col-md-4">
-                    <strong>Penanggung Jawab:</strong><br> {{ $service->pelanggan->penanggung_jawab ?? '-' }}
-                </div>
-                <div class="col-md-4">
-                    <strong>Alamat:</strong><br> {{ $service->pelanggan->alamat ?? '-' }}
-                </div>
-                <div class="col-md-4">
-                    <strong>Email:</strong><br> {{ $service->pelanggan->email ?? '-' }}
-                </div>
-                <div class="col-md-4">
-                    <strong>Kontak:</strong><br> {{ $service->pelanggan->phone ?? '-' }}
-                </div>
-                <div class="col-md-4">
-                    <strong>Nomor KTP:</strong><br> {{ $service->pelanggan->no_ktp ?? '-' }}
-                </div>
-                <div class="col-md-4">
-                    <strong>Produk/Layanan:</strong><br> {{ $service->services ?? '-' }}
-                </div>
-                <div class="col-md-4">
-                    <strong>Status:</strong><br>
-                    <span class="badge bg-success">Aktif</span>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="bi bi-building"></i>
+                    <div>
+                        <span class="title-text">Detail Order Hotel: {{ $hotel->nama_hotel }}</span>
+                    </div>
+                </h5>
+                <a href="{{ route('hotel.edit', $hotel->id) }}" class="btn-action">
+                    <i class="bi bi-pencil-fill"></i>
+                    Edit
+                </a>
+            </div>
+
+            @php
+                $status = strtolower($hotel->status);
+                $statusClass = '';
+                if (in_array($status, ['done', 'deal'])) {
+                    $statusClass = 'badge-success';
+                } elseif (in_array($status, ['pending', 'nego'])) {
+                    $statusClass = 'badge-warning';
+                } elseif (in_array($status, ['cancelled', 'batal'])) {
+                    $statusClass = 'badge-danger';
+                } else {
+                    $statusClass = 'badge-primary';
+                }
+            @endphp
+
+            <div class="card-body">
+                <div class="stats-grid">
+
+                    <div class="info-card">
+                        <h6 class="info-card-title"><i class="bi bi-info-circle-fill"></i> Info Order</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Nama Hotel</span>
+                                <span class="value">{{ $hotel->nama_hotel }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Tanggal Check-in</span>
+                                <span class="value"
+                                    style="text-transform: none;">{{ \Carbon\Carbon::parse($hotel->tanggal_checkin)->isoFormat('dddd, D MMMM Y') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Tanggal Check-out</span>
+                                <span class="value"
+                                    style="text-transform: none;">{{ \Carbon\Carbon::parse($hotel->tanggal_checkout)->isoFormat('dddd, D MMMM Y') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Status</span>
+                                <span class="value status-value">
+                                    <span class="badge {{ $statusClass }}">{{ $hotel->status }}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h6 class="info-card-title"><i class="bi bi-door-open-fill"></i> Info Kamar</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Tipe Kamar</span>
+                                <span class="value">{{ $hotel->type ?? '-' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Jumlah Kamar (Sesuai Tipe)</span>
+                                <span class="value">{{ $hotel->jumlah_type ?? '-' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Harga Per Kamar (Lama)</span>
+                                <span class="value">
+                                    {{ number_format($hotel->harga_perkamar ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h6 class="info-card-title"><i class="bi bi-cash-coin"></i> Info Finansial</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Supplier</span>
+                                <span class="value">{{ $hotel->supplier ?? '-' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Harga Dasar</span>
+                                <span class="value">Rp {{ number_format($hotel->harga_dasar ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Harga Jual</span>
+                                <span class="value">Rp {{ number_format($hotel->harga_jual ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Profit</span>
+                                <span class="value" style="color: var(--success-color);">
+                                    Rp
+                                    {{ number_format(($hotel->harga_jual ?? 0) - ($hotel->harga_dasar ?? 0), 0, ',', '.') }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card keterangan-card">
+                        <h6 class="info-card-title"><i class="bi bi-chat-right-text"></i> Catatan</h6>
+                        <div class="content">
+                            <p class="keterangan-body">
+                                {{ $hotel->catatan ?? 'Tidak ada catatan.' }}
+                            </p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="card shadow-sm">
-    <div class="card-header bg-white">
-        <h6 class="fw-bold mb-0" style="color: var(--haramain-primary);">
-            <i class="bi bi-building me-2"></i>Detail Hotel
-        </h6>
-    </div>
-
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Hotel</th>
-                        <th>Type</th>
-                        <th>Jumlah Type</th>
-
-                        <th>Harga per Kamar</th>
-
-                        <th>Catatan</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($service->hotels as $index => $hotel)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $hotel->nama_hotel ?? '-' }}</td>
-                            <td>{{ $hotel->type ?? '-' }}</td>
-                            <td>{{ $hotel->jumlah_type ?? '-' }}</td>
-                            <td>Rp {{ number_format($hotel->harga_perkamar ?? 0, 0, ',', '.') }}</td>
-                            <td>{{ $hotel->catatan ?? '-' }}</td>
-                            <td>
-                                <a href="{{ route('hotel.edit', $hotel->id) }}">
-                                    <button class="btn btn-warning">Tambah harga</button>
-                                </a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="text-center text-muted">Belum ada data hotel</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-
-</div>
 @endsection

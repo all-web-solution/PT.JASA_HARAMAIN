@@ -7,6 +7,8 @@ use App\Models\Tour;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\TourItem;
+use App\Models\Transportation;
+use App\Models\TransportationItem;
 use Illuminate\Support\Facades\Session;
 
 class TourController extends Controller
@@ -51,30 +53,78 @@ class TourController extends Controller
         return redirect()->route('handling.tour.index');
     }
    public function customer()
-{
-    // Ambil semua tour lengkap dengan relasi service dan pelanggan
-    $tours = Tour::with('service.pelanggan')
-        ->get()
-        ->groupBy('service_id');
+    {
+        // 1. Ambil data Tour (per item) dan lakukan paginasi
+        //    Kita gunakan 'with' (Eager Loading) agar cepat
+        $tours = Tour::with([
+                        'service.pelanggan', // Untuk Nama Travel
+                        'tourItem',          // Untuk Nama Tour
+                        'transportation'     // Untuk Nama Transportasi
+                    ])
+                    ->latest() // Urutkan berdasarkan yang terbaru
+                    ->paginate(10); // Ambil 15 item per halaman
 
-    return view('handling.tour.customer', compact('tours'));
-}
-public function show($id)
-{
-   // 1. Ambil data Service utama, beserta relasi pelanggannya.
-    // Gunakan findOrFail agar otomatis error 404 jika service_id tidak ditemukan.
-    $service = Service::with('pelanggan')->findOrFail($id);
+        // 2. Kirim data paginator ke view
+        return view('handling.tour.customer', compact('tours')); // Sesuaikan path view jika perlu
+    }
 
-    // 2. Ambil SEMUA item tour yang terkait dengan service_id ini.
-    // Lakukan Eager Loading untuk 'transportation' dan 'tourItem' untuk performa.
-    $tour = Tour::with(['transportation', 'tourItem'])
-                  ->where('service_id', $id)
-                  ->get();
+    public function showCustomerTour(Tour $tour)
+    {
+        // $tour otomatis ditemukan oleh Laravel (Route Model Binding)
 
-    // 3. Kirim KEDUA variabel ($service dan $tour) ke view.
-    return view('handling.tour.show', compact('service', 'tour'));
-}
+        // Load relasi yang dibutuhkan oleh view
+        $tour->load('service.pelanggan', 'tourItem', 'transportation');
 
+        // Asumsi nama view Anda adalah 'handling.tour.show'
+        return view('handling.tour.show', [
+            'tour' => $tour // Mengirim variabel $tour
+        ]);
+    }
+
+    public function editCustomerTour(Tour $tour)
+    {
+        // $tour adalah instance Tour yang ingin diedit
+        // (Otomatis ditemukan oleh Route Model Binding)
+
+        // Ambil data untuk dropdowns
+        $services = Service::with('pelanggan')->get();
+        $transportations = Transportation::all();
+        $tourItems = TourItem::all();
+
+        // Asumsi status (sesuai model lain)
+        $statuses = ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'];
+
+        return view('handling.tour.customer_edit', compact(
+            'tour',
+            'services',
+            'transportations',
+            'tourItems',
+            'statuses'
+        ));
+    }
+
+    public function updateCustomerTour(Request $request, Tour $tour)
+    {
+        // Validasi data berdasarkan model Tour
+        $validatedData = $request->validate([
+            // 'service_id' => 'required|exists:services,id',
+            // 'transportation_id' => 'nullable|exists:transportations,id',
+            // 'tour_id' => 'required|exists:tour_items,id',
+            // 'tanggal_keberangkatan' => 'required|date',
+            'supplier' => 'nullable|string|max:255',
+            'harga_dasar' => 'nullable|numeric|min:0',
+            'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
+            'status' => 'required|in:nego,deal,batal,tahap persiapan,tahap produksi,done',
+        ]);
+
+        // Update data tour
+        $tour->update($validatedData);
+
+        Session::flash('success', 'Order tour berhasil diperbarui.');
+
+        // Redirect kembali ke halaman detail tour
+        return redirect()->route('tour.customer.show', $tour->id);
+    }
 
 
     public function showSupplier($id)

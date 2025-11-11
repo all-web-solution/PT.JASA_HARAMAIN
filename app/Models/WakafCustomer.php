@@ -7,16 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class WakafCustomer extends Model
 {
     protected $table = 'wakaf_customers'; // opsional, Laravel otomatis paham
-    protected $fillable = ['service_id', 'wakaf_id', 'jumlah', 'status', 'supplier', 'harga_dasar'];
+    protected $fillable = ['service_id', 'wakaf_id', 'jumlah', 'status', 'supplier', 'harga_dasar', 'harga_jual'];
 
     public function service()
     {
-        return $this->belongsTo(Service::class, 'id');
+        return $this->belongsTo(Service::class, 'service_id');
     }
 
     public function wakaf()
     {
-        return $this->belongsTo(Wakaf::class);
+        return $this->belongsTo(Wakaf::class, 'wakaf_id');
     }
 }
 
