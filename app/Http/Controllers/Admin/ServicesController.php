@@ -105,6 +105,37 @@ class ServicesController extends Controller
             $countTransportationItemNego +
             $countWakafCustomerNego;
 
+        $countBadalDeal = Badal::where('status', 'deal')->count();
+        $countContentCustomerDeal = ContentCustomer::where('status', 'deal')->count();
+        $countCustomerDocumentDeal = CustomerDocument::where('status', 'deal')->count();
+        $countDoronganOrderDeal = DoronganOrder::where('status', 'deal')->count();
+        $countExchangeDeal = Exchange::where('status', 'deal')->count(); // Corrected typo: Exchange
+        $countGuideDeal = Guide::where('status', 'deal')->count();
+        $countHandlingHotelDeal = HandlingHotel::where('status', 'deal')->count();
+        $countHandlingPlaneDeal = HandlingPlanes::where('status', 'deal')->count();
+        $countHotelDeal = Hotel::where('status', 'deal')->count();
+        $countMealDeal = Meal::where('status', 'deal')->count();
+        $countPlaneDeal = Plane::where('status', 'deal')->count();
+        $countTourDeal = Tour::where('status', 'deal')->count();
+        $countTransportationItemDeal = TransportationItem::where('status', 'deal')->count();
+        $countWakafCustomerDeal = WakafCustomer::where('status', 'deal')->count();
+
+        $totalDealOverall =
+            $countBadalDeal +
+            $countContentCustomerDeal +
+            $countCustomerDocumentDeal +
+            $countDoronganOrderDeal +
+            $countExchangeDeal +
+            $countGuideDeal +
+            $countHandlingHotelDeal +
+            $countHandlingPlaneDeal +
+            $countHotelDeal +
+            $countMealDeal +
+            $countPlaneDeal +
+            $countTourDeal +
+            $countTransportationItemDeal +
+            $countWakafCustomerDeal;
+
         $countBadalPersiapan = Badal::where('status', 'tahap persiapan')->count();
         $countContentCustomerPersiapan = ContentCustomer::where('status', 'tahap persiapan')->count();
         $countCustomerDocumentPersiapan = CustomerDocument::where('status', 'tahap persiapan')->count();
@@ -204,7 +235,7 @@ class ServicesController extends Controller
             $countTransportationItemDone +
             $countWakafCustomerDone;
 
-        return view('admin.services.index', compact('services', 'totalNegoOverall', 'totalPersiapanOverall', 'totalProduksiOverall', 'totalDoneOverall'));
+        return view('admin.services.index', compact('services', 'totalNegoOverall', 'totalDealOverall', 'totalPersiapanOverall', 'totalProduksiOverall', 'totalDoneOverall'));
     }
 
 
