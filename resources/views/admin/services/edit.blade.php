@@ -2046,16 +2046,38 @@
                     if (detailForm) {
                         detailForm.classList.toggle('hidden', !isSelected); // Sembunyikan/tampilkan form
 
-                        // ▼▼▼ PERBAIKAN 1: VALIDASI ▼▼▼
-                        // Nonaktifkan semua input di dalamnya jika service TIDAK dipilih.
                         detailForm.querySelectorAll('input, select, textarea, button').forEach(el => {
-                            // Jangan disable tombol "Kembali ke Pilihan Layanan"
                             if (!el.classList.contains('back-to-services-btn')) {
+
+                                // ▼▼▼ PERBAIKAN DIMULAI DI SINI ▼▼▼
+
+                                // Pengecualian KHUSUS untuk service 'dokumen'
+                                if (serviceType === 'dokumen' && isSelected) {
+                                    // Saat MENGAKTIFKAN 'dokumen', JANGAN aktifkan
+                                    // input-input spesifik ini secara paksa.
+                                    // Biarkan mereka 'disabled' sampai dipilih manual.
+                                    const name = el.getAttribute('name');
+                                    if (name && (
+                                            name.startsWith('child_documents') ||
+                                            name.startsWith('jumlah_child_doc') ||
+                                            name.startsWith('base_documents') ||
+                                            name.startsWith('jumlah_base_doc') ||
+                                            name.startsWith('customer_document_id')
+                                        )) {
+                                        // Lewati (return), jangan ubah status 'disabled'.
+                                        // Biarkan Event 7 & 8 yang mengaturnya.
+                                        return;
+                                    }
+                                }
+
+                                // ▲▲▲ PERBAIKAN SELESAI ▲▲▲
+
+                                // Logika normal:
+                                // - Untuk service non-dokumen, ini akan toggle enable/disable.
+                                // - Untuk service 'dokumen' saat di-UNCHECK, ini akan disable semua.
                                 el.disabled = !isSelected;
                             }
                         });
-
-                        // ▼▼▼ PERBAIKAN 2: AUTO-SCROLL ▼▼▼
                         if (isSelected) {
                             detailForm.scrollIntoView({
                                 behavior: 'smooth',
@@ -2215,9 +2237,32 @@
 
                     if (form) {
                         form.classList.toggle('hidden', !isSelected);
+
+                        // ▼▼▼ PERBAIKAN DIMULAI DI SINI ▼▼▼
                         form.querySelectorAll('input, select').forEach(input => {
+
+                            // Pengecualian KHUSUS untuk parent yang punya 'children' (e.g. Visa)
+                            if (hasChildren && isSelected) {
+                                // Saat MENGAKTIFKAN parent ('Visa'), JANGAN aktifkan
+                                // input-input child-nya secara paksa.
+                                const name = input.getAttribute('name');
+                                if (name && (
+                                        name.startsWith('child_documents') ||
+                                        name.startsWith('jumlah_child_doc') ||
+                                        name.startsWith('customer_document_id')
+                                    )) {
+                                    // Lewati (return), biarkan 'disabled'.
+                                    // Event 8 (klik child) yang akan mengaturnya.
+                                    return;
+                                }
+                            }
+
+                            // Logika normal:
+                            // - Untuk 'base' doc (Siskopatuh), ini akan toggle enable/disable (INI BENAR).
+                            // - Untuk 'parent' doc (Visa) saat di-UNCHECK, ini akan disable semua (INI BENAR).
                             input.disabled = !isSelected;
                         });
+                        // ▲▲▲ AKHIR PERBAIKAN ▲▲▲
                     }
                 }
 
