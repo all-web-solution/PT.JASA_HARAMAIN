@@ -1036,7 +1036,8 @@ class ServicesController extends Controller
             'wakafs',
             'dorongans',
             'contents',
-            'badals'
+            'badals',
+            'exchanges'
         ])->findOrFail($id);
 
         $data = [

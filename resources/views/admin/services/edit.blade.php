@@ -525,8 +525,7 @@
                             ? in_array('bandara', $oldHandlingTypes)
                             : !is_null($service->handlingPlanes);
 
-                        // Reyal
-                        $existingReyal = $service->reyal; // Asumsi relasi namanya reyal()
+                        $existingReyal = $service->exchanges->first();
                         $oldReyalTipe = old('tipe', $existingReyal?->tipe);
 
                     @endphp
