@@ -96,23 +96,23 @@
             @php $grandTotal = 0; @endphp
 
             {{-- Hotels --}}
-                @foreach ($pelanggan->services as $service)
-                    @foreach ($service->hotels as $hotel)
-                        @php
-                            // total harga hotel (basic: durasi * harga per kamar)
-                            $amount = ($hotel->durasi ?? 1) * ($hotel->harga_perkamar ?? 0);
-                            $grandTotal += $amount;
-                        @endphp
-                        <tr>
-                            <td>[H] Hotel: {{ $hotel->nama_hotel }} - {{ $hotel->type }}</td>
-                            <td>{{ $hotel->durasi ?? 1 }}</td>
-                            <td>Days</td>
-                            <td>SAR {{ number_format($hotel->harga_perkamar ?? 0, 2, ',', '.') }}</td>
-                            <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                        </tr>
+            @foreach ($pelanggan->services as $service)
+                @foreach ($service->hotels as $hotel)
+                    @php
+                        // total harga hotel (basic: durasi * harga per kamar)
+                        $amount = ($hotel->durasi ?? 1) * ($hotel->harga_perkamar ?? 0);
+                        $grandTotal += $amount;
+                    @endphp
+                    <tr>
+                        <td>[H] Hotel: {{ $hotel->nama_hotel }} - {{ $hotel->type }}</td>
+                        <td>{{ $hotel->durasi ?? 1 }}</td>
+                        <td>Days</td>
+                        <td>SAR {{ number_format($hotel->harga_perkamar ?? 0, 2, ',', '.') }}</td>
+                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
+                    </tr>
 
-                        {{-- Detail tipe kamar --}}
-                        {{-- @foreach ($hotel->typeHotels as $type)
+                    {{-- Detail tipe kamar --}}
+                    {{-- @foreach ($hotel->typeHotels as $type)
                             @php
                                 $typeAmount = ($type->jumlah ?? 1) * ($hotel->harga_perkamar ?? 0);
                                 $grandTotal += $typeAmount;
@@ -125,14 +125,14 @@
                                 <td>SAR {{ number_format($typeAmount, 2, ',', '.') }}</td>
                             </tr>
                         @endforeach --}}
-                    @endforeach
                 @endforeach
+            @endforeach
 
 
 
             {{-- Flights --}}
             @foreach ($pelanggan->services as $service)
-                @foreach($service->planes as $plane)
+                @foreach ($service->planes as $plane)
                     @php
                         $amount = ($plane->qty ?? 1) * $plane->harga;
                         $grandTotal += $amount;
@@ -148,7 +148,7 @@
             @endforeach
 
             {{-- Transportasi --}}
-            @foreach($pelanggan->services as $service)
+            @foreach ($pelanggan->services as $service)
                 @foreach ($service->transportationItem as $t)
                     @php
                         $amount = ($t->qty ?? 1) * $t->harga;
@@ -158,21 +158,21 @@
                         <td>[T] Transport: {{ $t->Transportation->nama }}</td>
                         <td>1</td>
                         <td>Unit</td>
-                        <td>SAR {{$t->Transportation->harga}}</td>
-                        <td>SAR {{$t->Transportation->kapasitas}}</td>
+                        <td>SAR {{ $t->Transportation->harga }}</td>
+                        <td>SAR {{ $t->Transportation->kapasitas }}</td>
                     </tr>
                 @endforeach
             @endforeach
 
             {{-- Meals --}}
-            @foreach($pelanggan->services as $service)
+            @foreach ($pelanggan->services as $service)
                 @foreach ($service->meals as $meal)
                     @php
                         $amount = ($meal->qty ?? 1) * $meal->mealItem->price;
                         $grandTotal += $amount;
                     @endphp
                     <tr>
-                        <td>[M] Meal: {{ $meal->mealItem->name}}</td>
+                        <td>[M] Meal: {{ $meal->mealItem->name }}</td>
                         <td>{{ $meal->qty ?? 1 }}</td>
                         <td>Porsi</td>
                         <td>SAR {{ number_format($meal->mealItem->price, 2, ',', '.') }}</td>
@@ -183,172 +183,170 @@
 
 
             {{-- Guides (Pendamping) --}}
-           {{-- Guides (Pendamping) --}}
-                @foreach($pelanggan->services as $service)
-                    @foreach ($service->guides as $g)
-                        @php
-                            $amount = ($g->jumlah ?? 1) * ($g->guideItem->harga ?? 0);
-                            $grandTotal += $amount;
-                        @endphp
-                        <tr>
-                            <td>[P] Guide: {{ $g->guideItem->nama ?? '-' }}</td>
-                            <td>{{ $g->jumlah ?? 1 }}</td>
-                            <td>Days</td>
-                            <td>SAR {{ number_format($g->guideItem->harga ?? 0, 2, ',', '.') }}</td>
-                            <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                        </tr>
-                    @endforeach
+            {{-- Guides (Pendamping) --}}
+            @foreach ($pelanggan->services as $service)
+                @foreach ($service->guides as $g)
+                    @php
+                        $amount = ($g->jumlah ?? 1) * ($g->guideItem->harga ?? 0);
+                        $grandTotal += $amount;
+                    @endphp
+                    <tr>
+                        <td>[P] Guide: {{ $g->guideItem->nama ?? '-' }}</td>
+                        <td>{{ $g->jumlah ?? 1 }}</td>
+                        <td>Days</td>
+                        <td>SAR {{ number_format($g->guideItem->harga ?? 0, 2, ',', '.') }}</td>
+                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
+                    </tr>
                 @endforeach
+            @endforeach
 
             {{-- Wakaf --}}
-             @foreach($pelanggan->services as $service)
-             @foreach ($service->wakafs as $w)
-                @php
-                    $amount = $w->jumlah * $w->Wakaf->harga;
-                    $grandTotal += $amount;
-                @endphp
-                <tr>
-                    <td>[W] Wakaf - {{$w->Wakaf->nama}}</td>
-                    <td>{{$w->jumlah}}</td>
-                    <td>Paket</td>
-                    <td>SAR {{ number_format($w->Wakaf->harga, 2, ',', '.') }}</td>
-                    <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                </tr>
-            @endforeach
+            @foreach ($pelanggan->services as $service)
+                @foreach ($service->wakafs as $w)
+                    @php
+                        $amount = $w->jumlah * $w->Wakaf->harga;
+                        $grandTotal += $amount;
+                    @endphp
+                    <tr>
+                        <td>[W] Wakaf - {{ $w->Wakaf->nama }}</td>
+                        <td>{{ $w->jumlah }}</td>
+                        <td>Paket</td>
+                        <td>SAR {{ number_format($w->Wakaf->harga, 2, ',', '.') }}</td>
+                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
+                    </tr>
+                @endforeach
             @endforeach
 
 
             {{-- Badal --}}
-             @foreach($pelanggan->services as $service)
-             @foreach ($service->badals as $b)
-                @php
-                    $amount = $b->price ?? 0;
-                    $grandTotal += $amount;
-                @endphp
-                <tr>
-                    <td>[BD] Badal: {{ $b->name }}</td>
-                    <td>1</td>
-                    <td>Paket</td>
-                    <td>SAR {{ number_format($b->price, 2, ',', '.') }}</td>
-                    <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                </tr>
+            @foreach ($pelanggan->services as $service)
+                @foreach ($service->badals as $b)
+                    @php
+                        $amount = $b->price ?? 0;
+                        $grandTotal += $amount;
+                    @endphp
+                    <tr>
+                        <td>[BD] Badal: {{ $b->name }}</td>
+                        <td>1</td>
+                        <td>Paket</td>
+                        <td>SAR {{ number_format($b->price, 2, ',', '.') }}</td>
+                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
+                    </tr>
+                @endforeach
             @endforeach
 
-            @endforeach
-
-           {{-- Documents --}}
-           @foreach($pelanggan->services as $service)
             {{-- Documents --}}
-            @foreach ($service->documents as $cd)
-                @php
-                    $amount = ($cd->jumlah ?? 1) * ($cd->harga ?? 0);
-                    $grandTotal += $amount;
-                @endphp
-                <tr>
-                    <td>[D] Dokumen: {{ $cd->documents->name ?? '-' }}
-                        @if($cd->DocumentChildren)
-                            ({{ $cd->DocumentChildren->name }})
-                        @endif
-                    </td>
-                    <td>{{ $cd->jumlah }}</td>
-                    <td>Paket</td>
-                    <td>SAR {{$cd->harga}}</td>
-                    <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                </tr>
+            @foreach ($pelanggan->services as $service)
+                {{-- Documents --}}
+                @foreach ($service->documents as $cd)
+                    @php
+                        $amount = ($cd->jumlah ?? 1) * ($cd->harga ?? 0);
+                        $grandTotal += $amount;
+                    @endphp
+                    <tr>
+                        <td>[D] Dokumen: {{ $cd->documents->name ?? '-' }}
+                            @if ($cd->DocumentChildren)
+                                ({{ $cd->DocumentChildren->name }})
+                            @endif
+                        </td>
+                        <td>{{ $cd->jumlah }}</td>
+                        <td>Paket</td>
+                        <td>SAR {{ $cd->harga }}</td>
+                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
+                    </tr>
+                @endforeach
             @endforeach
-
-           @endforeach
 
 
 
             {{-- Handling --}}
-             @foreach($pelanggan->services as $service)
-             @foreach ($service->handlings as $hdl)
-                @php
-                    $amount = $hdl->harga ?? 0;
-                    $grandTotal += $amount;
-                @endphp
-                <tr>
-                    <td>[HDL] Handling - {{$hdl->name}}</td>
-                    <td>1</td>
-                    <td>Paket</td>
-                    <td>SAR {{ number_format($hdl->harga, 2, ',', '.') }}</td>
-                    <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                </tr>
-            @endforeach
+            @foreach ($pelanggan->services as $service)
+                @foreach ($service->handlings as $hdl)
+                    @php
+                        $amount = $hdl->harga ?? 0;
+                        $grandTotal += $amount;
+                    @endphp
+                    <tr>
+                        <td>[HDL] Handling - {{ $hdl->name }}</td>
+                        <td>1</td>
+                        <td>Paket</td>
+                        <td>SAR {{ number_format($hdl->harga, 2, ',', '.') }}</td>
+                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
+                    </tr>
+                @endforeach
             @endforeach
 
 
             {{-- Tours --}}
-             @foreach($pelanggan->services as $service)
-             @foreach ($service->tours as $tour)
-                @php
-                    $amount = $tour->transportation->harga ?? 0;
-                    $grandTotal += $amount;
-                @endphp
-                <tr>
-                    <td>[TO] Tour: {{ $tour->transportation->nama }}</td>
-                    <td>1</td>
-                    <td>Paket</td>
-                    <td>SAR {{ number_format($tour->transportation->harga, 2, ',', '.') }}</td>
-                    <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                </tr>
-            @endforeach
+            @foreach ($pelanggan->services as $service)
+                @foreach ($service->tours as $tour)
+                    @php
+                        $amount = $tour->transportation->harga ?? 0;
+                        $grandTotal += $amount;
+                    @endphp
+                    <tr>
+                        <td>[TO] Tour: {{ $tour->transportation->nama }}</td>
+                        <td>1</td>
+                        <td>Paket</td>
+                        <td>SAR {{ number_format($tour->transportation->harga, 2, ',', '.') }}</td>
+                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
+                    </tr>
+                @endforeach
             @endforeach
 
 
             {{-- Dorongan --}}
-             @foreach($pelanggan->services as $service)
-             @foreach ($service->dorongans as $dr)
-                @php
-                    $amount = $dr->jumlah * $dr->dorongan->price;
-                    $grandTotal += $amount;
+            @foreach ($pelanggan->services as $service)
+                @foreach ($service->dorongans as $dr)
+                    @php
+                        $amount = $dr->jumlah * $dr->dorongan->price;
+                        $grandTotal += $amount;
 
-                @endphp
-                <tr>
-                    <td>[DR] {{ $dr->dorongan->name }}</td>
-                    <td>{{ $dr->jumlah }}</td>
-                    <td>Paket</td>
-                    <td>SAR {{ number_format($dr->dorongan->price, 2, ',', '.') }}</td>
-                    <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                </tr>
-            @endforeach
+                    @endphp
+                    <tr>
+                        <td>[DR] {{ $dr->dorongan->name }}</td>
+                        <td>{{ $dr->jumlah }}</td>
+                        <td>Paket</td>
+                        <td>SAR {{ number_format($dr->dorongan->price, 2, ',', '.') }}</td>
+                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
+                    </tr>
+                @endforeach
             @endforeach
 
 
             {{-- Konten --}}
-             @foreach($pelanggan->services as $service)
-             @foreach ($service->contents as $c)
-                @php
-                    $amount = $c->content->price;
-                    $grandTotal += $amount;
-                @endphp
-                <tr>
-                    <td>[K] Konten - {{$c->content->name}}</td>
-                    <td>{{$c->jumlah}}</td>
-                    <td>Paket</td>
-                    <td>SAR {{number_format($c->content->price, 2,',','.')}}</td>
-                    <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                </tr>
-            @endforeach
+            @foreach ($pelanggan->services as $service)
+                @foreach ($service->contents as $c)
+                    @php
+                        $amount = $c->content->price;
+                        $grandTotal += $amount;
+                    @endphp
+                    <tr>
+                        <td>[K] Konten - {{ $c->content->name }}</td>
+                        <td>{{ $c->jumlah }}</td>
+                        <td>Paket</td>
+                        <td>SAR {{ number_format($c->content->price, 2, ',', '.') }}</td>
+                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
+                    </tr>
+                @endforeach
             @endforeach
 
 
             {{-- Reyal (Currency Exchange) --}}
-             @foreach($pelanggan->services as $service)
+            @foreach ($pelanggan->services as $service)
                 @foreach ($service->reyals as $r)
-                @php
-                    $amount = $r->jumlah ?? 0;
-                    $grandTotal += $amount;
-                @endphp
-                <tr>
-                    <td>[R] Tukar Riyal</td>
-                    <td>1</td>
-                    <td>Paket</td>
-                    <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                    <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                </tr>
-            @endforeach
+                    @php
+                        $amount = $r->jumlah ?? 0;
+                        $grandTotal += $amount;
+                    @endphp
+                    <tr>
+                        <td>[R] Tukar Riyal</td>
+                        <td>1</td>
+                        <td>Paket</td>
+                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
+                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
+                    </tr>
+                @endforeach
             @endforeach
 
         </tbody>
