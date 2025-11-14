@@ -19,10 +19,12 @@ return new class extends Migration
                 ->on('services')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->string('total_amount')->nullable();
             $table->string('invoice');
-            $table->string('total_yang_dibayarkan');
-            $table->string('sisa_hutang');
+            $table->decimal('total_estimasi', 15, 0)->nullable();
+            $table->decimal('total_yang_dibayarkan', 15, 0)->default(0);
+            $table->decimal('sisa_hutang', 15, 0)->default(0);
+            $table->decimal('total_amount_final', 15, 0)->nullable();
+            $table->string('status_harga')->default('estimasi');
             $table->enum('status_pembayaran', ['belum_bayar', 'belum_lunas', 'lunas'])->default('belum_bayar');
 
             $table->timestamps();

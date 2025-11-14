@@ -100,4 +100,67 @@ class Service extends Model
             ->whereYear('tanggal_keberangkatan', Carbon::now()->year)
             ->sum('total_jamaah');
     }
+
+    /**
+     * Daftar NAMA FUNGSI RELASI yang dianggap sebagai 'item layanan'
+     * dan harus dicek status & harganya.
+     * * PENTING: Sesuaikan nama string di array ini agar SAMA PERSIS
+     * dengan nama fungsi relasi yang ada di model Service ini.
+     */
+    public function getItemRelationsList(): array
+    {
+        return [
+            'planes',
+            'transportationItem',
+            'hotels',
+            'meals',
+            'guides',
+            'tours',
+            'documents',
+            'exchanges', // Menggunakan 'exchanges' sesuai nama relasi
+            'wakafs',
+            'dorongans',
+            'contents',
+            'badals',
+            // 'handlings' (akan di-handle secara nested di helper bawah)
+        ];
+        // Catatan: Relasi 'handlings' akan di-handle terpisah
+        // di getAllItemsFromService karena strukturnya nested.
+    }
+
+    /**
+     * Mengumpulkan semua item layanan dari semua relasi yang relevan
+     * ke dalam satu Collection.
+     * * PENTING: Pastikan relasi-relasi di atas SUDAH DI-EAGER LOAD
+     * (menggunakan ->with([...])) di controller sebelum memanggil fungsi ini.
+     */
+    public function getAllItemsFromService(): \Illuminate\Support\Collection
+    {
+        $allItems = collect([]);
+
+        // 1. Loop semua relasi non-nested dari daftar
+        foreach ($this->getItemRelationsList() as $relationName) {
+            if ($this->relationLoaded($relationName)) {
+                $items = $this->$relationName;
+                if ($items) {
+                    $allItems = $allItems->merge($items);
+                }
+            }
+        }
+
+        // 2. Handle relasi nested 'handlings' secara terpisah
+        if ($this->relationLoaded('handlings')) {
+            foreach ($this->handlings as $handling) {
+                // Pastikan relasi di dalam handling juga di-load
+                if ($handling->relationLoaded('handlingHotels')) {
+                    $allItems = $allItems->merge($handling->handlingHotels);
+                }
+                if ($handling->relationLoaded('handlingPlanes')) {
+                    $allItems = $allItems->merge($handling->handlingPlanes);
+                }
+            }
+        }
+
+        return $allItems;
+    }
 }

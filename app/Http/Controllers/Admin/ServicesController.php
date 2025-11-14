@@ -105,6 +105,37 @@ class ServicesController extends Controller
             $countTransportationItemNego +
             $countWakafCustomerNego;
 
+        $countBadalDeal = Badal::where('status', 'deal')->count();
+        $countContentCustomerDeal = ContentCustomer::where('status', 'deal')->count();
+        $countCustomerDocumentDeal = CustomerDocument::where('status', 'deal')->count();
+        $countDoronganOrderDeal = DoronganOrder::where('status', 'deal')->count();
+        $countExchangeDeal = Exchange::where('status', 'deal')->count(); // Corrected typo: Exchange
+        $countGuideDeal = Guide::where('status', 'deal')->count();
+        $countHandlingHotelDeal = HandlingHotel::where('status', 'deal')->count();
+        $countHandlingPlaneDeal = HandlingPlanes::where('status', 'deal')->count();
+        $countHotelDeal = Hotel::where('status', 'deal')->count();
+        $countMealDeal = Meal::where('status', 'deal')->count();
+        $countPlaneDeal = Plane::where('status', 'deal')->count();
+        $countTourDeal = Tour::where('status', 'deal')->count();
+        $countTransportationItemDeal = TransportationItem::where('status', 'deal')->count();
+        $countWakafCustomerDeal = WakafCustomer::where('status', 'deal')->count();
+
+        $totalDealOverall =
+            $countBadalDeal +
+            $countContentCustomerDeal +
+            $countCustomerDocumentDeal +
+            $countDoronganOrderDeal +
+            $countExchangeDeal +
+            $countGuideDeal +
+            $countHandlingHotelDeal +
+            $countHandlingPlaneDeal +
+            $countHotelDeal +
+            $countMealDeal +
+            $countPlaneDeal +
+            $countTourDeal +
+            $countTransportationItemDeal +
+            $countWakafCustomerDeal;
+
         $countBadalPersiapan = Badal::where('status', 'tahap persiapan')->count();
         $countContentCustomerPersiapan = ContentCustomer::where('status', 'tahap persiapan')->count();
         $countCustomerDocumentPersiapan = CustomerDocument::where('status', 'tahap persiapan')->count();
@@ -204,7 +235,7 @@ class ServicesController extends Controller
             $countTransportationItemDone +
             $countWakafCustomerDone;
 
-        return view('admin.services.index', compact('services', 'totalNegoOverall', 'totalPersiapanOverall', 'totalProduksiOverall', 'totalDoneOverall'));
+        return view('admin.services.index', compact('services', 'totalNegoOverall', 'totalDealOverall', 'totalPersiapanOverall', 'totalProduksiOverall', 'totalDoneOverall'));
     }
 
 
@@ -452,11 +483,13 @@ class ServicesController extends Controller
         // Hapus baris lama: $totalAmount = (float) $request->input('total_amount', 0);
         Order::create([
             'service_id' => $service->id,
-            'total_amount' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
             'invoice' => 'INV-' . time(),
+            'total_estimasi' => $serverTotalAmount,     // Simpan hasil hitung ke estimasi
+            'total_amount_final' => null,             // Harga final masih KOSONG
             'total_yang_dibayarkan' => 0,
-            'sisa_hutang' => $serverTotalAmount, // <-- Gunakan hasil perhitungan server
-            'status_pembayaran' => $serverTotalAmount == 0 ? 'lunas' : 'belum_bayar',
+            'sisa_hutang' => $serverTotalAmount,      // Sisa hutang = estimasi awal
+            'status_pembayaran' => 'belum_bayar',
+            'status_harga' => 'provisional'
         ]);
 
         return redirect()->route('admin.services.show', $service)->with('success', 'Data service berhasil disimpan.');

@@ -446,7 +446,8 @@
                 </h5>
             </div>
             <div class="payment-form-container">
-                <form action="{{ route('keuangan.payment.pay', $order) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('keuangan.payment.pay', $order->service_id) }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label for="jumlah_dibayarkan" class="form-label">Jumlah yang Dibayarkan (SAR)</label>
@@ -508,7 +509,7 @@
                         @forelse ($orders as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>Rp {{ number_format($item->total_amount, 0, ',', '.') }}</td>
+                                <td>Rp {{ number_format($item->total_amount_final, 0, ',', '.') }}</td>
                                 <td>Rp {{ number_format($item->total_yang_dibayarkan ?? 0, 0, ',', '.') }}</td>
                                 <td>Rp {{ number_format($item->sisa_hutang ?? 0, 0, ',', '.') }}</td>
                                 <td>{{ $item->created_at->format('d M Y') }}</td>

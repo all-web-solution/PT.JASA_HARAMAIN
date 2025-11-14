@@ -284,7 +284,7 @@
                     <i class="bi bi-person-badge"></i>
                     <span class="title-text">Detail Customer</span>
                 </h5>
-                <a href="{{ route('wakaf.index') }}" class="btn-secondary"> {{-- Ganti dengan route index wakaf Anda --}}
+                <a href="{{ route('wakaf.customer') }}" class="btn-secondary"> {{-- Ganti dengan route index wakaf Anda --}}
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
