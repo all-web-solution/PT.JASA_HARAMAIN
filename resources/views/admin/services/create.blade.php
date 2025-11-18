@@ -1,4 +1,4 @@
-@extends('admin.master')
+php@extends('admin.master')
 @section('title', 'Tambah Permintaan Service')
 @push('styles')
     <style>

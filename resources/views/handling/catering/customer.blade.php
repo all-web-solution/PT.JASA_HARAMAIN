@@ -293,6 +293,9 @@
                                             class="btn-action btn-view" title="View"> {{-- route('makanan.show', $meal->id) --}}
                                             <i class="bi bi-eye-fill"></i>
                                         </a>
+                                        <a href="{{ route('catering.customer.edit', $meal->id) }}" class="btn-action">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @empty

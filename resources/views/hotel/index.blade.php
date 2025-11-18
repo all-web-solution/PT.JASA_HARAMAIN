@@ -228,51 +228,58 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($hotels as $hotel)
-                                @php
-                                    $status = strtolower($hotel->status);
-                                    $statusClass = '';
-                                    if (in_array($status, ['done', 'deal'])) {
-                                        $statusClass = 'badge-success';
-                                    } elseif (in_array($status, ['pending', 'nego'])) {
-                                        $statusClass = 'badge-warning';
-                                    } elseif (in_array($status, ['cancelled', 'batal'])) {
-                                        $statusClass = 'badge-danger';
-                                    } else {
-                                        $statusClass = 'badge-primary';
-                                    }
-                                @endphp
+                            @if ($hotels->isEmpty())
                                 <tr>
-                                    <td>{{ ($hotels->currentPage() - 1) * $hotels->perPage() + $loop->iteration }}</td>
-                                    <td>
-                                        {{ $hotel->service?->pelanggan?->nama_travel ?? 'N/A' }}
-                                    </td>
-                                    <td>{{ $hotel->nama_hotel }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($hotel->tanggal_checkin)->isoFormat('D MMM Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($hotel->tanggal_checkout)->isoFormat('D MMM Y') }}</td>
-                                    <td>{{ $hotel->type ?? '-' }} ({{ $hotel->jumlah_type ?? $hotel->jumlah_kamar }} Kamar)
-                                    </td>
-                                    <td>
-                                        <span class="badge {{ $statusClass }}">{{ $hotel->status }}</span>
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('hotel.show', $hotel->id) }}" class="btn-action btn-view"
-                                            title="View">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </a>
-                                        <a href="{{ route('hotel.edit', $hotel->id) }}" class="btn-action btn-edit"
-                                            title="Edit">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </a>
+                                    <td colspan="8" class="text-center py-5">
+                                        <img src="{{ asset('assets/images/empty-state.svg') }}" alt="No data"
+                                            style="height: 150px;">
+                                        <h5 class="mt-3" style="color: var(--haramain-primary);">Belum Ada Permintaan
+                                            Hotel</h5>
+                                        <p class="text-muted">Tunggu permintaan dari admin</p>
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="8" style="text-align: center; padding: 2rem;">
-                                        Belum ada data order hotel.
-                                    </td>
-                                </tr>
-                            @endforelse
+                            @else
+                                @foreach ($hotels as $hotel)
+                                    @php
+                                        $status = strtolower($hotel->status);
+                                        $statusClass = '';
+                                        if (in_array($status, ['done', 'deal'])) {
+                                            $statusClass = 'badge-success';
+                                        } elseif (in_array($status, ['pending', 'nego'])) {
+                                            $statusClass = 'badge-warning';
+                                        } elseif (in_array($status, ['cancelled', 'batal'])) {
+                                            $statusClass = 'badge-danger';
+                                        } else {
+                                            $statusClass = 'badge-primary';
+                                        }
+                                    @endphp
+                                    <tr>
+                                        <td>{{ ($hotels->currentPage() - 1) * $hotels->perPage() + $loop->iteration }}</td>
+                                        <td>
+                                            {{ $hotel->service?->pelanggan?->nama_travel ?? 'N/A' }}
+                                        </td>
+                                        <td>{{ $hotel->nama_hotel }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($hotel->tanggal_checkin)->isoFormat('D MMM Y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($hotel->tanggal_checkout)->isoFormat('D MMM Y') }}</td>
+                                        <td>{{ $hotel->type ?? '-' }} ({{ $hotel->jumlah_type ?? $hotel->jumlah_kamar }}
+                                            Kamar)
+                                        </td>
+                                        <td>
+                                            <span class="badge {{ $statusClass }}">{{ $hotel->status }}</span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('hotel.show', $hotel->id) }}" class="btn-action btn-view"
+                                                title="View">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </a>
+                                            <a href="{{ route('hotel.edit', $hotel->id) }}" class="btn-action btn-edit"
+                                                title="Edit">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>

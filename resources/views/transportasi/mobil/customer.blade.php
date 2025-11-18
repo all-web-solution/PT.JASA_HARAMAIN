@@ -381,7 +381,7 @@
                 </h5>
             </div>
 
-            <!-- Search and Filter -->
+            {{-- <!-- Search and Filter -->
             <div class="search-filter-container">
                 <div class="search-box">
                     <i class="bi bi-search"></i>
@@ -403,7 +403,7 @@
                         <option>Custom</option>
                     </select>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Services Table -->
             <div class="table-responsive">
@@ -421,22 +421,38 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($customers as $customer)
+                        @if ($customers->isEmpty())
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $customer->service->pelanggan->nama_travel }}</td>
-                                <td>{{ $customer->transportation->nama }}</td>
-                                <td>{{ $customer->route->route }}</td>
-                                <td>{{ $customer->dari_tanggal }}</td>
-                                <td>{{ $customer->sampai_tanggal }}</td>
-                                <td>{{ $customer->status }}</td>
-                                <td>
-                                    <a href="{{ route('transportation.car.detail.customer', $customer->id) }}">
-                                        <button class="btn btn-primary">Detail</button>
-                                    </a>
-
+                                <td colspan="8" class="text-center py-5">
+                                    <img src="{{ asset('assets/images/empty-state.svg') }}" alt="No data"
+                                        style="height: 150px;">
+                                    <h5 class="mt-3" style="color: var(--haramain-primary);">Belum Ada Permintaan
+                                        Transportasi</h5>
+                                    <p class="text-muted">Tunggu permintaan dari admin</p>
+                                </td>
                             </tr>
-                        @endforeach
+                        @else
+                            @foreach ($customers as $customer)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $customer->service->pelanggan->nama_travel }}</td>
+                                    <td>{{ $customer->transportation->nama }}</td>
+                                    <td>{{ $customer->route->route }}</td>
+                                    <td>{{ $customer->dari_tanggal }}</td>
+                                    <td>{{ $customer->sampai_tanggal }}</td>
+                                    <td>{{ $customer->status }}</td>
+                                    <td>
+                                        <a href="{{ route('transportation.car.detail.customer', $customer->id) }}">
+                                            <button class="btn btn-primary">Detail</button>
+                                        </a>
+                                        <a href="{{ route('transportasi.customer.edit', $customer->id) }}"
+                                            class="btn-action-small btn-edit" title="Edit">
+                                            {{-- route('transportasi.mobil.edit', $item->id) --}}
+                                            edit
+                                        </a>
+                                </tr>
+                            @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>

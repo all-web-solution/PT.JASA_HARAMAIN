@@ -204,6 +204,10 @@
                                         <a href="{{ route('handling.handling.hotel.show', $hotel->id) }}">
                                             <i class="bi bi-eye-fill"></i>
                                         </a>
+                                        <a href="{{ route('handling.hotel.edit', $hotel->id) }}" class="btn-action">
+                                            {{-- Ganti # dengan route edit handling hotel --}}
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @empty

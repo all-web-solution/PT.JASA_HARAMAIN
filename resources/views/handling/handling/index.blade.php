@@ -162,6 +162,10 @@
                                             href="{{ route('handling.handling.plane.show', $plane->id) }}"class="btn btn-info btn-sm">
                                             <i class="bi bi-eye-fill"></i>
                                         </a>
+                                        <a href="{{ route('handling.pesawat.edit', $plane->id) }}" class="btn-action">
+                                            {{-- Ganti # dengan route edit handling pesawat --}}
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @empty

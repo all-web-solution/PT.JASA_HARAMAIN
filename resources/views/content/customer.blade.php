@@ -224,67 +224,73 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- Pastikan $customers adalah variabel dari controller --}}
-                        @forelse ($customers as $item)
-                            {{-- $item adalah instance dari CustomerDocument --}}
-
-                            {{-- Logika untuk menentukan warna badge --}}
-                            @php
-                                $status = strtolower($item->status);
-                                $statusClass = '';
-                                if (in_array($status, ['done', 'deal'])) {
-                                    $statusClass = 'badge-success';
-                                } elseif (in_array($status, ['nego', 'tahap persiapan', 'tahap produksi'])) {
-                                    $statusClass = 'badge-warning';
-                                } elseif (in_array($status, ['cancelled', 'batal'])) {
-                                    $statusClass = 'badge-danger';
-                                } else {
-                                    $statusClass = 'badge-primary';
-                                }
-                            @endphp
-
+                        @if ($customers->isEmpty())
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-
-                                {{-- Ambil dari relasi service -> pelanggan --}}
-                                <td>{{ $item->service?->pelanggan?->nama_travel ?? 'N/A' }}</td>
-
-                                {{-- Ambil dari relasi document --}}
-                                @if ($item->documentChild?->name)
-                                    <td>{{ $item->documentChild?->name ?? 'N/A' }}</td>
-                                @else
-                                    <td>{{ $item->document?->name ?? 'N/A' }}</td>
-                                @endif
-
-                                {{-- Ambil LANGSUNG dari $item --}}
-                                <td>{{ $item->jumlah }}</td>
-
-                                {{-- Ambil LANGSUNG dari $item --}}
-                                <td>{{ $item->supplier ?? '-' }}</td>
-
-                                {{-- Ambil LANGSUNG dari $item dan beri badge --}}
-                                <td>
-                                    <span class="badge {{ $statusClass }}">{{ $item->status }}</span>
-                                </td>
-
-                                <td>
-                                    <a href="{{ route('visa.document.customer.detail', $item->id) }}"> <button
-                                            class="btn-action btn-view" title="view">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </button>
-                                    </a>
-                                    <a href="{{ route('document.customer.edit', $item->id) }}" class="btn-action">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </a>
+                                <td colspan="8" class="text-center py-5">
+                                    <img src="{{ asset('assets/images/empty-state.svg') }}" alt="No data"
+                                        style="height: 150px;">
+                                    <h5 class="mt-3" style="color: var(--haramain-primary);">Belum Ada Permintaan
+                                        Dokumen</h5>
+                                    <p class="text-muted">Tunggu permintaan dari admin</p>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" style="text-align: center; padding: 2rem;">
-                                    Tidak ada data dokumen ditemukan.
-                                </td>
-                            </tr>
-                        @endforelse
+                        @else
+                            {{-- Pastikan $customers adalah variabel dari controller --}}
+                            @foreach ($customers as $item)
+                                {{-- $item adalah instance dari CustomerDocument --}}
+
+                                {{-- Logika untuk menentukan warna badge --}}
+                                @php
+                                    $status = strtolower($item->status);
+                                    $statusClass = '';
+                                    if (in_array($status, ['done', 'deal'])) {
+                                        $statusClass = 'badge-success';
+                                    } elseif (in_array($status, ['nego', 'tahap persiapan', 'tahap produksi'])) {
+                                        $statusClass = 'badge-warning';
+                                    } elseif (in_array($status, ['cancelled', 'batal'])) {
+                                        $statusClass = 'badge-danger';
+                                    } else {
+                                        $statusClass = 'badge-primary';
+                                    }
+                                @endphp
+
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+
+                                    {{-- Ambil dari relasi service -> pelanggan --}}
+                                    <td>{{ $item->service?->pelanggan?->nama_travel ?? 'N/A' }}</td>
+
+                                    {{-- Ambil dari relasi document --}}
+                                    @if ($item->documentChild?->name)
+                                        <td>{{ $item->documentChild?->name ?? 'N/A' }}</td>
+                                    @else
+                                        <td>{{ $item->document?->name ?? 'N/A' }}</td>
+                                    @endif
+
+                                    {{-- Ambil LANGSUNG dari $item --}}
+                                    <td>{{ $item->jumlah }}</td>
+
+                                    {{-- Ambil LANGSUNG dari $item --}}
+                                    <td>{{ $item->supplier ?? '-' }}</td>
+
+                                    {{-- Ambil LANGSUNG dari $item dan beri badge --}}
+                                    <td>
+                                        <span class="badge {{ $statusClass }}">{{ $item->status }}</span>
+                                    </td>
+
+                                    <td>
+                                        <a href="{{ route('visa.document.customer.detail', $item->id) }}"> <button
+                                                class="btn-action btn-view" title="view">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </button>
+                                        </a>
+                                        <a href="{{ route('document.customer.edit', $item->id) }}" class="btn-action">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>

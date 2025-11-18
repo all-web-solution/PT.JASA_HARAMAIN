@@ -283,6 +283,10 @@
                                             class="btn-action btn-view" title="View">
                                             <i class="bi bi-eye-fill"></i>
                                         </a>
+                                        <a href="{{ route('dorongan.customer.edit', $item->id) }}" class="btn-action">
+                                            {{-- route('dorongan.edit', $dorongan->id) --}}
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @empty

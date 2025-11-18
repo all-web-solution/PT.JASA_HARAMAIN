@@ -401,6 +401,16 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if ($customers->isEmpty())
+                            <tr>
+                                <td colspan="8" class="text-center py-5">
+                                    <img src="{{ asset('assets/images/empty-state.svg') }}" alt="No data"
+                                        style="height: 150px;">
+                                    <h5 class="mt-3" style="color: var(--haramain-primary);">Belum Ada Permintaan Konten</h5>
+                                    <p class="text-muted">Tunggu permintaan dari admin</p>
+                                </td>
+                            </tr>
+                        @else
                         @foreach ($customers as $item)
                             <tr>
                                 <td>{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}</td>

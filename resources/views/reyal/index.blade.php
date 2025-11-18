@@ -403,40 +403,57 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($reyals as $item)
-                            @php
-                                $status = strtolower($item->status);
-                                $statusClass = '';
-                                if (in_array($status, ['done', 'deal'])) {
-                                    $statusClass = 'badge-success';
-                                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan', 'tahap produksi'])) {
-                                    $statusClass = 'badge-warning';
-                                } elseif (in_array($status, ['cancelled', 'batal'])) {
-                                    $statusClass = 'badge-danger';
-                                } else {
-                                    $statusClass = 'badge-primary';
-                                }
-                            @endphp
+                        @if ($reyals->isEmpty())
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->service->pelanggan->nama_travel }}</td>
-                                <td>{{ $item->tipe }}</td>
-                                <td>{{ $item->jumlah_input }}</td>
-                                <td>{{ $item->kurs }}</td>
-                                <td>{{ $item->hasil }}</td>
-                                <td>{{ $item->tanggal_penyerahan }}</td>
-                                <td>
-                                    <span class="badge {{ $statusClass }}">{{ $item->status }}</span>
-                                </td>
-                                <td>
-                                    <a href="{{ route('reyal.detail', $item->id) }}"> <button class="btn-action btn-view"
-                                            title="view">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </button>
-                                    </a>
+                                <td colspan="8" class="text-center py-5">
+                                    <img src="{{ asset('assets/images/empty-state.svg') }}" alt="No data"
+                                        style="height: 150px;">
+                                    <h5 class="mt-3" style="color: var(--haramain-primary);">Belum Ada Permintaan
+                                        Penukaran Uang</h5>
+                                    <p class="text-muted">Tunggu permintaan dari admin</p>
                                 </td>
                             </tr>
-                        @endforeach
+                        @else
+                            @foreach ($reyals as $item)
+                                @php
+                                    $status = strtolower($item->status);
+                                    $statusClass = '';
+                                    if (in_array($status, ['done', 'deal'])) {
+                                        $statusClass = 'badge-success';
+                                    } elseif (
+                                        in_array($status, ['pending', 'nego', 'tahap persiapan', 'tahap produksi'])
+                                    ) {
+                                        $statusClass = 'badge-warning';
+                                    } elseif (in_array($status, ['cancelled', 'batal'])) {
+                                        $statusClass = 'badge-danger';
+                                    } else {
+                                        $statusClass = 'badge-primary';
+                                    }
+                                @endphp
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $item->service->pelanggan->nama_travel }}</td>
+                                    <td>{{ $item->tipe }}</td>
+                                    <td>{{ $item->jumlah_input }}</td>
+                                    <td>{{ $item->kurs }}</td>
+                                    <td>{{ $item->hasil }}</td>
+                                    <td>{{ $item->tanggal_penyerahan }}</td>
+                                    <td>
+                                        <span class="badge {{ $statusClass }}">{{ $item->status }}</span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('reyal.detail', $item->id) }}"> <button
+                                                class="btn-action btn-view" title="view">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </button>
+                                        </a>
+                                        <a href="{{ route('reyal.edit', $item->id) }}" class="btn-action">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>

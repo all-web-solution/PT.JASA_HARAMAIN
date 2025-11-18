@@ -382,7 +382,7 @@
                 </h5>
             </div>
 
-            <!-- Search and Filter -->
+            {{-- <!-- Search and Filter -->
             <div class="search-filter-container">
                 <div class="search-box">
                     <i class="bi bi-search"></i>
@@ -404,7 +404,7 @@
                         <option>Custom</option>
                     </select>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Services Table -->
             <div class="table-responsive">
