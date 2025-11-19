@@ -406,33 +406,36 @@
                                 <td colspan="8" class="text-center py-5">
                                     <img src="{{ asset('assets/images/empty-state.svg') }}" alt="No data"
                                         style="height: 150px;">
-                                    <h5 class="mt-3" style="color: var(--haramain-primary);">Belum Ada Permintaan Konten</h5>
+                                    <h5 class="mt-3" style="color: var(--haramain-primary);">Belum Ada Permintaan Konten
+                                    </h5>
                                     <p class="text-muted">Tunggu permintaan dari admin</p>
                                 </td>
                             </tr>
                         @else
-                        @foreach ($customers as $item)
-                            <tr>
-                                <td>{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}</td>
-                                <td>{{ $item->service?->pelanggan?->nama_travel ?? 'N/A' }}</td>
-                                <td>{{ $item->content?->name ?? 'N/A' }}</td>
-                                <td>{{ $item->tanggal_pelaksanaan }}</td>
-                                <td>{{ $item->supplier ?? '-' }}</td>
-                                <td>{{ $item->status }}</td>
-                                <td>
-                                    <a href="{{ route('content.customer.detail', $item->id) }}"> <button
-                                            class="btn-action btn-view" title="view">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </button>
-                                    </a>
-                                    <a href="{{ route('customer.edit', $item->id) }}">
-                                        <button class="btn-action btn-edit" title="Edit">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </button>
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach
+                            @foreach ($customers as $item)
+                                <tr>
+                                    <td>{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}
+                                    </td>
+                                    <td>{{ $item->service?->pelanggan?->nama_travel ?? 'N/A' }}</td>
+                                    <td>{{ $item->content?->name ?? 'N/A' }}</td>
+                                    <td>{{ $item->tanggal_pelaksanaan }}</td>
+                                    <td>{{ $item->supplier ?? '-' }}</td>
+                                    <td>{{ $item->status }}</td>
+                                    <td>
+                                        <a href="{{ route('content.customer.detail', $item->id) }}"> <button
+                                                class="btn-action btn-view" title="view">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </button>
+                                        </a>
+                                        <a href="{{ route('customer.edit', $item->id) }}">
+                                            <button class="btn-action btn-edit" title="Edit">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </button>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
