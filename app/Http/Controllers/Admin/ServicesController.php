@@ -2026,37 +2026,18 @@ class ServicesController extends Controller
             $service->update($fileData);
         }
 
-        // ID dokumen valid (untuk clean-up)
         $validCustomerDocIds = [];
+        $parentsReferencedByChildren = [];
 
-        // 2️⃣ Ambil hanya dokumen INDUK yang dicentang
-        $selectedParents = $request->input('dokumen_id', []);
-        foreach ($selectedParents as $parentId) {
-            $jumlah = $request->input("jumlah_doc_$parentId", 1);
-            $document = Document::find($parentId);
-
-            if ($document) {
-                $customerDoc = $service->documents()->updateOrCreate(
-                    [
-                        'document_id' => $parentId,
-                        'document_children_id' => null,
-                    ],
-                    [
-                        'jumlah' => $jumlah,
-                        'harga' => $document->price ?? 0,
-                    ]
-                );
-                $validCustomerDocIds[] = $customerDoc->id;
-            }
-        }
-
-        // 3️⃣ Ambil hanya dokumen ANAK yang dicentang
-        $selectedChildren = $request->input('child_documents', []);
+        // --------------------------------------------------------------------------------------------------
+        // 2️⃣ (Perubahan Urutan) PROSES DOKUMEN ANAK (Child Documents) TERLEBIH DAHULU
+        // --------------------------------------------------------------------------------------------------
+        $selectedChildren = $request->input('child_documents', []); //
         foreach ($selectedChildren as $childId) {
             $jumlah = $request->input("jumlah_child_doc.$childId", 1);
             $itemChild = DocumentChildren::find($childId);
 
-            if ($itemChild) {
+            if ($itemChild && $jumlah > 0) {
                 $customerDoc = $service->documents()->updateOrCreate(
                     [
                         'document_children_id' => $itemChild->id,
@@ -2065,6 +2046,46 @@ class ServicesController extends Controller
                         'document_id' => $itemChild->document_id,
                         'jumlah' => $jumlah,
                         'harga' => $itemChild->price ?? 0,
+                    ]
+                );
+                $validCustomerDocIds[] = $customerDoc->id;
+
+                // 🆕 Rekam ID Parent (ID Dokumen Induk)
+                $parentsReferencedByChildren[] = $itemChild->document_id;
+            }
+        }
+
+        // --------------------------------------------------------------------------------------------------
+        // 3️⃣ (Perubahan Urutan) PROSES DOKUMEN INDUK (Parent Documents)
+        // --------------------------------------------------------------------------------------------------
+
+        // Pastikan daftar parent yang ter-referensi unik
+        $parentsReferencedByChildren = array_unique($parentsReferencedByChildren);
+
+        // Ambil hanya dokumen INDUK yang dicentang
+        $selectedParents = $request->input('dokumen_id', []); //
+
+        foreach ($selectedParents as $parentId) {
+            $parentId = (int) $parentId;
+
+            // 🆕 KUNCI PERBAIKAN: Jika Parent ID sudah dicatat karena Dokumen Anaknya dipilih, skip.
+            if (in_array($parentId, $parentsReferencedByChildren)) {
+                continue;
+            }
+
+            $jumlah = $request->input("jumlah_doc_$parentId", 1);
+            $document = Document::find($parentId);
+
+            if ($document && $jumlah > 0) {
+                // Simpan Parent Document (Standalone)
+                $customerDoc = $service->documents()->updateOrCreate(
+                    [
+                        'document_id' => $parentId,
+                        'document_children_id' => null, // Ini entri untuk Parent Dokumen
+                    ],
+                    [
+                        'jumlah' => $jumlah,
+                        'harga' => $document->price ?? 0,
                     ]
                 );
                 $validCustomerDocIds[] = $customerDoc->id;
