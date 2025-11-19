@@ -260,53 +260,75 @@ class ServicesController extends Controller
 
     public function store(Request $request)
     {
+        // 1. Kondisi untuk Layanan Utama Transportasi
+        $isMainTransportationSelected = $request->has('services') && is_array($request->services) && in_array('transportasi', $request->services);
+
+        // 2. Kondisi untuk Transportasi Darat ('bus')
+        $isBusSelected = $isMainTransportationSelected &&
+            $request->has('transportation') && is_array($request->transportation) && in_array('bus', $request->transportation);
+
+        // 3. Kondisi untuk Transportasi Udara ('airplane')
+        $isPlaneSelected = $isMainTransportationSelected &&
+            $request->has('transportation') && is_array($request->transportation) && in_array('airplane', $request->transportation);
+
         $request->validate([
             'travel' => 'required|exists:pelanggans,id',
             'services' => 'required|array',
             'tanggal_keberangkatan' => 'required|date',
             'tanggal_kepulangan' => 'required|date',
             'total_jamaah' => 'required|integer',
-            'transportation_id' => [
-                'nullable',
-                Rule::requiredIf(function () use ($request) {
-                    return $request->has('services') && in_array('transportasi', $request->services) &&
-                        $request->has('transportation') && in_array('bus', $request->transportation);
-                }),
-                'array',
-                'min:1'
-            ],
-            // '.*' berarti "setiap item di dalam array"
-            'transportation_id.*' => 'required|exists:transportations,id',
+            'email' => 'required|email',
+            'phone' => 'required|string',
 
-            'rute_id' => [
-                'nullable',
-                Rule::requiredIf(function () use ($request) {
-                    return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation);
-                }),
-                'array',
-                'min:1'
-            ],
-            'rute_id.*' => 'required|exists:routes,id',
+            // --- VALIDASI UNTUK PEMILIHAN SUB-LAYANAN TRANSPORTASI ---
+            'transportation' => $isMainTransportationSelected ? 'required|array|min:1' : 'nullable|array',
 
-            'tanggal_transport' => [
-                'nullable',
-                Rule::requiredIf(function () use ($request) {
-                    return $request->has('services') && in_array('transportasi', $request->services) && $request->has('transportation') && in_array('bus', $request->transportation);
-                }),
-                'array',
-                'min:1'
-            ],
-            'tanggal_transport.*.dari' => 'required|date',
-            'tanggal_transport.*.sampai' => 'required|date|after_or_equal:tanggal_transport.*.dari', // Ini adalah validasi error Anda
+            // --- TRANSPORTASI DARAT (GROUND) ---
+            'transportation_id' => $isBusSelected ? 'required|array|min:1' : 'nullable|array',
+            'transportation_id.*' => $isBusSelected ? 'required|exists:transportations,id' : 'nullable',
+            'rute_id' => $isBusSelected ? 'required|array|min:1' : 'nullable|array',
+            'rute_id.*' => $isBusSelected ? 'required|exists:routes,id' : 'nullable',
+            'tanggal_transport' => $isBusSelected ? 'required|array|min:1' : 'nullable|array',
+            'tanggal_transport.*.dari' => $isBusSelected ? 'required|date' : 'nullable|date',
+            'tanggal_transport.*.sampai' => $isBusSelected ? 'required|date|after_or_equal:tanggal_transport.*.dari' : 'nullable|date',
+
+            // --- TRANSPORTASI UDARA (PESAWAT) ---
+            'rute' => $isPlaneSelected ? 'required|array|min:1' : 'nullable|array',
+            'tanggal' => $isPlaneSelected ? 'required|array|min:1' : 'nullable|array',
+
+            // Validasi untuk setiap item di dalam array Pesawat
+            'rute.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
+            'tanggal.*' => $isPlaneSelected ? 'required|date' : 'nullable|date',
+            'maskapai.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
+            'harga_tiket.*' => $isPlaneSelected ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
+            'jumlah.*' => $isPlaneSelected ? 'required|integer|min:1' : 'nullable|integer|min:0',
+
+            'tiket_berangkat.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
+            'tiket_pulang.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
 
         ], [
-            // --- PESAN ERROR KUSTOM ---
+            'transportation.required' => 'Anda memilih layanan Transportasi, wajib memilih minimal salah satu sub-layanan (Pesawat atau Transportasi Darat).',
+            'transportation.min' => 'Anda memilih layanan Transportasi, wajib memilih minimal salah satu sub-layanan (Pesawat atau Transportasi Darat).',
             'transportation_id.required' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
             'transportation_id.min' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
+            'rute_id.required' => 'Rute wajib dipilih untuk setiap transportasi darat.',
+            'rute_id.min' => 'Rute wajib dipilih untuk setiap transportasi darat.',
             'rute_id.*.required' => 'Rute wajib dipilih untuk setiap transportasi darat.',
+            'tanggal_transport.required' => 'Tanggal transportasi darat wajib diisi.',
+            'tanggal_transport.min' => 'Tanggal transportasi darat wajib diisi.',
             'tanggal_transport.*.dari.required' => 'Tanggal "Dari" wajib diisi untuk setiap transportasi darat.',
             'tanggal_transport.*.sampai.required' => 'Tanggal "Sampai" wajib diisi untuk setiap transportasi darat.',
-            'tanggal_transport.*.sampai.after_or_equal' => 'Tanggal "Sampai" harus sama atau setelah Tanggal "Dari".' // Pesan untuk error Anda
+            'tanggal_transport.*.sampai.after_or_equal' => 'Tanggal "Sampai" harus sama atau setelah Tanggal "Dari".',
+            'rute.required' => 'Anda memilih Tiket Pesawat, tapi belum menambahkan satu pun rute penerbangan.',
+            'rute.min' => 'Anda memilih Tiket Pesawat, tapi belum menambahkan satu pun rute penerbangan.',
+            'tanggal.required' => 'Tanggal keberangkatan wajib diisi untuk setiap penerbangan.',
+            'tanggal.min' => 'Tanggal keberangkatan wajib diisi untuk setiap penerbangan.',
+            'rute.*.required' => 'Rute (contoh: JKT-JED) wajib diisi untuk setiap penerbangan.',
+            'tanggal.*.required' => 'Tanggal keberangkatan wajib diisi untuk setiap penerbangan.',
+            'maskapai.*.required' => 'Nama maskapai wajib diisi untuk setiap penerbangan.',
+            'harga_tiket.*.required' => 'Harga tiket wajib diisi untuk setiap penerbangan.',
+            'jumlah.*.required' => 'Jumlah jamaah wajib diisi untuk setiap penerbangan.',
+            'jumlah.*.min' => 'Jumlah jamaah harus minimal 1.',
         ]);
 
         $masterPrefix = 'ID';
