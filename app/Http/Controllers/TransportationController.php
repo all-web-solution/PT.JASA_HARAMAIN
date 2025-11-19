@@ -123,7 +123,7 @@ public function update(Request $request, $id)
             Order::whereHas('service', function ($query) use ($pelangganId) {
                 $query->where('pelanggan_id', $pelangganId);
             })->update([
-                'total_amount' => $GrandTotal,
+                'total_amount_final' => $GrandTotal,
                 'sisa_hutang' => $GrandTotal,
                 'status_pembayaran' => 'belum_bayar'
 
