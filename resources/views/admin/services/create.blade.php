@@ -418,12 +418,33 @@
                         <h6 class="form-section-title">
                             <i class="bi bi-building"></i> Data Travel
                         </h6>
+                        @php
+                            $selectedPelanggan = null;
+                            $oldTravelId = old('travel');
+                            if ($oldTravelId && isset($pelanggans)) {
+                                foreach ($pelanggans as $pelanggan) {
+                                    if ($pelanggan->id == $oldTravelId) {
+                                        $selectedPelanggan = $pelanggan;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            $pjValue = $selectedPelanggan ? $selectedPelanggan->penanggung_jawab : '';
+                            $emailValue = $selectedPelanggan ? $selectedPelanggan->email : old('email');
+                            $phoneValue = $selectedPelanggan ? $selectedPelanggan->phone : old('phone');
+
+                            if (!$selectedPelanggan) {
+                                $emailValue = old('email');
+                                $phoneValue = old('phone');
+                            }
+                        @endphp
+
                         <div class="form-row">
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Nama Travel</label>
                                     <select class="form-control" name="travel" id="travel-select" required>
-                                        {{-- Tambahkan 'selected' jika old('travel') kosong --}}
                                         <option value="" disabled {{ !old('travel') ? 'selected' : '' }}>Pilih Travel
                                         </option>
                                         @foreach ($pelanggans as $pelanggan)
@@ -435,13 +456,16 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                    @error('travel')
+                                        <div class="validation-error-message mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Penanggung Jawab</label>
                                     <input type="text" class="form-control" readonly id="penanggung"
-                                        value="{{ old('penanggung_jawab') }}">
+                                        value="{{ $pjValue }}">
                                 </div>
                             </div>
                         </div>
@@ -450,15 +474,21 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" required id="email"
-                                        value="{{ old('email') }}">
+                                    <input type="email" class="form-control" required id="email" name="email"
+                                        value="{{ $emailValue }}">
+                                    @error('email')
+                                        <div class="validation-error-message mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Telepon</label>
-                                    <input type="tel" class="form-control" required id="phone"
-                                        value="{{ old('phone') }}">
+                                    <input type="tel" class="form-control" required id="phone" name="phone"
+                                        value="{{ $phoneValue }}">
+                                    @error('phone')
+                                        <div class="validation-error-message mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -469,6 +499,9 @@
                                     <label class="form-label">Tanggal Keberangkatan</label>
                                     <input type="date" class="form-control" name="tanggal_keberangkatan" required
                                         value="{{ old('tanggal_keberangkatan') }}">
+                                    @error('tanggal_keberangkatan')
+                                        <div class="validation-error-message mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="form-col">
@@ -476,6 +509,9 @@
                                     <label class="form-label">Tanggal Kepulangan</label>
                                     <input type="date" class="form-control" name="tanggal_kepulangan" required
                                         value="{{ old('tanggal_kepulangan') }}">
+                                    @error('tanggal_kepulangan')
+                                        <div class="validation-error-message mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -484,6 +520,9 @@
                             <label class="form-label">Jumlah Jamaah</label>
                             <input type="number" class="form-control" name="total_jamaah" min="1" required
                                 value="{{ old('total_jamaah') }}">
+                            @error('total_jamaah')
+                                <div class="validation-error-message mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -543,7 +582,6 @@
                         </h6>
 
                         {{-- TRANSPORTASI FORM --}}
-                        {{-- PERBAIKAN: Tampilkan form jika 'transportasi' ada di 'oldServices' --}}
                         <div class="detail-form {{ in_array('transportasi', $oldServices) ? '' : 'hidden' }}"
                             id="transportasi-details">
                             <h6 class="detail-title"><i class="bi bi-airplane"></i> Transportasi</h6>
@@ -563,15 +601,23 @@
                                             {{ in_array('bus', $oldTransportTypes) ? 'checked' : '' }}>
                                     </div>
                                 </div>
+                                @error('transportation')
+                                    <div class="validation-error-message mt-2 mb-3">{{ $message }}</div>
+                                @enderror
 
                                 {{-- FORM PESAWAT --}}
                                 <div class="form-group {{ in_array('airplane', $oldTransportTypes) ? '' : 'hidden' }}"
                                     data-transportasi="airplane" id="pesawat">
                                     <label class="form-label">Tiket Pesawat</label>
+
+                                    {{-- Error untuk array Pesawat (min:1) diletakkan di dekat tombol tambah --}}
+                                    @error('rute')
+                                        <div class="validation-error-message mt-2">{{ $message }}</div>
+                                    @enderror
+
                                     <button type="button" class="btn btn-sm btn-primary mb-3" id="addTicket">Tambah
                                         Tiket</button>
                                     <div id="ticketWrapper">
-                                        {{-- PERBAIKAN: Loop data 'old' untuk tiket pesawat --}}
                                         @if (is_array(old('tanggal')))
                                             @foreach (old('tanggal') as $index => $oldTanggal)
                                                 <div class="ticket-form bg-white p-3 border mb-3">
@@ -581,18 +627,30 @@
                                                                 Keberangkatan</label>
                                                             <input type="date" class="form-control" name="tanggal[]"
                                                                 value="{{ $oldTanggal }}">
+                                                            @error('tanggal.' . $index)
+                                                                <div class="validation-error-message mt-1">{{ $message }}
+                                                                </div>
+                                                            @enderror
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label class="form-label fw-semibold">Rute</label>
                                                             <input type="text" class="form-control" name="rute[]"
                                                                 placeholder="Contoh: CGK - JED"
                                                                 value="{{ old('rute.' . $index) }}">
+                                                            @error('rute.' . $index)
+                                                                <div class="validation-error-message mt-1">{{ $message }}
+                                                                </div>
+                                                            @enderror
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label class="form-label fw-semibold">Maskapai</label>
                                                             <input type="text" class="form-control" name="maskapai[]"
                                                                 placeholder="Nama maskapai"
                                                                 value="{{ old('maskapai.' . $index) }}">
+                                                            @error('maskapai.' . $index)
+                                                                <div class="validation-error-message mt-1">{{ $message }}
+                                                                </div>
+                                                            @enderror
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label class="form-label fw-semibold">Keterangan</label>
@@ -606,6 +664,10 @@
                                                             <input type="number" class="form-control"
                                                                 id="paspor-tiket-{{ $index }}" name="jumlah[]"
                                                                 value="{{ old('jumlah.' . $index) }}">
+                                                            @error('jumlah.' . $index)
+                                                                <div class="validation-error-message mt-1">{{ $message }}
+                                                                </div>
+                                                            @enderror
                                                         </div>
                                                     </div>
                                                     <div class="mt-3 text-end">
@@ -657,25 +719,13 @@
                                 <div class="form-group {{ in_array('bus', $oldTransportTypes) ? '' : 'hidden' }}"
                                     data-transportasi="bus" id="bis">
                                     <label class="form-label">Transportasi darat</label>
-                                    @error('transportation_id')
-                                        <div class="validation-error-message">{{ $message }}</div>
-                                    @enderror
-                                    @error('rute_id.*')
-                                        <div class="validation-error-message">Rute wajib dipilih untuk setiap transportasi
-                                            darat.</div>
-                                    @enderror
-                                    @error('tanggal_transport.*.dari')
-                                        <div class="validation-error-message">Tanggal "Dari" wajib diisi.</div>
-                                    @enderror
-                                    @error('tanggal_transport.*.sampai')
-                                        <div class="validation-error-message">{{ $message }}</div>
-                                    @enderror
-
-                                    <button type="button" class="btn btn-sm btn-primary mb-3" id="add-transport-btn">Tambah
+                                    <button type="button" class="btn btn-sm btn-primary mb-3"
+                                        id="add-transport-btn">Tambah
                                         Transportasi</button>
-
+                                    @error('transportation_id')
+                                        <div class="validation-error-message mt-2">{{ $message }}</div>
+                                    @enderror
                                     <div id="new-transport-forms">
-                                        {{-- PERBAIKAN: Loop data 'old' untuk transportasi darat --}}
                                         @if (is_array(old('transportation_id')))
                                             @foreach (old('transportation_id') as $index => $oldTransportId)
                                                 @php
@@ -708,6 +758,9 @@
                                                             </div>
                                                         @endforeach
                                                     </div>
+                                                    @error('transportation_id.' . $index)
+                                                        <div class="validation-error-message mt-1">{{ $message }}</div>
+                                                    @enderror
 
                                                     <div class="route-select {{ $selectedTransport ? '' : 'hidden' }}">
                                                         <label class="form-label mt-2">Pilih Rute:</label>
@@ -723,6 +776,10 @@
                                                                 @endforeach
                                                             @endif
                                                         </select>
+                                                        @error('rute_id.' . $index)
+                                                            <div class="validation-error-message mt-1">Rute wajib dipilih untuk
+                                                                setiap transportasi darat.</div>
+                                                        @enderror
                                                     </div>
 
                                                     <div class="route-select">
@@ -731,6 +788,10 @@
                                                             name="tanggal_transport[{{ $index }}][dari]"
                                                             class="form-control"
                                                             value="{{ old('tanggal_transport.' . $index . '.dari') }}">
+                                                        @error('tanggal_transport.' . $index . '.dari')
+                                                            <div class="validation-error-message mt-1">Tanggal "Dari" wajib
+                                                                diisi untuk setiap transportasi darat.</div>
+                                                        @enderror
                                                     </div>
 
                                                     <div class="route-select">
@@ -739,6 +800,10 @@
                                                             name="tanggal_transport[{{ $index }}][sampai]"
                                                             class="form-control"
                                                             value="{{ old('tanggal_transport.' . $index . '.sampai') }}">
+                                                        @error('tanggal_transport.' . $index . '.sampai')
+                                                            <div class="validation-error-message mt-1">{{ $message }}
+                                                            </div>
+                                                        @enderror
                                                     </div>
 
                                                     <div class="mt-2 text-end">
@@ -748,7 +813,7 @@
                                                 </div>
                                             @endforeach
                                         @else
-                                            {{-- Form default jika tidak ada data 'old' --}}
+                                            {{-- Default form (INDEX 0) - DITAMBAHKAN ERROR CHECK --}}
                                             <div class="transport-set card p-3 mt-3" data-index="0">
                                                 <div class="cars">
                                                     @foreach ($transportations as $i => $data)
@@ -768,21 +833,37 @@
                                                         </div>
                                                     @endforeach
                                                 </div>
+                                                @error('transportation_id.0')
+                                                    <div class="validation-error-message mt-1">{{ $message }}</div>
+                                                @enderror
+
                                                 <div class="route-select hidden">
                                                     <label class="form-label mt-2">Pilih Rute:</label>
                                                     <select name="rute_id[0]" class="form-control">
                                                         <option value="">-- Pilih Rute --</option>
                                                     </select>
+                                                    @error('rute_id.0')
+                                                        <div class="validation-error-message mt-1">Rute wajib dipilih untuk
+                                                            setiap transportasi darat.</div>
+                                                    @enderror
                                                 </div>
+
                                                 <div class="route-select">
                                                     <label class="form-label mt-2">Dari tanggal:</label>
                                                     <input type="date" name="tanggal_transport[0][dari]"
                                                         class="form-control">
+                                                    @error('tanggal_transport.0.dari')
+                                                        <div class="validation-error-message mt-1">Tanggal "Dari" wajib diisi
+                                                            untuk setiap transportasi darat.</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="route-select">
                                                     <label class="form-label mt-2">Sampai tanggal:</label>
                                                     <input type="date" name="tanggal_transport[0][sampai]"
                                                         class="form-control">
+                                                    @error('tanggal_transport.0.sampai')
+                                                        <div class="validation-error-message mt-1">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="mt-2 text-end">
                                                     <button type="button"
