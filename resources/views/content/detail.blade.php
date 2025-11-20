@@ -2,132 +2,7 @@
 @section('title', 'Detail Dokumen')
 @push('styles')
     <style>
-        :root {
-            --haramain-primary: #1a4b8c;
-            --haramain-secondary: #2a6fdb;
-            --haramain-light: #e6f0fa;
-            --haramain-accent: #3d8bfd;
-            --text-primary: #2d3748;
-            --text-secondary: #4a5568;
-            --border-color: #d1e0f5;
-            --hover-bg: #f0f7ff;
-            --background-light: #f8fafd;
-        }
-
-        .document-detail-container {
-            max-width: 100vw;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: var(--background-light);
-        }
-
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card-title {
-            font-weight: 700;
-            color: var(--haramain-primary);
-            margin: 0;
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .card-title i {
-            font-size: 1.5rem;
-            color: var(--haramain-secondary);
-        }
-
-        .card-body {
-            padding: 2rem;
-        }
-
-        /* Detail Display */
-        .detail-section p {
-            font-size: 1.1rem;
-            color: var(--text-primary);
-        }
-
-        .detail-section p strong {
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        /* Table Styles */
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 0.75rem;
-            margin-top: -0.75rem;
-        }
-
-        .table thead th {
-            background-color: var(--haramain-light);
-            color: var(--haramain-primary);
-            font-weight: 600;
-            padding: 1rem 1.25rem;
-            border-bottom: 2px solid var(--border-color);
-            text-align: left;
-            white-space: nowrap;
-        }
-
-        .table tbody tr {
-            background-color: white;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-        }
-
-        .table tbody tr:hover {
-            background-color: var(--hover-bg);
-            box-shadow: 0 4px 12px rgba(42, 111, 219, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .table tbody td {
-            padding: 1.25rem;
-            vertical-align: middle;
-            border: 1px solid transparent;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .table tbody tr td:first-child {
-            border-left: 1px solid var(--border-color);
-            border-top-left-radius: 8px;
-            border-bottom-left-radius: 8px;
-        }
-
-        .table tbody tr td:last-child {
-            border-right: 1px solid var(--border-color);
-            border-top-right-radius: 8px;
-            border-bottom-right-radius: 8px;
-        }
-
-        /* Actions Button Styling */
-        .actions-container {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
+        :root{--haramain-primary:#1a4b8c;--haramain-secondary:#2a6fdb;--haramain-light:#e6f0fa;--haramain-accent:#3d8bfd;--text-primary:#2d3748;--text-secondary:#4a5568;--border-color:#d1e0f5;--hover-bg:#f0f7ff;--background-light:#f8fafd}.document-detail-container{max-width:100vw;margin:0 auto;padding:2rem;background-color:var(--background-light)}.card{border-radius:12px;box-shadow:0 4px 12px rgb(0 0 0 / .05);border:1px solid var(--border-color);margin-bottom:2rem;overflow:hidden}.card-header{background:linear-gradient(135deg,var(--haramain-light) 0%,#ffffff 100%);border-bottom:1px solid var(--border-color);padding:1.5rem;display:flex;align-items:center;justify-content:space-between}.card-title{font-weight:700;color:var(--haramain-primary);margin:0;font-size:1.25rem;display:flex;align-items:center;gap:12px}.card-title i{font-size:1.5rem;color:var(--haramain-secondary)}.card-body{padding:2rem}.detail-section p{font-size:1.1rem;color:var(--text-primary)}.detail-section p strong{color:var(--text-secondary);font-weight:600}.table-responsive{overflow-x:auto}.table{width:100%;border-collapse:separate;border-spacing:0 .75rem;margin-top:-.75rem}.table thead th{background-color:var(--haramain-light);color:var(--haramain-primary);font-weight:600;padding:1rem 1.25rem;border-bottom:2px solid var(--border-color);text-align:left;white-space:nowrap}.table tbody tr{background-color:#fff;transition:all 0.3s ease;border-radius:8px}.table tbody tr:hover{background-color:var(--hover-bg);box-shadow:0 4px 12px rgb(42 111 219 / .1);transform:translateY(-2px)}.table tbody td{padding:1.25rem;vertical-align:middle;border:1px solid #fff0;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color)}.table tbody tr td:first-child{border-left:1px solid var(--border-color);border-top-left-radius:8px;border-bottom-left-radius:8px}.table tbody tr td:last-child{border-right:1px solid var(--border-color);border-top-right-radius:8px;border-bottom-right-radius:8px}.actions-container{display:flex;gap:.5rem;align-items:center}
     </style>
 @endpush
 @section('content')
@@ -188,11 +63,10 @@
                                                     <i class="bi bi-trash-fill"></i>
                                                 </button>
                                             </form>
-
-                                             <a href="{{ route('visa.document.customer.detail.supplier', $child->id) }}" class="btn btn-primary btn-sm"
-                                            title="Supplier">
-                                            <i class="bi bi-file-earmark-plus"></i>
-                                        </a>
+                                            <a href="{{ route('visa.document.customer.detail.supplier', $child->id) }}"
+                                                class="btn btn-primary btn-sm" title="Supplier">
+                                                <i class="bi bi-info-circle"></i>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
