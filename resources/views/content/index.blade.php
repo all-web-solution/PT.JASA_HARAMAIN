@@ -80,7 +80,6 @@
 
                     Swal.fire({
                         title: 'Anda Yakin?',
-                        // KODE YANG DIMODIFIKASI
                         html: `
                             Anda akan menghapus dokumen master: <strong>${docName}</strong>.<br><br>
                             <span style="color: var(--danger-color); font-weight: bold;">PERINGATAN KERAS:</span> Tindakan ini akan menyebabkan <strong style="color: var(--danger-color);">KEHILANGAN DATA PERMANEN</strong> pada semua data yang terkait, termasuk:

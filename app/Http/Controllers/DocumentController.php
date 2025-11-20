@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\CustomerDocument;
@@ -128,112 +127,83 @@ class DocumentController extends Controller
 
     public function customer()
     {
-        $customers = CustomerDocument::query()
-
+        $customers = Service::query()
+            ->has('documents')
             ->with([
-                'service.pelanggan',
-                'document'
+                'pelanggan',
+                'documents.document',
+                'documents.documentChild'
             ])
-
             ->latest()
             ->paginate(10);
-
         return view('content.customer', compact('customers'));
     }
     public function detail($id)
     {
-        $customerDocument = CustomerDocument::with('service.pelanggan', 'document', 'documentChild')->findOrFail($id);
-        return view('content.customer_detail', compact('customerDocument'));
+        $initialDocument = CustomerDocument::with('service.pelanggan')->findOrFail($id);
+        $serviceId = $initialDocument->service_id;
+        $service = Service::with([
+            'pelanggan',
+            'documents.document',
+            'documents.documentChild'
+        ])->findOrFail($serviceId);
+        return view('content.customer_detail', compact('service'));
     }
 
     public function editDocumentCustomer(CustomerDocument $document)
     {
-        // Ambil data untuk dropdowns
         $services = Service::with('pelanggan')->get();
         $documents = DocumentModel::all();
         $documentChildrens = DocumentChildren::all();
-
-        // Ambil status enum dari migrasi
         $statuses = ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'];
-
         return view('content.customer_edit', [
-            'document' => $document, // Nama variabel diubah jadi 'document'
+            'document' => $document,
             'services' => $services,
             'documents' => $documents,
             'documentChildrens' => $documentChildrens,
             'statuses' => $statuses
         ]);
     }
-
-    /**
-     * Memproses update untuk CustomerDocument.
-     */
     public function updateDocumentCustomer(Request $request, CustomerDocument $document)
     {
-        // Validasi data (sesuai migrasi)
-        // (Saya asumsikan kolom harga & jumlah seharusnya numeric)
         $validatedData = $request->validate([
             'status' => 'required|in:nego,deal,batal,tahap persiapan,tahap produksi,done',
             'supplier' => 'nullable|string|max:255',
             'harga_dasar' => 'nullable|numeric|min:0',
             'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
         ]);
-
-        // Update data
         $document->update($validatedData);
-
-        // Redirect kembali ke halaman index dokumen
-        // (Asumsi 'content.customer' adalah route index dokumen Anda)
         return redirect()->route('visa.document.customer')
             ->with('success', 'Order Dokumen berhasil diperbarui!');
     }
-
-    /**
-     * Menampilkan daftar supplier (transaksi) untuk Document CHILDREN.
-     * Menggunakan DocumentChildren ID.
-     */
-    public function supplier($id) // Rute lama: visa.document.customer.detail.supplier
+    public function supplier($id)
     {
-        // 1. Ambil data master DocumentChildren untuk konteks
         $documentChildren = DocumentChildren::with('document')->findOrFail($id);
 
-        // 2. Ambil SEMUA CustomerDocument (permintaan service) yang menggunakan DocumentChildren ini.
         $customerDocuments = CustomerDocument::where('document_children_id', $documentChildren->id)
             ->with(['service.pelanggan', 'document', 'documentChild'])
             ->latest()
             ->paginate(15);
-
-        // Menggunakan nama variabel 'documentItem' untuk konsistensi di view
         $documentItem = $documentChildren;
-
         return view('content.supplier', compact('documentItem', 'customerDocuments'));
     }
 
-    /**
-     * Menampilkan daftar supplier (transaksi) untuk Document INDUK tanpa CHILDREN.
-     * Menggunakan Document ID.
-     */
     public function supplierParent($id)
     {
-        // 1. Ambil Document (Induk)
         $documentParent = DocumentModel::findOrFail($id);
 
-        // 2. Query CustomerDocument yang menggunakan Document ID ini, tetapi TIDAK memiliki Document Children ID.
-        // Ini menangani kasus dokumen yang tidak memiliki child item
         $customerDocuments = CustomerDocument::where('document_id', $documentParent->id)
-            ->whereNull('document_children_id') // Penting: Hanya transaksi tanpa child ID
+            ->whereNull('document_children_id')
             ->with(['service.pelanggan', 'document', 'documentChild'])
             ->latest()
             ->paginate(15);
 
-        // Buat objek sementara agar konsisten di view
         $documentItem = (object) [
             'id' => $documentParent->id,
             'name' => $documentParent->name,
             'document' => $documentParent,
-            'is_parent_only' => true // Penanda di view
+            'is_parent_only' => true
         ];
-
         return view('content.supplier', compact('documentItem', 'customerDocuments'));
     }
 }
