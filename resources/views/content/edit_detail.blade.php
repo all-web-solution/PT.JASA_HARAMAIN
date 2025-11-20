@@ -11,7 +11,7 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-plus-circle"></i>Tambah Document {{ $children->name }}
+                    <i class="bi bi-plus-circle"></i>Edit Document {{ $children->name }}
                 </h5>
                 <a href="{{ route('visa.document.show', $children->id) }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali

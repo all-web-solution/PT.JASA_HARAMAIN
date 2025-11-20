@@ -1,5 +1,5 @@
 @extends('admin.master')
-@section('title', 'Daftar Dokumen dan Permit Customer')
+@section('title', 'Daftar Dokumen & Permit Customer')
 @push('styles')
     <style>
         :root {
@@ -180,19 +180,39 @@
             display: flex;
             justify-content: flex-end;
             padding: 1.5rem;
-            border-top: 1px solid var(--border-color)
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--haramain-secondary);
-            border-color: var(--haramain-secondary)
+            border-top: 1px solid var(--border-color);
+            gap: 1rem
         }
 
         .pagination .page-link {
+            border-radius: 10px;
+            margin: 0 3px;
             color: var(--haramain-primary);
-            border-radius: 8px;
-            margin: 0 .25rem;
-            border: 1px solid var(--border-color)
+            border-color: #d9e3f0
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #2f6fed;
+            border-color: #2f6fed;
+            color: #fff
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background-color: #f5f7fa;
+            color: #adb5bd;
+            border-color: #e3e7ec
+        }
+
+        .actions-container .btn-action.text-info {
+            color: var(--haramain-secondary);
+        }
+
+        .actions-container .btn-action.text-warning {
+            color: var(--warning-color);
+        }
+
+        .actions-container .btn-action.text-danger {
+            color: var(--danger-color);
         }
     </style>
 @endpush
@@ -201,7 +221,7 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-person-vcard"></i>Daftar Dokumen & Permit Customer
+                    <i class="bi bi-person-vcard"></i>Daftar Permintaan Dokumen per Layanan
                 </h5>
             </div>
             <div class="table-responsive">
@@ -209,19 +229,18 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Dibuat</th>
-                            <th>Nama Pelanggan</th>
-                            <th>Nama Dokumen</th>
-                            <th>Jumlah</th>
-                            <th>Supplier</th>
-                            <th>Status</th>
+                            <th>Tgl. Permintaan</th>
+                            <th>Nama Travel</th>
+                            <th>ID Service</th>
+                            <th>Jml. Jenis Dokumen</th>
+                            <th>Progres Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if ($customers->isEmpty())
                             <tr>
-                                <td colspan="8" class="text-center py-5">
+                                <td colspan="7" class="text-center py-5">
                                     <img src="{{ asset('assets/images/empty-state.svg') }}" alt="No data"
                                         style="height: 150px;">
                                     <h5 class="mt-3" style="color: var(--haramain-primary);">Belum Ada Permintaan
@@ -230,58 +249,48 @@
                                 </td>
                             </tr>
                         @else
-                            @foreach ($customers as $item)
+                            @foreach ($customers as $service)
                                 @php
-                                    $status = strtolower($item->status);
-                                    $statusClass = '';
-                                    if (in_array($status, ['done', 'deal'])) {
-                                        $statusClass = 'badge-success';
-                                    } elseif (in_array($status, ['nego', 'tahap persiapan', 'tahap produksi'])) {
-                                        $statusClass = 'badge-warning';
-                                    } elseif (in_array($status, ['cancelled', 'batal'])) {
-                                        $statusClass = 'badge-danger';
-                                    } else {
-                                        $statusClass = 'badge-primary';
+                                    $latestDocument = $service->documents->sortByDesc('created_at')->first();
+                                    $detailRoute = $latestDocument
+                                        ? route('visa.document.customer.detail', $latestDocument->id)
+                                        : '#';
+                                    $totalItems = $service->documents->count();
+                                    $doneStatuses = ['done', 'deal'];
+                                    $doneItems = $service->documents->whereIn('status', $doneStatuses)->count();
+                                    $progressPercentage = $totalItems > 0 ? round(($doneItems / $totalItems) * 100) : 0;
+                                    $progressTextColor = 'text-danger';
+                                    if ($progressPercentage >= 100) {
+                                        $progressTextColor = 'text-success';
+                                    } elseif ($progressPercentage > 0) {
+                                        $progressTextColor = 'text-warning';
                                     }
-
-                                    // LOGIKA BARU UNTUK ROUTE SUPPLIER GLOBAL
-                                    $supplierRoute = $item->document_children_id
-                                        ? route('visa.document.customer.detail.supplier', $item->document_children_id)
-                                        : route('visa.document.supplier.parent', $item->document_id);
                                 @endphp
                                 <tr>
                                     <td>{{ $loop->iteration + $customers->perPage() * ($customers->currentPage() - 1) }}
                                     </td>
-                                    <td>{{ $item->created_at->format('d M Y H:i') }}</td>
-                                    <td>{{ $item->service?->pelanggan?->nama_travel ?? 'N/A' }}</td>
-                                    @if ($item->documentChild?->name)
-                                        <td>{{ $item->documentChild?->name ?? 'N/A' }}</td>
-                                    @else
-                                        <td>{{ $item->document?->name ?? 'N/A' }}</td>
-                                    @endif
-                                    <td>{{ $item->jumlah }}</td>
-                                    <td>{{ $item->supplier ?? '-' }}</td>
+                                    <td>{{ $service->created_at->format('d M Y H:i') }}</td>
+                                    <td>{{ $service->pelanggan?->nama_travel ?? 'N/A' }}</td>
                                     <td>
-                                        <span class="badge {{ $statusClass }}">{{ $item->status }}</span>
+                                        <span class="fw-bold">{{ $service->unique_code ?? 'N/A' }}</span>
                                     </td>
                                     <td>
-                                        {{-- 1. Tombol Info Supplier Global (Baru) --}}
-                                        <a href="{{ $supplierRoute }}" class="btn-action" title="Daftar Supplier Global">
-                                            <i class="bi bi-truck"></i>
-                                        </a>
+                                        <span class="fw-bold">{{ $service->documents->count() }}</span> Item
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold {{ $progressTextColor }}">{{ $doneItems }} dari
+                                            {{ $totalItems }} Item Selesai</span>
+                                        <br>
+                                        <small class="text-muted">({{ $progressPercentage }}% Progres)</small>
+                                    </td>
 
-                                        {{-- 2. Tombol Detail --}}
-                                        <a href="{{ route('visa.document.customer.detail', $item->id) }}"> <button
-                                                class="btn-action btn-view" title="Detail Transaksi">
-                                                <i class="bi bi-eye-fill"></i>
-                                            </button>
-                                        </a>
-
-                                        {{-- 3. Tombol Edit Transaksi --}}
-                                        <a href="{{ route('document.customer.edit', $item->id) }}" class="btn-action"
-                                            title="Edit Transaksi">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </a>
+                                    <td>
+                                        <div class="actions-container">
+                                            <a href="{{ $detailRoute }}" class="btn-action text-info"
+                                                title="Lihat Semua Item Dokumen">
+                                                <i class="bi bi-list-check"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -289,7 +298,6 @@
                     </tbody>
                 </table>
             </div>
-            <!-- Pagination -->
             <div class="pagination-container">
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
@@ -311,3 +319,17 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script>
+        @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            timer: 2500,
+            showConfirmButton: false,
+            timerProgressBar: true
+        });
+        @endif
+    </script>
+@endpush
