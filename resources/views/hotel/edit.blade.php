@@ -3,7 +3,6 @@
 
 @push('styles')
     <style>
-        /* == SEMUA CSS DARI TEMPLATE ANDA == */
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;

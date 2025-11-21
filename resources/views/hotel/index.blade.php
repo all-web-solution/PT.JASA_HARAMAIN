@@ -3,7 +3,6 @@
 
 @push('styles')
     <style>
-        /* == CSS Dari Referensi == */
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;
@@ -20,22 +19,22 @@
             --success-bg: rgba(40, 167, 69, 0.1);
             --warning-bg: rgba(255, 193, 7, 0.1);
             --danger-bg: rgba(220, 53, 69, 0.1);
-            --primary-bg: var(--haramain-light);
+            --primary-bg: var(--haramain-light)
         }
 
         .service-list-container {
             max-width: 100vw;
             margin: 0 auto;
             padding: 2rem;
-            background-color: var(--background-light);
+            background-color: var(--background-light)
         }
 
         .card {
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgb(0 0 0 / .05);
             border: 1px solid var(--border-color);
             margin-bottom: 2rem;
-            overflow: hidden;
+            overflow: hidden
         }
 
         .card-header {
@@ -44,7 +43,7 @@
             padding: 1.5rem;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: space-between
         }
 
         .card-title {
@@ -54,26 +53,26 @@
             font-size: 1.25rem;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 12px
         }
 
         .card-title i {
             font-size: 1.5rem;
-            color: var(--haramain-secondary);
+            color: var(--haramain-secondary)
         }
 
         .table-responsive {
-            padding: 0 1.5rem 1.5rem;
+            padding: 0 1.5rem 1.5rem
         }
 
         .card-body {
-            padding: 0;
+            padding: 0
         }
 
         .table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 0 0.75rem;
+            border-spacing: 0 .75rem
         }
 
         .table thead th {
@@ -83,19 +82,19 @@
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
             text-align: left;
-            white-space: nowrap;
+            white-space: nowrap
         }
 
         .table tbody tr {
-            background-color: white;
+            background-color: #fff;
             transition: all 0.3s ease;
-            border-radius: 8px;
+            border-radius: 8px
         }
 
         .table tbody tr:hover {
             background-color: var(--hover-bg);
-            box-shadow: 0 4px 12px rgba(42, 111, 219, 0.1);
-            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgb(42 111 219 / .1);
+            transform: translateY(-2px)
         }
 
         .table tbody td {
@@ -103,19 +102,19 @@
             vertical-align: middle;
             text-align: left;
             border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color)
         }
 
         .table tbody tr td:first-child {
             border-left: 1px solid var(--border-color);
             border-top-left-radius: 8px;
-            border-bottom-left-radius: 8px;
+            border-bottom-left-radius: 8px
         }
 
         .table tbody tr td:last-child {
             border-right: 1px solid var(--border-color);
             border-top-right-radius: 8px;
-            border-bottom-right-radius: 8px;
+            border-bottom-right-radius: 8px
         }
 
         .btn-action {
@@ -125,79 +124,85 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin: 0 0.25rem;
+            margin: 0 .25rem;
             transition: all 0.3s ease;
             border: none;
-            background-color: transparent;
+            background-color: #fff0
         }
 
         .btn-action:hover {
-            background-color: var(--haramain-light);
+            background-color: var(--haramain-light)
         }
 
         .btn-action i {
-            font-size: 1rem;
+            font-size: 1rem
         }
 
         .btn-edit {
-            color: var(--haramain-secondary);
+            color: var(--haramain-secondary)
         }
 
         .btn-view {
-            color: var(--text-secondary);
+            color: var(--text-secondary)
         }
 
         .btn-delete {
-            color: var(--danger-color);
+            color: var(--danger-color)
         }
 
         .badge {
-            padding: 0.5rem 0.75rem;
+            padding: .5rem .75rem;
             border-radius: 6px;
             font-weight: 700;
-            font-size: 0.8rem;
-            text-transform: capitalize;
+            font-size: .8rem;
+            text-transform: capitalize
         }
 
         .badge-success {
             background-color: var(--success-bg);
-            color: var(--success-color);
+            color: var(--success-color)
         }
 
         .badge-warning {
             background-color: var(--warning-bg);
-            color: var(--warning-color);
+            color: var(--warning-color)
         }
 
         .badge-danger {
             background-color: var(--danger-bg);
-            color: var(--danger-color);
+            color: var(--danger-color)
         }
 
         .badge-primary {
             background-color: var(--primary-bg);
-            color: var(--haramain-secondary);
+            color: var(--haramain-secondary)
         }
 
         .pagination-container {
-            padding: 0 1.5rem 1.5rem;
             display: flex;
             justify-content: flex-end;
+            padding: 1.5rem;
             border-top: 1px solid var(--border-color);
-            padding-top: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--haramain-secondary);
-            border-color: var(--haramain-secondary);
+            gap: 1rem
         }
 
         .pagination .page-link {
+            border-radius: 10px;
+            margin: 0 3px;
             color: var(--haramain-primary);
-            border-radius: 8px;
-            margin: 0 0.25rem;
-            border: 1px solid var(--border-color);
+            border-color: #d9e3f0
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #2f6fed;
+            border-color: #2f6fed;
+            color: #fff
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background-color: #f5f7fa;
+            color: #adb5bd;
+            border-color: #e3e7ec
         }
     </style>
 @endpush
@@ -209,9 +214,7 @@
                 <h5 class="card-title">
                     <i class="bi bi-building"></i>Daftar Order Hotel
                 </h5>
-                {{-- <a href="{{ route('hotel.create') }}" class="btn-add-new">...</a> --}}
             </div>
-
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
@@ -288,20 +291,15 @@
                 <div class="pagination-container">
                     <nav aria-label="Page navigation">
                         <ul class="pagination justify-content-center">
-                            {{-- Previous Page Link --}}
                             <li class="page-item {{ $hotels->onFirstPage() ? 'disabled' : '' }}">
                                 <a class="page-link" href="{{ $hotels->previousPageUrl() ?? '#' }}"
                                     tabindex="-1">&laquo;</a>
                             </li>
-
-                            {{-- Page Number Links --}}
                             @foreach ($hotels->getUrlRange(1, $hotels->lastPage()) as $page => $url)
                                 <li class="page-item {{ $hotels->currentPage() == $page ? 'active' : '' }}">
                                     <a class="page-link" href="{{ $url }}">{{ $page }}</a>
                                 </li>
                             @endforeach
-
-                            {{-- Next Page Link --}}
                             <li class="page-item {{ !$hotels->hasMorePages() ? 'disabled' : '' }}">
                                 <a class="page-link" href="{{ $hotels->nextPageUrl() ?? '#' }}">&raquo;</a>
                             </li>

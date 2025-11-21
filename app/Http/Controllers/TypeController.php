@@ -33,7 +33,9 @@ class TypeController extends Controller
             'nama_tipe' => $request->name,
         ]);
 
-        return redirect()->route('hotel.type.index');
+        return redirect()
+            ->route('hotel.type.index')
+            ->with('success', 'Type hotel baru berhasil ditambahkan!');
     }
     public function edit(string $id)
     {
@@ -51,12 +53,17 @@ class TypeController extends Controller
             'nama_tipe' => $request->name,
         ]);
 
-        return redirect()->route('hotel.type.index');
+        return redirect()
+            ->route('hotel.type.index')
+            ->with('success', 'Type hotel berhasil diperbarui!');
     }
     public function destroy(string $id)
     {
         $type = TypeHotel::find($id);
         $type->delete();
-        return redirect()->route('hotel.type.index');
+
+        return redirect()
+            ->route('hotel.type.index')
+            ->with('success', 'Type hotel berhasil dihapus!');
     }
 }

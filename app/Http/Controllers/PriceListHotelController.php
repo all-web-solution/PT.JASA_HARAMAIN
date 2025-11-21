@@ -9,9 +9,17 @@ use Illuminate\Http\Request;
 
 class PriceListHotelController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $listHotel = PriceListHotel::all();
+        $query = PriceListHotel::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('nama_hotel', 'like', '%' . $search . '%')
+                ->orWhere('tipe_kamar', 'like', '%' . $search . '%');
+        }
+
+        $listHotel = $query->get();
         return view('hotel.price_list.index', compact('listHotel'));
     }
 
@@ -63,7 +71,6 @@ class PriceListHotelController extends Controller
     {
         $priceList = PriceListHotel::findOrFail($id);
         $priceList->delete();
-        return redirect()->route('hotel.price.index');
+        return redirect()->route('hotel.price.index')->with('success', 'Harga hotel berhasil dihapus!');
     }
-
 }
