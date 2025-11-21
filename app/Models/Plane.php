@@ -9,15 +9,14 @@ class Plane extends Model
     protected $fillable = [
         'service_id',
         'tanggal_keberangkatan',
-        'rute', 'maskapai',
+        'rute',
+        'maskapai',
         'harga',
         'keterangan',
-        'paspor',
-        'visa',
-        'tiket_berangkat',
-        'tiket_pulang',
+        'tiket',
         'jumlah_jamaah',
         'status',
+        'supplier',
         'harga_dasar',
         'harga_jual'
     ];

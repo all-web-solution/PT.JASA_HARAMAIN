@@ -10,18 +10,11 @@ use App\Models\Transportation;
 use App\Models\TransportationItem;
 use App\Models\Route;
 use App\Models\Service;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class TransportationController extends Controller
 {
-   public function index()
-    {
-        // 1. Mulai query, JANGAN panggil all()
-        $allPlanes = Plane::query();
-
-        $planes = $allPlanes->latest()->paginate(10);
-
-        return view('transportasi.pesawat.index', compact('planes'));
-    }
     public function indexCar()
     {
         $Transportations = Transportation::all();
@@ -74,14 +67,6 @@ class TransportationController extends Controller
         return redirect()->route('transportation.car.index')->with('success', 'Mobil berhasil di ubah');
     }
 
-    public function TransportationCustomer()
-    {
-        $AllCustomers = TransportationItem::all();
-        $customers = $AllCustomers->unique('service_id');
-
-        return view('transportasi.mobil.customer', compact('customers'));
-    }
-
     public function detailCar($id)
     {
         $transportation = TransportationItem    ::findOrFail($id);
@@ -90,59 +75,24 @@ class TransportationController extends Controller
         return view('transportasi.mobil.detail', compact('transportation', 'routes'));
     }
 
-    public function edit($id)
+    //Customer Car👇
+
+    public function TransportationCustomer()
     {
-        $pesawat = Plane::findOrFail($id);
-        $listTickets = PriceListTicket::all();
-        return view('transportasi.pesawat.edit', compact('pesawat', 'listTickets'));
+        // 1. Cari ID item terbaru untuk setiap service_id (agar unik)
+        // Kita ambil MAX(id) supaya jika ada duplikat service_id, kita ambil data inputan terakhir
+        $latestIds = TransportationItem::select(DB::raw('MAX(id) as id'))
+            ->groupBy('service_id')
+            ->pluck('id');
+
+        // 2. Ambil data lengkap berdasarkan ID unik tersebut + Pagination
+        $customers = TransportationItem::with('service.pelanggan') // Eager loading agar cepat
+            ->whereIn('id', $latestIds)
+            ->latest() // Urutkan dari yang terbaru
+            ->paginate(10); // Tampilkan 10 data per halaman
+
+        return view('transportasi.mobil.customer', compact('customers'));
     }
-public function update(Request $request, $id)
-    {
-       $plane = Plane::findOrFail($id);
-       $plane->update([
-        'harga' => $request->harga,
-        'tiket_berangkat' => $request->tiket_berangkat,
-        'tiket_pulang' => $request->tiket_pulang
-        ]);
-
-       if($plane->service){
-            $pelangganId = $plane->service->pelanggan_id;
-            $allServices = Service::where('pelanggan_id', $pelangganId)->get();
-            $GrandTotal = 0;
-
-            foreach ($allServices as $service) {
-                // Hitung total semua pesawat yang terhubung ke layanan ini
-                $totalPlanes = $service->planes()->sum('harga');
-
-                // Hitung total semua hotel yang terhubung ke layanan ini
-                $totalHotels = $service->hotels()->sum('harga_perkamar');
-
-                // Tambahkan ke total keseluruhan
-                $GrandTotal += $totalPlanes + $totalHotels;
-            }
-            Order::whereHas('service', function ($query) use ($pelangganId) {
-                $query->where('pelanggan_id', $pelangganId);
-            })->update([
-                'total_amount_final' => $GrandTotal,
-                'sisa_hutang' => $GrandTotal,
-                'status_pembayaran' => 'belum_bayar'
-
-            ]);
-       }
-        return redirect()->route('transportation.plane.index')
-            ->with('success', 'Harga pesawat & total order berhasil diperbarui!');
-    }
-
-// app/Http/Controllers/PlaneController.php (atau nama controller Anda)
-
-public function detail($id)
-{
-    // Gunakan 'with()' untuk memuat relasi 'service' dan juga 'pelanggan' dari service tsb.
-    $plane = Plane::with('service.pelanggan')->findOrFail($id);
-
-    // Kirim data $plane (yang kini sudah berisi service dan pelanggan) ke view
-    return view('transportasi.pesawat.detail', compact('plane'));
-}
 
     public function detailCustomer($id)
     {
@@ -204,5 +154,86 @@ public function detail($id)
         // Redirect kembali ke halaman detail customer
         return redirect()->route('transportation.car.detail.customer', $item->id)
                          ->with('success', 'Order transportasi berhasil diperbarui!');
+    }
+
+    //Customer Plane👇
+
+    public function indexPlane()
+    {
+        // 1. Ambil ID pesawat pertama/terbaru untuk setiap service_id agar unik
+        $latestPlaneIds = Plane::select(DB::raw('MAX(id) as id'))
+            ->groupBy('service_id')
+            ->pluck('id');
+
+        // 2. Query data berdasarkan ID tersebut
+        $planes = Plane::with(['service.pelanggan'])
+            ->whereIn('id', $latestPlaneIds)
+            ->latest()
+            ->paginate(10);
+
+        return view('transportasi.pesawat.index', compact('planes'));
+    }
+
+    /**
+     * Halaman Detail: Menampilkan info customer dan LIST tiket pesawat mereka.
+     * Parameter: $service_id
+     */
+    public function showPlane($service_id)
+    {
+        // Ambil service beserta data pelanggan
+        $service = Service::with('pelanggan')->findOrFail($service_id);
+
+        // Ambil semua pesawat yang terkait dengan service ini
+        $planes = Plane::where('service_id', $service_id)->get();
+
+        return view('transportasi.pesawat.detail', compact('service', 'planes'));
+    }
+
+    /**
+     * Halaman Edit: Mengedit SATU item tiket pesawat.
+     * Parameter: $plane (Model Binding)
+     */
+    public function editPlane(Plane $plane)
+    {
+        $statuses = ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'];
+
+        // Kita butuh list service jika ingin memindahkan order (opsional, biasanya read-only)
+        $services = Service::with('pelanggan')->get();
+
+        return view('transportasi.pesawat.edit', compact('plane', 'statuses', 'services'));
+    }
+
+    /**
+     * Proses Update: Menyimpan data dan menghandle 4 file upload.
+     */
+    public function updatePlane(Request $request, Plane $plane)
+    {
+        // Validasi disesuaikan dengan Model baru
+        $validatedData = $request->validate([
+            'service_id' => 'required|exists:services,id',
+            'maskapai' => 'required|string|max:255',
+            'rute' => 'required|string|max:255',
+            'tanggal_keberangkatan' => 'required|date',
+            'jumlah_jamaah' => 'required|integer|min:1',
+
+            // Finansial
+            'harga' => 'nullable|numeric|min:0',       // Estimasi
+            'harga_dasar' => 'nullable|numeric|min:0', // Modal
+            'harga_jual' => 'nullable|numeric|min:0',  // Jual
+
+            'status' => 'required|string',
+            'keterangan' => 'nullable|string',
+            'supplier' => 'nullable|string|max:255',
+
+            // PERUBAHAN: Tiket sekarang adalah string/text, bukan file
+            'tiket' => 'nullable|string|max:255',
+        ]);
+
+        // Update data (Tidak ada lagi logika upload file)
+        $plane->update($validatedData);
+
+        // Redirect kembali ke halaman DETAIL service
+        return redirect()->route('plane.show', $plane->service_id)
+                         ->with('success', 'Data penerbangan berhasil diperbarui!');
     }
 }
