@@ -24,6 +24,7 @@ use App\Http\Controllers\ReyalController;
 use App\Http\Controllers\TransportationController;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\PriceListTicketController;
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.index');
@@ -158,19 +159,16 @@ Route::middleware(['auth', 'handling'])->group(function () {
 
 Route::middleware(['auth', 'transportation'])->group(function () {
     Route::group(['prefix' => 'planes'], function () {
-        Route::get('/', [TransportationController::class, 'index'])->name('transportation.plane.index');
-        Route::get('/create', [TransportationController::class, 'create'])->name('transportation.plane.create');
-        Route::post('/create', [TransportationController::class, 'store'])->name('transportation.plane.store');
-        Route::get('/edit/{id}', [TransportationController::class, 'edit'])->name('transportation.plane.edit');
-        Route::get('/detail/{id}/plane', [TransportationController::class, 'detail'])->name('transportation.plane.detail');
-        Route::put('/update/{id}', [TransportationController::class, 'update'])->name('transportation.plane.update');
-        Route::delete('/delete/{id}', [TransportationController::class, 'delete'])->name('transportation.plane.delete');
-        Route::get('/price-list/ticket', [PriceListTicket::class, 'index'])->name('price.list.ticket');
-        Route::get('/price-list/ticket/create', [PriceListTicket::class, 'create'])->name('price.list.ticket.create');
-        Route::post('/price-list/ticket/post', [PriceListTicket::class, 'store'])->name('price.list.ticket.post');
-        Route::get('/price-list/ticket/edit/{id}', [PriceListTicket::class, 'edit'])->name('price.list.ticket.edit');
-        Route::put('/price-list/ticket/update/{id}', [PriceListTicket::class, 'update'])->name('price.list.ticket.update');
-        Route::delete('/price-list/ticket/delete/{id}', [PriceListTicket::class, 'destroy'])->name('price.list.ticket.delete');
+        Route::get('/', [TransportationController::class, 'indexPlane'])->name('plane.index');
+        Route::get('/detail/{service_id}', [TransportationController::class, 'showPlane'])->name('plane.show');
+        Route::get('/{plane}/edit', [TransportationController::class, 'editPlane'])->name('plane.edit');
+        Route::put('/{plane}', [TransportationController::class, 'updatePlane'])->name('plane.update');
+        Route::get('/price-list/ticket', [PriceListTicketController::class, 'index'])->name('price.list.ticket');
+        Route::get('/price-list/ticket/create', [PriceListTicketController::class, 'create'])->name('price.list.ticket.create');
+        Route::post('/price-list/ticket', [PriceListTicketController::class, 'store'])->name('price.list.ticket.store');
+        Route::get('/price-list/ticket/edit/{ticket}', [PriceListTicketController::class, 'edit'])->name('price.list.ticket.edit');
+        Route::put('/price-list/ticket/update/{ticket}', [PriceListTicketController::class, 'update'])->name('price.list.ticket.update');
+        Route::delete('/price-list/ticket/delete/{ticket}', [PriceListTicketController::class, 'destroy'])->name('price.list.ticket.delete');
     });
     Route::group(['prefix' => 'cars'], function () {
         Route::get('/', [TransportationController::class, 'indexCar'])->name('transportation.car.index');
