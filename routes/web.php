@@ -208,8 +208,7 @@ Route::middleware(['auth', 'visa'])->group(function () {
     Route::get('/document-customer/{document}/edit', [DocumentController::class, 'editDocumentCustomer'])->name('document.customer.edit');
     Route::put('/document-customer/{document}', [DocumentController::class, 'updateDocumentCustomer'])->name('document.customer.update');
     Route::get('/document/supplier/{id}', [DocumentController::class, 'supplier'])->name('visa.document.customer.detail.supplier');
-    Route::get('/document/supplier/{id}/create', [DocumentController::class, 'supplier_create'])->name('visa.document.customer.detail.supplier.create');
-    Route::put('/document/supplier/{id}/store', [DocumentController::class, 'supplier_store'])->name('visa.document.customer.detail.supplier.store');
+    Route::get('/document/supplier/parent/{id}', [DocumentController::class, 'supplierParent'])->name('visa.document.supplier.parent');
 });
 
 

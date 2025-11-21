@@ -139,13 +139,21 @@
     @elseif (auth()->user()->role === 'visa dan acara')
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('visa.document.index*') || (request()->routeIs('visa.document.*') && !request()->routeIs('visa.document.customer')) ? 'active' : '' }}"
+                <a class="nav-link
+        {{ (request()->routeIs('visa.document.*') && !request()->routeIs('visa.document.customer*')) ||
+        request()->routeIs('visa.document.customer.detail.supplier')
+            ? 'active'
+            : '' }}"
                     href="{{ route('visa.document.index') }}">
                     <i class="bi bi-file-richtext"></i> Dokumen
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('visa.document.customer*') ? 'active' : '' }}"
+                <a class="nav-link
+        {{ (request()->routeIs('visa.document.customer*') || request()->routeIs('document.customer.*')) &&
+        !request()->routeIs('visa.document.customer.detail.supplier')
+            ? 'active'
+            : '' }}"
                     href="{{ route('visa.document.customer') }}">
                     <i class="bi bi-person-badge"></i> Daftar Customer
                 </a>

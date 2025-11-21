@@ -1,9 +1,8 @@
 @extends('admin.master')
-@section('title', 'Detail Order Dokumen')
+@section('title', 'Detail Permintaan Dokumen Layanan')
 
 @push('styles')
     <style>
-        /* == CSS UTAMA (Disalin dari detail konten) == */
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;
@@ -38,12 +37,6 @@
             background-color: #ffffff;
             overflow: hidden;
             margin-bottom: 2rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
         }
 
         .card-header {
@@ -79,9 +72,9 @@
             padding: 1.5rem;
         }
 
-        /* Tombol Aksi */
         .btn-action,
         .btn-secondary {
+            /* Style Tombol Anda */
             background-color: var(--haramain-secondary);
             color: white;
             border-radius: 8px;
@@ -98,8 +91,6 @@
 
         .btn-action:hover {
             background-color: var(--haramain-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
         }
 
         .btn-secondary {
@@ -108,13 +99,25 @@
             border: 1px solid var(--border-color);
         }
 
-        .btn-secondary:hover {
-            background-color: var(--hover-bg);
-            border-color: var(--haramain-secondary);
+        .btn-action-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 .25rem;
+            transition: all 0.3s ease;
+            border: none;
+            background-color: #fff0;
+            color: var(--text-secondary);
+        }
+
+        .btn-action-icon:hover {
+            background-color: var(--haramain-light);
             color: var(--haramain-secondary);
         }
 
-        /* == DESAIN GRID (dari detail konten) == */
 
         .stats-grid {
             display: grid;
@@ -141,50 +144,53 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .info-card-title i {
-            color: var(--haramain-secondary);
-        }
-
-        .info-card .content {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            font-size: 0.9rem;
-        }
-
-        .info-item .label {
+        .info-card .label {
             font-size: 0.8rem;
             color: var(--text-secondary);
             font-weight: 500;
             margin-bottom: 0.25rem;
         }
 
-        .info-item .value {
+        .info-card .value {
             color: var(--text-primary);
             font-weight: 600;
             font-size: 1rem;
         }
 
-        .info-item .status-value {
-            margin-top: 0.25rem;
+        /* Table Style untuk List Item */
+        .item-list-card {
+            margin-top: 2rem;
+            background-color: var(--haramain-light);
+            padding: 1.5rem;
+            border-radius: 8px;
         }
 
-        /* Badge Status */
+        .table-item-list th {
+            background-color: var(--haramain-primary);
+            color: white;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .table-item-list td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 1rem 0.5rem;
+            background-color: white;
+        }
+
+        .actions-container-list {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
         .badge {
             padding: 0.5rem 0.75rem;
             border-radius: 6px;
             font-weight: 700;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-size: 0.8rem;
             text-transform: capitalize;
-            /* Otomatis huruf besar di awal */
         }
 
         .badge-success {
@@ -207,176 +213,207 @@
             color: var(--haramain-secondary);
         }
 
-        /* Media Query */
-        @media (max-width: 992px) {
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+        .text-info {
+            color: var(--haramain-secondary);
         }
 
-        @media (max-width: 768px) {
-            .service-list-container {
-                padding: 1rem;
-            }
+        .text-warning {
+            color: var(--warning-color);
+        }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .card-title {
-                font-size: 1.1rem;
-            }
-
-            /* Tombol jadi full-width di mobile */
-            .card-header div:last-child {
-                display: flex;
-                width: 100%;
-                gap: 0.75rem;
-            }
-
-            .btn-action,
-            .btn-secondary {
-                flex-grow: 1;
-                justify-content: center;
-            }
+        .text-danger {
+            color: var(--danger-color);
         }
     </style>
 @endpush
 
 @section('content')
     <div class="service-list-container">
-
-        {{-- KARTU UTAMA UNTUK DETAIL DOKUMEN --}}
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    {{-- Icon dari index dokumen --}}
                     <i class="bi bi-person-vcard"></i>
                     <div>
                         <span class="title-text">
-                            Detail Dokumen Customer
+                            Detail Permintaan Dokumen (Service ID: {{ $service->unique_code ?? 'N/A' }})
                         </span>
                     </div>
                 </h5>
                 <div>
-                    {{-- Ganti 'route('content.customer')' dengan route index dokumen Anda --}}
                     <a href="{{ route('visa.document.customer') }}" class="btn-secondary">
                         <i class="bi bi-arrow-left"></i>
-                        Kembali
-                    </a>
-                    {{-- Ganti '#' dengan route edit dokumen Anda --}}
-                    <a href="{{ route('document.customer.edit', $customerDocument->id) }}" class="btn-action">
-                        <i class="bi bi-pencil-fill"></i>
-                        Edit
+                        Kembali ke Daftar Layanan
                     </a>
                 </div>
             </div>
 
-            {{-- Logika Badge Status --}}
-            @php
-                $status = strtolower($customerDocument->status);
-                $statusClass = '';
-                // Enum: ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done']
-                if (in_array($status, ['done', 'deal'])) {
-                    $statusClass = 'badge-success';
-                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan', 'tahap produksi'])) {
-                    $statusClass = 'badge-warning';
-                } elseif (in_array($status, ['cancelled', 'batal'])) {
-                    $statusClass = 'badge-danger';
-                } else {
-                    $statusClass = 'badge-primary';
-                }
-            @endphp
-
             <div class="card-body">
 
                 <div class="stats-grid">
-
                     <div class="info-card">
                         <h6 class="info-card-title"><i class="bi bi-person-badge"></i> Info Pelanggan</h6>
                         <div class="content">
                             <div class="info-item">
                                 <span class="label">Nama Travel</span>
-                                <span
-                                    class="value">{{ $customerDocument->service?->pelanggan?->nama_travel ?? 'N/A' }}</span>
+                                <span class="value">{{ $service->pelanggan?->nama_travel ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Penanggung Jawab</span>
-                                <span
-                                    class="value">{{ $customerDocument->service?->pelanggan?->penanggung_jawab ?? 'N/A' }}</span>
+                                <span class="value">{{ $service->pelanggan?->penanggung_jawab ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">No. Telepon</span>
-                                <span class="value">{{ $customerDocument->service?->pelanggan?->phone ?? 'N/A' }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">ID Service</span>
-                                <span class="value">{{ $customerDocument->service?->unique_code ?? 'N/A' }}</span>
+                                <span class="value">{{ $service->pelanggan?->phone ?? 'N/A' }}</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="info-card">
-                        <h6 class="info-card-title"><i class="bi bi-file-earmark-text"></i> Info Dokumen</h6>
+                        <h6 class="info-card-title"><i class="bi bi-calendar-event"></i> Info Layanan</h6>
                         <div class="content">
                             <div class="info-item">
-                                <span class="label">Dokumen Induk</span>
-                                <span class="value">{{ $customerDocument->document?->name ?? 'N/A' }}</span>
+                                <span class="label">Tanggal Keberangkatan</span>
+                                <span
+                                    class="value">{{ \Carbon\Carbon::parse($service->tanggal_keberangkatan)->format('d M Y') ?? '-' }}</span>
                             </div>
                             <div class="info-item">
-                                <span class="label">Jenis Dokumen</span>
-                                <span class="value">{{ $customerDocument->documentChild?->name ?? '-' }}</span>
+                                <span class="label">Total Jamaah</span>
+                                <span class="value">{{ $service->total_jamaah ?? 0 }}</span>
                             </div>
                             <div class="info-item">
-                                <span class="label">Jumlah</span>
-                                <span class="value">{{ $customerDocument->jumlah }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Status</span>
-                                <span class="value status-value">
-                                    <span class="badge {{ $statusClass }}">{{ $customerDocument->status }}</span>
-                                </span>
+                                <span class="label">Total Item Dokumen</span>
+                                <span class="value">{{ $service->documents->count() }} Item</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="info-card">
-                        <h6 class="info-card-title"><i class="bi bi-cash-coin"></i> Info Supplier</h6>
+                        <h6 class="info-card-title"><i class="bi bi-bar-chart"></i> Ringkasan Status</h6>
                         <div class="content">
-                            <div class="info-item">
-                                <span class="label">Supplier</span>
-                                <span class="value">{{ $customerDocument->supplier ?? '-' }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Harga Dasar</span>
-                                <span class="value">Rp
-                                    {{ number_format($customerDocument->harga_dasar ?? 0, 0, ',', '.') }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Harga Jual</span>
-                                <span class="value">Rp
-                                    {{ number_format($customerDocument->harga_jual ?? 0, 0, ',', '.') }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Profit</span>
-                                <span class="value" style="color: var(--success-color);">
-                                    Rp
-                                    {{ number_format(($customerDocument->harga_jual ?? 0) - ($customerDocument->harga_dasar ?? 0), 0, ',', '.') }}
-                                </span>
-                            </div>
+                            @php
+                                $statusCounts = $service->documents->groupBy('status')->map->count();
+                            @endphp
+                            @foreach ($statusCounts as $status => $count)
+                                @php
+                                    $status = strtolower($status);
+                                    $statusClass = '';
+                                    if (in_array($status, ['done', 'deal'])) {
+                                        $statusClass = 'badge-success';
+                                    } elseif (in_array($status, ['nego', 'tahap persiapan', 'tahap produksi'])) {
+                                        $statusClass = 'badge-warning';
+                                    } elseif (in_array($status, ['cancelled', 'batal'])) {
+                                        $statusClass = 'badge-danger';
+                                    } else {
+                                        $statusClass = 'badge-primary';
+                                    }
+                                @endphp
+                                <div class="info-item">
+                                    <span class="label">{{ ucfirst(str_replace('_', ' ', $status)) }}</span>
+                                    <span class="value"><span
+                                            class="badge {{ $statusClass }}">{{ $count }}</span></span>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
-
                 </div>
+            </div>
+        </div>
 
-                {{-- Keterangan dihilangkan karena tidak ada di migrasi customer_documents --}}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="bi bi-file-earmark-ruled"></i>
+                    <div>
+                        <span class="title-text">
+                            Daftar Item Dokumen yang Diminta
+                        </span>
+                    </div>
+                </h5>
+            </div>
 
+            <div class="table-responsive">
+                <table class="table table-item-list">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Dokumen</th>
+                            <th>Jumlah</th>
+                            <th>Supplier Transaksi</th>
+                            <th>Harga Dasar</th>
+                            <th>Harga Jual</th>
+                            <th>Profit</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($service->documents as $item)
+                            @php
+                                // Logika Status Dinamis
+                                $status = strtolower($item->status);
+                                $statusClass = '';
+                                if (in_array($status, ['done', 'deal'])) {
+                                    $statusClass = 'badge-success';
+                                } elseif (in_array($status, ['nego', 'tahap persiapan', 'tahap produksi'])) {
+                                    $statusClass = 'badge-warning';
+                                } elseif (in_array($status, ['cancelled', 'batal'])) {
+                                    $statusClass = 'badge-danger';
+                                } else {
+                                    $statusClass = 'badge-primary';
+                                }
+
+                                // Logika Route Supplier Global (Dipertahankan)
+                                $supplierRoute = $item->document_children_id
+                                    ? route('visa.document.customer.detail.supplier', $item->document_children_id)
+                                    : route('visa.document.supplier.parent', $item->document_id);
+
+                                $hargaDasar = $item->harga_dasar ?? 0;
+                                $hargaJual = $item->harga_jual ?? 0;
+                                $profit = $hargaJual - $hargaDasar;
+                            @endphp
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td style="text-align: left;">
+                                    @if ($item->documentChild?->name)
+                                        <span class="fw-bold">{{ $item->documentChild->name }}</span>
+                                        <br><small class="text-muted">({{ $item->document?->name }})</small>
+                                    @else
+                                        <span class="fw-bold text-danger">{{ $item->document?->name ?? 'N/A' }}</span>
+                                    @endif
+                                </td>
+                                <td>{{ $item->jumlah }}</td>
+                                <td>{{ $item->supplier ?? '-' }}</td>
+                                <td>
+                                    <span class="text-danger">Rp {{ number_format($hargaDasar, 0, ',', '.') }}</span>
+                                </td>
+                                <td>
+                                    <span class="text-primary">Rp {{ number_format($hargaJual, 0, ',', '.') }}</span>
+                                </td>
+                                <td>
+                                    <span style="color: var(--success-color); font-weight: bold;">Rp
+                                        {{ number_format($profit, 0, ',', '.') }}</span>
+                                </td>
+
+                                <td>
+                                    <span class="badge {{ $statusClass }}">{{ $item->status }}</span>
+                                </td>
+                                <td>
+                                    <div class="actions-container-list">
+                                        <a href="{{ route('document.customer.edit', $item->id) }}"
+                                            class="btn-action-icon text-warning" title="Edit Transaksi">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="9" class="text-center py-4">Tidak ada item dokumen terkait dengan layanan
+                                    ini.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

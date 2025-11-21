@@ -31,38 +31,41 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        // --- DAPATKAN ID ORDER UTAMA ---
-        // 1. Dapatkan ID order paling LAMA (MIN(id)) untuk setiap 'service_id'
-        //    Ini kita anggap sebagai "Order Utama"
         $mainOrderIds = Order::select(DB::raw('MAX(id) as id'))
-                            ->groupBy('service_id')
-                            ->pluck('id');
+            ->groupBy('service_id')
+            ->pluck('id');
 
-        // --- QUERY UNTUK TABEL (HANYA ORDER UTAMA) ---
-        // 2. Buat query utama HANYA untuk ID-ID order utama tersebut
         $query = Order::with('service.pelanggan')
-                    ->whereIn('id', $mainOrderIds);
+            ->whereIn('id', $mainOrderIds);
 
-        // --- QUERY UNTUK STATS (HANYA ORDER UTAMA) ---
-        // 3. Buat query terpisah untuk statistik agar sesuai dengan filter
-        //    (Kita kloning query dasar sebelum filter tanggal)
         $statsQueryBase = Order::whereIn('id', $mainOrderIds);
 
-        // Terapkan Filter Tanggal (Kode Anda sudah benar)
         if ($request->filled('bulan')) {
             $query->whereMonth('created_at', $request->bulan);
-            $statsQueryBase->whereMonth('created_at', $request->bulan); // Terapkan juga di stats
+            $statsQueryBase->whereMonth('created_at', $request->bulan);
         }
         if ($request->filled('tahun')) {
             $query->whereYear('created_at', $request->tahun);
-            $statsQueryBase->whereYear('created_at', $request->tahun); // Terapkan juga di stats
+            $statsQueryBase->whereYear('created_at', $request->tahun);
         }
         if ($request->filled('tanggal')) {
             $query->whereDate('created_at', $request->tanggal);
-            $statsQueryBase->whereDate('created_at', $request->tanggal); // Terapkan juga di stats
+            $statsQueryBase->whereDate('created_at', $request->tanggal);
         }
+        if ($request->filled('search')) {
+            $search_term = '%' . $request->search . '%';
 
-        // 4. Hitung Statistik (Sekarang sudah efisien dan terfilter)
+            $searchFilter = function ($q) use ($search_term) {
+                $q->where('invoice', 'like', $search_term);
+
+                $q->orWhereHas('service.pelanggan', function ($q_pelanggan) use ($search_term) {
+                    $q_pelanggan->where('nama_travel', 'like', $search_term);
+                });
+            };
+
+            $query->where($searchFilter);
+            $statsQueryBase->where($searchFilter);
+        }
         $stats = [
             'total' => $statsQueryBase->clone()->count(),
             'belum_bayar' => $statsQueryBase->clone()->where('status_pembayaran', 'belum_bayar')->count(),
@@ -70,16 +73,13 @@ class OrderController extends Controller
             'lunas' => $statsQueryBase->clone()->where('status_pembayaran', 'lunas')->count()
         ];
 
-        // 5. Paginasi hasil query utama
-        $orders = $query->latest()->paginate(10);
+        $orders = $query->latest()->paginate(10)->withQueryString();
 
-        // 6. Kirim data ke view
         return view('admin.order.index', compact('orders', 'stats'));
     }
 
     public function create()
     {
-
         $travalers = Service::all();
         return view('admin.order.create', compact('travalers'));
     }
@@ -88,20 +88,17 @@ class OrderController extends Controller
     {
         $request->validate([
             'pelanggan_id' => 'required|exists:pelanggans,id',
-            'total_harga'  => 'required|numeric|min:0',
+            'total_harga' => 'required|numeric|min:0',
         ]);
 
-        // cek apakah customer sudah ada order
         $order = Order::where('service_id', $request->pelanggan_id)->first();
 
         if ($order) {
-            // kalau sudah ada → tambahin utangnya
             $order->total_amount += $request->total_harga;
             $order->save();
         } else {
-            // kalau belum ada → buat order baru
             $order = Order::create([
-                'service_id'   => $request->pelanggan_id,
+                'service_id' => $request->pelanggan_id,
                 'total_amount' => $request->total_harga,
             ]);
         }
@@ -111,13 +108,10 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        // 1. Tentukan SEMUA relasi yang dibutuhkan oleh Blade
         $relationsToLoad = [
-            'service.pelanggan', // Untuk info customer
-            'transactions',      // Untuk riwayat pembayaran
-            'uploadPayments',    // Untuk riwayat upload bukti
-
-            // --- Relasi untuk "Struk Supermarket" & Logika Finalisasi ---
+            'service.pelanggan',
+            'transactions',
+            'uploadPayments',
             'service.hotels',
             'service.meals.mealItem',
             'service.planes',
@@ -133,23 +127,19 @@ class OrderController extends Controller
             'service.wakafs.wakaf',
             'service.dorongans.dorongan',
             'service.exchanges',
-            'service.handlings.handlingHotels', // Relasi handling nested
-            'service.handlings.handlingPlanes', // Relasi handling nested
+            'service.handlings.handlingHotels',
+            'service.handlings.handlingPlanes',
             'service.filess'
         ];
 
-        // 2. Load semua relasi ke $order utama
         $order->load($relationsToLoad);
 
-        // 3. Ambil SEMUA order (termasuk yang lama) untuk riwayat pembayaran
         $orders = Order::where('service_id', $order->service_id)
-                        ->orderBy('created_at', 'desc')
-                        ->get();
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        // 4. Ambil semua item layanan
         $semuaItem = $order->service->getAllItemsFromService();
 
-        // 5. Kirim semua data yang dibutuhkan ke view
         return view('admin.order.show', compact('order', 'orders', 'semuaItem'));
     }
 
@@ -226,10 +216,20 @@ class OrderController extends Controller
     {
         // 1. Muat Service dengan SEMUA relasi item layanan
         $service = $order->service()->with([
-            'meals', 'hotels', 'planes', 'tours', 'guides', 'contents',
-            'badals', 'dorongans', 'wakafs', 'documents', 'exchanges',
+            'meals',
+            'hotels',
+            'planes',
+            'tours',
+            'guides',
+            'contents',
+            'badals',
+            'dorongans',
+            'wakafs',
+            'documents',
+            'exchanges',
             'transportationItem',
-            'handlings.handlingHotels', 'handlings.handlingPlanes'
+            'handlings.handlingHotels',
+            'handlings.handlingPlanes'
         ])->first();
 
         if (!$service) {
@@ -279,38 +279,40 @@ class OrderController extends Controller
         $total = 0;
 
         // Ambil harga jual (asumsi semua model sudah punya kolom 'harga_jual')
-        $hargaJual = (float)($item->harga_jual ?? 0);
+        $hargaJual = (float) ($item->harga_jual ?? 0);
 
         // Tentukan logika berdasarkan tipe Model
         if ($item instanceof Hotel) {
             $jumlahMalam = Carbon::parse($item->tanggal_checkin)->diffInDays($item->tanggal_checkout);
-            if ($jumlahMalam <= 0) $jumlahMalam = 1;
-            $total = $hargaJual * (int)($item->jumlah_type ?? 1) * $jumlahMalam;
+            if ($jumlahMalam <= 0)
+                $jumlahMalam = 1;
+            $total = $hargaJual * (int) ($item->jumlah_type ?? 1) * $jumlahMalam;
 
         } elseif ($item instanceof Meal) {
-            $total = $hargaJual * (int)($item->jumlah ?? 1);
+            $total = $hargaJual * (int) ($item->jumlah ?? 1);
 
         } elseif ($item instanceof Plane) {
-            $total = $hargaJual * (int)($item->jumlah_jamaah ?? 1);
+            $total = $hargaJual * (int) ($item->jumlah_jamaah ?? 1);
 
         } elseif ($item instanceof Guide) {
-            $total = $hargaJual * (int)($item->jumlah ?? 1);
+            $total = $hargaJual * (int) ($item->jumlah ?? 1);
 
         } elseif ($item instanceof ContentCustomer) {
-            $total = $hargaJual * (int)($item->jumlah ?? 1);
+            $total = $hargaJual * (int) ($item->jumlah ?? 1);
 
         } elseif ($item instanceof DoronganOrder) {
-            $total = $hargaJual * (int)($item->jumlah ?? 1);
+            $total = $hargaJual * (int) ($item->jumlah ?? 1);
 
         } elseif ($item instanceof WakafCustomer) {
-            $total = $hargaJual * (int)($item->jumlah ?? 1);
+            $total = $hargaJual * (int) ($item->jumlah ?? 1);
 
         } elseif ($item instanceof CustomerDocument) {
-            $total = $hargaJual * (int)($item->jumlah ?? 1);
+            $total = $hargaJual * (int) ($item->jumlah ?? 1);
 
         } elseif ($item instanceof TransportationItem) {
             $jumlahHari = Carbon::parse($item->dari_tanggal)->diffInDays($item->sampai_tanggal);
-            if ($jumlahHari <= 0) $jumlahHari = 1;
+            if ($jumlahHari <= 0)
+                $jumlahHari = 1;
             $total = $hargaJual * $jumlahHari;
 
         } elseif (
