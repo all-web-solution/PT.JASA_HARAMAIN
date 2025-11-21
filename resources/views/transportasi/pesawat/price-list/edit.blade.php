@@ -1,347 +1,165 @@
 @extends('admin.master')
-@section('title', 'Tambah Hotel')
+@section('title', 'Edit Harga Tiket')
+
+@push('styles')
+    <style>
+        :root {
+            --haramain-primary: #1a4b8c;
+            --haramain-secondary: #2a6fdb;
+            --haramain-light: #e6f0fa;
+            --border-color: #d1e0f5;
+            --background-light: #f8fafd;
+        }
+
+        .service-list-container {
+            padding: 2rem;
+            background-color: var(--background-light);
+            min-height: 100vh;
+        }
+
+        .card {
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            background: #fff;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--haramain-light) 0%, #fff 100%);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--haramain-primary);
+            gap: 10px;
+            display: flex;
+            align-items: center;
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-control:focus {
+            border-color: var(--haramain-accent);
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(42, 111, 219, 0.25);
+        }
+
+        .btn-secondary {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            color: #6c757d;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .btn-submit {
+            background: var(--haramain-secondary);
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-submit:hover {
+            background: var(--haramain-primary);
+        }
+    </style>
+@endpush
+
 @section('content')
-<style>
-    :root {
-        --haramain-primary: #1a4b8c;
-        --haramain-secondary: #2a6fdb;
-        --haramain-light: #e6f0fa;
-        --haramain-accent: #3d8bfd;
-        --text-primary: #2d3748;
-        --text-secondary: #4a5568;
-        --border-color: #d1e0f5;
-        --hover-bg: #f0f7ff;
-        --checked-color: #2a6fdb;
-        --success-color: #28a745;
-        --warning-color: #ffc107;
-        --danger-color: #dc3545;
-    }
+    <div class="service-list-container">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title"><i class="bi bi-pencil-square"></i> Edit Harga Tiket</h5>
+                <a href="{{ route('price.list.ticket') }}" class="btn-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
+            </div>
 
-    .service-create-container {
-        max-width: 100vw;
-        margin: 0 auto;
-        padding: 2rem;
-        background-color: #f8fafd;
-    }
-
-    .card {
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        border: 1px solid var(--border-color);
-        margin-bottom: 2rem;
-        overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-header {
-        background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
-        border-bottom: 1px solid var(--border-color);
-        padding: 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .card-title {
-        font-weight: 700;
-        color: var(--haramain-primary);
-        margin: 0;
-        font-size: 1.25rem;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .card-title i {
-        font-size: 1.5rem;
-        color: var(--haramain-secondary);
-    }
-
-    .card-body {
-        padding: 1.5rem;
-    }
-
-    /* Form Styles */
-    .form-section {
-        margin-bottom: 2rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .form-section-title {
-        font-size: 1.1rem;
-        color: var(--haramain-primary);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .form-section-title i {
-        color: var(--haramain-secondary);
-    }
-
-    .form-group {
-        margin-bottom: 1.25rem;
-    }
-
-    .form-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: border-color 0.3s ease;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--haramain-secondary);
-        box-shadow: 0 0 0 3px rgba(42, 111, 219, 0.1);
-    }
-
-    .form-text {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-        margin-top: 0.25rem;
-    }
-
-    .form-row {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .form-col {
-        flex: 1;
-    }
-
-    /* Service Selection */
-    .service-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .service-item {
-        border: 2px solid var(--border-color);
-        border-radius: 8px;
-        padding: 1.25rem;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        background-color: white;
-    }
-
-    .service-item:hover {
-        border-color: var(--haramain-secondary);
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .service-item.selected {
-        border-color: var(--haramain-secondary);
-        background-color: var(--haramain-light);
-    }
-
-    .service-icon {
-        font-size: 2rem;
-        color: var(--haramain-secondary);
-        margin-bottom: 0.75rem;
-    }
-
-    .service-name {
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.25rem;
-    }
-
-    .service-desc {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-    }
-
-    /* Detail Form */
-    .detail-form {
-        background-color: var(--haramain-light);
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-top: 1.5rem;
-    }
-
-    .detail-section {
-        margin-bottom: 1.5rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .detail-section:last-child {
-        margin-bottom: 0;
-        padding-bottom: 0;
-        border-bottom: none;
-    }
-
-    .detail-title {
-        font-weight: 600;
-        color: var(--haramain-primary);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .detail-title i {
-        color: var(--haramain-secondary);
-    }
-
-    /* Buttons */
-    .btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-primary {
-        background-color: var(--haramain-secondary);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background-color: var(--haramain-primary);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
-    }
-
-    .btn-secondary {
-        background-color: white;
-        color: var(--text-secondary);
-        border: 1px solid var(--border-color);
-    }
-
-    .btn-secondary:hover {
-        background-color: #f8f9fa;
-    }
-
-    .btn-submit {
-        background-color: var(--success-color);
-        color: white;
-    }
-
-    .btn-submit:hover {
-        background-color: #218838;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
-    }
-
-    .form-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--border-color);
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .form-row {
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .service-grid {
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        }
-
-        .form-actions {
-            flex-direction: column;
-        }
-
-        .btn {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-</style>
-
-<div class="service-create-container">
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title">
-                <i class="bi bi-plus-circle"></i>Tambah Hotel
-            </h5>
-            <a href="{{ route('price.list.ticket') }}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Kembali
-            </a>
-        </div>
-
-        <div class="card-body">
-            <form action="{{ route('price.list.ticket.update', $list->id) }}" method="POST">
+            <form action="{{ route('price.list.ticket.update', $ticket->id) }}" method="POST">
                 @csrf
-                @method('put')
-                <!-- Data Travel Section -->
-                <div class="form-section">
-                    <h6 class="form-section-title">
-                        <i class="bi bi-building"></i> Data harga tiket
-                    </h6>
-
-                    <div class="form-row">
-                        <div class="form-col">
+                @method('PUT')
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Tanggal berangkat</label>
-                                <input type="text" class="form-control" name="tanggal_berangkat" required id="email" value="{{ $list->tanggal }}">
+                                <label class="form-label">Tanggal</label>
+                                <input type="date" name="tanggal"
+                                    class="form-control @error('tanggal') is-invalid @enderror"
+                                    value="{{ old('tanggal', $ticket->tanggal) }}" required>
+                                @error('tanggal')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
-                        <div class="form-col">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Jam berangkat</label>
-                                <input type="text" class="form-control" name="jam_berangkat" value="{{ $list->jam_berangkat }}"
-                                       required  id="penanggung">
+                                <label class="form-label">Jam Berangkat</label>
+                                <input type="time" name="jam_berangkat"
+                                    class="form-control @error('jam_berangkat') is-invalid @enderror"
+                                    value="{{ old('jam_berangkat', $ticket->jam_berangkat) }}" required>
+                                @error('jam_berangkat')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-col">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label class="form-label">Kelas</label>
-                                <input type="text" class="form-control" name="kelas" required id="email" value="{{ $list->kelas }}">
+                                <select name="kelas" class="form-select @error('kelas') is-invalid @enderror" required>
+                                    <option value="">-- Pilih Kelas --</option>
+                                    @foreach (['Ekonomi', 'Bisnis', 'First Class', 'Promo'] as $kelas)
+                                        <option value="{{ $kelas }}"
+                                            {{ old('kelas', $ticket->kelas) == $kelas ? 'selected' : '' }}>
+                                            {{ $kelas }}</option>
+                                    @endforeach
+                                </select>
+                                @error('kelas')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
-                        <div class="form-col">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Harga</label>
-                                <input type="text" class="form-control" name="harga" required id="phone" value="{{ $list->harga }}">
+                                <label class="form-label">Harga (Rp)</label>
+                                <input type="number" name="harga"
+                                    class="form-control @error('harga') is-invalid @enderror"
+                                    value="{{ old('harga', $ticket->harga) }}" required>
+                                @error('harga')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn-submit"><i class="bi bi-save"></i> Update Data</button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-submit">
-                    <i class="bi bi-check-circle"></i> Simpan perubahan data harga tiket
-                </button>
             </form>
         </div>
     </div>
-</div>
-
-
 @endsection
