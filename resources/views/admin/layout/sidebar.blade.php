@@ -40,7 +40,7 @@
     @elseif (auth()->user()->role === 'hotel')
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hotel.index') || request()->routeIs('hotel.edit')  || request()->routeIs('hotel.show') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('hotel.index') || request()->routeIs('hotel.edit') || request()->routeIs('hotel.show') ? 'active' : '' }}"
                     href="{{ route('hotel.index') }}">
                     <i class="bi bi-building"></i> HOTEL
                 </a>
@@ -113,14 +113,8 @@
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('transportation.plane.index*') ? 'active' : '' }}"
-                    href="{{ route('transportation.plane.index') }}">
-                    <i class="bi bi-airplane-fill"></i> Pesawat
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('transportation.car.index*') ? 'active' : '' }}"
-                    href="{{ route('transportation.car.index') }}">
-                    <i class="bi bi-car-front-fill"></i> Kendaraan
+                    href="{{ route('plane.index') }}">
+                    <i class="bi bi-airplane-fill"></i> Customer Pesawat
                 </a>
             </li>
             <li class="nav-item">
@@ -130,9 +124,15 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('transportation.car.index*') ? 'active' : '' }}"
+                    href="{{ route('transportation.car.index') }}">
+                    <i class="bi bi-car-front-fill"></i> List Kendaraan
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('price.list.ticket*') ? 'active' : '' }}"
                     href="{{ route('price.list.ticket') }}">
-                    <i class="bi bi-ticket-perforated-fill"></i> Price list tiket
+                    <i class="bi bi-ticket-perforated-fill"></i> Pricelist tiket
                 </a>
             </li>
         </ul>
