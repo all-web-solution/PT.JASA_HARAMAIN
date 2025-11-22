@@ -12,15 +12,16 @@ class HotelController extends Controller
 {
     public function index()
     {
-        // 1. Ambil data Hotel (per item) dan lakukan paginasi
-        $hotels = Hotel::with([
-                        'service.pelanggan', // Untuk Nama Travel
-                    ])
-                    ->latest() // Urutkan berdasarkan yang terbaru
-                    ->paginate(15); // Ambil 15 item per halaman
+        $services = Service::query()
+            ->has('hotels')
+            ->with([
+                'pelanggan',
+                'hotels',
+            ])
+            ->latest()
+            ->paginate(15);
 
-        // 2. Kirim data paginator ke view
-        return view('hotel.index', compact('hotels'));
+        return view('hotel.index', ['hotels' => $services]);
     }
 
 
@@ -32,7 +33,6 @@ class HotelController extends Controller
 
     public function store(Request $request)
     {
-        // Validate the request data
         $request->validate([
             'checkin' => 'required|date',
             'checkout' => 'required|date|after:checkin',
@@ -40,7 +40,6 @@ class HotelController extends Controller
             'star' => 'required|string|max:255',
         ]);
 
-        // Create a new hotel booking
         Hotel::create([
             'checkin' => $request->checkin,
             'checkout' => $request->checkout,
@@ -48,24 +47,25 @@ class HotelController extends Controller
             'star' => $request->star,
         ]);
 
-        // Redirect to the hotel index page with a success message
         return redirect()->route('hotel.index')->with('success', 'Hotel booking created successfully.');
     }
 
-    // Add other methods like show, edit, update, destroy as needed
     public function show(Hotel $hotel)
     {
-        // $hotel otomatis ditemukan oleh Laravel
-        $hotel->load('service.pelanggan'); // Load relasi
+        $serviceId = $hotel->service_id;
 
-        return view('hotel.show', compact('hotel'));
+        $service = Service::with([
+            'pelanggan',
+            'hotels'
+        ])->findOrFail($serviceId);
+
+        return view('hotel.show', compact('service'));
     }
 
     public function edit(Hotel $hotel)
     {
-        // Ambil data untuk dropdowns
         $services = Service::with('pelanggan')->get();
-        $statuses = ['nego', 'deal', 'batal', 'done']; // Sesuaikan dengan kebutuhan
+        $statuses = ['nego', 'deal', 'batal', 'done'];
 
         return view('hotel.edit', compact(
             'hotel',
@@ -76,7 +76,6 @@ class HotelController extends Controller
 
     public function update(Request $request, Hotel $hotel)
     {
-        // Validasi data berdasarkan model Hotel
         $validatedData = $request->validate([
             'service_id' => 'nullable|exists:services,id',
             'tanggal_checkin' => 'nullable|date',
@@ -88,18 +87,15 @@ class HotelController extends Controller
             'type' => 'nullable|string|max:255',
             'jumlah_type' => 'nullable|integer|min:0',
             'status' => 'required|string',
-            // Field Baru
             'supplier' => 'nullable|string|max:255',
             'harga_dasar' => 'nullable|numeric|min:0',
             'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
         ]);
 
-        // Update data hotel
         $hotel->update($validatedData);
 
         Session::flash('success', 'Order hotel berhasil diperbarui.');
 
-        // Redirect kembali ke halaman detail
         return redirect()->route('hotel.show', $hotel->id);
     }
 
