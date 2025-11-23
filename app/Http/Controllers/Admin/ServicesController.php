@@ -312,10 +312,35 @@ class ServicesController extends Controller
             // --- VALIDASI HOTEL ---
             'nama_hotel' => $isHotelSelected ? 'required|array|min:1' : 'nullable|array',
             'nama_hotel.*' => $isHotelSelected ? 'required|string|filled' : 'nullable',
+
             'tanggal_checkin' => $isHotelSelected ? 'required|array|min:1' : 'nullable|array',
             'tanggal_checkin.*' => $isHotelSelected ? 'required|date' : 'nullable',
+
             'tanggal_checkout' => $isHotelSelected ? 'required|array|min:1' : 'nullable|array',
             'tanggal_checkout.*' => $isHotelSelected ? 'required|date|after:tanggal_checkin.*' : 'nullable',
+
+            'jumlah_kamar' => $isHotelSelected ? 'required|array|min:1' : 'nullable|array',
+            'jumlah_kamar.*' => $isHotelSelected ? 'required|integer|min:1' : 'nullable',
+
+            'hotel_data' => [
+                $isHotelSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $value, $fail) use ($request, $isHotelSelected) {
+                    if (!$isHotelSelected)
+                        return;
+
+                    $hotelIndexes = array_keys($request->input('nama_hotel', []));
+
+                    foreach ($hotelIndexes as $index) {
+                        if (!isset($value[$index]) || !is_array($value[$index]) || count($value[$index]) < 1) {
+                            $namaHotel = $request->input("nama_hotel.$index", "Hotel ke-" . ($index + 1));
+                            $fail("Hotel '$namaHotel' wajib memiliki minimal satu Tipe Kamar yang dipilih.");
+                        }
+                    }
+                },
+            ],
+
+            'hotel_data.*.*.jumlah' => $isHotelSelected ? 'required|integer|min:1' : 'nullable',
 
             // --- VALIDASI DOKUMEN ---
 
@@ -395,9 +420,15 @@ class ServicesController extends Controller
             'nama_hotel.required' => 'Anda memilih layanan Hotel, wajib mengisi data minimal satu hotel.',
             'nama_hotel.*.required' => 'Nama hotel wajib diisi.',
             'nama_hotel.*.filled' => 'Nama hotel tidak boleh kosong.',
-            'tanggal_checkin.*.required' => 'Tanggal Check-in wajib diisi untuk setiap hotel.',
-            'tanggal_checkout.*.required' => 'Tanggal Check-out wajib diisi untuk setiap hotel.',
+            'tanggal_checkin.*.required' => 'Tanggal Check-in wajib diisi.',
+            'tanggal_checkout.*.required' => 'Tanggal Check-out wajib diisi.',
             'tanggal_checkout.*.after' => 'Tanggal Check-out harus setelah tanggal Check-in.',
+            'jumlah_kamar.*.required' => 'Total jumlah kamar wajib diisi.',
+            'jumlah_kamar.*.min' => 'Total jumlah kamar minimal 1.',
+            'jumlah_kamar.*.integer' => 'Total jumlah kamar harus berupa angka.',
+
+            'hotel_data.*.*.jumlah.required' => 'Jumlah kamar untuk tipe yang dipilih wajib diisi.',
+            'hotel_data.*.*.jumlah.min' => 'Jumlah kamar untuk tipe yang dipilih minimal 1.',
 
             // Dokumen
             'dokumen_id.required_without' => 'Anda memilih layanan Dokumen, wajib memilih minimal satu jenis dokumen (Induk atau Turunan).',

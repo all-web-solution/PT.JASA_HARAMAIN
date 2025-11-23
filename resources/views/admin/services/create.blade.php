@@ -882,7 +882,6 @@
                             <button type="button" class="btn btn-sm btn-primary mb-3" id="addHotel">Tambah
                                 Hotel</button>
                             <div id="hotelWrapper">
-                                {{-- PERBAIKAN: Loop data 'old' untuk hotel --}}
                                 @if (is_array(old('nama_hotel')))
                                     @foreach (old('nama_hotel') as $index => $oldNamaHotel)
                                         <div class="hotel-form bg-white p-3 border mb-3"
@@ -890,27 +889,43 @@
                                             <div class="row g-3">
                                                 <div class="col-md-6">
                                                     <label class="form-label fw-semibold">Tanggal Checkin</label>
-                                                    <input type="date" class="form-control"
+                                                    <input type="date"
+                                                        class="form-control @error('tanggal_checkin.' . $index) is-invalid @enderror"
                                                         name="tanggal_checkin[{{ $index }}]"
                                                         value="{{ old('tanggal_checkin.' . $index) }}">
+                                                    @error('tanggal_checkin.' . $index)
+                                                        <div class="validation-error-message mt-1">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label fw-semibold">Tanggal Checkout</label>
-                                                    <input type="date" class="form-control"
+                                                    <input type="date"
+                                                        class="form-control @error('tanggal_checkout.' . $index) is-invalid @enderror"
                                                         name="tanggal_checkout[{{ $index }}]"
                                                         value="{{ old('tanggal_checkout.' . $index) }}">
+                                                    @error('tanggal_checkout.' . $index)
+                                                        <div class="validation-error-message mt-1">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-12">
                                                     <label class="form-label fw-semibold">Nama Hotel</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text"
+                                                        class="form-control @error('nama_hotel.' . $index) is-invalid @enderror"
                                                         name="nama_hotel[{{ $index }}]" placeholder="Nama hotel"
                                                         data-field="nama_hotel" value="{{ $oldNamaHotel }}">
+                                                    @error('nama_hotel.' . $index)
+                                                        <div class="validation-error-message mt-1">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
+
                                                 <div class="col-12">
                                                     <label class="form-label fw-semibold">Tipe Kamar</label>
+                                                    @error('hotel_data.' . $index)
+                                                        <div class="validation-error-message mb-2">{{ $message }}</div>
+                                                    @enderror
+
                                                     <div class="service-grid">
                                                         @php
-                                                            // Dapatkan tipe kamar yang dipilih untuk hotel[index] ini
                                                             $oldHotelTypes = array_keys(
                                                                 old('hotel_data.' . $index, []),
                                                             );
@@ -921,14 +936,13 @@
                                                                 data-price="{{ $type->jumlah }}"
                                                                 data-name="{{ $type->nama_tipe }}">
                                                                 <div class="service-name">{{ $type->nama_tipe }}</div>
-                                                                {{-- Checkbox 'type[]' tidak terlalu penting, tapi 'hotel_data' iya --}}
                                                                 <input type="checkbox" name="type[]"
                                                                     value="{{ $type->nama_tipe }}">
                                                             </div>
                                                         @endforeach
                                                     </div>
+
                                                     <div class="type-input-container">
-                                                        {{-- Render ulang input tipe kamar yang sudah dipilih --}}
                                                         @if (isset($oldHotelTypes))
                                                             @foreach ($oldHotelTypes as $oldTypeId)
                                                                 @php
@@ -941,15 +955,21 @@
                                                                     <div class="form-group mt-2 bg-white p-3 border rounded"
                                                                         data-type-id="{{ $oldTypeId }}">
                                                                         <label class="form-label">Jumlah Kamar
-                                                                            ({{ $type->nama_tipe }})
-                                                                        </label>
+                                                                            ({{ $type->nama_tipe }})</label>
                                                                         <input type="number"
-                                                                            class="form-control qty-input-hotel"
+                                                                            class="form-control qty-input-hotel @error('hotel_data.' . $index . '.' . $oldTypeId . '.jumlah') is-invalid @enderror"
                                                                             name="hotel_data[{{ $index }}][{{ $oldTypeId }}][jumlah]"
                                                                             min="1"
                                                                             value="{{ $oldTypeData['jumlah'] }}"
                                                                             data-is-qty="true"
                                                                             data-type-id="{{ $oldTypeId }}">
+
+                                                                        @error('hotel_data.' . $index . '.' . $oldTypeId .
+                                                                            '.jumlah')
+                                                                            <div class="validation-error-message mt-1">
+                                                                                {{ $message }}</div>
+                                                                        @enderror
+
                                                                         <label class="form-label mt-2">Harga
                                                                             ({{ $type->nama_tipe }})</label>
                                                                         <input type="text" class="form-control"
@@ -965,12 +985,18 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="form-group mt-2">
                                                 <label class="form-label">Total kamar</label>
-                                                <input type="number" class="form-control"
+                                                <input type="number"
+                                                    class="form-control @error('jumlah_kamar.' . $index) is-invalid @enderror"
                                                     name="jumlah_kamar[{{ $index }}]" min="0"
                                                     value="{{ old('jumlah_kamar.' . $index) }}">
+                                                @error('jumlah_kamar.' . $index)
+                                                    <div class="validation-error-message mt-1">{{ $message }}</div>
+                                                @enderror
                                             </div>
+
                                             <div class="form-group mt-2">
                                                 <label class="form-label">Keterangan</label>
                                                 <input type="text" class="form-control"
@@ -984,7 +1010,6 @@
                                         </div>
                                     @endforeach
                                 @else
-                                    {{-- Form default jika tidak ada data 'old' --}}
                                     <div class="hotel-form bg-white p-3 border mb-3" data-index="0">
                                         <div class="row g-3">
                                             <div class="col-md-6">
@@ -1055,6 +1080,9 @@
                                         </div>
                                     @endforeach
                                 </div>
+                                @error('dokumen_id')
+                                    <div class="validation-error-message mt-2">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div id="document-forms-container">
                                 @foreach ($documents as $document)
@@ -1074,13 +1102,17 @@
                                                         <div class="child-name">{{ $child->name }}</div>
                                                         <div class="child-name">Rp. {{ number_format($child->price) }}
                                                         </div>
-
                                                         <input type="checkbox" name="child_documents[]"
                                                             value="{{ $child->id }}"
                                                             {{ $isChildChecked ? 'checked' : '' }} class="d-none">
                                                     </div>
                                                 @endforeach
                                             </div>
+                                            @error('child_documents')
+                                                @if (in_array($document->id, $oldDocParents))
+                                                    <div class="validation-error-message mt-2 mb-3">{{ $message }}</div>
+                                                @endif
+                                            @enderror
                                             @foreach ($document->childrens as $child)
                                                 @php
                                                     $isChildChecked = in_array($child->id, $oldChildDocs);
