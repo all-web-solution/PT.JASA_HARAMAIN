@@ -302,18 +302,18 @@
                     </div>
 
                     <div class="info-card">
-                        <h6 class="info-card-title"><i class="bi bi-briefcase-fill"></i> Info Finansial</h6>
+                        <h6 class="info-card-title"><i class="bi bi-briefcase-fill"></i> Info Supplier</h6>
                         <div class="content">
                             <div class="info-item">
                                 <span class="label">Supplier</span>
                                 <span class="value">{{ $reyal->supplier ?? '-' }}</span>
                             </div>
                             <div class="info-item">
-                                <span class="label">Harga Dasar</span>
+                                <span class="label">Kurs Dasar</span>
                                 <span class="value">Rp {{ number_format($reyal->harga_dasar ?? 0, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
-                                <span class="label">Harga Jual</span>
+                                <span class="label">Kurs Jual</span>
                                 <span class="value">Rp {{ number_format($reyal->harga_jual ?? 0, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
@@ -332,3 +332,31 @@
         </div>
     </div>
 @endsection
+
+
+@push('scripts')
+    {{-- Pastikan SweetAlert2 JS sudah ada, jika belum tambahkan ini: --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Cek apakah ada session 'success' dari controller
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                timer: 3000, // Alert akan hilang otomatis setelah 3 detik
+                showConfirmButton: false
+            });
+        @endif
+
+        // Opsional: Cek apakah ada session 'error'
+        @if (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: "{{ session('error') }}",
+            });
+        @endif
+    </script>
+@endpush

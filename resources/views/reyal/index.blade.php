@@ -394,9 +394,7 @@
                             <th>No</th>
                             <th>Travel</th>
                             <th>Tipe</th>
-                            <th>Jumlah</th>
-                            <th>Kurs</th>
-                            <th>Hasil</th>
+                            <th>Tanggal Permintaan</th>
                             <th>Tanggal penyerahan</th>
                             <th>Status</th>
                             <th>Aksi</th>
@@ -434,10 +432,8 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->service->pelanggan->nama_travel }}</td>
                                     <td>{{ $item->tipe }}</td>
-                                    <td>{{ $item->jumlah_input }}</td>
-                                    <td>{{ $item->kurs }}</td>
-                                    <td>{{ $item->hasil }}</td>
-                                    <td>{{ $item->tanggal_penyerahan }}</td>
+                                    <td>{{ $item->created_at->format('d M y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_penyerahan)->format('d M y') }}</td>
                                     <td>
                                         <span class="badge {{ $statusClass }}">{{ $item->status }}</span>
                                     </td>
