@@ -5,377 +5,7 @@
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        :root {
-            --haramain-primary: #1a4b8c;
-            --haramain-secondary: #2a6fdb;
-            --haramain-light: #e6f0fa;
-            --haramain-accent: #3d8bfd;
-            --text-primary: #2d3748;
-            --text-secondary: #4a5568;
-            --border-color: #d1e0f5;
-            --hover-bg: #f0f7ff;
-            --checked-color: #2a6fdb;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-        }
-
-        .service-list-container {
-            max-width: 100vw;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #f8fafd;
-        }
-
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card-title {
-            font-weight: 700;
-            color: var(--haramain-primary);
-            margin: 0;
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .card-title i {
-            font-size: 1.5rem;
-            color: var(--haramain-secondary);
-        }
-
-        /* Table Styles */
-        .table-responsive {
-            padding: 0 1.5rem;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 0.75rem;
-        }
-
-        .table thead th {
-            background-color: var(--haramain-light);
-            color: var(--haramain-primary);
-            font-weight: 600;
-            padding: 1rem 1.25rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .table tbody tr {
-            background-color: white;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-        }
-
-        .table tbody tr:hover {
-            background-color: var(--hover-bg);
-            box-shadow: 0 4px 12px rgba(42, 111, 219, 0.1);
-        }
-
-        .table tbody td {
-            padding: 1.25rem;
-            vertical-align: middle;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .table tbody td:first-child {
-            border-left: 1px solid var(--border-color);
-            border-top-left-radius: 8px;
-            border-bottom-left-radius: 8px;
-        }
-
-        .table tbody td:last-child {
-            border-right: 1px solid var(--border-color);
-            border-top-right-radius: 8px;
-            border-bottom-right-radius: 8px;
-        }
-
-        /* Status Badge */
-        .badge {
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .badge i {
-            font-size: 0.8rem;
-        }
-
-        .badge-primary {
-            background-color: var(--haramain-light);
-            color: var(--haramain-secondary);
-        }
-
-        .badge-success {
-            background-color: rgba(40, 167, 69, 0.1);
-            color: var(--success-color);
-        }
-
-        .badge-warning {
-            background-color: rgba(255, 193, 7, 0.1);
-            color: var(--warning-color);
-        }
-
-        .badge-danger {
-            background-color: rgba(220, 53, 69, 0.1);
-            color: var(--danger-color);
-        }
-
-        /* Customer/Travel Info */
-        .customer-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .customer-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--haramain-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            color: var(--haramain-secondary);
-            font-size: 1.25rem;
-        }
-
-        .customer-details {
-            line-height: 1.4;
-        }
-
-        .customer-name {
-            font-weight: 600;
-            color: var(--haramain-primary);
-        }
-
-        .customer-type {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            background-color: var(--haramain-light);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        /* Date Info */
-        .date-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .date-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .date-value {
-            font-weight: 600;
-            color: var(--haramain-primary);
-        }
-
-        /* Action Buttons */
-        .btn-action {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 0.25rem;
-            transition: all 0.3s ease;
-            border: none;
-            background-color: transparent;
-        }
-
-        .btn-action:hover {
-            background-color: var(--haramain-light);
-        }
-
-        .btn-action i {
-            font-size: 1rem;
-        }
-
-        .btn-edit {
-            color: var(--haramain-secondary);
-        }
-
-        .btn-delete {
-            color: var(--danger-color);
-        }
-
-        .btn-view {
-            color: var(--text-secondary);
-        }
-
-        /* Search and Filter */
-        .search-filter-container {
-            display: flex;
-            justify-content: space-between;
-            padding: 1.5rem;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .search-box {
-            position: relative;
-            width: 300px;
-        }
-
-        .search-box input {
-            padding-left: 2.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            height: 40px;
-            width: 100%;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .filter-select {
-            height: 40px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 0 1rem;
-            min-width: 150px;
-        }
-
-        /* Add New Button */
-        .btn-add-new {
-            background-color: var(--haramain-secondary);
-            color: white;
-            border-radius: 8px;
-            padding: 0.625rem 1.5rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        .btn-add-new:hover {
-            background-color: var(--haramain-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
-        }
-
-        /* Pagination */
-        .pagination-container {
-            display: flex;
-            justify-content: flex-end;
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--haramain-secondary);
-            border-color: var(--haramain-secondary);
-        }
-
-        .pagination .page-link {
-            color: var(--haramain-primary);
-            border-radius: 8px;
-            margin: 0 0.25rem;
-            border: 1px solid var(--border-color);
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .search-filter-container {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            .filter-group {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-
-            .table thead {
-                display: none;
-            }
-
-            .table tbody tr {
-                display: block;
-                margin-bottom: 1rem;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            }
-
-            .table tbody td {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0.75rem 1rem;
-                border: none;
-                border-radius: 0;
-            }
-
-            .table tbody td:before {
-                content: attr(data-label);
-                font-weight: 600;
-                color: var(--haramain-primary);
-                margin-right: 1rem;
-            }
-
-            .table tbody td:first-child {
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
-            }
-
-            .table tbody td:last-child {
-                border-bottom-left-radius: 8px;
-                border-bottom-right-radius: 8px;
-            }
-            .card-title{
-                display: none;
-            }
-        }
+        :root{--haramain-primary:#1a4b8c;--haramain-secondary:#2a6fdb;--haramain-light:#e6f0fa;--haramain-accent:#3d8bfd;--text-primary:#2d3748;--text-secondary:#4a5568;--border-color:#d1e0f5;--hover-bg:#f0f7ff;--checked-color:#2a6fdb;--success-color:#28a745;--warning-color:#ffc107;--danger-color:#dc3545}.service-list-container{max-width:100vw;margin:0 auto;padding:2rem;background-color:#f8fafd}.card{border-radius:12px;box-shadow:0 4px 12px rgb(0 0 0 / .05);border:1px solid var(--border-color);margin-bottom:2rem;overflow:hidden;transition:transform 0.3s ease,box-shadow 0.3s ease}.card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgb(0 0 0 / .1)}.card-header{background:linear-gradient(135deg,var(--haramain-light) 0%,#ffffff 100%);border-bottom:1px solid var(--border-color);padding:1.5rem;display:flex;align-items:center;justify-content:space-between}.card-title{font-weight:700;color:var(--haramain-primary);margin:0;font-size:1.25rem;display:flex;align-items:center;gap:12px}.card-title i{font-size:1.5rem;color:var(--haramain-secondary)}.table-responsive{padding:0 1.5rem}.table{width:100%;border-collapse:separate;border-spacing:0 .75rem}.table thead th{background-color:var(--haramain-light);color:var(--haramain-primary);font-weight:600;padding:1rem 1.25rem;border-bottom:2px solid var(--border-color)}.table tbody tr{background-color:#fff;transition:all 0.3s ease;border-radius:8px}.table tbody tr:hover{background-color:var(--hover-bg);box-shadow:0 4px 12px rgb(42 111 219 / .1)}.table tbody td{padding:1.25rem;vertical-align:middle;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color)}.table tbody td:first-child{border-left:1px solid var(--border-color);border-top-left-radius:8px;border-bottom-left-radius:8px}.table tbody td:last-child{border-right:1px solid var(--border-color);border-top-right-radius:8px;border-bottom-right-radius:8px}.badge{padding:.5rem .75rem;border-radius:6px;font-weight:600;font-size:.75rem;display:inline-flex;align-items:center;gap:.5rem}.badge i{font-size:.8rem}.badge-primary{background-color:var(--haramain-light);color:var(--haramain-secondary)}.badge-success{background-color:rgb(40 167 69 / .1);color:var(--success-color)}.badge-warning{background-color:rgb(255 193 7 / .1);color:var(--warning-color)}.badge-danger{background-color:rgb(220 53 69 / .1);color:var(--danger-color)}.customer-info{display:flex;align-items:center}.customer-avatar{width:40px;height:40px;border-radius:50%;background-color:var(--haramain-light);display:flex;align-items:center;justify-content:center;margin-right:1rem;color:var(--haramain-secondary);font-size:1.25rem}.customer-details{line-height:1.4}.customer-name{font-weight:600;color:var(--haramain-primary)}.customer-type{font-size:.75rem;color:var(--text-secondary);background-color:var(--haramain-light);padding:.25rem .5rem;border-radius:4px;display:inline-block}.date-info{display:flex;flex-direction:column}.date-label{font-size:.75rem;color:var(--text-secondary)}.date-value{font-weight:600;color:var(--haramain-primary)}.btn-action{width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;margin:0 .25rem;transition:all 0.3s ease;border:none;background-color:#fff0}.btn-action:hover{background-color:var(--haramain-light)}.btn-action i{font-size:1rem}.btn-edit{color:var(--haramain-secondary)}.btn-delete{color:var(--danger-color)}.btn-view{color:var(--text-secondary)}.search-filter-container{display:flex;justify-content:space-between;padding:1.5rem;align-items:center;border-bottom:1px solid var(--border-color)}.search-box{position:relative;width:300px}.search-box input{padding-left:2.5rem;border-radius:8px;border:1px solid var(--border-color);height:40px;width:100%}.search-box i{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--text-secondary)}.filter-group{display:flex;gap:1rem}.filter-select{height:40px;border-radius:8px;border:1px solid var(--border-color);padding:0 1rem;min-width:150px}.btn-add-new{background-color:var(--haramain-secondary);color:#fff;border-radius:8px;padding:.625rem 1.5rem;font-weight:600;display:flex;align-items:center;gap:8px;transition:all 0.3s ease;border:none}.btn-add-new:hover{background-color:var(--haramain-primary);transform:translateY(-2px);box-shadow:0 4px 8px rgb(26 75 140 / .3)}.pagination-container{display:flex;justify-content:flex-end;padding:1.5rem;border-top:1px solid var(--border-color)}.pagination .page-item.active .page-link{background-color:var(--haramain-secondary);border-color:var(--haramain-secondary)}.pagination .page-link{color:var(--haramain-primary);border-radius:8px;margin:0 .25rem;border:1px solid var(--border-color)}@media (max-width:768px){.search-filter-container{flex-direction:column;gap:1rem;align-items:flex-start}.search-box{width:100%}.filter-group{width:100%;flex-wrap:wrap}.table thead{display:none}.table tbody tr{display:block;margin-bottom:1rem;border-radius:8px;box-shadow:0 2px 8px rgb(0 0 0 / .1)}.table tbody td{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1rem;border:none;border-radius:0}.table tbody td:before{content:attr(data-label);font-weight:600;color:var(--haramain-primary);margin-right:1rem}.table tbody td:first-child{border-top-left-radius:8px;border-top-right-radius:8px}.table tbody td:last-child{border-bottom-left-radius:8px;border-bottom-right-radius:8px}.card-title{display:none}}
     </style>
 @endpush
 @section('content')
@@ -383,12 +13,22 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title"><i class="bi bi-list-check"></i> Daftar Harga Tiket</h5>
-                <a href="{{ route('hotel.price.create') }}" class="btn btn-success">Tambah Harga</a>
+                <a href="{{ route('hotel.price.create') }}" class="btn-add-new">
+                    <i class="bi bi-plus-circle"></i> Tambah Harga
+                </a>
             </div>
 
-            @if (session('success'))
-                <div class="alert alert-success mt-2">{{ session('success') }}</div>
-            @endif
+            {{-- START: Form Pencarian Baru --}}
+            <form method="GET" action="{{ route('hotel.price.index') }}">
+                <div class="search-filter-container">
+                    <div class="search-box" style="width: 100%;">
+                        <i class="bi bi-search"></i>
+                        <input type="text" name="search" placeholder="Cari nama hotel atau tipe kamar..."
+                            value="{{ request('search') }}">
+                    </div>
+                </div>
+            </form>
+            {{-- END: Form Pencarian Baru --}}
 
             <div class="table-responsive">
                 <table class="table">
@@ -403,7 +43,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($listHotel as $item)
+                        @forelse ($listHotel as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->tanggal }}</td>
@@ -411,78 +51,78 @@
                                 <td>{{ $item->tipe_kamar }}</td>
                                 <td>{{ number_format($item->harga, 0, ',', '.') }}</td>
                                 <td>
-                                    <a href="{{ route('hotel.price.edit', $item->id) }}" class="btn btn-outline-warning"
+                                    <a href="{{ route('hotel.price.edit', $item->id) }}" class="btn btn-action btn-edit"
                                         title="Edit">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
 
-                                    <form action="{{ route('hotel.price.delete', $item->id) }}" method="POST"
-                                        class="d-inline delete-form">
+                                    <button type="button" class="btn btn-action btn-delete delete-btn"
+                                        data-id="{{ $item->id }}" title="Delete">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+
+                                    <form id="delete-form-{{ $item->id }}"
+                                        action="{{ route('hotel.price.delete', $item->id) }}" method="POST"
+                                        style="display: none;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-delete" title="Delete">
-                                            <i class="fa-solid fa-trash"></i> </button>
                                     </form>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <i class="fa-solid fa-hotel me-2"></i> Belum ada data harga hotel yang tersedia.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
-                {{-- <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Tanggal</th>
-                            <th>Hotel</th>
-                            <th>Harga Tersedia</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($priceLists as $priceList)
-                            <tr>
-                                <td>{{ \Carbon\Carbon::parse($priceList->check_in)->format('d M Y') }} -
-                                    {{ \Carbon\Carbon::parse($priceList->check_out)->format('d M Y') }}
-                                </td>
-                                <td>{{ $priceList->hotel->nama_hotel }}</td>
-                                <td>
-                                    @foreach ($priceList->details as $detail)
-                                        <span class="badge bg-primary">
-                                            {{ $detail->type->nama_tipe }}
-                                        </span>
-                                    @endforeach
-                                </td>
-                                <td>
-                                    <a href="{{ route('hotel.price.show', $priceList->id) }}"
-                                        class="btn btn-info btn-sm">Detail</a>
-                                    <a href="{{ route('hotel.price.edit', $priceList->id) }}"
-                                        class="btn btn-warning btn-sm">Edit</a>
-                                    <form action="{{ route('hotel.price.delete', $priceList->id) }}" method="POST"
-                                        style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-danger btn-sm"
-                                            onclick="return confirm('Yakin hapus data ini?')">Hapus</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table> --}}
             </div>
         </div>
     </div>
-
+@endsection
+@push('scripts')
+    {{-- Anda perlu memastikan CDN SweetAlert2 sudah ada, misal di admin.master atau di sini: --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const deleteForms = document.querySelectorAll('.delete-form');
-            deleteForms.forEach(form => {
-                form.addEventListener('submit', function(e) {
+
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            @endif
+
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
                     e.preventDefault();
-                    if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                        form.submit();
-                    }
+                    const itemId = this.getAttribute('data-id');
+                    const form = document.getElementById(`delete-form-${itemId}`);
+
+                    Swal.fire({
+                        title: 'Anda Yakin?',
+                        text: "Data harga hotel ini akan dihapus permanen!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
                 });
             });
         });
     </script>
-@endsection
+@endpush

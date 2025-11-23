@@ -106,7 +106,7 @@ class DatabaseSeeder extends Seeder
             ]));
         }
 
-         $pendampings = [
+        $pendampings = [
             [
                 'nama' => 'Muthawif kelas premium',
                 'harga' => 12000,
@@ -130,7 +130,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($pendampings as $p) {
-           GuideItems::create($p);
+            GuideItems::create($p);
         }
 
         $transportations = [
@@ -161,9 +161,9 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($transportations as $t) {
-           Transportation::create($t);
+            Transportation::create($t);
         }
-         $tours = [
+        $tours = [
             ['name' => 'Makkah'],
             ['name' => 'Madinah'],
             ['name' => 'Al Ula'],
@@ -175,44 +175,50 @@ class DatabaseSeeder extends Seeder
         }
 
         $meals = [
-           [ "name" => "Nasi Box",
-            "price" => "15000"],
-           [ "name" => "Buffle Hotel",
-            "price" => "10000"],
-           [ "name" => "snack",
-            "price" => "6000"],
+            [
+                "name" => "Nasi Box",
+                "price" => "15000"
+            ],
+            [
+                "name" => "Buffle Hotel",
+                "price" => "10000"
+            ],
+            [
+                "name" => "snack",
+                "price" => "6000"
+            ],
         ];
 
-        foreach($meals as $meal){
+        foreach ($meals as $meal) {
             MealItem::create($meal);
         }
         $routes = [
-            ['transportation_id' => 1, "route" => "jeddah to makkah" , "price" => 250],
-            ['transportation_id' => 1, "route" => "makkah to ziyarat" , "price" => 170],
-            ['transportation_id' => 1, "route" => "makkah - madinah, madinah - makkah" , "price" => 450],
-            ['transportation_id' => 1, "route" => "madina to ziyarat" , "price" => 170],
-            ['transportation_id' => 1, "route" => "makkah to jeddah" , "price" => 250],
-            ['transportation_id' => 1, "route" => "jeddah to madina" , "price" => 250],
-            ['transportation_id' => 2, "route" => "jeddah to makkah" , "price" => 250],
-            ['transportation_id' => 2, "route" => "makkah to ziyarat" , "price" => 170],
-            ['transportation_id' => 2, "route" => "makkah - madinah, madinah - makkah" , "price" => 450],
-            ['transportation_id' => 2, "route" => "madina to ziyarat" , "price" => 170],
-            ['transportation_id' => 2, "route" => "makkah to jeddah" , "price" => 250],
-            ['transportation_id' => 2, "route" => "jeddah to madina" , "price" => 250],
-            ['transportation_id' => 3, "route" => "jeddah to makkah" , "price" => 250],
-            ['transportation_id' => 3, "route" => "makkah to ziyarat" , "price" => 170],
-            ['transportation_id' => 3, "route" => "makkah - madinah, madinah - makkah" , "price" => 450],
-            ['transportation_id' => 3, "route" => "madina to ziyarat" , "price" => 170],
-            ['transportation_id' => 3, "route" => "makkah to jeddah" , "price" => 250],
-            ['transportation_id' => 3, "route" => "jeddah to madina" , "price" => 250],
-            ['transportation_id' => 4, "route" => "jeddah to makkah" , "price" => 250],
-            ['transportation_id' => 4, "route" => "makkah to ziyarat" , "price" => 170],
-            ['transportation_id' => 4, "route" => "makkah - madinah, madinah - makkah" , "price" => 450],
-            ['transportation_id' => 4, "route" => "madina to ziyarat" , "price" => 170],
-            ['transportation_id' => 4, "route" => "makkah to jeddah" , "price" => 250],
-            ['transportation_id' => 4, "route" => "jeddah to madina" , "price" => 250],
+            ['transportation_id' => 1, "route" => "jeddah to makkah", "price" => 250],
+            ['transportation_id' => 1, "route" => "makkah to ziyarat", "price" => 170],
+            ['transportation_id' => 1, "route" => "makkah - madinah, madinah - makkah", "price" => 450],
+            ['transportation_id' => 1, "route" => "madina to ziyarat", "price" => 170],
+            ['transportation_id' => 1, "route" => "makkah to jeddah", "price" => 250],
+            ['transportation_id' => 1, "route" => "jeddah to madina", "price" => 250],
+            ['transportation_id' => 2, "route" => "jeddah to makkah", "price" => 250],
+            ['transportation_id' => 2, "route" => "makkah to ziyarat", "price" => 170],
+            ['transportation_id' => 2, "route" => "makkah - madinah, madinah - makkah", "price" => 450],
+            ['transportation_id' => 2, "route" => "madina to ziyarat", "price" => 170],
+            ['transportation_id' => 2, "route" => "makkah to jeddah", "price" => 250],
+            ['transportation_id' => 2, "route" => "jeddah to madina", "price" => 250],
+            ['transportation_id' => 3, "route" => "jeddah to makkah", "price" => 250],
+            ['transportation_id' => 3, "route" => "makkah to ziyarat", "price" => 170],
+            ['transportation_id' => 3, "route" => "makkah - madinah, madinah - makkah", "price" => 450],
+            ['transportation_id' => 3, "route" => "madina to ziyarat", "price" => 170],
+            ['transportation_id' => 3, "route" => "makkah to jeddah", "price" => 250],
+            ['transportation_id' => 3, "route" => "jeddah to madina", "price" => 250],
+            ['transportation_id' => 4, "route" => "jeddah to makkah", "price" => 250],
+            ['transportation_id' => 4, "route" => "makkah to ziyarat", "price" => 170],
+            ['transportation_id' => 4, "route" => "makkah - madinah, madinah - makkah", "price" => 450],
+            ['transportation_id' => 4, "route" => "madina to ziyarat", "price" => 170],
+            ['transportation_id' => 4, "route" => "makkah to jeddah", "price" => 250],
+            ['transportation_id' => 4, "route" => "jeddah to madina", "price" => 250],
         ];
-        foreach($routes as $route){
+        foreach ($routes as $route) {
             Route::create($route);
         }
 
@@ -221,7 +227,7 @@ class DatabaseSeeder extends Seeder
             ["name" => "vaksin"],
             ["name" => "siskopatuh"]
         ];
-        foreach($documents as $document){
+        foreach ($documents as $document) {
             Document::create($document);
         }
 
@@ -229,13 +235,13 @@ class DatabaseSeeder extends Seeder
             ['document_id' => 1, 'name' => 'visa umrah', "price" => 12000],
             ['document_id' => 1, 'name' => 'visa haji', "price" => 16000],
             ['document_id' => 1, 'name' => 'visa ziarah', "price" => 20000],
-            ['document_id' => 1, 'name' => 'visa personal',"price" => 5000],
+            ['document_id' => 1, 'name' => 'visa personal', "price" => 5000],
             ['document_id' => 1, 'name' => 'visa group', "price" => 22000],
             ['document_id' => 2, 'name' => 'polio', "price" => 31000],
-            ['document_id' => 2, 'name' => 'meningtis',  "price" => 60000],
+            ['document_id' => 2, 'name' => 'meningtis', "price" => 60000],
         ];
 
-        foreach($documentChildren as $data){
+        foreach ($documentChildren as $data) {
             DocumentChildren::create($data);
         }
         $wakaf = [
@@ -244,7 +250,7 @@ class DatabaseSeeder extends Seeder
             ["nama" => "Mushaf", "Harga" => "16000"],
         ];
 
-        foreach($wakaf as $item){
+        foreach ($wakaf as $item) {
             Wakaf::create($item);
         }
         $dorongan = [
@@ -253,36 +259,36 @@ class DatabaseSeeder extends Seeder
             ["name" => "tawaf", "price" => "7.000"],
             ["name" => "dorongan sel", "price" => "7.000"],
         ];
-        foreach($dorongan as $data){
+        foreach ($dorongan as $data) {
             Dorongan::create($data);
         }
 
-        $contents= [
+        $contents = [
             ["name" => "Moment Umrah", "price" => 12000],
             ["name" => "Moment mekkah", "price" => 13000],
             ["name" => "Moment madinah", "price" => 52000],
             ["name" => "Full content", "price" => 62000],
         ];
-        foreach($contents as $content){
+        foreach ($contents as $content) {
             ContentItem::create($content);
         }
 
-         $types = [
+        $types = [
             ["nama_tipe" => 'Double', "jumlah" => 5000],
             ["nama_tipe" => 'Triple', "jumlah" => 12000],
             ["nama_tipe" => 'Kuint', "jumlah" => 3200],
             ["nama_tipe" => 'Kuard', "jumlah" => 15000],
         ];
-        foreach($types as $type){
+        foreach ($types as $type) {
             TypeHotel::create($type);
         }
 
         $pelanggans = [
-            ['foto' => '1.jpg', 'nama_travel' => 'Madinatain', 'alamat'=>'Jl. Suka-suka', 'email' => 'madinatain@travel.com', 'penanggung_jawab' => 'fulan', 'phone' => '000', 'no_ktp' => '1000', 'status' => 'active'],
-            ['foto' => '1.jpg', 'nama_travel' => 'Haramain', 'alamat'=>'Jl. duka-duka', 'email' => 'haramain@travel.com', 'penanggung_jawab' => 'fulan', 'phone' => '001', 'no_ktp' => '2000', 'status' => 'active']
+            ['foto' => '1.jpg', 'nama_travel' => 'Madinatain', 'alamat' => 'Jl. Suka-suka', 'email' => 'madinatain@travel.com', 'penanggung_jawab' => 'fulan', 'phone' => '0214891682', 'no_ktp' => '3322070302430001', 'status' => 'active'],
+            ['nama_travel' => 'Haramain', 'alamat' => 'Jl. duka-duka', 'email' => 'haramain@travel.com', 'penanggung_jawab' => 'fulan', 'phone' => '0218566452', 'no_ktp' => '3322075412580001', 'status' => 'active']
         ];
 
-        foreach($pelanggans as $pelanggan){
+        foreach ($pelanggans as $pelanggan) {
             Pelanggan::create($pelanggan);
         }
     }
