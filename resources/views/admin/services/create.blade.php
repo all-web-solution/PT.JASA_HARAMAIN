@@ -1565,7 +1565,8 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" name="action" value="save" class="btn btn-primary">Simpan</button>
+                        {{-- <button type="submit" name="action" value="save" class="btn btn-primary">Simpan</button> --}}
+                        <button type="submit" name="action" value="nego" class="btn btn-primary">Simpan (Nego)</button>
                     </div>
                 </form>
             </div>
