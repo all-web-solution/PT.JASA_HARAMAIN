@@ -307,7 +307,7 @@
                         </div>
                     </div>
 
-                    {{-- BARIS 4: SUPPLIER, HARGA DASAR, HARGA JUAL (Editable) --}}
+                    {{-- BARIS 4: SUPPLIER, kurs DASAR, kurs JUAL (Editable) --}}
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -322,7 +322,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="harga_dasar" class="form-label">Harga Dasar</label>
+                                <label for="harga_dasar" class="form-label">Kurs Dasar</label>
                                 <input type="number" step="0.01" id="harga_dasar" name="harga_dasar"
                                     class="form-control @error('harga_dasar') is-invalid @enderror"
                                     value="{{ old('harga_dasar', $reyal->harga_dasar) }}">
@@ -333,7 +333,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="harga_jual" class="form-label">Harga Jual</label>
+                                <label for="harga_jual" class="form-label">Kurs Jual</label>
                                 <input type="number" step="0.01" id="harga_jual" name="harga_jual"
                                     class="form-control @error('harga_jual') is-invalid @enderror"
                                     value="{{ old('harga_jual', $reyal->harga_jual) }}">

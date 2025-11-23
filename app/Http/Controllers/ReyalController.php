@@ -87,9 +87,29 @@ class ReyalController extends Controller
             'tanggal_penyerahan' => 'required|date',
             'supplier' => 'nullable|string|max:255',
             'harga_dasar' => 'nullable|numeric|min:0',
-            'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
+            'harga_jual' => 'nullable|numeric|min:1',
             'status' => 'required'
         ]);
+
+        if ($request->filled('harga_jual') && $request->harga_jual > 0) {
+
+            // Ambil jumlah_input yang sudah ada di database
+            $jumlahInput = $reyal->jumlah_input;
+            $hargaJual   = $request->harga_jual;
+            $tipe        = $reyal->tipe;
+
+            // Terapkan Rumus Berdasarkan Tipe
+            if ($tipe === 'tamis') {
+                // Tamis (Biasanya Rupiah -> Reyal): DIBAGI
+                // Rumus: Hasil = Jumlah Input / Kurs
+                $validatedData['hasil'] = $jumlahInput / $hargaJual;
+
+            } elseif ($tipe === 'tumis') {
+                // Tumis (Biasanya Reyal -> Rupiah): DIKALI
+                // Rumus: Hasil = Jumlah Input * Kurs
+                $validatedData['hasil'] = $jumlahInput * $hargaJual;
+            }
+        }
 
         // Update data reyal
         $reyal->update($validatedData);
