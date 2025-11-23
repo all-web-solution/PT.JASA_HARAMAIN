@@ -84,6 +84,7 @@
         .table tbody tr {
             background-color: white;
             transition: all 0.3s ease;
+            text-align: center;
             border-radius: 8px;
         }
 
@@ -412,11 +413,9 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Travel</th>
-                            <th>Nama kendaraan</th>
-                            <th>Route</th>
-                            <th>Dari tanggal</th>
-                            <th>Sampai tanggal</th>
-                            <th>Status</th>
+                            <th>Penanggung Jawab</th>
+                            <th>Jumlah Pesanan</th>
+                            <th>Permintaan Dibuat</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -436,19 +435,18 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $customer->service->pelanggan->nama_travel }}</td>
-                                    <td>{{ $customer->transportation->nama }}</td>
-                                    <td>{{ $customer->route->route }}</td>
-                                    <td>{{ $customer->dari_tanggal }}</td>
-                                    <td>{{ $customer->sampai_tanggal }}</td>
-                                    <td>{{ $customer->status }}</td>
+                                    <td>{{ $customer->service->Pelanggan->penanggung_jawab }}</td>
                                     <td>
-                                        <a href="{{ route('transportation.car.detail.customer', $customer->id) }}">
-                                            <button class="btn btn-primary">Detail</button>
-                                        </a>
-                                        <a href="{{ route('transportasi.customer.edit', $customer->id) }}"
-                                            class="btn-action-small btn-edit" title="Edit">
-                                            {{-- route('transportasi.mobil.edit', $item->id) --}}
-                                            edit
+                                        <span class="badge bg-info text-dark">
+                                            {{ \App\Models\TransportationItem::where('service_id', $customer->service_id)->count() }}
+                                            Penerbangan
+                                        </span>
+                                    </td>
+                                    <td>{{ $customer->created_at->format('d M Y') }}</td>
+                                    <td>
+                                        <a href="{{ route('transportation.car.detail.customer', $customer->id) }}"
+                                            title="view">
+                                            <i class="bi bi-eye"></i>
                                         </a>
                                 </tr>
                             @endforeach
