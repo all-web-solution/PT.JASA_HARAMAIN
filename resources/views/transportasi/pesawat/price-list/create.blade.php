@@ -135,7 +135,6 @@
                                     <option value="Bisnis" {{ old('kelas') == 'Bisnis' ? 'selected' : '' }}>Bisnis</option>
                                     <option value="First Class" {{ old('kelas') == 'First Class' ? 'selected' : '' }}>First
                                         Class</option>
-                                    <option value="Promo" {{ old('kelas') == 'Promo' ? 'selected' : '' }}>Promo</option>
                                 </select>
                                 @error('kelas')
                                     <div class="invalid-feedback">{{ $message }}</div>
