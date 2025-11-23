@@ -162,9 +162,9 @@
     @elseif (auth()->user()->role === 'palugada')
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('wakaf.*') && !request()->routeIs('wakaf.customer') ? 'active' : '' }}"
-                    href="{{ route('wakaf.index') }}">
-                    <i class="bi bi-gem"></i> Wakaf
+                <a class="nav-link {{ request()->routeIs('palugada.badal*') ? 'active' : '' }}"
+                    href="{{ route('palugada.badal') }}">
+                    <i class="bi bi-arrow-repeat"></i> Customer Badal
                 </a>
             </li>
             <li class="nav-item">
@@ -174,21 +174,21 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('dorongan.*') && !request()->routeIs('dorongan.customer*') ? 'active' : '' }}"
-                    href="{{ route('dorongan.index') }}">
-                    <i class="bi bi-cart3"></i> Dorongan
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('dorongan.customer*') ? 'active' : '' }}"
                     href="{{ route('dorongan.customer') }}">
                     <i class="bi bi-person-bounding-box"></i> Customer dorongan
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('palugada.badal*') ? 'active' : '' }}"
-                    href="{{ route('palugada.badal') }}">
-                    <i class="bi bi-arrow-repeat"></i> Badal
+                <a class="nav-link {{ request()->routeIs('wakaf.*') && !request()->routeIs('wakaf.customer') ? 'active' : '' }}"
+                    href="{{ route('wakaf.index') }}">
+                    <i class="bi bi-gem"></i> Wakaf
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('dorongan.*') && !request()->routeIs('dorongan.customer*') ? 'active' : '' }}"
+                    href="{{ route('dorongan.index') }}">
+                    <i class="bi bi-cart3"></i> Dorongan
                 </a>
             </li>
         </ul>
