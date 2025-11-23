@@ -95,7 +95,7 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
-            text-align: left;
+            text-align: center;
             white-space: nowrap;
         }
 
@@ -103,6 +103,7 @@
             background-color: white;
             transition: all 0.3s ease;
             border-radius: 8px;
+            text-align: center;
         }
 
         .table tbody tr:hover {
@@ -156,7 +157,8 @@
                             <th>No</th>
                             <th>Nama</th>
                             <th>Harga</th>
-                            <th>Aksi</th>
+                            <th>Tanggal Dibuat</th>
+                            <th style="text-align: left">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -165,6 +167,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->nama }}</td>
                                 <td>{{ $item->harga }}</td>
+                                <td>{{ $item->created_at->format('d M y') }}</td>
                                 <td>
                                     <div class="actions-container">
                                         <a href="{{ route('wakaf.edit', $item->id) }}" class="btn btn-warning btn-sm"
@@ -182,7 +185,7 @@
                                             </button>
                                         </form>
 
-                                        
+
                                     </div>
                                 </td>
                             </tr>

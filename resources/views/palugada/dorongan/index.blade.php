@@ -83,13 +83,14 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
-            text-align: left;
+            text-align: center;
             white-space: nowrap;
         }
 
         .table tbody tr {
             background-color: white;
             transition: all 0.3s ease;
+            text-align: center;
             border-radius: 8px;
         }
 
@@ -143,7 +144,8 @@
                             <th>No</th>
                             <th>Nama</th>
                             <th>Harga</th>
-                            <th>Aksi</th>
+                            <th>Dibuat Tanggal</th>
+                            <th style="text-align: left">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -152,6 +154,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->name }}</td>
                                 <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                                <td>{{ $item->created_at->format('d M y') }}</td>
                                 <td>
                                     <div class="actions-container">
                                         <a href="{{ route('dorongan.edit', $item->id) }}" class="btn btn-warning btn-sm"
@@ -168,11 +171,6 @@
                                                 <i class="bi bi-trash-fill"></i>
                                             </button>
                                         </form>
-                                        <a href="{{ route('dorongan.supplier.show', $item->id) }}">
-                                            <button class="btn btn-info" title="Detail Supplier">
-                                                    <i class="bi bi-info-circle"></i>
-                                            </button>
-                                        </a>
                                     </div>
                                 </td>
                             </tr>
