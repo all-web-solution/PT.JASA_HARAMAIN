@@ -271,6 +271,12 @@ class ServicesController extends Controller
         $isPlaneSelected = $isMainTransportationSelected &&
             $request->has('transportation') && is_array($request->transportation) && in_array('airplane', $request->transportation);
 
+        // 4. Kondisi untuk Layanan Hotel
+        $isHotelSelected = $request->has('services') && is_array($request->services) && in_array('hotel', $request->services);
+
+        // 5. Kondisi untuk Layanan Dokumen
+        $isDocumentSelected = $request->has('services') && is_array($request->services) && in_array('dokumen', $request->services);
+
         $request->validate([
             'travel' => 'required|exists:pelanggans,id',
             'services' => 'required|array',
@@ -295,18 +301,73 @@ class ServicesController extends Controller
             // --- TRANSPORTASI UDARA (PESAWAT) ---
             'rute' => $isPlaneSelected ? 'required|array|min:1' : 'nullable|array',
             'tanggal' => $isPlaneSelected ? 'required|array|min:1' : 'nullable|array',
-
-            // Validasi untuk setiap item di dalam array Pesawat
             'rute.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
             'tanggal.*' => $isPlaneSelected ? 'required|date' : 'nullable|date',
             'maskapai.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
             'harga_tiket.*' => $isPlaneSelected ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
             'jumlah.*' => $isPlaneSelected ? 'required|integer|min:1' : 'nullable|integer|min:0',
-
             'tiket_berangkat.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
             'tiket_pulang.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
 
+            // --- VALIDASI HOTEL ---
+            'nama_hotel' => $isHotelSelected ? 'required|array|min:1' : 'nullable|array',
+            'nama_hotel.*' => $isHotelSelected ? 'required|string|filled' : 'nullable',
+            'tanggal_checkin' => $isHotelSelected ? 'required|array|min:1' : 'nullable|array',
+            'tanggal_checkin.*' => $isHotelSelected ? 'required|date' : 'nullable',
+            'tanggal_checkout' => $isHotelSelected ? 'required|array|min:1' : 'nullable|array',
+            'tanggal_checkout.*' => $isHotelSelected ? 'required|date|after:tanggal_checkin.*' : 'nullable',
+
+            // --- VALIDASI DOKUMEN ---
+
+            // 1. Validasi Child Documents
+            'child_documents' => [
+                // Wajib diisi JIKA dokumen dipilih DAN dokumen_id kosong
+                $isDocumentSelected ? 'required_without:dokumen_id' : 'nullable',
+                'array',
+                'exists:document_childrens,id'
+            ],
+
+            // 2. Validasi Dokumen Induk (Gabungan Logic)
+            'dokumen_id' => [
+                // Wajib diisi JIKA dokumen dipilih DAN child_documents kosong
+                $isDocumentSelected ? 'required_without:child_documents' : 'nullable',
+                'array',
+
+                // Custom Rule: Cek apakah Induk yang dipilih mewajibkan anak
+                function ($attribute, $value, $fail) use ($request) {
+                    // $value adalah array ID dokumen induk (bisa null/kosong)
+                    if (empty($value) || !is_array($value))
+                        return;
+
+                    // Ambil dokumen induk yang dipilih user, tapi HANYA yang punya 'childrens'
+                    // Pastikan namespace Document sesuai model Anda (misal: \App\Models\Document)
+                    $parentsWithChildren = Document::whereIn('id', $value)
+                        ->has('childrens')
+                        ->with('childrens')
+                        ->get();
+
+                    // Ambil daftar ID anak yang dipilih user dari form
+                    $selectedChildIds = $request->input('child_documents', []);
+
+                    // Loop setiap Dokumen Induk yang punya anak
+                    foreach ($parentsWithChildren as $parent) {
+                        // Ambil semua ID anak yang valid milik induk ini
+                        $validChildIds = $parent->childrens->pluck('id')->toArray();
+
+                        // Cek irisan: Apakah ada ID anak yang dipilih user yang cocok dengan induk ini?
+                        $hasSelectedChild = !empty(array_intersect($selectedChildIds, $validChildIds));
+
+                        // Jika user memilih Induk (yang punya anak), tapi TIDAK memilih satu pun anaknya:
+                        if (!$hasSelectedChild) {
+                            $fail("Dokumen '{$parent->name}' memiliki opsi turunan (seperti Visa Ziarah/Umrah). Anda wajib memilih minimal satu sub-jenis dokumen tersebut.");
+                        }
+                    }
+                },
+            ],
+
         ], [
+            // Custmom Error Messages
+            // Transport
             'transportation.required' => 'Anda memilih layanan Transportasi, wajib memilih minimal salah satu sub-layanan (Pesawat atau Transportasi Darat).',
             'transportation.min' => 'Anda memilih layanan Transportasi, wajib memilih minimal salah satu sub-layanan (Pesawat atau Transportasi Darat).',
             'transportation_id.required' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
@@ -329,6 +390,18 @@ class ServicesController extends Controller
             'harga_tiket.*.required' => 'Harga tiket wajib diisi untuk setiap penerbangan.',
             'jumlah.*.required' => 'Jumlah jamaah wajib diisi untuk setiap penerbangan.',
             'jumlah.*.min' => 'Jumlah jamaah harus minimal 1.',
+
+            // Hotel
+            'nama_hotel.required' => 'Anda memilih layanan Hotel, wajib mengisi data minimal satu hotel.',
+            'nama_hotel.*.required' => 'Nama hotel wajib diisi.',
+            'nama_hotel.*.filled' => 'Nama hotel tidak boleh kosong.',
+            'tanggal_checkin.*.required' => 'Tanggal Check-in wajib diisi untuk setiap hotel.',
+            'tanggal_checkout.*.required' => 'Tanggal Check-out wajib diisi untuk setiap hotel.',
+            'tanggal_checkout.*.after' => 'Tanggal Check-out harus setelah tanggal Check-in.',
+
+            // Dokumen
+            'dokumen_id.required_without' => 'Anda memilih layanan Dokumen, wajib memilih minimal satu jenis dokumen (Induk atau Turunan).',
+            'child_documents.required_without' => 'Anda memilih layanan Dokumen, wajib memilih minimal satu jenis dokumen (Induk atau Turunan).',
         ]);
 
         try {
@@ -1081,11 +1154,6 @@ class ServicesController extends Controller
         ])->with('success', 'Data service berhasil diperbarui dengan status NEGO.');
     }
 
-
-
-
-
-
     public function edit($id)
     {
         $service = Service::with([
@@ -1130,11 +1198,6 @@ class ServicesController extends Controller
         $status = $request->input('action') === 'nego' ? 'nego' : 'deal';
 
         DB::transaction(function () use ($request, $service, $status) {
-
-            /* =====================================================
-             * ✅ VALIDASI INPUT
-             * ===================================================== */
-
 
             /* =====================================================
              * 🔁 UPDATE DATA SERVICE UTAMA
