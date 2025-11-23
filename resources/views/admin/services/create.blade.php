@@ -533,10 +533,9 @@
                         $oldReyalTipe = old('tipe');
                         $oldTourIds = old('tour_ids', []);
                         $oldDocParents = old('dokumen_id', []);
-                        $oldDocChildrenQty = old('jumlah_child_doc', []);
-                        $oldDocBaseQty = collect(request()->old())->filter(
-                            fn($val, $key) => str_starts_with($key, 'jumlah_doc_'),
-                        );
+                        $oldChildDocs = old('child_documents', []);
+                        $oldDocChildrenQtyValues = old('jumlah_child_doc', []);
+                        $oldDocBaseQtyValues = old('jumlah_base_doc', []);
                         $oldPendampingQty = old('jumlah_pendamping', []);
                         $oldKontenQty = old('jumlah_konten', []);
                         $oldMealsQty = old('jumlah_meals', []);
@@ -1045,15 +1044,14 @@
                                     @foreach ($documents as $document)
                                         @php
                                             $isParentSelected = in_array($document->id, $oldDocParents);
-                                            $isBaseSelected = $oldDocBaseQty->has('jumlah_doc_' . $document->id);
                                         @endphp
-                                        <div class="document-item {{ $isParentSelected || $isBaseSelected ? 'selected' : '' }}"
+                                        <div class="document-item {{ $isParentSelected ? 'selected' : '' }}"
                                             data-document-id="{{ $document->id }}"
                                             data-has-children="{{ $document->childrens->isNotEmpty() ? 'true' : 'false' }}"
                                             data-name="{{ $document->name }}" data-price="{{ $document->price }}">
                                             <div class="service-name">{{ $document->name }}</div>
                                             <input type="checkbox" name="dokumen_id[]" value="{{ $document->id }}"
-                                                {{ $isParentSelected || $isBaseSelected ? 'checked' : '' }}>
+                                                {{ $isParentSelected ? 'checked' : '' }} class="d-none">
                                         </div>
                                     @endforeach
                                 </div>
@@ -1066,41 +1064,53 @@
                                             <label class="form-label">{{ $document->name }}</label>
                                             <div class="cars">
                                                 @foreach ($document->childrens as $child)
-                                                    <div class="child-item {{ array_key_exists($child->id, $oldDocChildrenQty) ? 'selected' : '' }}"
+                                                    @php
+                                                        $isChildChecked = in_array($child->id, $oldChildDocs);
+                                                    @endphp
+                                                    <div class="child-item {{ $isChildChecked ? 'selected' : '' }}"
                                                         data-child-id="{{ $child->id }}"
                                                         data-price="{{ $child->price }}"
                                                         data-name="{{ $child->name }}">
                                                         <div class="child-name">{{ $child->name }}</div>
                                                         <div class="child-name">Rp. {{ number_format($child->price) }}
                                                         </div>
+
                                                         <input type="checkbox" name="child_documents[]"
                                                             value="{{ $child->id }}"
-                                                            {{ array_key_exists($child->id, $oldDocChildrenQty) ? 'checked' : '' }}>
+                                                            {{ $isChildChecked ? 'checked' : '' }} class="d-none">
                                                     </div>
                                                 @endforeach
                                             </div>
                                             @foreach ($document->childrens as $child)
+                                                @php
+                                                    $isChildChecked = in_array($child->id, $oldChildDocs);
+                                                    $oldQty = $oldDocChildrenQtyValues[$child->id] ?? 1;
+                                                @endphp
                                                 <div id="doc-child-form-{{ $child->id }}"
-                                                    class="form-group mt-2 bg-white p-3 border rounded {{ array_key_exists($child->id, $oldDocChildrenQty) ? '' : 'hidden' }}">
+                                                    class="form-group mt-2 bg-white p-3 border rounded {{ $isChildChecked ? '' : 'hidden' }}">
                                                     <label class="form-label">Jumlah {{ $child->name }}</label>
                                                     <input type="number" class="form-control jumlah-child-doc"
                                                         data-parent-id="{{ $document->id }}"
                                                         data-child-id="{{ $child->id }}"
                                                         data-name="{{ $child->name }}"
                                                         data-price="{{ $child->price }}" min="1"
-                                                        value="{{ old('jumlah_child_doc.' . $child->id, 1) }}"
-                                                        name="jumlah_child_doc[{{ $child->id }}]">
+                                                        value="{{ $oldQty }}"
+                                                        name="jumlah_child_doc[{{ $child->id }}]"
+                                                        {{ !$isChildChecked ? 'disabled' : '' }}>
                                                 </div>
                                             @endforeach
                                         </div>
                                     @else
-                                        <div class="form-group {{ $oldDocBaseQty->has('jumlah_doc_' . $document->id) ? '' : 'hidden' }} document-base-form"
-                                            id="doc-{{ $document->id }}-form" data-document-id="{{ $document->id }}"
-                                            data-price="{{ $document->price }}" data-name="{{ $document->name }}">
+                                        @php
+                                            $isBaseSelected = in_array($document->id, $oldDocParents);
+                                        @endphp
+                                        <div class="form-group {{ $isBaseSelected ? '' : 'hidden' }} document-base-form"
+                                            id="doc-{{ $document->id }}-form" data-document-id="{{ $document->id }}">
                                             <label class="form-label">Jumlah {{ $document->name }}</label>
                                             <input type="number" class="form-control"
                                                 name="jumlah_doc_{{ $document->id }}" min="1"
-                                                value="{{ old('jumlah_doc_' . $document->id) }}">
+                                                value="{{ old('jumlah_doc_' . $document->id, 1) }}"
+                                                {{ !$isBaseSelected ? 'disabled' : '' }}>
                                         </div>
                                     @endif
                                 @endforeach
@@ -1566,7 +1576,8 @@
 
                     <div class="form-actions">
                         {{-- <button type="submit" name="action" value="save" class="btn btn-primary">Simpan</button> --}}
-                        <button type="submit" name="action" value="nego" class="btn btn-primary">Simpan (Nego)</button>
+                        <button type="submit" name="action" value="nego" class="btn btn-primary">Simpan
+                            (Nego)</button>
                     </div>
                 </form>
             </div>
@@ -1915,38 +1926,53 @@
                     const docId = documentItem.dataset.documentId;
                     const hasChildren = documentItem.dataset.hasChildren === 'true';
                     documentItem.classList.toggle('selected');
+                    const isSelected = documentItem.classList.contains('selected');
 
-                    // PERBAIKAN: Aktifkan/nonaktifkan checkbox juga
                     const parentCheckbox = documentItem.querySelector('input[type="checkbox"]');
-                    if (parentCheckbox) parentCheckbox.checked = documentItem.classList.contains(
-                        'selected');
+                    if (parentCheckbox) parentCheckbox.checked = isSelected;
 
                     const formElement = document.querySelector(
-                        `.document-child-form[data-parent-id="${docId}"]`) || document.querySelector(
-                        `.document-base-form[data-document-id="${docId}"]`);
+                            `.document-child-form[data-parent-id="${docId}"]`) ||
+                        document.querySelector(`.document-base-form[data-document-id="${docId}"]`);
+
                     if (formElement) {
-                        const isHidden = formElement.classList.toggle('hidden');
-                        if (!isHidden && !hasChildren) {
+                        const isHidden = !isSelected;
+                        formElement.classList.toggle('hidden', isHidden);
+
+                        formElement.querySelectorAll('input, select').forEach(input => {
+                            if (input.type !== 'checkbox') {
+                                input.disabled =
+                                    isHidden;
+                            }
+                        });
+
+                        if (isSelected && !hasChildren) {
                             const qtyInput = formElement.querySelector('input[type="number"]');
                             if (qtyInput) qtyInput.value = 1;
+
                             const name = documentItem.dataset.name;
                             const price = parseInt(documentItem.dataset.price) || 0;
                             updateItemInCart(`doc-base-${docId}`, `Dokumen - ${name}`, 1, price);
-                        } else if (isHidden) {
+                        } else if (!isSelected) {
                             Object.keys(cart).forEach(key => {
                                 if (key.startsWith(`doc-base-${docId}`) || key.startsWith(
                                         `doc-child-${docId}`)) {
                                     delete cart[key];
                                 }
                             });
-                            // Jika punya anak, reset juga semua anak
+
                             if (hasChildren) {
-                                formElement.querySelectorAll('.child-item').forEach(child => child.classList
-                                    .remove('selected'));
-                                formElement.querySelectorAll('.form-group.mt-2').forEach(childForm =>
-                                    childForm.classList.add('hidden'));
-                                formElement.querySelectorAll('input[name^="jumlah_child_doc"]').forEach(
-                                    input => input.value = 1);
+                                formElement.querySelectorAll('.child-item').forEach(child => {
+                                    child.classList.remove('selected');
+                                    const childCheck = child.querySelector(
+                                        'input[type="checkbox"]');
+                                    if (childCheck) childCheck.checked = false;
+                                });
+                                formElement.querySelectorAll('.form-group.mt-2').forEach(childForm => {
+                                    childForm.classList.add('hidden');
+                                    childForm.querySelectorAll('input').forEach(i => i.disabled =
+                                        true);
+                                });
                             }
                         }
                     }
@@ -1959,42 +1985,39 @@
                     const childId = childItem.dataset.childId;
                     const name = childItem.dataset.name;
                     const price = parseInt(childItem.dataset.price) || 0;
-                    const cartId = `doc-child-${parentId}-${childId}`;
-                    const isSelected = childItem.classList.toggle('selected');
-
-                    // PERBAIKAN: Aktifkan/nonaktifkan checkbox juga
+                    childItem.classList.toggle('selected');
+                    const isSelected = childItem.classList.contains('selected');
                     const childCheckbox = childItem.querySelector('input[type="checkbox"]');
                     if (childCheckbox) childCheckbox.checked = isSelected;
 
                     const formContainer = childItem.closest('.document-child-form');
                     let existingForm = formContainer.querySelector(`#doc-child-form-${childId}`);
 
-                    // Buat form jika belum ada
-                    if (isSelected && !existingForm) {
+                    if (!existingForm && isSelected) {
                         const newForm = document.createElement('div');
                         newForm.id = `doc-child-form-${childId}`;
                         newForm.classList.add('form-group', 'mt-2', 'bg-white', 'p-3', 'border', 'rounded');
                         newForm.innerHTML =
                             `<label class="form-label">Jumlah ${name}</label>
-                            <input type="number"
-                                class="form-control jumlah-child-doc"
-                                data-parent-id="${parentId}"
-                                data-child-id="${childId}"
-                                data-name="${name}"
-                                data-price="${price}"
-                                min="1"
-                                value="1"
-                                name="jumlah_child_doc[${childId}]">`; // <-- Nama input sudah benar
+            <input type="number" class="form-control jumlah-child-doc"
+                data-parent-id="${parentId}" data-child-id="${childId}"
+                data-name="${name}" data-price="${price}"
+                min="1" value="1" name="jumlah_child_doc[${childId}]">`;
                         formContainer.appendChild(newForm);
-                        existingForm = newForm; // Set existingForm ke form yang baru dibuat
+                        existingForm = newForm;
                     }
 
-                    // Tampilkan/sembunyikan form
                     if (existingForm) {
                         existingForm.classList.toggle('hidden', !isSelected);
+                        const inputQty = existingForm.querySelector('input');
+                        if (inputQty) {
+                            inputQty.disabled = !isSelected;
+                            if (isSelected && (inputQty.value == 0 || inputQty.value == '')) {
+                                inputQty.value = 1;
+                            }
+                        }
                     }
-
-                    // Update cart
+                    const cartId = `doc-child-${parentId}-${childId}`;
                     if (isSelected) {
                         updateItemInCart(cartId, `Dokumen - ${name}`, 1, price);
                     } else {
