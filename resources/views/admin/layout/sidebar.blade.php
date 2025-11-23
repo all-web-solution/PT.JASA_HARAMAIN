@@ -222,5 +222,14 @@
                 </a>
             </li>
         </ul>
+    @elseif (auth()->user()->role == 'reyal')
+        <ul class="nav flex-column mt-2">
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('reyal.index*') ? 'active' : '' }}"
+                    href="{{ route('reyal.index') }}">
+                    <i class="bi bi-calculator"></i> Order Penukaran
+                </a>
+            </li>
+        </ul>
     @endif
 </div>
