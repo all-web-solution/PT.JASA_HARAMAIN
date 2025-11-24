@@ -260,6 +260,7 @@ class ServicesController extends Controller
 
     public function store(Request $request)
     {
+        $services = $request->input('services', []);
         // 1. Kondisi untuk Layanan Utama Transportasi
         $isMainTransportationSelected = $request->has('services') && is_array($request->services) && in_array('transportasi', $request->services);
 
@@ -276,6 +277,15 @@ class ServicesController extends Controller
 
         // 5. Kondisi untuk Layanan Dokumen
         $isDocumentSelected = $request->has('services') && is_array($request->services) && in_array('dokumen', $request->services);
+        // Kondisi Baru: Handling & Pendamping
+        $isHandlingSelected = in_array('handling', $services);
+        $isPendampingSelected = in_array('pendamping', $services);
+
+        // Handling (Baru)
+        $handlingTypes = $request->input('handlings', []);
+        $isHandlingHotelSelected = $isHandlingSelected && in_array('hotel', $handlingTypes);
+        $isHandlingBandaraSelected = $isHandlingSelected && in_array('bandara', $handlingTypes);
+
 
         $request->validate([
             'travel' => 'required|exists:pelanggans,id',
@@ -390,6 +400,79 @@ class ServicesController extends Controller
                 },
             ],
 
+            // ====================================================
+            // D. VALIDASI HANDLING (BARU)
+            // ====================================================
+
+            // 1. Pastikan sub-jenis handling dipilih (Hotel / Bandara)
+            'handlings' => $isHandlingSelected ? 'required|array|min:1' : 'nullable',
+
+            // 2. Validasi Handling Hotel
+            'nama_hotel_handling' => $isHandlingHotelSelected ? 'required|string|max:255' : 'nullable',
+            'tanggal_hotel_handling' => $isHandlingHotelSelected ? 'required|date' : 'nullable',
+            'harga_hotel_handling' => $isHandlingHotelSelected ? 'required|numeric|min:0' : 'nullable',
+            'pax_hotel_handling' => $isHandlingHotelSelected ? 'required|integer|min:1' : 'nullable',
+
+            // 3. Validasi Handling Bandara
+            'nama_bandara_handling' => $isHandlingBandaraSelected ? 'required|string|max:255' : 'nullable',
+            'jumlah_jamaah_handling' => $isHandlingBandaraSelected ? 'required|integer|min:1' : 'nullable',
+            'harga_bandara_handling' => $isHandlingBandaraSelected ? 'required|numeric|min:0' : 'nullable',
+            'kedatangan_jamaah_handling' => $isHandlingBandaraSelected ? 'required|date' : 'nullable',
+            'nama_supir' => $isHandlingBandaraSelected ? 'required|string|max:255' : 'nullable',
+
+            // ====================================================
+            // E. VALIDASI PENDAMPING (BARU)
+            // ====================================================
+
+            // 1. Pastikan ada minimal satu pendamping yang dipilih (jumlah > 0)
+            'jumlah_pendamping' => [
+                $isPendampingSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $value, $fail) use ($isPendampingSelected) {
+                    if (!$isPendampingSelected)
+                        return;
+
+                    // Cek apakah ada setidaknya satu item dengan jumlah > 0
+                    $hasSelection = false;
+                    foreach ($value as $qty) {
+                        if ((int) $qty > 0) {
+                            $hasSelection = true;
+                            break;
+                        }
+                    }
+
+                    if (!$hasSelection) {
+                        $fail('Anda memilih layanan Pendamping, wajib mengisi jumlah minimal untuk satu pendamping.');
+                    }
+                },
+            ],
+
+            // 2. Validasi Tanggal untuk setiap Pendamping yang dipilih
+            'tanggal_pendamping' => [
+                $isPendampingSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $dates, $fail) use ($request, $isPendampingSelected) {
+                    if (!$isPendampingSelected)
+                        return;
+
+                    $jumlahs = $request->input('jumlah_pendamping', []);
+
+                    foreach ($jumlahs as $guideId => $qty) {
+                        if ((int) $qty > 0) {
+                            // Jika pendamping ID ini dipilih (qty > 0), wajib punya tanggal valid
+                            $start = $dates[$guideId]['dari'] ?? null;
+                            $end = $dates[$guideId]['sampai'] ?? null;
+
+                            if (empty($start) || empty($end)) {
+                                $guide = GuideItems::find($guideId); // Asumsi model master guide
+                                $name = $guide ? $guide->nama : 'Pendamping';
+                                $fail("Tanggal 'Dari' dan 'Sampai' wajib diisi untuk $name.");
+                            }
+                        }
+                    }
+                }
+            ],
+
         ], [
             // Custmom Error Messages
             // Transport
@@ -433,6 +516,23 @@ class ServicesController extends Controller
             // Dokumen
             'dokumen_id.required_without' => 'Anda memilih layanan Dokumen, wajib memilih minimal satu jenis dokumen (Induk atau Turunan).',
             'child_documents.required_without' => 'Anda memilih layanan Dokumen, wajib memilih minimal satu jenis dokumen (Induk atau Turunan).',
+
+            // Handling
+            'handlings.required' => 'Anda memilih layanan Handling, wajib memilih jenis handling (Hotel atau Bandara).',
+
+            'nama_hotel_handling.required' => 'Nama hotel (Handling) wajib diisi.',
+            'tanggal_hotel_handling.required' => 'Tanggal hotel (Handling) wajib diisi.',
+            'harga_hotel_handling.required' => 'Harga hotel (Handling) wajib diisi.',
+            'pax_hotel_handling.required' => 'Jumlah Pax hotel (Handling) wajib diisi.',
+
+            'nama_bandara_handling.required' => 'Nama bandara wajib diisi.',
+            'jumlah_jamaah_handling.required' => 'Jumlah jamaah (Bandara) wajib diisi.',
+            'harga_bandara_handling.required' => 'Harga handling bandara wajib diisi.',
+            'kedatangan_jamaah_handling.required' => 'Tanggal kedatangan jamaah wajib diisi.',
+            'nama_supir.required' => 'Nama supir wajib diisi.',
+
+            // Pendamping
+            'jumlah_pendamping.required' => 'Data pendamping wajib diisi.',
         ]);
 
         try {

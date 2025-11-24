@@ -536,8 +536,9 @@
                         $oldChildDocs = old('child_documents', []);
                         $oldDocChildrenQtyValues = old('jumlah_child_doc', []);
                         $oldDocBaseQtyValues = old('jumlah_base_doc', []);
-                        $oldPendampingQty = old('jumlah_pendamping', []);
+                        $oldPendampingIds = old('pendamping_id', []);
                         $oldKontenQty = old('jumlah_konten', []);
+                        $oldPendampingQtyValues = old('jumlah_pendamping', []);
                         $oldMealsQty = old('jumlah_meals', []);
                         $oldDoronganQty = old('jumlah_dorongan', []);
                         $oldWakafQty = old('jumlah_wakaf', []);
@@ -549,19 +550,19 @@
                         </h6>
                         <div class="service-grid">
                             @foreach ([
-                                'transportasi' => ['icon' => 'bi-airplane', 'name' => 'Transportasi', 'desc' => 'Tiket & Transport'],
-                                'hotel' => ['icon' => 'bi-building', 'name' => 'Hotel', 'desc' => 'Akomodasi'],
-                                'dokumen' => ['icon' => 'bi-file-text', 'name' => 'Dokumen', 'desc' => 'Visa & Administrasi'],
-                                'handling' => ['icon' => 'bi-briefcase', 'name' => 'Handling', 'desc' => 'Bandara & Hotel'],
-                                'pendamping' => ['icon' => 'bi-people', 'name' => 'Pendamping', 'desc' => 'Tour Leader & Mutawwif'],
-                                'konten' => ['icon' => 'bi-camera', 'name' => 'Konten', 'desc' => 'Dokumentasi'],
-                                'reyal' => ['icon' => 'bi-currency-exchange', 'name' => 'Reyal', 'desc' => 'Penukaran Mata Uang'],
-                                'tour' => ['icon' => 'bi-geo-alt', 'name' => 'Tour', 'desc' => 'City Tour & Ziarah'],
-                                'meals' => ['icon' => 'bi-egg-fried', 'name' => 'Meals', 'desc' => 'Makanan'],
-                                'dorongan' => ['icon' => 'bi-basket', 'name' => 'Dorongan', 'desc' => 'Bagi penyandang disabilitas'],
-                                'waqaf' => ['icon' => 'bi-gift', 'name' => 'Waqaf', 'desc' => 'Sedekah & Waqaf'],
-                                'badal' => ['icon' => 'bi-gift', 'name' => 'Badal Umrah', 'desc' => 'Umrah Badal'],
-                            ] as $key => $service)
+            'transportasi' => ['icon' => 'bi-airplane', 'name' => 'Transportasi', 'desc' => 'Tiket & Transport'],
+            'hotel' => ['icon' => 'bi-building', 'name' => 'Hotel', 'desc' => 'Akomodasi'],
+            'dokumen' => ['icon' => 'bi-file-text', 'name' => 'Dokumen', 'desc' => 'Visa & Administrasi'],
+            'handling' => ['icon' => 'bi-briefcase', 'name' => 'Handling', 'desc' => 'Bandara & Hotel'],
+            'pendamping' => ['icon' => 'bi-people', 'name' => 'Pendamping', 'desc' => 'Tour Leader & Mutawwif'],
+            'konten' => ['icon' => 'bi-camera', 'name' => 'Konten', 'desc' => 'Dokumentasi'],
+            'reyal' => ['icon' => 'bi-currency-exchange', 'name' => 'Reyal', 'desc' => 'Penukaran Mata Uang'],
+            'tour' => ['icon' => 'bi-geo-alt', 'name' => 'Tour', 'desc' => 'City Tour & Ziarah'],
+            'meals' => ['icon' => 'bi-egg-fried', 'name' => 'Meals', 'desc' => 'Makanan'],
+            'dorongan' => ['icon' => 'bi-basket', 'name' => 'Dorongan', 'desc' => 'Bagi penyandang disabilitas'],
+            'waqaf' => ['icon' => 'bi-gift', 'name' => 'Waqaf', 'desc' => 'Sedekah & Waqaf'],
+            'badal' => ['icon' => 'bi-gift', 'name' => 'Badal Umrah', 'desc' => 'Umrah Badal'],
+        ] as $key => $service)
                                 <div class="service-item {{ in_array($key, $oldServices) ? 'selected' : '' }}"
                                     data-service="{{ $key }}">
                                     <div class="service-icon"><i class="bi {{ $service['icon'] }}"></i></div>
@@ -955,7 +956,8 @@
                                                                     <div class="form-group mt-2 bg-white p-3 border rounded"
                                                                         data-type-id="{{ $oldTypeId }}">
                                                                         <label class="form-label">Jumlah Kamar
-                                                                            ({{ $type->nama_tipe }})</label>
+                                                                            ({{ $type->nama_tipe }})
+                                                                        </label>
                                                                         <input type="number"
                                                                             class="form-control qty-input-hotel @error('hotel_data.' . $index . '.' . $oldTypeId . '.jumlah') is-invalid @enderror"
                                                                             name="hotel_data[{{ $index }}][{{ $oldTypeId }}][jumlah]"
@@ -1153,6 +1155,7 @@
                         <div class="detail-form {{ in_array('handling', $oldServices) ? '' : 'hidden' }}"
                             id="handling-details">
                             <h6 class="detail-title"><i class="bi bi-briefcase"></i> Handling</h6>
+
                             <div class="detail-section">
                                 <div class="service-grid">
                                     <div class="handling-item {{ in_array('hotel', $oldHandlingTypes) ? 'selected' : '' }}"
@@ -1168,60 +1171,128 @@
                                             {{ in_array('bandara', $oldHandlingTypes) ? 'checked' : '' }}>
                                     </div>
                                 </div>
+                                @error('handlings')
+                                    <div class="validation-error-message mt-2">{{ $message }}</div>
+                                @enderror
                             </div>
+
                             <div class="form-group {{ in_array('hotel', $oldHandlingTypes) ? '' : 'hidden' }}"
                                 id="hotel-handling-form">
+                                <h6 class="fw-bold mb-3 text-primary">Detail Handling Hotel</h6>
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Nama Hotel</label><input
-                                            type="text" class="form-control" name="nama_hotel_handling"
-                                            value="{{ old('nama_hotel_handling') }}"></div>
-                                    <div class="form-col"><label class="form-label">Tanggal</label><input type="date"
-                                            class="form-control" name="tanggal_hotel_handling"
-                                            value="{{ old('tanggal_hotel_handling') }}"></div>
+                                    <div class="form-col">
+                                        <label class="form-label">Nama Hotel</label>
+                                        <input type="text"
+                                            class="form-control @error('nama_hotel_handling') is-invalid @enderror"
+                                            name="nama_hotel_handling" value="{{ old('nama_hotel_handling') }}">
+                                        @error('nama_hotel_handling')
+                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-col">
+                                        <label class="form-label">Tanggal</label>
+                                        <input type="date"
+                                            class="form-control @error('tanggal_hotel_handling') is-invalid @enderror"
+                                            name="tanggal_hotel_handling" value="{{ old('tanggal_hotel_handling') }}">
+                                        @error('tanggal_hotel_handling')
+                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Harga</label><input type="text"
-                                            class="form-control" name="harga_hotel_handling"
-                                            value="{{ old('harga_hotel_handling') }}"></div>
-                                    <div class="form-col"><label class="form-label">Pax</label><input type="text"
-                                            class="form-control" name="pax_hotel_handling"
-                                            value="{{ old('pax_hotel_handling') }}"></div>
+                                    <div class="form-col">
+                                        <label class="form-label">Harga</label>
+                                        <input type="text"
+                                            class="form-control @error('harga_hotel_handling') is-invalid @enderror"
+                                            name="harga_hotel_handling" value="{{ old('harga_hotel_handling') }}">
+                                        @error('harga_hotel_handling')
+                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-col">
+                                        <label class="form-label">Pax</label>
+                                        <input type="text"
+                                            class="form-control @error('pax_hotel_handling') is-invalid @enderror"
+                                            name="pax_hotel_handling" value="{{ old('pax_hotel_handling') }}">
+                                        @error('pax_hotel_handling')
+                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Kode Booking</label><input type="file"
-                                        class="form-control" name="kode_booking_hotel_handling">
-                                    <label class="form-label">Room List</label><input type="file" class="form-control"
-                                        name="rumlis_hotel_handling">
-                                    <label class="form-label">Identitas Koper</label><input type="file"
-                                        class="form-control" name="identitas_hotel_handling">
+                                    <label class="form-label">Kode Booking</label>
+                                    <input type="file" class="form-control" name="kode_booking_hotel_handling">
+
+                                    <label class="form-label mt-2">Room List</label>
+                                    <input type="file" class="form-control" name="rumlis_hotel_handling">
+
+                                    <label class="form-label mt-2">Identitas Koper</label>
+                                    <input type="file" class="form-control" name="identitas_hotel_handling">
                                 </div>
                             </div>
+
                             <div class="form-group {{ in_array('bandara', $oldHandlingTypes) ? '' : 'hidden' }}"
                                 id="bandara-handling-form">
+                                <h6 class="fw-bold mb-3 text-primary">Detail Handling Bandara</h6>
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Nama Bandara</label><input
-                                            type="text" class="form-control" name="nama_bandara_handling"
-                                            value="{{ old('nama_bandara_handling') }}"></div>
-                                    <div class="form-col"><label class="form-label">Jumlah Jamaah</label><input
-                                            type="text" class="form-control" name="jumlah_jamaah_handling"
-                                            value="{{ old('jumlah_jamaah_handling') }}"></div>
-                                    <div class="form-col"><label class="form-label">Harga</label><input type="text"
-                                            class="form-control" name="harga_bandara_handling"
-                                            value="{{ old('harga_bandara_handling') }}"></div>
+                                    <div class="form-col">
+                                        <label class="form-label">Nama Bandara</label>
+                                        <input type="text"
+                                            class="form-control @error('nama_bandara_handling') is-invalid @enderror"
+                                            name="nama_bandara_handling" value="{{ old('nama_bandara_handling') }}">
+                                        @error('nama_bandara_handling')
+                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-col">
+                                        <label class="form-label">Jumlah Jamaah</label>
+                                        <input type="text"
+                                            class="form-control @error('jumlah_jamaah_handling') is-invalid @enderror"
+                                            name="jumlah_jamaah_handling" value="{{ old('jumlah_jamaah_handling') }}">
+                                        @error('jumlah_jamaah_handling')
+                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-col">
+                                        <label class="form-label">Harga</label>
+                                        <input type="text"
+                                            class="form-control @error('harga_bandara_handling') is-invalid @enderror"
+                                            name="harga_bandara_handling" value="{{ old('harga_bandara_handling') }}">
+                                        @error('harga_bandara_handling')
+                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Kedatangan Jamaah</label><input
-                                            type="date" class="form-control" name="kedatangan_jamaah_handling"
-                                            value="{{ old('kedatangan_jamaah_handling') }}"></div>
-                                    <div class="form-col"><label class="form-label">Paket Info</label><input
-                                            type="file" class="form-control" name="paket_info"></div>
+                                    <div class="form-col">
+                                        <label class="form-label">Kedatangan Jamaah</label>
+                                        <input type="date"
+                                            class="form-control @error('kedatangan_jamaah_handling') is-invalid @enderror"
+                                            name="kedatangan_jamaah_handling"
+                                            value="{{ old('kedatangan_jamaah_handling') }}">
+                                        @error('kedatangan_jamaah_handling')
+                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-col">
+                                        <label class="form-label">Paket Info</label>
+                                        <input type="file" class="form-control" name="paket_info">
+                                    </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Nama Sopir</label><input
-                                            type="text" class="form-control" name="nama_supir"
-                                            value="{{ old('nama_supir') }}"></div>
-                                    <div class="form-col"><label class="form-label">Identitas Koper</label><input
-                                            type="file" class="form-control" name="identitas_koper_bandara_handling">
+                                    <div class="form-col">
+                                        <label class="form-label">Nama Sopir</label>
+                                        <input type="text"
+                                            class="form-control @error('nama_supir') is-invalid @enderror"
+                                            name="nama_supir" value="{{ old('nama_supir') }}">
+                                        @error('nama_supir')
+                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-col">
+                                        <label class="form-label">Identitas Koper</label>
+                                        <input type="file" class="form-control"
+                                            name="identitas_koper_bandara_handling">
                                     </div>
                                 </div>
                             </div>
@@ -1230,41 +1301,69 @@
                         {{-- PENDAMPING FORM --}}
                         <div class="detail-form {{ in_array('pendamping', $oldServices) ? '' : 'hidden' }}"
                             id="pendamping-details">
-                            <h6 class="detail-title"><i class="bi bi-briefcase"></i> Pendamping</h6>
+                            <h6 class="detail-title"><i class="bi bi-people"></i> Pendamping</h6>
+
                             <div class="detail-section">
                                 <div class="service-grid">
                                     @foreach ($guides as $guide)
-                                        <div class="pendamping-item {{ array_key_exists($guide->id, $oldPendampingQty) ? 'selected' : '' }}"
+                                        @php
+                                            // Cek apakah ID ada di array checkbox yang dipilih
+                                            $isSelected = in_array($guide->id, $oldPendampingIds);
+                                        @endphp
+                                        <div class="pendamping-item {{ $isSelected ? 'selected' : '' }}"
                                             data-id="{{ $guide->id }}" data-price="{{ $guide->harga }}"
                                             data-name="{{ $guide->nama }}" data-type="pendamping">
+
                                             <div class="service-name">{{ $guide->nama }}</div>
                                             <div class="service-desc">Rp {{ number_format($guide->harga) }}</div>
+
+                                            {{-- TAMBAHKAN CHECKBOX INI --}}
+                                            <input type="checkbox" name="pendamping_id[]" value="{{ $guide->id }}"
+                                                {{ $isSelected ? 'checked' : '' }} class="d-none">
                                         </div>
                                     @endforeach
                                 </div>
+
+                                {{-- Error Message Global --}}
+                                @error('jumlah_pendamping')
+                                    <div class="validation-error-message mt-2 mb-3">{{ $message }}</div>
+                                @enderror
+                                @error('tanggal_pendamping')
+                                    <div class="validation-error-message mt-2 mb-3">{{ $message }}</div>
+                                @enderror
                             </div>
+
                             <div class="detail-section">
                                 @foreach ($guides as $guide)
+                                    @php
+                                        $isSelected = in_array($guide->id, $oldPendampingIds);
+                                        $oldQty = $oldPendampingQtyValues[$guide->id] ?? '';
+                                    @endphp
                                     <div id="form-pendamping-{{ $guide->id }}"
-                                        class="form-group {{ array_key_exists($guide->id, $oldPendampingQty) ? '' : 'hidden' }}">
+                                        class="form-group {{ $isSelected ? '' : 'hidden' }}">
+
                                         <label class="form-label">Jumlah {{ $guide->nama }}</label>
                                         <input type="number" class="form-control jumlah-item"
                                             data-id="{{ $guide->id }}" data-name="{{ $guide->nama }}"
                                             data-price="{{ $guide->harga }}" data-type="pendamping"
                                             name="jumlah_pendamping[{{ $guide->id }}]" min="1"
-                                            value="{{ old('jumlah_pendamping.' . $guide->id) }}">
+                                            value="{{ $oldQty }}" {{-- PENTING: Matikan input jika tidak dipilih --}}
+                                            {{ !$isSelected ? 'disabled' : '' }}>
+
                                         <div class="form-row d-flex gap-3 mt-2">
                                             <div class="form-col">
                                                 <label class="form-label">Tanggal Dari</label>
                                                 <input type="date" class="form-control"
                                                     name="tanggal_pendamping[{{ $guide->id }}][dari]"
-                                                    value="{{ old('tanggal_pendamping.' . $guide->id . '.dari') }}">
+                                                    value="{{ old('tanggal_pendamping.' . $guide->id . '.dari') }}"
+                                                    {{ !$isSelected ? 'disabled' : '' }}>
                                             </div>
                                             <div class="form-col">
                                                 <label class="form-label">Tanggal Sampai</label>
                                                 <input type="date" class="form-control"
                                                     name="tanggal_pendamping[{{ $guide->id }}][sampai]"
-                                                    value="{{ old('tanggal_pendamping.' . $guide->id . '.sampai') }}">
+                                                    value="{{ old('tanggal_pendamping.' . $guide->id . '.sampai') }}"
+                                                    {{ !$isSelected ? 'disabled' : '' }}>
                                             </div>
                                         </div>
                                     </div>
@@ -2062,25 +2161,37 @@
                     '.pendamping-item, .content-item, .meal-item, .dorongan-item, .wakaf-item');
                 if (toggleItem) {
                     const isSelected = toggleItem.classList.toggle('selected');
+                    const checkbox = toggleItem.querySelector('input[type="checkbox"]');
+                    if (checkbox) {
+                        checkbox.checked = isSelected;
+                    }
                     const type = toggleItem.dataset.type;
                     const id = toggleItem.dataset.id;
                     const form = document.getElementById(`form-${type}-${id}`);
                     if (form) {
                         form.classList.toggle('hidden', !isSelected);
-                        const qtyInput = form.querySelector('input[type="number"]');
-                        const name = toggleItem.dataset.name;
-                        const price = parseInt(toggleItem.dataset.price) || 0;
-                        if (isSelected) {
-                            qtyInput.value = 1;
-                            updateItemInCart(`${type}-${id}`, name, 1, price);
-                        } else {
-                            qtyInput.value = 0;
-                            delete cart[`${type}-${id}`];
+                        form.querySelectorAll('input, select, textarea').forEach(input => {
+                            input.disabled = !isSelected;
+                        });
+
+                        const qtyInput = form.querySelector('input[type="number"].jumlah-item');
+                        if (qtyInput) {
+                            const name = toggleItem.dataset.name;
+                            const price = parseInt(toggleItem.dataset.price) || 0;
+                            const cartKey = `${type}-${id}`;
+
+                            if (isSelected) {
+                                if (qtyInput.value == 0 || qtyInput.value == '') {
+                                    qtyInput.value = 1;
+                                }
+                                updateItemInCart(cartKey, name, parseInt(qtyInput.value), price);
+                            } else {
+                                delete cart[cartKey];
+                            }
                         }
                     }
                     updateCartUI();
                 }
-
                 if (e.target.classList.contains("removeTicket") && document.querySelectorAll(".ticket-form")
                     .length > 0) { // Izinkan hapus sampai 0
                     e.target.closest(".ticket-form").remove();
