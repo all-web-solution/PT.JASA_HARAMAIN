@@ -212,7 +212,7 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('keuangan.index*') ? 'active' : '' }}"
                     href="{{ route('keuangan.index') }}">
-                    <i class="bi bi-calculator"></i> DASHBOARD
+                    <i class="bi bi-speedometer2"></i> DASHBOARD
                 </a>
             </li>
             <li class="nav-item">
