@@ -13,11 +13,29 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('invoice_code');
-            $table->string('total_hutang');
-            $table->string('total_yang_di_bayarkan');
-            $table->string('sisa_hutang');
+
+            // Relasi ke tabel orders
+            $table->foreignId('order_id')
+                  ->constrained('orders')
+                  ->cascadeOnDelete()
+                  ->cascadeOnUpdate();
+
+            // PENTING: Gunakan decimal untuk uang, jangan string.
+            // (15, 0) artinya total 15 digit, 0 digit di belakang koma (cocok untuk Rupiah)
+            $table->decimal('jumlah_bayar', 15, 0);
+
+            // Gunakan tipe date agar mudah difilter/sort
+            $table->date('tanggal_bayar');
+
+            // Boleh kosong (nullable), karena mungkin bukti diupload belakangan
+            $table->string('bukti_pembayaran')->nullable();
+
+            // Berikan nilai default, misal 'pending' atau 'verified'
+            $table->string('status')->default('pending');
+
+            // Catatan boleh kosong
+            $table->text('catatan')->nullable();
+
             $table->timestamps();
         });
     }
