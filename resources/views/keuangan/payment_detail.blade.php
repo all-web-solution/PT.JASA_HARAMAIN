@@ -11,6 +11,10 @@
             --border-color: #d1e0f5;
             --hover-bg: #f0f7ff;
             --success-color: #198754;
+            --success-bg: rgba(40, 167, 69, 0.1);
+            --warning-bg: rgba(255, 193, 7, 0.1);
+            --danger-bg: rgba(220, 53, 69, 0.1);
+            --primary-bg: var(--haramain-light);
         }
 
         .payment-container {
@@ -53,6 +57,96 @@
         .card-title i {
             font-size: 1.4rem;
             color: var(--haramain-secondary);
+        }
+
+        /* == DESAIN GRID == */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-card.success-card {
+            background-color: var(--success-bg);
+            border-color: var(--success-color);
+        }
+
+        .info-card.danger-card {
+            background-color: var(--danger-bg);
+            border-color: var(--danger-color);
+        }
+
+        .info-card.warning-card {
+            background-color: var(--warning-bg, #fffbe6);
+            border-color: var(--warning-color, #ffc107);
+        }
+
+        .info-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--haramain-primary);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-card-title i {
+            color: var(--haramain-secondary);
+        }
+
+        .info-card .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex-grow: 1;
+        }
+
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.9rem;
+        }
+
+        .info-item .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-item .value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: capitalize;
+            word-break: break-word;
+        }
+
+        .info-item .value-large {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .info-card.success-card .info-item .value-large {
+            color: var(--success-color);
+        }
+
+        .info-card.danger-card .info-item .value-large {
+            color: var(--danger-color);
         }
 
         /* ===== Table Styling ===== */
@@ -165,6 +259,33 @@
             transform: translateY(-2px);
         }
 
+        .btn-secondary {
+            background-color: var(--haramain-secondary);
+            color: white;
+            border-radius: 8px;
+            padding: 0.625rem 1.25rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--hover-bg);
+            border-color: var(--haramain-secondary);
+            color: var(--haramain-secondary);
+        }
+
 
         /* ===== Responsiveness ===== */
         @media (max-width: 992px) {
@@ -235,6 +356,42 @@
         }
     </style>
 
+    @php
+        // -------------------------------------------------------------------
+        // BAGIAN 1: LOGIC PENGECEKAN STATUS (Diletakkan di sini)
+        // -------------------------------------------------------------------
+        $items = $order->service->getAllItemsFromService();
+        $totalItems = $items->count();
+
+        // Hitung item yang BELUM final (statusnya 'nego')
+        $itemsBelumFinal = $items->where('status', 'nego')->count();
+
+        // Hitung item yang SUDAH final (status BUKAN 'nego')
+        $itemsSudahFinal = $totalItems - $itemsBelumFinal;
+
+        // Tombol aktif JIKA SEMUA item sudah TIDAK 'nego' lagi
+        $semuaFinal = $totalItems > 0 && $itemsBelumFinal === 0;
+
+        // --- LOGIKA BARU UNTUK KALKULASI TOTAL ---
+        // $order adalah SEMUA tagihan (termasuk cicilan) untuk service_id ini
+
+        // 1. Total Tagihan Induk (ambil dari order paling LAMA)
+        $orderInduk = $order; // .last() karena controller sort by desc
+        $totalTagihanInduk = $orderInduk->total_amount_final ?? ($orderInduk->total_estimasi ?? 0);
+
+        // 2. Total Dibayar Akumulatif (jumlahkan semua pembayaran)
+        $totalDibayarAkumulatif = $transactions->sum('jumlah_bayar');
+
+        // 3. Sisa Hutang Saat Ini (ambil dari order paling BARU)
+        $orderAktif = $order; // .first() karena controller sort by desc
+        $sisaHutangSaatIni = $orderAktif->sisa_hutang ?? 0;
+        $statusPembayaranSaatIni = $orderAktif->status_pembayaran ?? 'estimasi';
+
+        // === PERBAIKAN DI SINI ===
+        // Cek status harga pada ORDER INDUK (Tagihan Pertama), bukan order saat ini
+        $hargaSudahFinal = $orderInduk->status_harga == 'final';
+    @endphp
+
     <div class="payment-container">
         <!-- Order Details Card -->
         <div class="card">
@@ -244,6 +401,12 @@
                     <span class="full-text">Detail Order: {{ $order->invoice }}</span>
                     <span class="short-text" style="display: none;">#{{ $order->invoice }}</span>
                 </h5>
+                <div>
+                    <a href="{{ route('keuangan.payment') }}" class="btn-secondary">
+                        <i class="bi bi-arrow-left"></i>
+                        Kembali
+                    </a>
+                </div>
             </div>
 
             <div class="table-responsive">
@@ -420,6 +583,72 @@
             </div>
         </div>
 
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="bi bi-file-earmark-text-fill"></i>
+                    <span class="title-text">Ringkasan Invoice: {{ $order->invoice }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                @php
+                    $status = strtolower($order->status_pembayaran);
+                    $statusClass = '';
+                    if (in_array($status, ['lunas'])) {
+                        $statusClass = 'badge-success';
+                    } elseif (in_array($status, ['belum_bayar'])) {
+                        $statusClass = 'badge-danger';
+                    } elseif (in_array($status, ['belum_lunas'])) {
+                        $statusClass = 'badge-info';
+                    } else {
+                        // 'estimasi'
+                        $statusClass = 'badge-warning';
+                    }
+                @endphp
+                <div class="stats-grid">
+                    <div class="info-card">
+                        <h6 class="info-card-title"><i class="bi bi-cash-stack"></i> Total Tagihan</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Total Amount (Final)</span>
+                                <span class="value value-large">Rp
+                                    {{ number_format($totalTagihanInduk, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Total Estimasi (Awal)</span>
+                                <span class="value">Rp
+                                    {{ number_format($orderInduk->total_estimasi ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-card success-card">
+                        <h6 class="info-card-title"><i class="bi bi-check-circle-fill"></i> Total Dibayar</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Sudah Dibayar</span>
+                                <span class="value value-large">Rp
+                                    {{ number_format($totalDibayarAkumulatif ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-card danger-card">
+                        <h6 class="info-card-title"><i class="bi bi-exclamation-triangle-fill"></i> Sisa Tagihan</h6>
+                        <div class="content">
+                            <div class="info-item">
+                                <span class="label">Sisa Hutang</span>
+                                <span class="value value-large">Rp
+                                    {{ number_format($sisaHutangSaatIni ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+                        {{-- <div class="info-item">
+                            <span class="label">Status Pembayaran</span>
+                            <span class="value badge {{ $statusClass }}">{{ $order->status_pembayaran }}</span>
+                        </div> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Payment Form Card -->
         <div class="card">
             <div class="card-header">
@@ -450,31 +679,25 @@
                     enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
-                        <label for="jumlah_dibayarkan" class="form-label">Jumlah yang Dibayarkan (SAR)</label>
-                        <input type="number" step="any" class="form-control" id="jumlah_dibayarkan"
-                            name="jumlah_dibayarkan" placeholder="Contoh: 1500.50" required>
+                        <label for="jumlah_bayar" class="form-label">Jumlah yang Dibayarkan (SAR)</label>
+                        <input type="number" step="any" class="form-control" id="jumlah_bayar" name="jumlah_bayar"
+                            placeholder="Contoh: 1500.50" required>
                     </div>
                     <div class="form-group">
-                        <label for="jumlah_dibayarkan" class="form-label">Status</label>
-                        <select class="form-control" name="status" id="travel-select" required>
-                            <option value="">Pilih status</option>
-                            <option value="belum_bayar">Belum bayar</option>
-                            <option value="belum_lunas">Belum lunas</option>
-                            <option value="lunas">Lunas</option>
-
-                        </select>
-                    </div>
-                    <div class="mb-3">
                         <label for="foto" class="form-label">Bukti Pembayaran</label>
                         <input type="file" class="form-control" id="foto" name="bukti_pembayaran" accept="image/*">
                     </div>
                     <div class="form-group">
-                        <label for="jumlah_dibayarkan" class="form-label">Status bukti pembayaran</label>
-                        <select class="form-control" name="status_bukti_pembayaran" id="travel-select" required>
+                        <label for="jumlah_bayar" class="form-label">Status bukti pembayaran</label>
+                        <select class="form-control" name="status" id="travel-select" required>
                             <option value="">Pilih status</option>
                             <option value="approve">Approve</option>
                             <option value="unapprove">Unapprove</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="catatan" class="form-label">Catatan</label>
+                        <input type="text" class="form-control" id="catatan" name="catatan">
                     </div>
                     <button type="submit" class="btn-submit">
                         <i class="bi bi-check-circle"></i> Simpan Pembayaran
@@ -497,22 +720,18 @@
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Total hutang</th>
                             <th>Total yang di bayarkan</th>
-                            <th>Sisa hutang</th>
                             <th>Tanggal pembayaran</th>
                             <th>Bukti pembayaran</th>
-                            <th>status bukti pembayaran</th>
+                            <th>status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($orders as $item)
+                        @forelse ($transactions as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>Rp {{ number_format($item->total_amount_final, 0, ',', '.') }}</td>
-                                <td>Rp {{ number_format($item->total_yang_dibayarkan ?? 0, 0, ',', '.') }}</td>
-                                <td>Rp {{ number_format($item->sisa_hutang ?? 0, 0, ',', '.') }}</td>
-                                <td>{{ $item->created_at->format('d M Y') }}</td>
+                                <td>Rp {{ number_format($item->jumlah_bayar ?? 0, 0, ',', '.') }}</td>
+                                <td>{{ $item->tanggal_bayar->format('d M Y') }}</td>
                                 <td>
                                     @if ($item->bukti_pembayaran)
                                         <a href="{{ asset('storage/' . $item->bukti_pembayaran) }}">
@@ -524,7 +743,7 @@
                                     @endif
 
                                 </td>
-                                <td>{{ $item->status_bukti_pembayaran }}</td>
+                                <td>{{ $item->status }}</td>
                             </tr>
                         @empty
                             <tr>

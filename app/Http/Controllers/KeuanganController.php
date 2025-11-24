@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -21,12 +22,12 @@ class KeuanganController extends Controller
         $dataLunas = Order::where('status_pembayaran', 'lunas')->get();
 
         // Hitung total (sum) untuk kartu jumlah dan pie chart
-        $totalBelumBayar = $dataBelumBayar->sum('total_amount_final');
-        $totalBelumLunas = $dataBelumLunas->sum('total_amount_final');
-        $totalLunas = $dataLunas->sum('total_amount_final');
+        $totalBelumBayar = Order::where('status_pembayaran', 'belum_bayar')->sum('total_amount_final');
+        $totalBelumLunas = Order::where('status_pembayaran', 'belum_lunas')->sum('total_amount_final');
+        $totalLunas      = Order::where('status_pembayaran', 'lunas')->sum('total_amount_final');
 
         // Hitung total keseluruhan
-        $totalKeseluruhan = $totalBelumBayar + $totalBelumLunas + $totalLunas;
+        $totalKeseluruhan = Order::get()->sum('total_amount_final');
 
         // Siapkan data untuk Pie Chart
         $pieChartData = [
@@ -112,92 +113,96 @@ class KeuanganController extends Controller
         $order = Order::where('service_id', $id)->firstOrFail();
 
         // Ambil semua order dengan service_id yang sama (misal untuk riwayat pembayaran)
-        $orders = Order::where('service_id', $id)->get();
+        $transactions = Transaction::where('order_id', $id)->get();
 
-        return view('keuangan.payment_detail', compact('order', 'orders'));
+        return view('keuangan.payment_detail', compact('order', 'transactions'));
     }
 
-    public function pay(Request $request, $service_id) // <-- MENGGUNAKAN service_id KEMBALI
+    public function pay(Request $request, $service_id)
     {
-        // <-- CARI ORDER TERLAMA YANG BELUM DIBAYAR BERDASARKAN service_id
-        // Ini memastikan kita selalu membayar tagihan terlama (yang paling duluan dibuat)
-        $order = Order::where('service_id', $service_id)
-                    ->where('status_pembayaran', 'belum_bayar')
-                    ->orderBy('created_at', 'asc')
-                    ->first();
+        // 1. Cari Order Utama berdasarkan Service ID
+        $order = Order::where('service_id', $service_id)->first();
 
-        // <-- Error handling jika tidak ada tagihan
         if (!$order) {
-            return redirect()->back()->with('error', 'Tidak ada tagihan yang belum dibayar untuk service ID ini.');
+            return redirect()->back()->with('error', 'Data tagihan tidak ditemukan.');
         }
 
-        $jumlahBayar = (int) $request->jumlah_dibayarkan;
-        $statusPembayaran = $request->status;
-        // Asumsi: Perbaikan typo pada request name (pemabayaran -> pembayaran)
-        $statusBuktiPembayaran = $request->status_bukti_pembayaran;
+        // =================================================================
+        // 🔒 GERBANG PENGAMAN (OPSI A)
+        // Cek apakah harga sudah final. Jika belum, tolak pembayaran.
+        // =================================================================
+        if ($order->status_harga !== 'final') {
+            return redirect()->back()->with('error', 'Harga belum final. Mohon lakukan "Hitung & Finalkan Total" terlebih dahulu sebelum input pembayaran.');
+        }
+
+        // Validasi Input
+        $request->validate([
+            'jumlah_bayar'      => 'required|numeric|min:1',
+            'bukti_pembayaran'  => 'nullable|image|max:2048', // Max 2MB
+            'catatan'           => 'nullable|string'
+        ]);
+
+        $jumlahBayarInput = (float) $request->jumlah_bayar;
+
+        // Cek Overpayment (Opsional tapi disarankan)
+        if ($jumlahBayarInput > $order->sisa_hutang) {
+            return redirect()->back()->with('error', 'Jumlah pembayaran melebihi sisa hutang (Rp ' . number_format($order->sisa_hutang, 0, ',', '.') . ').');
+        }
 
         DB::beginTransaction();
 
-        // Inisialisasi pathBuktiPembayaran
-        $pathBuktiPembayaran = $order->bukti_pembayaran; // Ambil bukti lama, jika ada
-
         try {
-            // --- LOGIKA UPLOAD BUKTI PEMBAYARAN ---
+            // 2. Upload Bukti (Jika ada)
+            $pathBuktiPembayaran = null;
             if ($request->hasFile('bukti_pembayaran')) {
-                // Ini akan menyimpan file di: storage/app/public/payment_proofs
                 $pathBuktiPembayaran = $request->file('bukti_pembayaran')->store('payment_proofs', 'public');
             }
 
-            // --- LOGIKA PERHITUNGAN DAN UPDATE ORDER LAMA ---
-            $totalDibayarBaru = $order->total_yang_dibayarkan + $jumlahBayar;
-            $sisaHutangBaru = $order->total_amount_final - $totalDibayarBaru;
-
-            // Tentukan status pembayaran akhir untuk order lama
-            // Jika sisa hutang <= 0, maka order ini dianggap lunas.
-            $finalStatusPembayaran = ($sisaHutangBaru <= 0) ? 'lunas' : $statusPembayaran;
-
-            // Update order lama (tagihan terlama yang sedang dibayar)
-            $order->update([
-                'total_yang_dibayarkan' => $totalDibayarBaru,
-                'sisa_hutang' => max(0, $sisaHutangBaru), // Pastikan sisa_hutang tidak negatif
-                'status_pembayaran' => $finalStatusPembayaran,
-                'bukti_pembayaran' => $pathBuktiPembayaran,
-                'status_bukti_pembayaran' => $statusBuktiPembayaran,
-                'upload_transfer' => null // Catatan: ini selalu diset null?
+            // 3. CREATE PAYMENT RECORD (Log Transaksi)
+            // Kita mencatat detail transaksi ini di tabel 'payments'
+            Transaction::create([
+                'order_id'          => $order->id,
+                'jumlah_bayar'      => $jumlahBayarInput,
+                'tanggal_bayar'     => now(), // Atau dari input $request->tanggal_bayar
+                'bukti_pembayaran'  => $pathBuktiPembayaran,
+                'status'            => 'verified', // Asumsi admin yang input langsung verified
+                'catatan'           => $request->catatan ?? 'Pembayaran Cicilan/Pelunasan',
             ]);
 
-            // --- LOGIKA PEMBUATAN ORDER BARU UNTUK SISA HUTANG (JIKA ADA) ---
-            // Kalau masih ada sisa hutang (> 0) dan order ini belum lunas,
-            // buat order baru khusus untuk sisa hutang tersebut.
-            if ($sisaHutangBaru > 0 && $finalStatusPembayaran !== 'lunas') {
-                $newInvoice = 'INV-' . date('YmdHis') . '-' . mt_rand(100, 999);
+            // 4. HITUNG ULANG TOTAL & UPDATE ORDER (INDUK)
+            // Ambil total yang sudah dibayar dari SEMUA history payment (termasuk yang barusan dibuat)
+            $totalSudahDibayar = $order->transactions()->sum('jumlah_bayar');
 
-                Order::create([
-                    'service_id' => $order->service_id,
-                    'total_amount_final' => $sisaHutangBaru,
-                    'total_yang_dibayarkan' => 0,
-                    'sisa_hutang' => $sisaHutangBaru,
-                    'invoice' => $newInvoice,
-                    'status_pembayaran' => 'belum_bayar', // Order baru statusnya 'belum_bayar'
-                    // Bukti pembayaran tidak di-copy ke order baru karena order baru belum dibayar
-                    'bukti_pembayaran' => null,
-                    'status_bukti_pembayaran' => null,
-                    'upload_transfer' => null
-                ]);
+            // Hitung sisa hutang berdasarkan Total Final
+            $sisaHutang = $order->total_amount_final - $totalSudahDibayar;
+            $sisaHutang = max(0, $sisaHutang); // Menjaga agar tidak negatif
+
+            // Tentukan status pembayaran
+            if ($sisaHutang <= 0) {
+                $statusPembayaran = 'lunas';
+            } elseif ($totalSudahDibayar > 0) {
+                $statusPembayaran = 'belum_lunas'; // Cicilan berjalan
+            } else {
+                $statusPembayaran = 'belum_bayar';
             }
+
+            // Update Order Utama
+            $order->update([
+                'total_yang_dibayarkan' => $totalSudahDibayar,
+                'sisa_hutang'           => $sisaHutang,
+                'status_pembayaran'     => $statusPembayaran,
+                // Note: Kita tidak perlu simpan bukti_pembayaran di Order lagi,
+                // karena sudah ada di tabel payments per transaksi.
+            ]);
 
             DB::commit();
 
-            return redirect()->back()
-                ->with('success', 'Pembayaran berhasil! Sisa hutang: Rp. ' . number_format(max(0, $sisaHutangBaru), 0, ',', '.'));
+            return redirect()->back()->with('success', 'Pembayaran berhasil dicatat! Sisa hutang: Rp ' . number_format($sisaHutang, 0, ',', '.'));
 
         } catch (\Exception $e) {
             DB::rollBack();
-            // Log error untuk debugging
-            Log::error("Gagal memproses pembayaran Service ID {$service_id}: " . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
+            Log::error("Gagal memproses pembayaran Order ID {$order->id}: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
     }
-
-
 }
