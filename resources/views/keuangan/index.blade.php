@@ -1,448 +1,478 @@
 @extends('admin.master')
-@section('content')
-<style>
-/* === Responsiveness for 320px screens === */
-@media screen and (max-width: 320px) {
+@section('title', 'Dashboard Keuangan')
 
-        /* Container padding */
-        .container-fluid {
-            padding: 10px !important;
+@push('styles')
+    <style>
+        /* == VARIABLE & BASE STYLE == */
+        :root {
+            --haramain-primary: #1a4b8c;
+            --haramain-secondary: #2a6fdb;
+            --haramain-light: #e6f0fa;
+            --haramain-accent: #3d8bfd;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border-color: #d1e0f5;
+            --hover-bg: #f0f7ff;
+            --background-light: #f8fafd;
+            --success-color: #198754;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-bg: rgba(25, 135, 84, 0.1);
+            --warning-bg: rgba(255, 193, 7, 0.1);
+            --danger-bg: rgba(220, 53, 69, 0.1);
         }
 
-        /* Kartu dashboard satu per baris */
-        #cards-dashboard .col-xl-3,
-        #cards-dashboard .col-md-6 {
-            width: 100% !important;
-            flex: 0 0 100%;
+        .dashboard-container {
+            max-width: 100vw;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--background-light);
+            min-height: 100vh;
         }
 
-        #card-reponsive {
-            margin-bottom: 10px;
+        /* == STATS CARDS == */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
-        /* Ukuran teks lebih kecil */
-        .card-title {
-            font-size: 18px !important;
-        }
-
-        .card-subtitle {
-            font-size: 13px !important;
-        }
-
-        /* Chart menyesuaikan lebar penuh */
-        #charts .col-lg-8,
-        #charts .col-lg-4 {
-            width: 100% !important;
-            flex: 0 0 100%;
-        }
-
-        .chart-container {
-            margin-bottom: 15px;
-        }
-
-        /* Tombol dropdown & action */
-        .btn {
-            font-size: 12px !important;
-            padding: 4px 8px !important;
-        }
-
-        /* === TABEL RESPONSIVE MOBILE === */
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table.table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        thead {
-            display: none;
-            /* sembunyikan header tabel */
-        }
-
-        tbody tr {
-            display: block;
+        .stat-card {
             background: #fff;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
-            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
         }
 
-        tbody td {
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            border-color: var(--haramain-secondary);
+        }
+
+        .stat-header {
             display: flex;
             justify-content: space-between;
-            padding: 5px 10px;
-            border: none;
-            text-align: right;
-            /* Jaga agar data di kanan */
+            align-items: flex-start;
+            margin-bottom: 1rem;
         }
 
-        tbody td::before {
-            content: attr(data-label);
-            font-weight: bold;
-            color: #444;
-            flex: 1;
+        .stat-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        /* Warna Spesifik Stat */
+        .stat-card.primary .stat-value {
+            color: var(--haramain-primary);
+        }
+
+        .stat-card.primary .stat-icon {
+            background-color: var(--haramain-light);
+            color: var(--haramain-primary);
+        }
+
+        .stat-card.warning .stat-value {
+            color: #ff9800;
+        }
+
+        .stat-card.warning .stat-icon {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: #ff9800;
+        }
+
+        .stat-card.success .stat-value {
+            color: var(--success-color);
+        }
+
+        .stat-card.success .stat-icon {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+        }
+
+        .stat-card.danger .stat-value {
+            color: var(--danger-color);
+        }
+
+        .stat-card.danger .stat-icon {
+            background-color: var(--danger-bg);
+            color: var(--danger-color);
+        }
+
+
+        /* == STANDARD CARD (Chart & Table) == */
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--haramain-light) 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--haramain-primary);
+            margin: 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* == TABLE == */
+        .table-responsive {
+            overflow-x: auto;
+            padding: 0;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.5rem;
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: var(--haramain-light);
+            color: var(--haramain-primary);
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+            border-bottom: 2px solid var(--border-color);
             text-align: left;
-            /* Label di kiri */
+            white-space: nowrap;
         }
 
-        tbody td:last-child {
-            border-bottom: none;
+        .table tbody tr {
+            background-color: white;
+            transition: all 0.3s ease;
         }
 
-        /* Teks judul tabel & tombol tambah order */
-        #recent .card-header h5 {
-            font-size: 16px !important;
+        .table tbody tr:hover {
+            background-color: var(--hover-bg);
         }
 
-        #recent .btn-haramain {
-            font-size: 12px !important;
-            padding: 5px 8px !important;
+        .table tbody td {
+            padding: 1rem 1.25rem;
+            vertical-align: middle;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
         }
-    }
-</style>
 
-<div class="container-fluid p-4">
-    <!-- Stats Cards -->
-    <div class="row g-3 mb-4" id="cards-dashboard">
-        <div class="col-xl-3 col-md-6" id="card-reponsive">
-            <div class="card card-stat h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h4 class="card-subtitle mb-1">Total Belum bayar</h4>
-                            <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                {{ $dataBelumBayar->count() }}
-                            </h3>
+        .table tbody tr td:first-child {
+            border-left: 1px solid var(--border-color);
+            border-radius: 8px 0 0 8px;
+        }
 
-                        </div>
-                        <div class="bg-warning bg-opacity-10 p-3 rounded">
-                            <i class="bi bi-clock-history fs-4" style="color: #ff9800;"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6" id="card-reponsive">
-            <div class="card card-stat h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h4 class="card-subtitle mb-1">Total belum lunas</h4>
-                            <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                {{ $dataBelumLunas->count() }}
-                            </h3>
+        .table tbody tr td:last-child {
+            border-right: 1px solid var(--border-color);
+            border-radius: 0 8px 8px 0;
+        }
 
-                        </div>
-                        <div class="bg-warning bg-opacity-10 p-3 rounded">
-                            <i class="bi bi-hourglass-split fs-4" style="color: #ff9800;"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6" id="card-reponsive">
-            <div class="card card-stat h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h4 class="card-subtitle mb-1">Total lunas</h4>
-                            <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                {{ $dataLunas->count() }}
-                            </h3>
+        /* == BADGE == */
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
 
-                        </div>
-                        <div class="bg-success bg-opacity-10 p-3 rounded">
-                            <i class="bi bi-check-circle fs-4" style="color: #4caf50;"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6" id="card-reponsive">
-            <div class="card card-stat h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h4 class="card-subtitle mb-1">Total Keseluruhan</h4>
-                            <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                                Rp. {{ number_format($totalKeseluruhan) }}
-                            </h3>
-                        </div>
-                        <div class="bg-primary bg-opacity-10 p-3 rounded">
-                            <i class="bi bi-currency-dollar fs-4" style="color: #0d6efd;"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Catatan: Saya memindahkan 3 kartu total ke bawah agar lebih rapi -->
-        <div class="col-xl-4 col-md-6" id="card-reponsive">
-            <div class="card card-stat h-100">
-                <div class="card-body">
-                    <h4 class="card-subtitle mb-1">Jumlah Belum bayar</h4>
-                    <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                        Rp. {{ number_format($totalBelumBayar) }}
-                    </h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-4 col-md-6" id="card-reponsive">
-            <div class="card card-stat h-100">
-                <div class="card-body">
-                    <h4 class="card-subtitle mb-1">Jumlah belum lunas</h4>
-                    <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                        Rp. {{ number_format($totalBelumLunas) }}
-                    </h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-4 col-md-6" id="card-reponsive">
-            <div class="card card-stat h-100">
-                <div class="card-body">
-                    <h4 class="card-subtitle mb-1">Jumlah lunas</h4>
-                    <h3 class="card-title fw-bold" style="color: var(--haramain-primary);">
-                        Rp. {{ number_format($totalLunas) }}
-                    </h3>
-                </div>
-            </div>
-        </div>
-    </div>
+        .bg-success {
+            background-color: var(--success-color) !important;
+        }
 
+        .bg-danger {
+            background-color: var(--danger-color) !important;
+        }
 
+        .bg-warning {
+            background-color: var(--warning-color) !important;
+        }
 
-    <!-- Charts (INI BAGIAN YANG DIPERBAIKI) -->
-    <div class="row g-4" id="charts">
-
-        <!-- Kolom Grafik Batang (8 unit) -->
-        <div class="col-lg-8">
-            <div class="chart-container h-100">
-               
-                <div class="chart-wrapper" style="height: 300px;">
-                    <canvas id="monthlyPerformanceChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Kolom Grafik Bulat (4 unit) -->
-        <div class="col-lg-4">
-            <div class="chart-container h-100">
-                <div class="chart-wrapper d-flex justify-content-center align-items-center"
-                    style="height: 300px;">
-                    <canvas id="statusDistributionChart" style="max-height: 300px; max-width: 300px;"></canvas>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <!-- Akhir bagian Charts -->
-
-
-    <!-- Recent Activity Table -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm" id="recent">
-                <div class="card-header bg-white border-0 pb-0 pt-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold mb-2" style="color: var(--haramain-primary);">
-                            <i class="bi bi-clock-history me-2"></i>Recent Activity
-                        </h5>
-                    </div>
-                </div>
-                <div class="card-body pt-2">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Invoice</th>
-                                    <th>Customer</th>
-                                    <th>Tagihan</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (\App\Models\Order::latest()->take(10)->get() as $order)
-                                    <!-- Ambil 10 terbaru saja -->
-                                    <tr>
-                                        <td data-label="Invoice">{{ $order->invoice }}</td>
-                                        <td data-label="Customer">
-                                            {{ $order->service->pelanggan->nama_travel ?? 'Customer Dihapus' }}</td>
-                                        <td data-label="Tagihan">Rp. {{ number_format($order->total_amount) }}</td>
-                                        <td data-label="Status">
-                                            @if ($order->status_pembayaran == 'lunas')
-                                                <span class="badge bg-success">Lunas</span>
-                                            @elseif ($order->status_pembayaran == 'belum_lunas')
-                                                <span class="badge bg-danger">Belum Lunas</span>
-                                            @else
-                                                <span class="badge bg-warning text-dark">Belum Bayar</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Script Chart.js harus di-push ke stack 'scripts' di master layout Anda -->
-@push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Pastikan script ini dieksekusi setelah DOM siap
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // Ambil data labels
-            const barLabels = @json($barChartLabels);
-
-            // (PERUBAHAN) Ambil 3 set data untuk grafik batang
-            // Pastikan controller Anda mengirim variabel:
-            // $barChartDataBelumBayar, $barChartDataBelumLunas, $barChartDataLunas
-            const barDataBelumBayar = @json($barChartDataBelumBayar ?? []);
-            const barDataBelumLunas = @json($barChartDataBelumLunas ?? []);
-            const barDataLunas = @json($barChartDataLunas ?? []);
-
-            // Ambil data untuk pie chart (tidak berubah)
-            const pieData = @json($pieChartData['data']);
-            const pieLabels = @json($pieChartData['labels']);
-
-            // ===================================
-            // 1. GRAFIK BATANG (Monthly Performance) - (UPDATED)
-            // ===================================
-            const ctxBar = document.getElementById('monthlyPerformanceChart');
-            if (ctxBar) {
-                new Chart(ctxBar, {
-                    type: 'bar',
-                    data: {
-                        labels: barLabels, // ['Jan', 'Feb', ...]
-
-                        // (PERUBAHAN) Tampilkan 3 datasets
-                        datasets: [
-                        {
-                            label: 'Total Belum Bayar',
-                            data: barDataBelumBayar,
-                            backgroundColor: 'rgba(255, 99, 132, 0.6)', // Merah
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Total Belum Lunas',
-                            data: barDataBelumLunas,
-                            backgroundColor: 'rgba(255, 206, 86, 0.6)', // Kuning
-                            borderColor: 'rgba(255, 206, 86, 1)',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Total Pemasukan Lunas',
-                            data: barDataLunas,
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)', // Hijau (konsisten dgn pie)
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }
-                    ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false, // Agar chart mengisi tinggi div
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function(value, index, values) {
-                                        return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
-                                    }
-                                }
-                            }
-                        },
-                        plugins: {
-                            // (PERUBAHAN) Tampilkan legenda karena ada > 1 dataset
-                            legend: {
-                                display: true,
-                                position: 'bottom'
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed.y !== null) {
-                                            label += 'Rp ' + new Intl.NumberFormat('id-ID')
-                                                .format(context.parsed.y);
-                                        }
-                                        return label;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
+        /* == RESPONSIVE == */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
             }
 
-            // ===================================
-            // 2. GRAFIK BULAT (Status Distribution) - (Tidak Berubah)
-            // ===================================
-            const ctxPie = document.getElementById('statusDistributionChart');
-            if (ctxPie) {
-                new Chart(ctxPie, {
-                    type: 'doughnut',
-                    data: {
-                        labels: pieLabels, // ['Belum Bayar', 'Belum Lunas', 'Lunas']
-                        datasets: [{
-                            label: 'Distribusi Status',
-                            data: pieData, // [5000, 2000, 15000]
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.7)', // Merah (Belum Bayar)
-                                'rgba(255, 206, 86, 0.7)', // Kuning (Belum Lunas)
-                                'rgba(75, 192, 192, 0.7)' // Hijau (Lunas)
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed !== null) {
-                                            label += 'Rp ' + new Intl.NumberFormat('id-ID')
-                                                .format(context.parsed);
-                                        }
-                                        return label;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
+            /* Card Grid menjadi 1 kolom di HP */
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
-        }); // Akhir document.addEventListener
-    </script>
+
+            /* Table Responsive Card View */
+            .table thead {
+                display: none;
+            }
+
+            .table tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 0.5rem;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            }
+
+            .table tbody td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.75rem 1rem;
+                border: none;
+                text-align: right;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .table tbody td:last-child {
+                border-bottom: none;
+            }
+
+            .table tbody td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--haramain-primary);
+                margin-right: 1rem;
+                text-align: left;
+            }
+
+            /* Reset border radius table cells for mobile card view */
+            .table tbody tr td:first-child {
+                border-radius: 0;
+                border-left: none;
+            }
+
+            .table tbody tr td:last-child {
+                border-radius: 0;
+                border-right: none;
+            }
+        }
+    </style>
 @endpush
 
+@section('content')
+    <div class="dashboard-container">
 
+        {{-- 1. STATISTIK CARDS (Baris 1: Counter) --}}
+        <div class="stats-grid">
+            <div class="stat-card danger">
+                <div class="stat-header">
+                    <span class="stat-title">Total Belum Bayar</span>
+                    <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
+                </div>
+                <span class="stat-value">{{ $dataBelumBayar->count() }}</span>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-header">
+                    <span class="stat-title">Total Belum Lunas</span>
+                    <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+                </div>
+                <span class="stat-value">{{ $dataBelumLunas->count() }}</span>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-header">
+                    <span class="stat-title">Total Lunas</span>
+                    <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+                </div>
+                <span class="stat-value">{{ $dataLunas->count() }}</span>
+            </div>
+
+            <div class="stat-card primary">
+                <div class="stat-header">
+                    <span class="stat-title">Total Transaksi</span>
+                    <div class="stat-icon"><i class="bi bi-receipt"></i></div>
+                </div>
+                {{-- Hitung total order jika belum ada variabelnya --}}
+                <span
+                    class="stat-value">{{ $dataBelumBayar->count() + $dataBelumLunas->count() + $dataLunas->count() }}</span>
+            </div>
+        </div>
+
+        {{-- 2. STATISTIK CARDS (Baris 2: Nominal/Rupiah) --}}
+        <div class="stats-grid">
+            <div class="stat-card danger">
+                <div class="stat-header">
+                    <span class="stat-title">Nominal Belum Bayar</span>
+                </div>
+                <span class="stat-value" style="font-size: 1.4rem;">Rp {{ number_format($totalBelumBayar) }}</span>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-header">
+                    <span class="stat-title">Nominal Belum Lunas</span>
+                </div>
+                <span class="stat-value" style="font-size: 1.4rem;">Rp {{ number_format($totalBelumLunas) }}</span>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-header">
+                    <span class="stat-title">Nominal Lunas</span>
+                </div>
+                <span class="stat-value" style="font-size: 1.4rem;">Rp {{ number_format($totalLunas) }}</span>
+            </div>
+
+            <div class="stat-card primary">
+                <div class="stat-header">
+                    <span class="stat-title">Total Tagihan</span>
+                </div>
+                <span class="stat-value" style="font-size: 1.4rem;">Rp {{ number_format($totalKeseluruhan) }}</span>
+            </div>
+        </div>
+
+
+        {{-- 3. CHARTS SECTION --}}
+        <div class="row g-4 mb-4" id="charts">
+            <div class="col-lg-8">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title"><i class="bi bi-bar-chart-fill"></i> Performa Bulanan</h5>
+                    </div>
+                    <div class="card-body">
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="monthlyPerformanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title"><i class="bi bi-pie-chart-fill"></i> Distribusi Status</h5>
+                    </div>
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                        <div style="height: 300px; width: 100%; position: relative;">
+                            <canvas id="statusDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Data dari Controller
+                const barLabels = @json($barChartLabels);
+                const barDataBelumBayar = @json($barChartDataBelumBayar ?? []);
+                const barDataBelumLunas = @json($barChartDataBelumLunas ?? []);
+                const barDataLunas = @json($barChartDataLunas ?? []);
+                const pieData = @json($pieChartData['data']);
+                const pieLabels = @json($pieChartData['labels']);
+
+                // 1. Bar Chart
+                const ctxBar = document.getElementById('monthlyPerformanceChart');
+                if (ctxBar) {
+                    new Chart(ctxBar, {
+                        type: 'bar',
+                        data: {
+                            labels: barLabels,
+                            datasets: [{
+                                    label: 'Belum Bayar',
+                                    data: barDataBelumBayar,
+                                    backgroundColor: '#dc3545'
+                                },
+                                {
+                                    label: 'Belum Lunas',
+                                    data: barDataBelumLunas,
+                                    backgroundColor: '#ffc107'
+                                },
+                                {
+                                    label: 'Lunas',
+                                    data: barDataLunas,
+                                    backgroundColor: '#198754'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // 2. Doughnut Chart
+                const ctxPie = document.getElementById('statusDistributionChart');
+                if (ctxPie) {
+                    new Chart(ctxPie, {
+                        type: 'doughnut',
+                        data: {
+                            labels: pieLabels,
+                            datasets: [{
+                                data: pieData,
+                                backgroundColor: ['#dc3545', '#ffc107', '#198754'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        </script>
+    @endpush
 @endsection

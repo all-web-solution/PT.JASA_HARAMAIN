@@ -315,10 +315,13 @@ class OrderController extends Controller
                 $jumlahHari = 1;
             $total = $hargaJual * $jumlahHari;
 
+        } elseif ($item instanceof Exchange) {
+            $jumlahInput = (float) ($item->jumlah_input ?? 0);
+            $total = $jumlahInput;
+
         } elseif (
             $item instanceof Tour ||
             $item instanceof Badal ||
-            $item instanceof Exchange ||
             $item instanceof HandlingHotel ||
             $item instanceof HandlingPlanes
         ) {
