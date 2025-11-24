@@ -297,6 +297,9 @@ class ServicesController extends Controller
         $isMealSelected = in_array('meals', $services);
         $isDoronganSelected = in_array('dorongan', $services);
 
+        $isWakafSelected = in_array('waqaf', $services);
+        $isBadalSelected = in_array('badal', $services);
+
         $request->validate([
             'travel' => 'required|exists:pelanggans,id',
             'services' => 'required|array',
@@ -668,6 +671,43 @@ class ServicesController extends Controller
                 }
             ],
 
+            // ====================================================
+            // K. VALIDASI WAKAF (BARU)
+            // ====================================================
+
+            // Wajib isi minimal 1 item dengan jumlah > 0
+            'jumlah_wakaf' => [
+                $isWakafSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $value, $fail) use ($isWakafSelected) {
+                    if (!$isWakafSelected)
+                        return;
+                    $hasSelection = false;
+                    foreach ($value as $qty) {
+                        if ((int) $qty > 0) {
+                            $hasSelection = true;
+                            break;
+                        }
+                    }
+                    if (!$hasSelection) {
+                        $fail('Anda memilih layanan Waqaf, wajib mengisi jumlah minimal untuk satu item waqaf.');
+                    }
+                },
+            ],
+
+            // ====================================================
+            // L. VALIDASI BADAL UMRAH (BARU)
+            // ====================================================
+
+            // 1. Pastikan array input ada
+            'nama_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
+            'harga_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
+            'tanggal_pelaksanaan_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
+
+            // 2. Validasi setiap baris input (tidak boleh kosong)
+            'nama_badal.*' => $isBadalSelected ? 'required|string|filled' : 'nullable',
+            'harga_badal.*' => $isBadalSelected ? 'required|numeric|min:0' : 'nullable',
+            'tanggal_pelaksanaan_badal.*' => $isBadalSelected ? 'required|date' : 'nullable',
         ], [
             // Custmom Error Messages
             // Transport
@@ -751,6 +791,15 @@ class ServicesController extends Controller
 
             // Dorongan
             'jumlah_dorongan.required' => 'Data dorongan wajib diisi.',
+
+            // Pesan Error Waqaf
+            'jumlah_wakaf.required' => 'Data waqaf wajib diisi.',
+
+            // Pesan Error Badal
+            'nama_badal.required' => 'Data jamaah badal wajib diisi.',
+            'nama_badal.*.required' => 'Nama jamaah yang dibadalkan wajib diisi.',
+            'harga_badal.*.required' => 'Harga badal wajib diisi.',
+            'tanggal_pelaksanaan_badal.*.required' => 'Tanggal pelaksanaan badal wajib diisi.',
         ]);
 
         try {

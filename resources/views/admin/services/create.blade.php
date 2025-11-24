@@ -549,6 +549,8 @@
                         $oldDoronganIds = old('dorongan_id', []);
                         $oldDoronganQtyValues = old('jumlah_dorongan', []);
                         $oldReyalTipe = old('tipe');
+                        $oldWakafIds = old('wakaf_id', []);
+                        $oldWakafQtyValues = old('jumlah_wakaf', []);
                     @endphp
 
                     <div class="form-section" id="service-selection-grid">
@@ -1602,7 +1604,8 @@
                                                 </div>
                                                 <div class="service-desc">Fasilitas: {{ $trans->fasilitas ?? 'N/A' }}
                                                 </div>
-                                                <div class="service-desc">Estimasi Harga: Rp {{ number_format($trans->harga) }}
+                                                <div class="service-desc">Estimasi Harga: Rp
+                                                    {{ number_format($trans->harga) }}
                                                 </div>
                                                 <input type="radio" name="tour_transport[{{ $tour->id }}]"
                                                     value="{{ $trans->id }}"
@@ -1745,28 +1748,48 @@
                         {{-- WAQAF FORM --}}
                         <div class="detail-form {{ in_array('waqaf', $oldServices) ? '' : 'hidden' }}"
                             id="waqaf-details">
-                            <h6 class="detail-title"><i class="bi bi-briefcase"></i> Waqaf</h6>
+                            <h6 class="detail-title"><i class="bi bi-gift"></i> Waqaf</h6>
+
+                            {{-- GRID WAKAF --}}
                             <div class="service-grid">
                                 @foreach ($wakaf as $item)
-                                    <div class="wakaf-item {{ array_key_exists($item->id, $oldWakafQty) ? 'selected' : '' }}"
+                                    @php
+                                        $isSelected = in_array($item->id, $oldWakafIds);
+                                    @endphp
+                                    <div class="wakaf-item {{ $isSelected ? 'selected' : '' }}"
                                         data-id="{{ $item->id }}" data-name="{{ $item->nama }}"
                                         data-price="{{ $item->harga }}" data-type="wakaf">
                                         <div class="service-name">{{ $item->nama }}</div>
                                         <div class="service-desc">Rp. {{ number_format($item->harga) }}</div>
-                                        <input type="checkbox" name="wakaf_id" value="{{ $item->id }}">
+
+                                        {{-- CHECKBOX HIDDEN --}}
+                                        <input type="checkbox" name="wakaf_id[]" value="{{ $item->id }}"
+                                            class="d-none" {{ $isSelected ? 'checked' : '' }}>
                                     </div>
                                 @endforeach
                             </div>
+
+                            {{-- ERROR MESSAGE --}}
+                            @error('jumlah_wakaf')
+                                <div class="validation-error-message mt-2">{{ $message }}</div>
+                            @enderror
+
+                            {{-- FORM DETAIL WAKAF --}}
                             <div class="detail-section">
                                 @foreach ($wakaf as $item)
+                                    @php
+                                        $isSelected = in_array($item->id, $oldWakafIds);
+                                        $oldQty = $oldWakafQtyValues[$item->id] ?? '';
+                                    @endphp
                                     <div id="form-wakaf-{{ $item->id }}"
-                                        class="form-group {{ array_key_exists($item->id, $oldWakafQty) ? '' : 'hidden' }}">
+                                        class="form-group {{ $isSelected ? '' : 'hidden' }}">
                                         <label class="form-label">Jumlah {{ $item->nama }}</label>
                                         <input type="number" class="form-control jumlah-item"
                                             data-id="{{ $item->id }}" data-name="{{ $item->nama }}"
                                             data-price="{{ $item->harga }}" data-type="wakaf"
                                             name="jumlah_wakaf[{{ $item->id }}]" min="1"
-                                            value="{{ old('jumlah_wakaf.' . $item->id) }}">
+                                            value="{{ $oldQty }}" {{-- Disabled jika tidak dipilih --}}
+                                            {{ !$isSelected ? 'disabled' : '' }}>
                                     </div>
                                 @endforeach
                             </div>
@@ -1775,32 +1798,57 @@
                         {{-- BADAL UMRAH FORM --}}
                         <div class="detail-form {{ in_array('badal', $oldServices) ? '' : 'hidden' }}"
                             id="badal-details">
-                            <h6 class="detail-title"><i class="bi bi-briefcase"></i> Badal Umrah</h6>
+                            <h6 class="detail-title"><i class="bi bi-gift"></i> Badal Umrah</h6>
+
                             <button type="button" class="btn btn-sm btn-primary mb-3" id="addBadal">Tambah
                                 Badal</button>
+
+                            {{-- ERROR MESSAGES --}}
+                            @error('nama_badal')
+                                <div class="validation-error-message mt-1">{{ $message }}</div>
+                            @enderror
+
                             <div id="badalWrapper">
-                                {{-- PERBAIKAN: Loop data 'old' untuk badal --}}
+                                @php
+                                    // Cek apakah card Badal dipilih (untuk status disabled input)
+                                    $isBadalActive = in_array('badal', $oldServices);
+                                @endphp
+
                                 @if (is_array(old('nama_badal')))
                                     @foreach (old('nama_badal') as $index => $oldNamaBadal)
                                         <div class="badal-form bg-white p-3 border mb-3"
                                             data-index="{{ $index }}">
                                             <div class="form-group mb-2">
                                                 <label class="form-label">Nama yang dibadalkan</label>
-                                                <input type="text" class="form-control nama_badal"
-                                                    name="nama_badal[{{ $index }}]"
-                                                    value="{{ $oldNamaBadal }}">
+                                                <input type="text"
+                                                    class="form-control nama_badal @error('nama_badal.' . $index) is-invalid @enderror"
+                                                    name="nama_badal[{{ $index }}]" value="{{ $oldNamaBadal }}"
+                                                    {{ !$isBadalActive ? 'disabled' : '' }}>
+                                                @error('nama_badal.' . $index)
+                                                    <div class="validation-error-message mt-1">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="form-group mb-2">
                                                 <label class="form-label">Harga</label>
-                                                <input type="number" class="form-control harga_badal"
+                                                <input type="number"
+                                                    class="form-control harga_badal @error('harga_badal.' . $index) is-invalid @enderror"
                                                     name="harga_badal[{{ $index }}]" min="0"
-                                                    value="{{ old('harga_badal.' . $index) }}">
+                                                    value="{{ old('harga_badal.' . $index) }}"
+                                                    {{ !$isBadalActive ? 'disabled' : '' }}>
+                                                @error('harga_badal.' . $index)
+                                                    <div class="validation-error-message mt-1">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="form-group mb-2">
                                                 <label class="form-label">Tanggal pelaksanaan</label>
-                                                <input type="date" class="form-control"
+                                                <input type="date"
+                                                    class="form-control @error('tanggal_pelaksanaan_badal.' . $index) is-invalid @enderror"
                                                     name="tanggal_pelaksanaan_badal[{{ $index }}]"
-                                                    value="{{ old('tanggal_pelaksanaan_badal.' . $index) }}">
+                                                    value="{{ old('tanggal_pelaksanaan_badal.' . $index) }}"
+                                                    {{ !$isBadalActive ? 'disabled' : '' }}>
+                                                @error('tanggal_pelaksanaan_badal.' . $index)
+                                                    <div class="validation-error-message mt-1">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="mt-2 text-end">
                                                 <button type="button" class="btn btn-danger btn-sm removeBadal">Hapus
@@ -1809,21 +1857,23 @@
                                         </div>
                                     @endforeach
                                 @else
-                                    {{-- Form default jika tidak ada data 'old' --}}
+                                    {{-- FORM DEFAULT (INDEX 0) --}}
                                     <div class="badal-form bg-white p-3 border mb-3" data-index="0">
                                         <div class="form-group mb-2">
                                             <label class="form-label">Nama yang dibadalkan</label>
-                                            <input type="text" class="form-control nama_badal" name="nama_badal[0]">
+                                            <input type="text" class="form-control nama_badal" name="nama_badal[0]"
+                                                {{ !$isBadalActive ? 'disabled' : '' }}>
                                         </div>
                                         <div class="form-group mb-2">
                                             <label class="form-label">Harga</label>
                                             <input type="number" class="form-control harga_badal" name="harga_badal[0]"
-                                                min="0">
+                                                min="0" {{ !$isBadalActive ? 'disabled' : '' }}>
                                         </div>
                                         <div class="form-group mb-2">
                                             <label class="form-label">Tanggal pelaksanaan</label>
                                             <input type="date" class="form-control"
-                                                name="tanggal_pelaksanaan_badal[0]">
+                                                name="tanggal_pelaksanaan_badal[0]"
+                                                {{ !$isBadalActive ? 'disabled' : '' }}>
                                         </div>
                                         <div class="mt-2 text-end">
                                             <button type="button" class="btn btn-danger btn-sm removeBadal">Hapus
