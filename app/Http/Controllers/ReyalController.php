@@ -97,6 +97,7 @@ class ReyalController extends Controller
             $jumlahInput = $reyal->jumlah_input;
             $hargaJual   = $request->harga_jual;
             $tipe        = $reyal->tipe;
+            $kursFinal   = $hargaJual;
 
             // Terapkan Rumus Berdasarkan Tipe
             if ($tipe === 'tamis') {
@@ -109,6 +110,8 @@ class ReyalController extends Controller
                 // Rumus: Hasil = Jumlah Input * Kurs
                 $validatedData['hasil'] = $jumlahInput * $hargaJual;
             }
+
+            $validatedData['kurs'] = $kursFinal;
         }
 
         // Update data reyal
