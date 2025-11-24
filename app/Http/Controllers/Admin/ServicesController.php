@@ -286,6 +286,12 @@ class ServicesController extends Controller
         $isHandlingHotelSelected = $isHandlingSelected && in_array('hotel', $handlingTypes);
         $isHandlingBandaraSelected = $isHandlingSelected && in_array('bandara', $handlingTypes);
 
+        // Konten
+        $isKontenSelected = in_array('konten', $services);
+        $isReyalSelected = in_array('reyal', $services);
+
+        // Cek tipe reyal untuk validasi kondisional
+        $reyalType = $request->input('tipe');
 
         $request->validate([
             'travel' => 'required|exists:pelanggans,id',
@@ -464,7 +470,7 @@ class ServicesController extends Controller
                             $end = $dates[$guideId]['sampai'] ?? null;
 
                             if (empty($start) || empty($end)) {
-                                $guide = GuideItems::find($guideId); // Asumsi model master guide
+                                $guide = GuideItems::find($guideId);
                                 $name = $guide ? $guide->nama : 'Pendamping';
                                 $fail("Tanggal 'Dari' dan 'Sampai' wajib diisi untuk $name.");
                             }
@@ -472,6 +478,71 @@ class ServicesController extends Controller
                     }
                 }
             ],
+
+            // ====================================================
+            // F. VALIDASI KONTEN
+            // ====================================================
+
+            // 1. Pastikan minimal ada satu konten yang jumlahnya > 0
+            'jumlah_konten' => [
+                $isKontenSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $value, $fail) use ($isKontenSelected) {
+                    if (!$isKontenSelected)
+                        return;
+
+                    $hasSelection = false;
+                    foreach ($value as $qty) {
+                        if ((int) $qty > 0) {
+                            $hasSelection = true;
+                            break;
+                        }
+                    }
+                    if (!$hasSelection) {
+                        $fail('Anda memilih layanan Konten, wajib mengisi jumlah minimal untuk satu item konten.');
+                    }
+                },
+            ],
+
+            // 2. Validasi Tanggal Pelaksanaan untuk setiap Konten yang dipilih
+            'tanggal_konten' => [
+                $isKontenSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $dates, $fail) use ($request, $isKontenSelected) {
+                    if (!$isKontenSelected)
+                        return;
+
+                    $jumlahs = $request->input('jumlah_konten', []);
+
+                    foreach ($jumlahs as $contentId => $qty) {
+                        if ((int) $qty > 0) {
+                            $date = $dates[$contentId] ?? null;
+
+                            if (empty($date)) {
+                                $content = ContentItem::find($contentId);
+                                $name = $content ? $content->name : 'Konten';
+                                $fail("Tanggal pelaksanaan wajib diisi untuk $name.");
+                            }
+                        }
+                    }
+                }
+            ],
+
+            // ====================================================
+            // G. VALIDASI REYAL (BARU)
+            // ====================================================
+
+            // 1. Validasi Umum Reyal
+            'tipe' => $isReyalSelected ? 'required|in:tamis,tumis' : 'nullable',
+            'tanggal_penyerahan' => $isReyalSelected ? 'required|date' : 'nullable',
+
+            // 2. Validasi Jika Tipe = TAMIS (Rupiah -> Reyal)
+            'jumlah_rupiah' => ($isReyalSelected && $reyalType === 'tamis') ? 'required|numeric|min:1' : 'nullable',
+            'kurs_tamis' => ($isReyalSelected && $reyalType === 'tamis') ? 'required|numeric|min:1' : 'nullable',
+
+            // 3. Validasi Jika Tipe = TUMIS (Reyal -> Rupiah)
+            'jumlah_reyal' => ($isReyalSelected && $reyalType === 'tumis') ? 'required|numeric|min:1' : 'nullable',
+            'kurs_tumis' => ($isReyalSelected && $reyalType === 'tumis') ? 'required|numeric|min:1' : 'nullable',
 
         ], [
             // Custmom Error Messages
@@ -533,6 +604,20 @@ class ServicesController extends Controller
 
             // Pendamping
             'jumlah_pendamping.required' => 'Data pendamping wajib diisi.',
+
+            // Konten
+            'jumlah_konten.required' => 'Data konten wajib diisi.',
+
+            // Reyal
+            'tipe.required' => 'Tipe penukaran (Tamis/Tumis) wajib dipilih.',
+            'tipe.in' => 'Tipe penukaran tidak valid.',
+            'tanggal_penyerahan.required' => 'Tanggal penyerahan uang wajib diisi.',
+
+            'jumlah_rupiah.required' => 'Jumlah Rupiah wajib diisi untuk transaksi Tamis.',
+            'kurs_tamis.required' => 'Kurs Tamis wajib diisi.',
+
+            'jumlah_reyal.required' => 'Jumlah Reyal wajib diisi untuk transaksi Tumis.',
+            'kurs_tumis.required' => 'Kurs Tumis wajib diisi.',
         ]);
 
         try {
