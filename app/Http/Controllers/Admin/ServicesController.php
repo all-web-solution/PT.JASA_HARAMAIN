@@ -293,6 +293,10 @@ class ServicesController extends Controller
         // Cek tipe reyal untuk validasi kondisional
         $reyalType = $request->input('tipe');
 
+        $isTourSelected = in_array('tour', $services);
+        $isMealSelected = in_array('meals', $services);
+        $isDoronganSelected = in_array('dorongan', $services);
+
         $request->validate([
             'travel' => 'required|exists:pelanggans,id',
             'services' => 'required|array',
@@ -544,6 +548,126 @@ class ServicesController extends Controller
             'jumlah_reyal' => ($isReyalSelected && $reyalType === 'tumis') ? 'required|numeric|min:1' : 'nullable',
             'kurs_tumis' => ($isReyalSelected && $reyalType === 'tumis') ? 'required|numeric|min:1' : 'nullable',
 
+            // ====================================================
+            // H. VALIDASI TOUR (BARU)
+            // ====================================================
+
+            // 1. Wajib pilih minimal 1 lokasi tour
+            'tour_ids' => $isTourSelected ? 'required|array|min:1' : 'nullable',
+
+            // 2. Validasi Tanggal Tour untuk setiap lokasi yang dipilih
+            'tanggal_tour' => [
+                $isTourSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $dates, $fail) use ($request, $isTourSelected) {
+                    if (!$isTourSelected)
+                        return;
+
+                    $selectedTours = $request->input('tour_ids', []);
+                    foreach ($selectedTours as $tourId) {
+                        if (empty($dates[$tourId])) {
+                            $tour = TourItem::find($tourId);
+                            $name = $tour ? $tour->name : 'Tour';
+                            $fail("Tanggal pelaksanaan wajib diisi untuk tour: $name.");
+                        }
+                    }
+                }
+            ],
+
+            // ====================================================
+            // I. VALIDASI MEALS (BARU)
+            // ====================================================
+
+            // 1. Wajib isi minimal 1 item dengan jumlah > 0
+            'jumlah_meals' => [
+                $isMealSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $value, $fail) use ($isMealSelected) {
+                    if (!$isMealSelected)
+                        return;
+                    $hasSelection = false;
+                    foreach ($value as $qty) {
+                        if ((int) $qty > 0) {
+                            $hasSelection = true;
+                            break;
+                        }
+                    }
+                    if (!$hasSelection) {
+                        $fail('Anda memilih layanan Meals, wajib mengisi jumlah minimal untuk satu menu.');
+                    }
+                },
+            ],
+
+            // 2. Validasi Tanggal (Dari & Sampai) untuk meals yang dipilih
+            'dari_tanggal_makanan' => [
+                $isMealSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $dates, $fail) use ($request, $isMealSelected) {
+                    if (!$isMealSelected)
+                        return;
+                    $jumlahs = $request->input('jumlah_meals', []);
+
+                    foreach ($jumlahs as $id => $qty) {
+                        if ((int) $qty > 0) {
+                            $start = $dates[$id]['dari'] ?? null;
+                            // Cek pasangannya di array 'sampai_tanggal_makanan'
+                            $endArray = $request->input('sampai_tanggal_makanan', []);
+                            $end = $endArray[$id]['sampai'] ?? null;
+
+                            if (empty($start) || empty($end)) {
+                                $meal = MealItem::find($id);
+                                $name = $meal ? $meal->name : 'Menu';
+                                $fail("Tanggal 'Dari' dan 'Sampai' wajib diisi untuk $name.");
+                            }
+                        }
+                    }
+                }
+            ],
+
+            // ====================================================
+            // J. VALIDASI DORONGAN (BARU)
+            // ====================================================
+
+            // 1. Wajib isi minimal 1 item dengan jumlah > 0
+            'jumlah_dorongan' => [
+                $isDoronganSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $value, $fail) use ($isDoronganSelected) {
+                    if (!$isDoronganSelected)
+                        return;
+                    $hasSelection = false;
+                    foreach ($value as $qty) {
+                        if ((int) $qty > 0) {
+                            $hasSelection = true;
+                            break;
+                        }
+                    }
+                    if (!$hasSelection) {
+                        $fail('Anda memilih layanan Dorongan, wajib mengisi jumlah minimal untuk satu item.');
+                    }
+                },
+            ],
+
+            // 2. Validasi Tanggal Pelaksanaan untuk dorongan yang dipilih
+            'tanggal_dorongan' => [
+                $isDoronganSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $dates, $fail) use ($request, $isDoronganSelected) {
+                    if (!$isDoronganSelected)
+                        return;
+                    $jumlahs = $request->input('jumlah_dorongan', []);
+                    foreach ($jumlahs as $id => $qty) {
+                        if ((int) $qty > 0) {
+                            if (empty($dates[$id])) {
+                                $item = Dorongan::find($id);
+                                $name = $item ? $item->name : 'Dorongan';
+                                $fail("Tanggal pelaksanaan wajib diisi untuk $name.");
+                            }
+                        }
+                    }
+                }
+            ],
+
         ], [
             // Custmom Error Messages
             // Transport
@@ -618,6 +742,15 @@ class ServicesController extends Controller
 
             'jumlah_reyal.required' => 'Jumlah Reyal wajib diisi untuk transaksi Tumis.',
             'kurs_tumis.required' => 'Kurs Tumis wajib diisi.',
+
+            // Tour
+            'tour_ids.required' => 'Mohon pilih minimal satu lokasi tour.',
+
+            // Meals
+            'jumlah_meals.required' => 'Data meals wajib diisi.',
+
+            // Dorongan
+            'jumlah_dorongan.required' => 'Data dorongan wajib diisi.',
         ]);
 
         try {

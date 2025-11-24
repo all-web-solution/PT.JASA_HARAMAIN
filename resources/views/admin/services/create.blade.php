@@ -542,10 +542,12 @@
                         $oldMealsQty = old('jumlah_meals', []);
                         $oldDoronganQty = old('jumlah_dorongan', []);
                         $oldWakafQty = old('jumlah_wakaf', []);
-                        $oldContentIds = old('content_id', []); // Array ID Konten yang dipilih
-                        $oldKontenQtyValues = old('jumlah_konten', []); // Array Nilai Jumlahnya
-
-                        // (Variabel Reyal tetap sama)
+                        $oldContentIds = old('content_id', []);
+                        $oldKontenQtyValues = old('jumlah_konten', []);
+                        $oldMealIds = old('meal_id', []);
+                        $oldMealsQtyValues = old('jumlah_meals', []);
+                        $oldDoronganIds = old('dorongan_id', []);
+                        $oldDoronganQtyValues = old('jumlah_dorongan', []);
                         $oldReyalTipe = old('tipe');
                     @endphp
 
@@ -1551,6 +1553,8 @@
                         {{-- TOUR FORM --}}
                         <div class="detail-form {{ in_array('tour', $oldServices) ? '' : 'hidden' }}" id="tour-details">
                             <h6 class="detail-title"><i class="bi bi-geo-alt"></i> Tour</h6>
+
+                            {{-- GRID TOUR --}}
                             <div class="detail-section">
                                 <div class="service-grid">
                                     @foreach ($tours as $tour)
@@ -1562,19 +1566,30 @@
                                         </div>
                                     @endforeach
                                 </div>
+                                {{-- ERROR MESSAGE --}}
+                                @error('tour_ids')
+                                    <div class="validation-error-message mt-2">{{ $message }}</div>
+                                @enderror
+                                @error('tanggal_tour')
+                                    <div class="validation-error-message mt-2">{{ $message }}</div>
+                                @enderror
                             </div>
+
+                            {{-- FORM DETAIL TOUR --}}
                             @foreach ($tours as $tour)
                                 @php
+                                    $isSelected = in_array($tour->id, $oldTourIds);
                                     $oldTourTransport = old('tour_transport.' . $tour->id);
+                                    $oldDate = old('tanggal_tour.' . $tour->id);
                                 @endphp
                                 <div id="tour-{{ $tour->id }}-form"
-                                    class="tour-form {{ in_array($tour->id, $oldTourIds) ? '' : 'hidden' }}">
-                                    <h6 class="detail-title">Transportasi untuk Tour {{ $tour->name }}</h6>
+                                    class="tour-form {{ $isSelected ? '' : 'hidden' }}">
+                                    <h6 class="detail-title">Detail Tour {{ $tour->name }}</h6>
                                     <div class="form-group">
                                         <label class="form-label">Tanggal Tour</label>
                                         <input type="date" class="form-control"
-                                            name="tanggal_tour[{{ $tour->id }}]"
-                                            value="{{ old('tanggal_tour.' . $tour->id) }}">
+                                            name="tanggal_tour[{{ $tour->id }}]" value="{{ $oldDate }}"
+                                            {{ !$isSelected ? 'disabled' : '' }}>
                                     </div>
                                     <div class="service-grid">
                                         @foreach ($transportations as $trans)
@@ -1587,11 +1602,12 @@
                                                 </div>
                                                 <div class="service-desc">Fasilitas: {{ $trans->fasilitas ?? 'N/A' }}
                                                 </div>
-                                                <div class="service-desc">Harga: Rp {{ number_format($trans->harga) }}
+                                                <div class="service-desc">Estimasi Harga: Rp {{ number_format($trans->harga) }}
                                                 </div>
                                                 <input type="radio" name="tour_transport[{{ $tour->id }}]"
                                                     value="{{ $trans->id }}"
-                                                    {{ $oldTourTransport == $trans->id ? 'checked' : '' }}>
+                                                    {{ $oldTourTransport == $trans->id ? 'checked' : '' }}
+                                                    {{ !$isSelected ? 'disabled' : '' }}>
                                             </div>
                                         @endforeach
                                     </div>
@@ -1603,39 +1619,64 @@
                         <div class="detail-form {{ in_array('meals', $oldServices) ? '' : 'hidden' }}"
                             id="meals-details">
                             <h6 class="detail-title"><i class="bi bi-briefcase"></i> Makanan</h6>
+
+                            {{-- GRID MEALS --}}
                             <div class="service-grid">
                                 @foreach ($meals as $meal)
-                                    <div class="meal-item {{ array_key_exists($meal->id, $oldMealsQty) ? 'selected' : '' }}"
+                                    @php
+                                        $isSelected = in_array($meal->id, $oldMealIds);
+                                    @endphp
+                                    <div class="meal-item {{ $isSelected ? 'selected' : '' }}"
                                         data-id="{{ $meal->id }}" data-name="{{ $meal->name }}"
                                         data-price="{{ $meal->price }}" data-type="meal">
                                         <div class="service-name">{{ $meal->name }}</div>
                                         <div class="service-desc">Rp. {{ number_format($meal->price) }}</div>
+
+                                        {{-- CHECKBOX HIDDEN --}}
+                                        <input type="checkbox" name="meal_id[]" value="{{ $meal->id }}"
+                                            class="d-none" {{ $isSelected ? 'checked' : '' }}>
                                     </div>
                                 @endforeach
                             </div>
+
+                            {{-- ERROR MESSAGE --}}
+                            @error('jumlah_meals')
+                                <div class="validation-error-message mt-2">{{ $message }}</div>
+                            @enderror
+                            @error('dari_tanggal_makanan')
+                                <div class="validation-error-message mt-2">{{ $message }}</div>
+                            @enderror
+
+                            {{-- FORM DETAIL MEALS --}}
                             <div class="detail-section">
                                 @foreach ($meals as $meal)
+                                    @php
+                                        $isSelected = in_array($meal->id, $oldMealIds);
+                                        $oldQty = $oldMealsQtyValues[$meal->id] ?? '';
+                                        $oldDari = old('dari_tanggal_makanan.' . $meal->id . '.dari');
+                                        $oldSampai = old('sampai_tanggal_makanan.' . $meal->id . '.sampai');
+                                    @endphp
                                     <div id="form-meal-{{ $meal->id }}"
-                                        class="form-group {{ array_key_exists($meal->id, $oldMealsQty) ? '' : 'hidden' }}"
+                                        class="form-group {{ $isSelected ? '' : 'hidden' }}"
                                         style="margin-bottom: 50px">
                                         <label class="form-label">Jumlah {{ $meal->name }}</label>
                                         <input type="number" class="form-control jumlah-item"
                                             data-id="{{ $meal->id }}" data-name="{{ $meal->name }}"
                                             data-price="{{ $meal->price }}" data-type="meal"
                                             name="jumlah_meals[{{ $meal->id }}]" min="1"
-                                            value="{{ old('jumlah_meals.' . $meal->id) }}">
+                                            value="{{ $oldQty }}" {{ !$isSelected ? 'disabled' : '' }}>
                                         <div class="form-row d-flex gap-3 mt-2">
                                             <div class="form-col">
                                                 <label class="form-label">Dari Tanggal</label>
                                                 <input type="date" class="form-control"
                                                     name="dari_tanggal_makanan[{{ $meal->id }}][dari]"
-                                                    value="{{ old('dari_tanggal_makanan.' . $meal->id . '.dari') }}">
+                                                    value="{{ $oldDari }}" {{ !$isSelected ? 'disabled' : '' }}>
                                             </div>
                                             <div class="form-col">
                                                 <label class="form-label">Sampai Tanggal</label>
                                                 <input type="date" class="form-control"
                                                     name="sampai_tanggal_makanan[{{ $meal->id }}][sampai]"
-                                                    value="{{ old('sampai_tanggal_makanan.' . $meal->id . '.sampai') }}">
+                                                    value="{{ $oldSampai }}" {{ !$isSelected ? 'disabled' : '' }}>
                                             </div>
                                         </div>
                                     </div>
@@ -1647,31 +1688,55 @@
                         <div class="detail-form {{ in_array('dorongan', $oldServices) ? '' : 'hidden' }}"
                             id="dorongan-details">
                             <h6 class="detail-title"><i class="bi bi-briefcase"></i> Dorongan</h6>
+
+                            {{-- GRID DORONGAN --}}
                             <div class="service-grid">
                                 @foreach ($dorongan as $item)
-                                    <div class="dorongan-item {{ array_key_exists($item->id, $oldDoronganQty) ? 'selected' : '' }}"
+                                    @php
+                                        $isSelected = in_array($item->id, $oldDoronganIds);
+                                    @endphp
+                                    <div class="dorongan-item {{ $isSelected ? 'selected' : '' }}"
                                         data-id="{{ $item->id }}" data-name="{{ $item->name }}"
                                         data-price="{{ $item->price }}" data-type="dorongan">
                                         <div class="service-name">{{ $item->name }}</div>
                                         <div class="service-desc">Rp. {{ number_format($item->price) }}</div>
+
+                                        {{-- CHECKBOX HIDDEN --}}
+                                        <input type="checkbox" name="dorongan_id[]" value="{{ $item->id }}"
+                                            class="d-none" {{ $isSelected ? 'checked' : '' }}>
                                     </div>
                                 @endforeach
                             </div>
+
+                            {{-- ERROR MESSAGE --}}
+                            @error('jumlah_dorongan')
+                                <div class="validation-error-message mt-2">{{ $message }}</div>
+                            @enderror
+                            @error('tanggal_dorongan')
+                                <div class="validation-error-message mt-2">{{ $message }}</div>
+                            @enderror
+
+                            {{-- FORM DETAIL DORONGAN --}}
                             <div class="detail-section">
                                 @foreach ($dorongan as $item)
+                                    @php
+                                        $isSelected = in_array($item->id, $oldDoronganIds);
+                                        $oldQty = $oldDoronganQtyValues[$item->id] ?? '';
+                                        $oldDate = old('tanggal_dorongan.' . $item->id);
+                                    @endphp
                                     <div id="form-dorongan-{{ $item->id }}"
-                                        class="form-group {{ array_key_exists($item->id, $oldDoronganQty) ? '' : 'hidden' }}">
+                                        class="form-group {{ $isSelected ? '' : 'hidden' }}">
                                         <label class="form-label">Jumlah {{ $item->name }}</label>
                                         <input type="number" class="form-control jumlah-item"
                                             data-id="{{ $item->id }}" data-name="{{ $item->name }}"
                                             data-price="{{ $item->price }}" data-type="dorongan"
                                             name="jumlah_dorongan[{{ $item->id }}]" min="1"
-                                            value="{{ old('jumlah_dorongan.' . $item->id) }}">
-                                        <label class="form-label">Tanggal Pelaksanaan Dorongan
-                                            {{ $item->name }}</label>
+                                            value="{{ $oldQty }}" {{ !$isSelected ? 'disabled' : '' }}>
+
+                                        <label class="form-label mt-2">Tanggal Pelaksanaan</label>
                                         <input type="date" class="form-control"
-                                            name="tanggal_dorongan[{{ $item->id }}]"
-                                            value="{{ old('tanggal_dorongan.' . $item->id) }}">
+                                            name="tanggal_dorongan[{{ $item->id }}]" value="{{ $oldDate }}"
+                                            {{ !$isSelected ? 'disabled' : '' }}>
                                     </div>
                                 @endforeach
                             </div>
@@ -1902,11 +1967,11 @@
 
                         // Matikan/Hidupkan semua input di dalam section ini
                         detailForm.querySelectorAll('input, select, textarea, button').forEach(
-                        el => {
-                            if (!el.classList.contains('back-to-services-btn')) {
-                                el.disabled = !isSelected;
-                            }
-                        });
+                            el => {
+                                if (!el.classList.contains('back-to-services-btn')) {
+                                    el.disabled = !isSelected;
+                                }
+                            });
 
                         // Jika di-uncheck, reset visual sub-item
                         if (!isSelected) {
@@ -2035,7 +2100,7 @@
                     routes.forEach(route => {
                         select.insertAdjacentHTML('beforeend',
                             `<option value="${route.id}" data-price="${route.price}" data-car-name="${carItem.dataset.name}">${route.route} - Rp. ${parseInt(route.price).toLocaleString('id-ID')}</option>`
-                            );
+                        );
                     });
                     if (routeSelectDiv) routeSelectDiv.classList.remove('hidden');
                 }
@@ -2145,7 +2210,7 @@
                 // 4. ITEM UMUM (KONTEN, PENDAMPING, MEAL, DORONGAN, WAKAF, TOUR)
                 const toggleItem = e.target.closest(
                     '.pendamping-item, .content-item, .meal-item, .dorongan-item, .wakaf-item, .service-tour'
-                    );
+                );
 
                 if (toggleItem) {
                     toggleItem.classList.toggle('selected');
@@ -2169,7 +2234,7 @@
                                 if (input.type === 'radio' && !isSelected) {
                                     input.checked = false;
                                     input.closest('.transport-option')?.classList.remove(
-                                    'selected');
+                                        'selected');
                                 }
                                 input.disabled = !isSelected;
                             });
