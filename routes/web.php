@@ -57,8 +57,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/payment', [PaymentController::class, 'index'])->name('admin.payment');
     Route::get('/payment/create', [PaymentController::class, 'create'])->name('admin.payment.create');
     Route::post('/payment/store', [PaymentController::class, 'store'])->name('admin.payment.stor');
-    Route::get('/nego/{id}', [ServicesController::class, 'nego'])->name('admin.service.nego');
-    Route::put('/update/{id}/nego', [ServicesController::class, 'updateNego'])->name('update.nego.admin');
     Route::get('/services/{id}/upload-berkas', [ServicesController::class, 'uploadBerkas'])->name('service.uploadBerkas');
     Route::post('/services/store-berkas/{id}', [ServicesController::class, 'storeBerkas'])->name('service.storeBerkas');
     Route::get('/service/files/{id}', [ServicesController::class, 'showFile'])->name('admin.service.file');
@@ -213,7 +211,7 @@ Route::middleware(['auth', 'visa'])->group(function () {
 
 
 Route::group(['middleware' => 'guest'], function () {
-    Route::get('admin/login', function () {
+    Route::get('login', function () {
         return view('admin.auth.login');
     })->name('login');
     Route::post('/sign-in', [AuthController::class, 'sign_in'])->name('sign_in');
