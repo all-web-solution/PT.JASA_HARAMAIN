@@ -1897,7 +1897,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Matikan input di form yang tersembunyi saat load awal
             document.querySelectorAll('.detail-form.hidden').forEach(detailForm => {
                 detailForm.querySelectorAll('input, select, textarea, button').forEach(el => {
                     if (!el.classList.contains('back-to-services-btn')) {
