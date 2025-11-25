@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ServiceRequest;
 use App\Models\ContentCustomer;
 use App\Models\ContentItem;
 use App\Models\Exchange;
@@ -42,21 +43,12 @@ use Illuminate\Validation\Rule;
 
 class ServicesController extends Controller
 {
-    /**
-     * Tampilkan daftar layanan.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\View\View
-     */
     public function index(Request $request)
     {
-        // 1. Ambil input search
         $searchKeyword = $request->input('search');
 
-        // 2. Mulai query
-        $query = Service::query()->latest(); // Urutkan terbaru dulu
+        $query = Service::query()->latest();
 
-        // 3. Terapkan Search
         if ($searchKeyword) {
             $query->where(function ($q) use ($searchKeyword) {
                 $q->where('unique_code', 'LIKE', '%' . $searchKeyword . '%')
@@ -238,7 +230,6 @@ class ServicesController extends Controller
         return view('admin.services.index', compact('services', 'totalNegoOverall', 'totalDealOverall', 'totalPersiapanOverall', 'totalProduksiOverall', 'totalDoneOverall'));
     }
 
-
     public function create()
     {
         $data = [
@@ -257,551 +248,8 @@ class ServicesController extends Controller
         return view('admin.services.create', $data);
     }
 
-
-    public function store(Request $request)
+    public function store(ServiceRequest $request)
     {
-        $services = $request->input('services', []);
-        // 1. Kondisi untuk Layanan Utama Transportasi
-        $isMainTransportationSelected = $request->has('services') && is_array($request->services) && in_array('transportasi', $request->services);
-
-        // 2. Kondisi untuk Transportasi Darat ('bus')
-        $isBusSelected = $isMainTransportationSelected &&
-            $request->has('transportation') && is_array($request->transportation) && in_array('bus', $request->transportation);
-
-        // 3. Kondisi untuk Transportasi Udara ('airplane')
-        $isPlaneSelected = $isMainTransportationSelected &&
-            $request->has('transportation') && is_array($request->transportation) && in_array('airplane', $request->transportation);
-
-        // 4. Kondisi untuk Layanan Hotel
-        $isHotelSelected = $request->has('services') && is_array($request->services) && in_array('hotel', $request->services);
-
-        // 5. Kondisi untuk Layanan Dokumen
-        $isDocumentSelected = $request->has('services') && is_array($request->services) && in_array('dokumen', $request->services);
-        // Kondisi Baru: Handling & Pendamping
-        $isHandlingSelected = in_array('handling', $services);
-        $isPendampingSelected = in_array('pendamping', $services);
-
-        // Handling (Baru)
-        $handlingTypes = $request->input('handlings', []);
-        $isHandlingHotelSelected = $isHandlingSelected && in_array('hotel', $handlingTypes);
-        $isHandlingBandaraSelected = $isHandlingSelected && in_array('bandara', $handlingTypes);
-
-        // Konten
-        $isKontenSelected = in_array('konten', $services);
-        $isReyalSelected = in_array('reyal', $services);
-
-        // Cek tipe reyal untuk validasi kondisional
-        $reyalType = $request->input('tipe');
-
-        $isTourSelected = in_array('tour', $services);
-        $isMealSelected = in_array('meals', $services);
-        $isDoronganSelected = in_array('dorongan', $services);
-
-        $isWakafSelected = in_array('waqaf', $services);
-        $isBadalSelected = in_array('badal', $services);
-
-        $request->validate([
-            'travel' => 'required|exists:pelanggans,id',
-            'services' => 'required|array',
-            'tanggal_keberangkatan' => 'required|date',
-            'tanggal_kepulangan' => 'required|date',
-            'total_jamaah' => 'required|integer',
-            'email' => 'required|email',
-            'phone' => 'required|string',
-
-            // --- VALIDASI UNTUK PEMILIHAN SUB-LAYANAN TRANSPORTASI ---
-            'transportation' => $isMainTransportationSelected ? 'required|array|min:1' : 'nullable|array',
-
-            // --- TRANSPORTASI DARAT (GROUND) ---
-            'transportation_id' => $isBusSelected ? 'required|array|min:1' : 'nullable|array',
-            'transportation_id.*' => $isBusSelected ? 'required|exists:transportations,id' : 'nullable',
-            'rute_id' => $isBusSelected ? 'required|array|min:1' : 'nullable|array',
-            'rute_id.*' => $isBusSelected ? 'required|exists:routes,id' : 'nullable',
-            'tanggal_transport' => $isBusSelected ? 'required|array|min:1' : 'nullable|array',
-            'tanggal_transport.*.dari' => $isBusSelected ? 'required|date' : 'nullable|date',
-            'tanggal_transport.*.sampai' => $isBusSelected ? 'required|date|after_or_equal:tanggal_transport.*.dari' : 'nullable|date',
-
-            // --- TRANSPORTASI UDARA (PESAWAT) ---
-            'rute' => $isPlaneSelected ? 'required|array|min:1' : 'nullable|array',
-            'tanggal' => $isPlaneSelected ? 'required|array|min:1' : 'nullable|array',
-            'rute.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
-            'tanggal.*' => $isPlaneSelected ? 'required|date' : 'nullable|date',
-            'maskapai.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
-            'harga_tiket.*' => $isPlaneSelected ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
-            'jumlah.*' => $isPlaneSelected ? 'required|integer|min:1' : 'nullable|integer|min:0',
-            'tiket_berangkat.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
-            'tiket_pulang.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
-
-            // --- VALIDASI HOTEL ---
-            'nama_hotel' => $isHotelSelected ? 'required|array|min:1' : 'nullable|array',
-            'nama_hotel.*' => $isHotelSelected ? 'required|string|filled' : 'nullable',
-
-            'tanggal_checkin' => $isHotelSelected ? 'required|array|min:1' : 'nullable|array',
-            'tanggal_checkin.*' => $isHotelSelected ? 'required|date' : 'nullable',
-
-            'tanggal_checkout' => $isHotelSelected ? 'required|array|min:1' : 'nullable|array',
-            'tanggal_checkout.*' => $isHotelSelected ? 'required|date|after:tanggal_checkin.*' : 'nullable',
-
-            'jumlah_kamar' => $isHotelSelected ? 'required|array|min:1' : 'nullable|array',
-            'jumlah_kamar.*' => $isHotelSelected ? 'required|integer|min:1' : 'nullable',
-
-            'hotel_data' => [
-                $isHotelSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $value, $fail) use ($request, $isHotelSelected) {
-                    if (!$isHotelSelected)
-                        return;
-
-                    $hotelIndexes = array_keys($request->input('nama_hotel', []));
-
-                    foreach ($hotelIndexes as $index) {
-                        if (!isset($value[$index]) || !is_array($value[$index]) || count($value[$index]) < 1) {
-                            $namaHotel = $request->input("nama_hotel.$index", "Hotel ke-" . ($index + 1));
-                            $fail("Hotel '$namaHotel' wajib memiliki minimal satu Tipe Kamar yang dipilih.");
-                        }
-                    }
-                },
-            ],
-
-            'hotel_data.*.*.jumlah' => $isHotelSelected ? 'required|integer|min:1' : 'nullable',
-
-            // --- VALIDASI DOKUMEN ---
-
-            // 1. Validasi Child Documents
-            'child_documents' => [
-                // Wajib diisi JIKA dokumen dipilih DAN dokumen_id kosong
-                $isDocumentSelected ? 'required_without:dokumen_id' : 'nullable',
-                'array',
-                'exists:document_childrens,id'
-            ],
-
-            // 2. Validasi Dokumen Induk (Gabungan Logic)
-            'dokumen_id' => [
-                // Wajib diisi JIKA dokumen dipilih DAN child_documents kosong
-                $isDocumentSelected ? 'required_without:child_documents' : 'nullable',
-                'array',
-
-                // Custom Rule: Cek apakah Induk yang dipilih mewajibkan anak
-                function ($attribute, $value, $fail) use ($request) {
-                    // $value adalah array ID dokumen induk (bisa null/kosong)
-                    if (empty($value) || !is_array($value))
-                        return;
-
-                    // Ambil dokumen induk yang dipilih user, tapi HANYA yang punya 'childrens'
-                    // Pastikan namespace Document sesuai model Anda (misal: \App\Models\Document)
-                    $parentsWithChildren = Document::whereIn('id', $value)
-                        ->has('childrens')
-                        ->with('childrens')
-                        ->get();
-
-                    // Ambil daftar ID anak yang dipilih user dari form
-                    $selectedChildIds = $request->input('child_documents', []);
-
-                    // Loop setiap Dokumen Induk yang punya anak
-                    foreach ($parentsWithChildren as $parent) {
-                        // Ambil semua ID anak yang valid milik induk ini
-                        $validChildIds = $parent->childrens->pluck('id')->toArray();
-
-                        // Cek irisan: Apakah ada ID anak yang dipilih user yang cocok dengan induk ini?
-                        $hasSelectedChild = !empty(array_intersect($selectedChildIds, $validChildIds));
-
-                        // Jika user memilih Induk (yang punya anak), tapi TIDAK memilih satu pun anaknya:
-                        if (!$hasSelectedChild) {
-                            $fail("Dokumen '{$parent->name}' memiliki opsi turunan (seperti Visa Ziarah/Umrah). Anda wajib memilih minimal satu sub-jenis dokumen tersebut.");
-                        }
-                    }
-                },
-            ],
-
-            // ====================================================
-            // D. VALIDASI HANDLING (BARU)
-            // ====================================================
-
-            // 1. Pastikan sub-jenis handling dipilih (Hotel / Bandara)
-            'handlings' => $isHandlingSelected ? 'required|array|min:1' : 'nullable',
-
-            // 2. Validasi Handling Hotel
-            'nama_hotel_handling' => $isHandlingHotelSelected ? 'required|string|max:255' : 'nullable',
-            'tanggal_hotel_handling' => $isHandlingHotelSelected ? 'required|date' : 'nullable',
-            'harga_hotel_handling' => $isHandlingHotelSelected ? 'required|numeric|min:0' : 'nullable',
-            'pax_hotel_handling' => $isHandlingHotelSelected ? 'required|integer|min:1' : 'nullable',
-
-            // 3. Validasi Handling Bandara
-            'nama_bandara_handling' => $isHandlingBandaraSelected ? 'required|string|max:255' : 'nullable',
-            'jumlah_jamaah_handling' => $isHandlingBandaraSelected ? 'required|integer|min:1' : 'nullable',
-            'harga_bandara_handling' => $isHandlingBandaraSelected ? 'required|numeric|min:0' : 'nullable',
-            'kedatangan_jamaah_handling' => $isHandlingBandaraSelected ? 'required|date' : 'nullable',
-            'nama_supir' => $isHandlingBandaraSelected ? 'required|string|max:255' : 'nullable',
-
-            // ====================================================
-            // E. VALIDASI PENDAMPING (BARU)
-            // ====================================================
-
-            // 1. Pastikan ada minimal satu pendamping yang dipilih (jumlah > 0)
-            'jumlah_pendamping' => [
-                $isPendampingSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $value, $fail) use ($isPendampingSelected) {
-                    if (!$isPendampingSelected)
-                        return;
-
-                    // Cek apakah ada setidaknya satu item dengan jumlah > 0
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
-                        if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
-                        }
-                    }
-
-                    if (!$hasSelection) {
-                        $fail('Anda memilih layanan Pendamping, wajib mengisi jumlah minimal untuk satu pendamping.');
-                    }
-                },
-            ],
-
-            // 2. Validasi Tanggal untuk setiap Pendamping yang dipilih
-            'tanggal_pendamping' => [
-                $isPendampingSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $dates, $fail) use ($request, $isPendampingSelected) {
-                    if (!$isPendampingSelected)
-                        return;
-
-                    $jumlahs = $request->input('jumlah_pendamping', []);
-
-                    foreach ($jumlahs as $guideId => $qty) {
-                        if ((int) $qty > 0) {
-                            // Jika pendamping ID ini dipilih (qty > 0), wajib punya tanggal valid
-                            $start = $dates[$guideId]['dari'] ?? null;
-                            $end = $dates[$guideId]['sampai'] ?? null;
-
-                            if (empty($start) || empty($end)) {
-                                $guide = GuideItems::find($guideId);
-                                $name = $guide ? $guide->nama : 'Pendamping';
-                                $fail("Tanggal 'Dari' dan 'Sampai' wajib diisi untuk $name.");
-                            }
-                        }
-                    }
-                }
-            ],
-
-            // ====================================================
-            // F. VALIDASI KONTEN
-            // ====================================================
-
-            // 1. Pastikan minimal ada satu konten yang jumlahnya > 0
-            'jumlah_konten' => [
-                $isKontenSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $value, $fail) use ($isKontenSelected) {
-                    if (!$isKontenSelected)
-                        return;
-
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
-                        if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
-                        }
-                    }
-                    if (!$hasSelection) {
-                        $fail('Anda memilih layanan Konten, wajib mengisi jumlah minimal untuk satu item konten.');
-                    }
-                },
-            ],
-
-            // 2. Validasi Tanggal Pelaksanaan untuk setiap Konten yang dipilih
-            'tanggal_konten' => [
-                $isKontenSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $dates, $fail) use ($request, $isKontenSelected) {
-                    if (!$isKontenSelected)
-                        return;
-
-                    $jumlahs = $request->input('jumlah_konten', []);
-
-                    foreach ($jumlahs as $contentId => $qty) {
-                        if ((int) $qty > 0) {
-                            $date = $dates[$contentId] ?? null;
-
-                            if (empty($date)) {
-                                $content = ContentItem::find($contentId);
-                                $name = $content ? $content->name : 'Konten';
-                                $fail("Tanggal pelaksanaan wajib diisi untuk $name.");
-                            }
-                        }
-                    }
-                }
-            ],
-
-            // ====================================================
-            // G. VALIDASI REYAL (BARU)
-            // ====================================================
-
-            // 1. Validasi Umum Reyal
-            'tipe' => $isReyalSelected ? 'required|in:tamis,tumis' : 'nullable',
-            'tanggal_penyerahan' => $isReyalSelected ? 'required|date' : 'nullable',
-
-            // 2. Validasi Jika Tipe = TAMIS (Rupiah -> Reyal)
-            'jumlah_rupiah' => ($isReyalSelected && $reyalType === 'tamis') ? 'required|numeric|min:1' : 'nullable',
-            'kurs_tamis' => ($isReyalSelected && $reyalType === 'tamis') ? 'required|numeric|min:1' : 'nullable',
-
-            // 3. Validasi Jika Tipe = TUMIS (Reyal -> Rupiah)
-            'jumlah_reyal' => ($isReyalSelected && $reyalType === 'tumis') ? 'required|numeric|min:1' : 'nullable',
-            'kurs_tumis' => ($isReyalSelected && $reyalType === 'tumis') ? 'required|numeric|min:1' : 'nullable',
-
-            // ====================================================
-            // H. VALIDASI TOUR (BARU)
-            // ====================================================
-
-            // 1. Wajib pilih minimal 1 lokasi tour
-            'tour_ids' => $isTourSelected ? 'required|array|min:1' : 'nullable',
-
-            // 2. Validasi Tanggal Tour untuk setiap lokasi yang dipilih
-            'tanggal_tour' => [
-                $isTourSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $dates, $fail) use ($request, $isTourSelected) {
-                    if (!$isTourSelected)
-                        return;
-
-                    $selectedTours = $request->input('tour_ids', []);
-                    foreach ($selectedTours as $tourId) {
-                        if (empty($dates[$tourId])) {
-                            $tour = TourItem::find($tourId);
-                            $name = $tour ? $tour->name : 'Tour';
-                            $fail("Tanggal pelaksanaan wajib diisi untuk tour: $name.");
-                        }
-                    }
-                }
-            ],
-
-            // ====================================================
-            // I. VALIDASI MEALS (BARU)
-            // ====================================================
-
-            // 1. Wajib isi minimal 1 item dengan jumlah > 0
-            'jumlah_meals' => [
-                $isMealSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $value, $fail) use ($isMealSelected) {
-                    if (!$isMealSelected)
-                        return;
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
-                        if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
-                        }
-                    }
-                    if (!$hasSelection) {
-                        $fail('Anda memilih layanan Meals, wajib mengisi jumlah minimal untuk satu menu.');
-                    }
-                },
-            ],
-
-            // 2. Validasi Tanggal (Dari & Sampai) untuk meals yang dipilih
-            'dari_tanggal_makanan' => [
-                $isMealSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $dates, $fail) use ($request, $isMealSelected) {
-                    if (!$isMealSelected)
-                        return;
-                    $jumlahs = $request->input('jumlah_meals', []);
-
-                    foreach ($jumlahs as $id => $qty) {
-                        if ((int) $qty > 0) {
-                            $start = $dates[$id]['dari'] ?? null;
-                            // Cek pasangannya di array 'sampai_tanggal_makanan'
-                            $endArray = $request->input('sampai_tanggal_makanan', []);
-                            $end = $endArray[$id]['sampai'] ?? null;
-
-                            if (empty($start) || empty($end)) {
-                                $meal = MealItem::find($id);
-                                $name = $meal ? $meal->name : 'Menu';
-                                $fail("Tanggal 'Dari' dan 'Sampai' wajib diisi untuk $name.");
-                            }
-                        }
-                    }
-                }
-            ],
-
-            // ====================================================
-            // J. VALIDASI DORONGAN (BARU)
-            // ====================================================
-
-            // 1. Wajib isi minimal 1 item dengan jumlah > 0
-            'jumlah_dorongan' => [
-                $isDoronganSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $value, $fail) use ($isDoronganSelected) {
-                    if (!$isDoronganSelected)
-                        return;
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
-                        if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
-                        }
-                    }
-                    if (!$hasSelection) {
-                        $fail('Anda memilih layanan Dorongan, wajib mengisi jumlah minimal untuk satu item.');
-                    }
-                },
-            ],
-
-            // 2. Validasi Tanggal Pelaksanaan untuk dorongan yang dipilih
-            'tanggal_dorongan' => [
-                $isDoronganSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $dates, $fail) use ($request, $isDoronganSelected) {
-                    if (!$isDoronganSelected)
-                        return;
-                    $jumlahs = $request->input('jumlah_dorongan', []);
-                    foreach ($jumlahs as $id => $qty) {
-                        if ((int) $qty > 0) {
-                            if (empty($dates[$id])) {
-                                $item = Dorongan::find($id);
-                                $name = $item ? $item->name : 'Dorongan';
-                                $fail("Tanggal pelaksanaan wajib diisi untuk $name.");
-                            }
-                        }
-                    }
-                }
-            ],
-
-            // ====================================================
-            // K. VALIDASI WAKAF (BARU)
-            // ====================================================
-
-            // Wajib isi minimal 1 item dengan jumlah > 0
-            'jumlah_wakaf' => [
-                $isWakafSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $value, $fail) use ($isWakafSelected) {
-                    if (!$isWakafSelected)
-                        return;
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
-                        if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
-                        }
-                    }
-                    if (!$hasSelection) {
-                        $fail('Anda memilih layanan Waqaf, wajib mengisi jumlah minimal untuk satu item waqaf.');
-                    }
-                },
-            ],
-
-            // ====================================================
-            // L. VALIDASI BADAL UMRAH (BARU)
-            // ====================================================
-
-            // 1. Pastikan array input ada
-            'nama_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
-            'harga_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
-            'tanggal_pelaksanaan_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
-
-            // 2. Validasi setiap baris input (tidak boleh kosong)
-            'nama_badal.*' => $isBadalSelected ? 'required|string|filled' : 'nullable',
-            'harga_badal.*' => $isBadalSelected ? 'required|numeric|min:0' : 'nullable',
-            'tanggal_pelaksanaan_badal.*' => $isBadalSelected ? 'required|date' : 'nullable',
-        ], [
-            // Custmom Error Messages
-            // Transport
-            'transportation.required' => 'Anda memilih layanan Transportasi, wajib memilih minimal salah satu sub-layanan (Pesawat atau Transportasi Darat).',
-            'transportation.min' => 'Anda memilih layanan Transportasi, wajib memilih minimal salah satu sub-layanan (Pesawat atau Transportasi Darat).',
-            'transportation_id.required' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
-            'transportation_id.min' => 'Anda memilih Transportasi Darat, tapi belum menambahkan satu pun item transportasi.',
-            'rute_id.required' => 'Rute wajib dipilih untuk setiap transportasi darat.',
-            'rute_id.min' => 'Rute wajib dipilih untuk setiap transportasi darat.',
-            'rute_id.*.required' => 'Rute wajib dipilih untuk setiap transportasi darat.',
-            'tanggal_transport.required' => 'Tanggal transportasi darat wajib diisi.',
-            'tanggal_transport.min' => 'Tanggal transportasi darat wajib diisi.',
-            'tanggal_transport.*.dari.required' => 'Tanggal "Dari" wajib diisi untuk setiap transportasi darat.',
-            'tanggal_transport.*.sampai.required' => 'Tanggal "Sampai" wajib diisi untuk setiap transportasi darat.',
-            'tanggal_transport.*.sampai.after_or_equal' => 'Tanggal "Sampai" harus sama atau setelah Tanggal "Dari".',
-            'rute.required' => 'Anda memilih Tiket Pesawat, tapi belum menambahkan satu pun rute penerbangan.',
-            'rute.min' => 'Anda memilih Tiket Pesawat, tapi belum menambahkan satu pun rute penerbangan.',
-            'tanggal.required' => 'Tanggal keberangkatan wajib diisi untuk setiap penerbangan.',
-            'tanggal.min' => 'Tanggal keberangkatan wajib diisi untuk setiap penerbangan.',
-            'rute.*.required' => 'Rute (contoh: JKT-JED) wajib diisi untuk setiap penerbangan.',
-            'tanggal.*.required' => 'Tanggal keberangkatan wajib diisi untuk setiap penerbangan.',
-            'maskapai.*.required' => 'Nama maskapai wajib diisi untuk setiap penerbangan.',
-            'harga_tiket.*.required' => 'Harga tiket wajib diisi untuk setiap penerbangan.',
-            'jumlah.*.required' => 'Jumlah jamaah wajib diisi untuk setiap penerbangan.',
-            'jumlah.*.min' => 'Jumlah jamaah harus minimal 1.',
-
-            // Hotel
-            'nama_hotel.required' => 'Anda memilih layanan Hotel, wajib mengisi data minimal satu hotel.',
-            'nama_hotel.*.required' => 'Nama hotel wajib diisi.',
-            'nama_hotel.*.filled' => 'Nama hotel tidak boleh kosong.',
-            'tanggal_checkin.*.required' => 'Tanggal Check-in wajib diisi.',
-            'tanggal_checkout.*.required' => 'Tanggal Check-out wajib diisi.',
-            'tanggal_checkout.*.after' => 'Tanggal Check-out harus setelah tanggal Check-in.',
-            'jumlah_kamar.*.required' => 'Total jumlah kamar wajib diisi.',
-            'jumlah_kamar.*.min' => 'Total jumlah kamar minimal 1.',
-            'jumlah_kamar.*.integer' => 'Total jumlah kamar harus berupa angka.',
-
-            'hotel_data.*.*.jumlah.required' => 'Jumlah kamar untuk tipe yang dipilih wajib diisi.',
-            'hotel_data.*.*.jumlah.min' => 'Jumlah kamar untuk tipe yang dipilih minimal 1.',
-
-            // Dokumen
-            'dokumen_id.required_without' => 'Anda memilih layanan Dokumen, wajib memilih minimal satu jenis dokumen (Induk atau Turunan).',
-            'child_documents.required_without' => 'Anda memilih layanan Dokumen, wajib memilih minimal satu jenis dokumen (Induk atau Turunan).',
-
-            // Handling
-            'handlings.required' => 'Anda memilih layanan Handling, wajib memilih jenis handling (Hotel atau Bandara).',
-
-            'nama_hotel_handling.required' => 'Nama hotel (Handling) wajib diisi.',
-            'tanggal_hotel_handling.required' => 'Tanggal hotel (Handling) wajib diisi.',
-            'harga_hotel_handling.required' => 'Harga hotel (Handling) wajib diisi.',
-            'pax_hotel_handling.required' => 'Jumlah Pax hotel (Handling) wajib diisi.',
-
-            'nama_bandara_handling.required' => 'Nama bandara wajib diisi.',
-            'jumlah_jamaah_handling.required' => 'Jumlah jamaah (Bandara) wajib diisi.',
-            'harga_bandara_handling.required' => 'Harga handling bandara wajib diisi.',
-            'kedatangan_jamaah_handling.required' => 'Tanggal kedatangan jamaah wajib diisi.',
-            'nama_supir.required' => 'Nama supir wajib diisi.',
-
-            // Pendamping
-            'jumlah_pendamping.required' => 'Data pendamping wajib diisi.',
-
-            // Konten
-            'jumlah_konten.required' => 'Data konten wajib diisi.',
-
-            // Reyal
-            'tipe.required' => 'Tipe penukaran (Tamis/Tumis) wajib dipilih.',
-            'tipe.in' => 'Tipe penukaran tidak valid.',
-            'tanggal_penyerahan.required' => 'Tanggal penyerahan uang wajib diisi.',
-
-            'jumlah_rupiah.required' => 'Jumlah Rupiah wajib diisi untuk transaksi Tamis.',
-            'kurs_tamis.required' => 'Kurs Tamis wajib diisi.',
-
-            'jumlah_reyal.required' => 'Jumlah Reyal wajib diisi untuk transaksi Tumis.',
-            'kurs_tumis.required' => 'Kurs Tumis wajib diisi.',
-
-            // Tour
-            'tour_ids.required' => 'Mohon pilih minimal satu lokasi tour.',
-
-            // Meals
-            'jumlah_meals.required' => 'Data meals wajib diisi.',
-
-            // Dorongan
-            'jumlah_dorongan.required' => 'Data dorongan wajib diisi.',
-
-            // Pesan Error Waqaf
-            'jumlah_wakaf.required' => 'Data waqaf wajib diisi.',
-
-            // Pesan Error Badal
-            'nama_badal.required' => 'Data jamaah badal wajib diisi.',
-            'nama_badal.*.required' => 'Nama jamaah yang dibadalkan wajib diisi.',
-            'harga_badal.*.required' => 'Harga badal wajib diisi.',
-            'tanggal_pelaksanaan_badal.*.required' => 'Tanggal pelaksanaan badal wajib diisi.',
-        ]);
-
         try {
             DB::beginTransaction();
 
@@ -825,165 +273,15 @@ class ServicesController extends Controller
 
             $this->processServiceItems($request, $service);
 
-            // ----------------------------------------------------
-            // 🔒 HITUNG ULANG TOTAL DI SERVER SETELAH ITEM DISIMPAN
-            // ----------------------------------------------------
-            $serverTotalAmount = 0;
+            $serverTotalAmount = $this->calculateTotalServicePrice($service);
 
-            // Muat ulang (refresh) relasi yang baru saja disimpan/diperbarui
-            // Ini penting agar kita mendapatkan data yang paling akurat dari database
-            $service->load([
-                'documents', // Relasi ke CustomerDocument
-                'hotels',    // Relasi ke Hotel
-                'badals',    // Relasi ke Badal
-                'meals',     // Relasi ke MealCustomer (atau nama relasi Anda)
-                'guides',    // Relasi ke GuideCustomer (atau nama relasi Anda)
-                'tours',     // Relasi ke TourCustomer (atau nama relasi Anda)
-                'wakafs',    // Relasi ke WakafCustomer
-                'dorongans.dorongan', // Relasi ke DoronganOrder
-                'contents',  // Relasi ke ContentCustomer
-                // Tambahkan relasi lain yang relevan di sini
-            ]);
-
-            $service->loadMissing(['transportationItem.transportation', 'transportationItem.route']);
-
-            foreach ($service->transportationItem as $item) {
-                // Safety check: pastikan relasi & tanggal ada
-                if ($item->transportation && $item->route && $item->dari_tanggal && $item->sampai_tanggal) {
-
-                    try {
-                        // 1. Ambil harga dasar per hari dari Tipe Transportasi
-                        $hargaPerHari = $item->transportation->harga ?? 0;
-
-                        // 2. Ambil harga tambahan rute (jika ada)
-                        $hargaRute = $item->route->price ?? 0; // Sesuaikan 'price' jika nama kolomnya beda
-
-                        // 3. Hitung jumlah hari penggunaan
-                        $tanggalMulai = Carbon::parse($item->dari_tanggal);
-                        $tanggalSelesai = Carbon::parse($item->sampai_tanggal);
-
-                        // diffInDays menghitung selisih hari. Jika sama, hasilnya 0.
-                        // Tambah 1 untuk mendapatkan jumlah hari penggunaan (inklusif).
-                        // Cth: 25 Okt - 25 Okt = 0 hari selisih -> jadi 1 hari penggunaan.
-                        // Cth: 26 Okt - 25 Okt = 1 hari selisih -> jadi 2 hari penggunaan.
-                        $jumlahHari = $tanggalMulai->diffInDays($tanggalSelesai) + 1;
-
-                        // 4. Kalkulasi subtotal untuk item ini
-                        // (Harga per hari * Jumlah Hari) + Harga Rute (jika ada)
-                        $subTotalDarat = (($hargaPerHari * $jumlahHari) + $hargaRute);
-
-                        // 5. Tambahkan ke total server
-                        $serverTotalAmount += $subTotalDarat;
-
-                    } catch (\Exception $e) {
-                        // Tangani jika format tanggal salah/invalid
-                        // info("Error calculating transport cost: " . $e->getMessage());
-                    }
-                }
-            }
-
-            // Kalkulasi Harga Dokumen
-            foreach ($service->documents as $doc) {
-                // Asumsi: CustomerDocument punya kolom 'harga' & 'jumlah'
-                $serverTotalAmount += ($doc->harga ?? 0) * ($doc->jumlah ?? 0);
-            }
-
-            foreach ($service->hotels as $hotel) {
-
-                // Safety check: pastikan kolom-kolom ada isinya
-                if ($hotel->tanggal_checkin && $hotel->tanggal_checkout && $hotel->harga_perkamar > 0 && $hotel->jumlah_type > 0) {
-
-                    try {
-                        // 1. Ubah string tanggal menjadi objek Carbon
-                        $checkin = Carbon::parse($hotel->tanggal_checkin);
-                        $checkout = Carbon::parse($hotel->tanggal_checkout);
-
-                        // 2. Hitung jumlah malam.
-                        // diffInDays() adalah cara paling aman. Cth: checkout 25 - checkin 22 = 3 hari
-                        $jumlah_malam = $checkin->diffInDays($checkout);
-
-                        // 3. Jika jumlah malam adalah 0 (misal checkin/checkout di hari yg sama),
-                        // kita anggap itu minimal 1 malam.
-                        if ($jumlah_malam <= 0) {
-                            $jumlah_malam = 1;
-                        }
-
-                        // 4. Kalkulasi subtotal untuk baris ini
-                        $subTotalHotel = ($hotel->harga_perkamar * $hotel->jumlah_type) * $jumlah_malam;
-
-                        // 5. Tambahkan ke total server
-                        $serverTotalAmount += $subTotalHotel;
-
-                    } catch (\Exception $e) {
-                        // Tangani jika format tanggal salah/invalid, log error jika perlu
-                        // info($e->getMessage());
-                    }
-                }
-            }
-
-            // Kalkulasi Harga Badal
-            foreach ($service->badals as $badal) {
-                $serverTotalAmount += $badal->price ?? 0; // Asumsi: Badal punya kolom 'price'
-            }
-
-            // Kalkulasi Harga Meals
-            foreach ($service->meals as $mealCustomer) { // Asumsi relasi namanya 'meals' -> MealCustomer
-                // Asumsi: MealCustomer punya relasi 'mealItem' ke MealItem yg punya 'price'
-                // dan MealCustomer punya kolom 'jumlah'
-                $serverTotalAmount += ($mealCustomer->mealItem->price ?? 0) * ($mealCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
-            }
-
-            // Kalkulasi Harga Guides (Pendamping)
-            foreach ($service->guides as $guideCustomer) { // Asumsi relasi namanya 'guides' -> GuideCustomer
-                // Asumsi: GuideCustomer punya relasi 'guideItem' ke GuideItems yg punya 'harga'
-                // dan GuideCustomer punya kolom 'jumlah'
-                $serverTotalAmount += ($guideCustomer->guideItem->harga ?? 0) * ($guideCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
-            }
-
-            // Kalkulasi Harga Tours
-            foreach ($service->tours as $tour) { // $tour adalah instance Model Tour
-                // Ambil harga dari relasi (gunakan casting float untuk keamanan)
-                $tourPrice = (float) ($tour->tourItem->price ?? 0); // Harga dasar tour (dari TourItem)
-                $transportPrice = (float) ($tour->transportation->harga ?? 0); // Harga transport (dari Transportation)
-
-                // Tambahkan ke total server
-                $serverTotalAmount += ($tourPrice + $transportPrice);
-            }
-
-            // Kalkulasi Harga Wakaf
-            foreach ($service->wakafs as $wakafCustomer) { // Asumsi relasi namanya 'wakafs' -> WakafCustomer
-                // Asumsi: WakafCustomer punya relasi 'wakafItem' ke Wakaf yg punya 'harga'
-                // dan WakafCustomer punya kolom 'jumlah'
-                $serverTotalAmount += ($wakafCustomer->wakaf->harga ?? 0) * ($wakafCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
-            }
-
-            // Kalkulasi Harga Dorongan
-            foreach ($service->dorongans as $doronganOrder) { // Asumsi relasi namanya 'dorongans' -> DoronganOrder
-                // Asumsi: DoronganOrder punya relasi 'doronganItem' ke Dorongan yg punya 'price'
-                // dan DoronganOrder punya kolom 'jumlah'
-                $serverTotalAmount += ($doronganOrder->dorongan->price ?? 0) * ($doronganOrder->jumlah ?? 0); // Sesuaikan nama relasi/kolom
-            }
-
-            // Kalkulasi Harga Content
-            foreach ($service->contents as $contentCustomer) { // Asumsi relasi namanya 'contents' -> ContentCustomer
-                // Asumsi: ContentCustomer punya relasi 'contentItem' ke ContentItem yg punya 'price'
-                // dan ContentCustomer punya kolom 'jumlah'
-                $serverTotalAmount += ($contentCustomer->content->price ?? 0) * ($contentCustomer->jumlah ?? 0); // Sesuaikan nama relasi/kolom
-            }
-
-            // ... Tambahkan kalkulasi untuk item lain jika ada (misal: Handling, Reyal jika ada biayanya) ...
-
-            // ----------------------------------------------------
-            // BUAT ORDER DENGAN TOTAL YANG AMAN DARI SERVER
-            // ----------------------------------------------------
-            // Hapus baris lama: $totalAmount = (float) $request->input('total_amount', 0);
             Order::create([
                 'service_id' => $service->id,
                 'invoice' => 'INV-' . time(),
-                'total_estimasi' => $serverTotalAmount,     // Simpan hasil hitung ke estimasi
-                'total_amount_final' => null,             // Harga final masih KOSONG
+                'total_estimasi' => $serverTotalAmount,
+                'total_amount_final' => null,
                 'total_yang_dibayarkan' => 0,
-                'sisa_hutang' => $serverTotalAmount,      // Sisa hutang = estimasi awal
+                'sisa_hutang' => $serverTotalAmount,
                 'status_pembayaran' => 'belum_bayar',
                 'status_harga' => 'provisional'
             ]);
@@ -992,7 +290,6 @@ class ServicesController extends Controller
             return redirect()->route('admin.services.show', $service)->with('success', 'Data service berhasil disimpan.');
         } catch (\Exception $e) {
             DB::rollBack();
-
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['msg' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
@@ -1050,7 +347,6 @@ class ServicesController extends Controller
         return view('admin.services.show', compact('service'));
     }
 
-
     public function nego($id)
     {
         // Eager load semua relasi yang mungkin dibutuhkan di view
@@ -1098,7 +394,6 @@ class ServicesController extends Controller
         ]);
     }
 
-
     public function storeBerkas(Request $request, $id)
     {
         $service = Service::findOrFail($id);
@@ -1130,21 +425,12 @@ class ServicesController extends Controller
         return redirect()->route('admin.services')->with('success', 'Berkas berhasil diupload.');
     }
 
-
-
-    /**
-     * Tampilkan daftar berkas.
-     *
-     * @return \Illuminate\View\View
-     */
     public function showFile($id)
     {
-
         $service = Service::findOrFail($id);
         $files = File::where('service_id', $service->id)->get();
         return view('admin.services.show_file', compact('files', 'service'));
     }
-
 
     public function destroy($id)
     {
@@ -1551,7 +837,6 @@ class ServicesController extends Controller
             'total_jamaah' => $request->total_jamaah,
         ])->with('success', 'Data service berhasil diperbarui dengan status NEGO.');
     }
-
     public function edit($id)
     {
         $service = Service::with([
@@ -1589,7 +874,6 @@ class ServicesController extends Controller
 
         return view('admin.services.edit', $data);
     }
-
     public function update(Request $request, $id)
     {
         $service = Service::findOrFail($id);
@@ -2249,7 +1533,6 @@ class ServicesController extends Controller
         }
     }
 
-
     private function deleteServiceItems(Service $service)
     {
         $service->hotels()->delete();
@@ -2309,28 +1592,6 @@ class ServicesController extends Controller
         }
     }
 
-    // private function handleHotelItems(Request $request, Service $service)
-    // {
-    //     if ($request->filled('nama_hotel')) {
-    //         foreach ($request->nama_hotel as $i => $namaHotel) {
-    //             foreach ($request->type as $t => $type) {
-    //                 if (empty($namaHotel))
-    //                     continue;
-    //                 $hotel = $service->hotels()->create([
-    //                     'nama_hotel' => $namaHotel,
-    //                     'tanggal_checkin' => $request->tanggal_checkin[$i] ?? null,
-    //                     'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
-    //                     'type' => $type,
-    //                     'jumlah_kamar' => $request->jumlah_kamar[$i],
-    //                     'harga_perkamar' => "0",
-    //                     'jumlah_type' => $request->jumlah_type[$i],
-    //                     'catatan' => $request->keterangan[$i]
-    //                 ]);
-    //             }
-    //         }
-    //     }
-    // }
-
     private function handleTransportationItems(Request $request, Service $service)
     {
         // ✈️ Tiket Pesawat
@@ -2377,7 +1638,6 @@ class ServicesController extends Controller
             }
         }
     }
-
 
     private function handleHandlingItems(Request $request, Service $service)
     {
@@ -2435,7 +1695,6 @@ class ServicesController extends Controller
         }
     }
 
-
     private function handleGuideItems(Request $request, Service $service)
     {
         if ($request->filled('jumlah_pendamping')) {
@@ -2456,7 +1715,6 @@ class ServicesController extends Controller
             }
         }
     }
-
 
     private function handleTourItems(Request $request, Service $service)
     {
@@ -2570,7 +1828,6 @@ class ServicesController extends Controller
             ->delete();
     }
 
-
     private function handleReyalItems(Request $request, Service $service)
     {
         // 1. Validasi semua input terlebih dahulu
@@ -2611,33 +1868,6 @@ class ServicesController extends Controller
             ]);
         }
     }
-    // private function handleReyalItems(Request $request, Service $service)
-    // {
-    //     $tipe = $request->input('tipe');
-    //     $tanggalPenyerahan = $request->input('tanggal_penyerahan');
-    //     if ($tanggalPenyerahan) {
-    //         if ($tipe === 'tamis') {
-    //             $service->exchanges()->create([
-    //                 'tipe' => 'tamis',
-    //                 'jumlah_input' => $request->input('jumlah_rupiah'),
-    //                 'kurs' => $request->input('kurs_tamis'),
-    //                 'hasil' => $request->input('hasil_tamis'),
-    //                 'tanggal_penyerahan' => $tanggalPenyerahan,
-    //             ]);
-    //         }
-
-    //         if ($tipe === 'tumis') {
-    //             $service->exchanges()->create([
-    //                 'tipe' => 'tumis',
-    //                 'jumlah_input' => $request->input('jumlah_reyal'),
-    //                 'kurs' => $request->input('kurs_tumis'),
-    //                 'hasil' => $request->input('hasil_tumis'),
-    //                 'tanggal_penyerahan' => $tanggalPenyerahan,
-    //             ]);
-    //         }
-    //     }
-    // }
-
 
     private function handleWakafItems(Request $request, Service $service)
     {
@@ -2671,7 +1901,6 @@ class ServicesController extends Controller
         }
     }
 
-
     private function handleContentItems(Request $request, Service $service)
     {
         if ($request->filled('jumlah_konten')) {
@@ -2688,7 +1917,6 @@ class ServicesController extends Controller
         }
     }
 
-
     private function handleBadalItems(Request $request, Service $service)
     {
         if ($request->has('nama_badal')) {
@@ -2703,6 +1931,117 @@ class ServicesController extends Controller
                 }
             }
         }
+    }
+
+    /**
+     * Helper: Menghitung total harga service secara server-side
+     * Digunakan oleh method store() dan update()
+     */
+    private function calculateTotalServicePrice(Service $service): float
+    {
+        $serverTotalAmount = 0;
+
+        // Refresh relasi agar data yang diambil adalah data terbaru dari DB
+        $service->load([
+            'documents',
+            'hotels',
+            'badals',
+            'meals.mealItem',
+            'guides.guideItem',
+            'tours.tourItem',
+            'tours.transportation',
+            'wakafs.wakaf',
+            'dorongans.dorongan',
+            'contents.content',
+            'transportationItem.transportation',
+            'transportationItem.route'
+        ]);
+
+        // 1. Transportasi Darat
+        foreach ($service->transportationItem as $item) {
+            if ($item->transportation && $item->route && $item->dari_tanggal && $item->sampai_tanggal) {
+                try {
+                    $hargaPerHari = $item->transportation->harga ?? 0;
+                    $hargaRute = $item->route->price ?? 0;
+                    $tanggalMulai = Carbon::parse($item->dari_tanggal);
+                    $tanggalSelesai = Carbon::parse($item->sampai_tanggal);
+                    $jumlahHari = $tanggalMulai->diffInDays($tanggalSelesai) + 1;
+                    $serverTotalAmount += (($hargaPerHari * $jumlahHari) + $hargaRute);
+                } catch (\Exception $e) {
+                }
+            }
+        }
+
+        // 2. Hotel
+        foreach ($service->hotels as $hotel) {
+            if ($hotel->tanggal_checkin && $hotel->tanggal_checkout && $hotel->harga_perkamar > 0 && $hotel->jumlah_type > 0) {
+                try {
+                    $checkin = Carbon::parse($hotel->tanggal_checkin);
+                    $checkout = Carbon::parse($hotel->tanggal_checkout);
+                    $jumlah_malam = $checkin->diffInDays($checkout);
+                    if ($jumlah_malam <= 0)
+                        $jumlah_malam = 1;
+                    $serverTotalAmount += ($hotel->harga_perkamar * $hotel->jumlah_type) * $jumlah_malam;
+                } catch (\Exception $e) {
+                }
+            }
+        }
+
+        // 3. Dokumen
+        foreach ($service->documents as $doc) {
+            $serverTotalAmount += ($doc->harga ?? 0) * ($doc->jumlah ?? 0);
+        }
+
+        // 4. Badal
+        foreach ($service->badals as $badal) {
+            $serverTotalAmount += $badal->price ?? 0;
+        }
+
+        // 5. Meals
+        foreach ($service->meals as $mealCustomer) {
+            $serverTotalAmount += ($mealCustomer->mealItem->price ?? 0) * ($mealCustomer->jumlah ?? 0);
+        }
+
+        // 6. Guides
+        foreach ($service->guides as $guideCustomer) {
+            $serverTotalAmount += ($guideCustomer->guideItem->harga ?? 0) * ($guideCustomer->jumlah ?? 0);
+        }
+
+        // 7. Tours (Harga Tour + Harga Transportasi Tour)
+        foreach ($service->tours as $tour) {
+            $tourPrice = (float) ($tour->tourItem->price ?? 0);
+            $transportPrice = (float) ($tour->transportation->harga ?? 0);
+            $serverTotalAmount += ($tourPrice + $transportPrice);
+        }
+
+        // 8. Wakaf
+        foreach ($service->wakafs as $wakafCustomer) {
+            $serverTotalAmount += ($wakafCustomer->wakaf->harga ?? 0) * ($wakafCustomer->jumlah ?? 0);
+        }
+
+        // 9. Dorongan
+        foreach ($service->dorongans as $doronganOrder) {
+            $serverTotalAmount += ($doronganOrder->dorongan->price ?? 0) * ($doronganOrder->jumlah ?? 0);
+        }
+
+        // 10. Content
+        foreach ($service->contents as $contentCustomer) {
+            $serverTotalAmount += ($contentCustomer->content->price ?? 0) * ($contentCustomer->jumlah ?? 0);
+        }
+
+        // 11. Handling & Lainnya (Tambahkan logika handling jika handling memiliki harga fix per pax)
+        // Jika HandlingHotel / HandlingPlane punya harga dan jumlah, tambahkan disini.
+        // Contoh:
+        foreach ($service->handlings as $handling) {
+            foreach ($handling->handlingHotels as $hh) {
+                $serverTotalAmount += ($hh->harga ?? 0) * ($hh->pax ?? 0);
+            }
+            foreach ($handling->handlingPlanes as $hp) {
+                $serverTotalAmount += ($hp->harga ?? 0) * ($hp->jumlah_jamaah ?? 0);
+            }
+        }
+
+        return $serverTotalAmount;
     }
 
     public function bayar(Order $order)
