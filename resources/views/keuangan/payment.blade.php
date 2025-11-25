@@ -268,7 +268,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="text-center py-5" style="color: var(--text-secondary);">
+                                    <td colspan="5" class="text-center py-5" style="color: var(--text-secondary);">
                                         <i class="bi bi-inbox fs-1 d-block mb-3"></i>
                                         Belum ada data pembayaran.
                                     </td>
