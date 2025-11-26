@@ -1070,11 +1070,6 @@ class ServicesController extends Controller
         ])->with('success', 'Data service berhasil diperbarui dengan status NEGO.');
     }
 
-
-
-
-
-
     public function edit($id)
     {
         $service = Service::with([
