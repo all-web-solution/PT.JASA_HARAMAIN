@@ -222,10 +222,7 @@
                         <tr>
                             <th>No</th>
                             <th>Travel</th>
-                            <th>Nama Tour</th>
-                            <th>Transportasi</th>
                             <th>Tgl Keberangkatan</th>
-                            <th>Supplier</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
@@ -258,17 +255,8 @@
                                     {{ $tour->service?->pelanggan?->nama_travel ?? 'N/A' }}
                                 </td>
 
-                                {{-- Kolom Nama Tour --}}
-                                <td>{{ $tour->tourItem?->name ?? 'N/A' }}</td>
-
-                                {{-- Kolom Transportasi --}}
-                                <td>{{ $tour->transportation?->nama ?? '-' }}</td>
-
                                 {{-- Kolom Tanggal Keberangkatan --}}
                                 <td>{{ \Carbon\Carbon::parse($tour->tanggal_keberangkatan)->isoFormat('D MMM Y') }}</td>
-
-                                {{-- Kolom Harga Jual --}}
-                                <td>{{ $tour->supplier ?? '-        ' }}</td>
 
                                 {{-- Kolom Status --}}
                                 <td>
@@ -278,13 +266,9 @@
                                 {{-- Kolom Aksi --}}
                                 <td>
                                     {{-- Ganti 'tour.show' & 'tour.edit' dengan nama route Anda --}}
-                                    <a href="{{ route('tour.customer.show', $tour->id) }}" class="btn-action btn-view"
+                                    <a href="{{ route('tour.customer.show', $tour->service_id) }}" class="btn-action btn-view"
                                         title="View">
                                         <i class="bi bi-eye-fill"></i>
-                                    </a>
-                                    <a href="{{ route('tour.customer.edit', $tour->id) }}" class="btn-action">
-                                        {{-- Ganti # dengan route 'tour.edit' --}}
-                                        <i class="bi bi-pencil-fill"></i>
                                     </a>
                                 </td>
                             </tr>

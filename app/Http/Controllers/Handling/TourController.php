@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\TourItem;
 use App\Models\Transportation;
 use App\Models\TransportationItem;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class TourController extends Controller
@@ -54,31 +55,33 @@ class TourController extends Controller
     }
    public function customer()
     {
-        // 1. Ambil data Tour (per item) dan lakukan paginasi
-        //    Kita gunakan 'with' (Eager Loading) agar cepat
-        $tours = Tour::with([
-                        'service.pelanggan', // Untuk Nama Travel
-                        'tourItem',          // Untuk Nama Tour
-                        'transportation'     // Untuk Nama Transportasi
-                    ])
-                    ->latest() // Urutkan berdasarkan yang terbaru
-                    ->paginate(10); // Ambil 15 item per halaman
+        // 1. Ambil ID tour terbaru untuk setiap service_id (agar unik per travel)
+        $latestIds = Tour::select(DB::raw('MAX(id) as id'))
+            ->groupBy('service_id')
+            ->pluck('id');
+
+        // 2. Ambil data berdasarkan ID unik tersebut
+        $tours = Tour::with('service.pelanggan')
+            ->whereIn('id', $latestIds)
+            ->latest()
+            ->paginate(10);
 
         // 2. Kirim data paginator ke view
         return view('handling.tour.customer', compact('tours')); // Sesuaikan path view jika perlu
     }
 
-    public function showCustomerTour(Tour $tour)
+    public function showCustomerTour($service_id)
     {
-        // $tour otomatis ditemukan oleh Laravel (Route Model Binding)
+        // 1. Cari data Service & Pelanggan berdasarkan service_id
+        $service = Service::with('pelanggan')->findOrFail($service_id);
 
-        // Load relasi yang dibutuhkan oleh view
-        $tour->load('service.pelanggan', 'tourItem', 'transportation');
+        // 2. Ambil SEMUA item tour yang milik service_id tersebut
+        $tourList = Tour::where('service_id', $service_id)
+                    ->get();
 
-        // Asumsi nama view Anda adalah 'handling.tour.show'
-        return view('handling.tour.show', [
-            'tour' => $tour // Mengirim variabel $tour
-        ]);
+        // 3. Kirim ke view
+        // Kita kirim $service (untuk info customer) dan $tourList (untuk tabel)
+        return view('handling.tour.show', compact('service', 'tourList'));
     }
 
     public function editCustomerTour(Tour $tour)
