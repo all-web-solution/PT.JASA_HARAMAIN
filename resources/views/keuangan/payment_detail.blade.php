@@ -667,7 +667,7 @@
             </div>
         </div>
 
-        <div class="card">
+        {{-- <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
                     <i class="bi bi-credit-card"></i>
@@ -704,7 +704,7 @@
                     </button>
                 </form>
             </div>
-        </div>
+        </div> --}}
 
         <div class="card">
             <div class="card-header">
