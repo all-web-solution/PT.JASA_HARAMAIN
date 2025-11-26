@@ -163,9 +163,9 @@ class KeuanganController extends Controller
             Transaction::create([
                 'order_id'          => $order->id,
                 'jumlah_bayar'      => $jumlahBayarInput,
-                'tanggal_bayar'     => now(), // Atau dari input $request->tanggal_bayar
+                'tanggal_bayar'     => $request->tanggal_bayar,
                 'bukti_pembayaran'  => $pathBuktiPembayaran,
-                'status'            => 'verified', // Asumsi admin yang input langsung verified
+                'status'            => $request->status, // Asumsi admin yang input langsung verified
                 'catatan'           => $request->catatan ?? 'Pembayaran Cicilan/Pelunasan',
             ]);
 

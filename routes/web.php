@@ -72,6 +72,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/payment_proff/{order}', [OrderController::class, 'payment_proff'])->name('payment.proff');
     // Route::get('/payment_proff/{order}/create', [OrderController::class, 'payment_proff_create'])->name('payment.proff.create');
     Route::post('/payment_proff/{order}/create', [OrderController::class, 'payment_proff_store'])->name('payment.proff.store');
+    Route::post('/payment/pay/{service_id}', [App\Http\Controllers\KeuanganController::class, 'pay'])->name('keuangan.payment.pay');
 });
 
 Route::middleware(['auth', 'hotel'])->group(function () {
@@ -148,7 +149,7 @@ Route::middleware(['auth', 'handling'])->group(function () {
         Route::put('/update/{id}', [TourController::class, 'update'])->name('handling.tour.update');
         Route::delete('/delete/{id}', [TourController::class, 'destroy'])->name('handling.tour.destroy');
         Route::get('/customer', [TourController::class, 'customer'])->name('handling.tour.customer');
-        Route::get('/detail/{tour}', [TourController::class, 'showCustomerTour'])->name('tour.customer.show'); // Nama route ya
+        Route::get('/detail/{service_id}', [TourController::class, 'showCustomerTour'])->name('tour.customer.show'); // Nama route ya
         Route::get('/{tour}/edit', [TourController::class, 'editCustomerTour'])->name('tour.customer.edit');
         Route::put('/{tour}', [TourController::class, 'updateCustomerTour'])->name('tour.customer.update');
         Route::get('/supplier/{id}', [TourController::class, 'showSupplier'])->name('tour.supplier.show');
@@ -290,5 +291,5 @@ Route::middleware(['auth', 'keuangan'])->group(function () {
     Route::get('/keuangan', [App\Http\Controllers\KeuanganController::class, 'index'])->name('keuangan.index');
     Route::get('/payment', [App\Http\Controllers\KeuanganController::class, 'payment'])->name('keuangan.payment');
     Route::get('/payment/detail/{id}', [App\Http\Controllers\KeuanganController::class, 'payment_detail'])->name('keuangan.payment.detail');
-    Route::post('/payment/pay/{service_id}', [App\Http\Controllers\KeuanganController::class, 'pay'])->name('keuangan.payment.pay');
+    // Route::post('/payment/pay/{service_id}', [App\Http\Controllers\KeuanganController::class, 'pay'])->name('keuangan.payment.pay');
 });
