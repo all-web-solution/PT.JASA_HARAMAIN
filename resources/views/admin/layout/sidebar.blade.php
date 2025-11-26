@@ -61,18 +61,6 @@
     @elseif (auth()->user()->role === 'handling')
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('catering.index*') || request()->routeIs('catering.edit') || request()->routeIs('catering.create') || request()->routeIs('catering.show') ? 'active' : '' }}"
-                    href="{{ route('catering.index') }}">
-                    <i class="bi bi-egg-fried"></i> Catering
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('catering.customer*') ? 'active' : '' }}"
-                    href="{{ route('catering.customer') }}">
-                    <i class="bi bi-person-check"></i> Catering Customer
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('handling.handling.index*') ? 'active' : '' }}"
                     href="{{ route('handling.handling.index') }}">
                     <i class="bi bi-airplane"></i> Handling Pesawat
@@ -85,15 +73,27 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('handling.pendamping.index*') ? 'active' : '' }}"
-                    href="{{ route('handling.pendamping.index') }}">
-                    <i class="bi bi-person-plus"></i> Pendamping
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('handling.pendamping.customer*') ? 'active' : '' }}"
                     href="{{ route('handling.pendamping.customer') }}">
                     <i class="bi bi-people"></i> Pendamping Customer
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('handling.tour.index*') ? 'active' : '' }}"
+                    href="{{ route('handling.tour.customer') }}">
+                    <i class="bi bi-map"></i> Tour Customer
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('catering.customer*') ? 'active' : '' }}"
+                    href="{{ route('catering.customer') }}">
+                    <i class="bi bi-person-check"></i> Catering Customer
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('handling.pendamping.index*') ? 'active' : '' }}"
+                    href="{{ route('handling.pendamping.index') }}">
+                    <i class="bi bi-person-plus"></i> Pendamping
                 </a>
             </li>
             <li class="nav-item">
@@ -103,9 +103,9 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('handling.tour.index*') ? 'active' : '' }}"
-                    href="{{ route('handling.tour.customer') }}">
-                    <i class="bi bi-map"></i> Tour Customer
+                <a class="nav-link {{ request()->routeIs('catering.index*') || request()->routeIs('catering.edit') || request()->routeIs('catering.create') || request()->routeIs('catering.show') ? 'active' : '' }}"
+                    href="{{ route('catering.index') }}">
+                    <i class="bi bi-egg-fried"></i> Catering
                 </a>
             </li>
         </ul>

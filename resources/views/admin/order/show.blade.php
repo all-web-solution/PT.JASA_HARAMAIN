@@ -268,13 +268,8 @@
             font-weight: 600;
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
-            text-align: left;
+            text-align: center;
             white-space: nowrap;
-        }
-
-        .table thead th.right-align,
-        .table tbody td.right-align {
-            text-align: right;
         }
 
         .table tbody tr {
@@ -291,7 +286,7 @@
         .table tbody td {
             padding: 1.25rem;
             vertical-align: middle;
-            text-align: left;
+            text-align: center;
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -309,8 +304,16 @@
         }
 
         /* == Form Style == */
+        .payment-form-container {
+            padding: 1rem;
+        }
+
         .form-group {
             margin-bottom: 1.5rem;
+        }
+
+        .form-column {
+            columns: 3;
         }
 
         .form-label {
@@ -659,6 +662,52 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
+                    <i class="bi bi-credit-card"></i>
+                    <span>Input Pembayaran</span>
+                </h5>
+            </div>
+            <div class="payment-form-container">
+                <form action="{{ route('keuangan.payment.pay', $order->service_id) }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="jumlah_bayar" class="form-label">Jumlah yang Dibayarkan (SAR)</label>
+                        <input type="number" step="any" class="form-control" id="jumlah_bayar" name="jumlah_bayar"
+                            placeholder="Contoh: 1500.50" required>
+                    </div>
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="foto" class="form-label">Bukti Pembayaran</label>
+                            <input type="file" class="form-control" id="foto" name="bukti_pembayaran"
+                                accept="image/*">
+                        </div>
+                        <div class="form-group">
+                            <label for="tanggal_bayar" class="form-label">Tanggal Bayar</label>
+                            <input type="date" class="form-control" id="tanggal_bayar" name="tanggal_bayar">
+                        </div>
+                        <div class="form-group">
+                            <label for="jumlah_bayar" class="form-label">Status bukti pembayaran</label>
+                            <select class="form-control" name="status" id="travel-select" required>
+                                <option value="">Pilih status</option>
+                                <option value="approve">Approve</option>
+                                <option value="unapprove">Unapprove</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="catatan" class="form-label">Catatan</label>
+                        <input type="text" class="form-control" id="catatan" name="catatan">
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-check-circle"></i> Simpan Pembayaran
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
                     <i class="bi bi-hourglass-split"></i>
                     <span class="title-text">Riwayat Tagihan & Pembayaran</span>
                 </h5>
@@ -670,16 +719,15 @@
                             <tr>
                                 <th>No.</th>
                                 <th>Invoice</th>
-                                <th class="right-align">Total Tagihan</th>
-                                <th class="right-align">Total Dibayar</th>
-                                <th class="right-align">Sisa Hutang</th>
+                                <th>Tanggal Bayar</th>
+                                <th>Total Dibayar</th>
                                 <th>Status</th>
                                 <th>Bukti</th>
                             </tr>
                         </thead>
                         <tbody>
                             {{-- $orders adalah SEMUA order terkait service_id ini --}}
-                            @forelse ($orders as $item)
+                            @forelse ($transactions as $item)
                                 @php
                                     $status = strtolower($item->status_pembayaran);
                                     $statusClass = '';
@@ -693,16 +741,12 @@
                                 @endphp
                                 <tr>
                                     <td data-label="No.">{{ $loop->iteration }}</td>
-                                    <td data-label="Invoice">{{ $item->invoice }}</td>
-                                    <td data-label="Total Tagihan" class="right-align">Rp
-                                        {{ number_format($item->total_amount ?? $item->total_amount_final, 0, ',', '.') }}
-                                    </td>
-                                    <td data-label="Total Dibayar" class="right-align">Rp
-                                        {{ number_format($item->total_yang_dibayarkan ?? 0, 0, ',', '.') }}</td>
-                                    <td data-label="Sisa Hutang" class="right-align">Rp
-                                        {{ number_format($item->sisa_hutang ?? 0, 0, ',', '.') }}</td>
+                                    <td data-label="Invoice">{{ $item->order->invoice }}</td>
+                                    <td data-label="Tanggal Bayar">{{ $item->tanggal_bayar->format('d M y') }}</td>
+                                    <td data-label="Total Dibayar">Rp
+                                        {{ number_format($item->jumlah_bayar ?? 0, 0, ',', '.') }}</td>
                                     <td data-label="Status"><span
-                                            class="badge {{ $statusClass }}">{{ $item->status_pembayaran }}</span></td>
+                                            class="badge {{ $statusClass }}">{{ $item->status }}</span></td>
                                     <td data-label="Bukti">
                                         @if ($item->bukti_pembayaran)
                                             <a href="{{ asset('storage/' . $item->bukti_pembayaran) }}" target="_blank"

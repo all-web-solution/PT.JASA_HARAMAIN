@@ -181,7 +181,7 @@
                     <i class="bi bi-map-fill"></i> Edit Order Tour
                 </h5>
                 {{-- Arahkan kembali ke detail tour --}}
-                <a href="{{ route('tour.customer.show', $tour->id) }}" class="btn btn-secondary">
+                <a href="{{ route('tour.customer.show', $tour->service_id) }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>

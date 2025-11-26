@@ -18,6 +18,7 @@ use App\Models\Pelanggan;
 use App\Models\Plane;
 use App\Models\Service;
 use App\Models\Tour;
+use App\Models\Transaction;
 use App\Models\TransportationItem;
 use App\Models\UploadPayment;
 use App\Models\WakafCustomer;
@@ -138,9 +139,11 @@ class OrderController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $transactions = Transaction::where('order_id', $order->service_id)->get();
+
         $semuaItem = $order->service->getAllItemsFromService();
 
-        return view('admin.order.show', compact('order', 'orders', 'semuaItem'));
+        return view('admin.order.show', compact('order', 'orders', 'transactions', 'semuaItem'));
     }
 
     public function edit($id)
