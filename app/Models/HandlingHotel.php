@@ -27,6 +27,6 @@ class HandlingHotel extends Model
 
     public function handling()
     {
-        return $this->belongsTo(Handling::class, 'id');
+        return $this->belongsTo(Handling::class, 'handling_id');
     }
 }
