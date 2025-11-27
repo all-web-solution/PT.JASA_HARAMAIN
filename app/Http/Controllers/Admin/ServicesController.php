@@ -941,26 +941,47 @@ class ServicesController extends Controller
 
             if ($request->has('services') && in_array('hotel', $request->services)) {
 
-                if ($request->has('tanggal_checkin')) {
+                // 1. Hapus data lama terlebih dahulu agar tidak duplikat
+                Hotel::where('service_id', $service->id)->delete();
 
-                    Hotel::where('service_id', $service->id)->delete();
+                // 2. Proses Data Baru (Menggunakan struktur 'hotel_data')
+                if ($request->filled('hotel_data')) {
 
-                    foreach ($request->tanggal_checkin as $i => $checkin) {
-                        if (empty($checkin))
+                    foreach ($request->hotel_data as $i => $types) {
+                        // $i = index hotel (0, 1, 2...)
+                        // $types = array tipe kamar yang dipilih untuk hotel tersebut
+
+                        $namaHotel = $request->nama_hotel[$i] ?? null;
+
+                        // Validasi: Lewati jika nama hotel kosong
+                        if (empty($namaHotel))
                             continue;
 
-                        Hotel::create([
-                            'service_id' => $service->id,
-                            'tanggal_checkin' => $checkin,
-                            'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
-                            'nama_hotel' => $request->nama_hotel[$i] ?? null,
-                            'jumlah_kamar' => $request->jumlah_kamar[$i] ?? 0,
-                            'type' => $request->type_hotel[$i] ?? 'Standard',
-                            'jumlah_type' => $request->jumlah_type[$i] ?? 0,
-                        ]);
+                        // Loop setiap TIPE KAMAR yang dipilih di form
+                        foreach ($types as $typeId => $typeData) {
+
+                            $jumlahPerTipe = $typeData['jumlah'] ?? 0;
+
+                            // Hanya simpan jika jumlah tipe > 0
+                            if ($jumlahPerTipe > 0) {
+                                Hotel::create([
+                                    'service_id' => $service->id,
+
+                                    // Data Umum Hotel
+                                    'nama_hotel' => $namaHotel,
+                                    'tanggal_checkin' => $request->tanggal_checkin[$i] ?? null,
+                                    'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
+                                    'jumlah_kamar' => $request->jumlah_kamar[$i] ?? 0, // Total seluruh kamar
+                                    'catatan' => $request->keterangan[$i] ?? null,
+
+                                    // Data Spesifik Tipe Kamar (Dari hotel_data)
+                                    'type' => $typeData['type_name'] ?? 'Standard',
+                                    'jumlah_type' => $jumlahPerTipe,
+                                    'harga_perkamar' => str_replace(['.', ','], '', $typeData['harga'] ?? 0),
+                                ]);
+                            }
+                        }
                     }
-                } else {
-                    Hotel::where('service_id', $service->id)->delete();
                 }
 
             } else {

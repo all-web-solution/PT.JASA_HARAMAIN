@@ -947,7 +947,7 @@
                                                                 data-name="{{ $type->nama_tipe }}">
                                                                 <div class="service-name">{{ $type->nama_tipe }}</div>
                                                                 <input type="checkbox" name="type[]"
-                                                                    value="{{ $type->nama_tipe }}">
+                                                                    value="{{ $type->nama_tipe }}" class="d-none">
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -1045,7 +1045,7 @@
                                                             data-name="{{ $type->nama_tipe }}">
                                                             <div class="service-name">{{ $type->nama_tipe }}</div>
                                                             <input type="checkbox" name="type[]"
-                                                                value="{{ $type->nama_tipe }}">
+                                                                value="{{ $type->nama_tipe }}" class="d-none">
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -2411,74 +2411,149 @@
                 }
             });
 
-            // --- HOTEL SPECIFIC LOGIC ---
+            // --- HOTEL LOGIC (UPDATED FOR CREATE) ---
+
+            // 1. Fungsi Hitung Total Kamar
             function updateJumlahKamarTotal(hotelForm) {
                 let totalKamar = 0;
-                hotelForm.querySelectorAll('.qty-input-hotel[data-is-qty="true"]').forEach(input => {
+                // Cari semua input qty di dalam form hotel ini
+                hotelForm.querySelectorAll('.qty-input-hotel').forEach(input => {
                     totalKamar += parseInt(input.value) || 0;
                 });
+
+                // Update field Total Kamar
                 const target = hotelForm.querySelector('input[name^="jumlah_kamar"]');
-                if (target) target.value = totalKamar;
+                if (target) {
+                    target.value = totalKamar;
+                    // Opsional: Buat readonly agar user tidak edit manual, karena sudah otomatis
+                    // target.readOnly = true;
+                }
             }
 
+            // 2. Fungsi Listener Perubahan Input
             function addQtyChangeListener(input, hotelForm) {
                 input.addEventListener('input', function() {
                     updateJumlahKamarTotal(hotelForm);
                 });
             }
 
+            // 3. Inisialisasi Awal (jika ada data old)
             document.querySelectorAll('.hotel-form').forEach(form => {
                 form.querySelectorAll('.qty-input-hotel').forEach(inp => addQtyChangeListener(inp, form));
                 updateJumlahKamarTotal(form);
             });
 
-            // HOTEL WRAPPER CLICK (Menangani Tipe Kamar)
+            // 4. Event Listener Utama untuk Klik Grid Tipe Kamar
             const hotelWrapper = document.getElementById('hotelWrapper');
             if (hotelWrapper) {
                 hotelWrapper.addEventListener('click', function(e) {
                     const typeItem = e.target.closest('.type-item');
+
                     if (typeItem) {
                         const hotelForm = typeItem.closest('.hotel-form');
                         const container = hotelForm.querySelector('.type-input-container');
+
                         const typeId = typeItem.dataset.typeId;
                         const name = typeItem.dataset.name;
                         const price = parseInt(typeItem.dataset.price) || 0;
+
+                        // Ambil index hotel dari atribut data-index (penting untuk array name)
                         const index = hotelForm.dataset.index;
 
-                        // Handle Checkbox Manual
                         const chk = typeItem.querySelector('input[type="checkbox"]');
                         const existing = container.querySelector(`[data-type-id="${typeId}"]`);
 
                         if (existing) {
-                            // Logika Unselect
+                            // UNSELECT: Hapus input & hapus visual selection
                             existing.remove();
                             typeItem.classList.remove('selected');
-                            if (chk) chk.checked = false; // Uncheck
-                            delete cart[`hotel-${index}-type-${typeId}`];
+                            if (chk) chk.checked = false;
                         } else {
-                            // Logika Select
+                            // SELECT: Tambah visual selection & checkbox
                             typeItem.classList.add('selected');
-                            if (chk) chk.checked = true; // Check
+                            if (chk) chk.checked = true;
 
+                            // Buat Input Baru
                             const div = document.createElement('div');
                             div.className = 'form-group mt-2 bg-white p-3 border rounded';
                             div.dataset.typeId = typeId;
+
+                            // Perhatikan class 'qty-input-hotel' yang ditambahkan di sini
                             div.innerHTML = `
-                            <label class="form-label">Jumlah Kamar (${name})</label>
-                            <input type="number" class="form-control qty-input-hotel" name="hotel_data[${index}][${typeId}][jumlah]" min="1" data-is-qty="true" data-type-id="${typeId}" value="1">
-                            <label class="form-label mt-2">Harga</label>
-                            <input type="text" class="form-control" name="hotel_data[${index}][${typeId}][harga]" value="${price.toLocaleString('id-ID')}" readonly>
-                            <input type="hidden" name="hotel_data[${index}][${typeId}][type_name]" value="${name}">
-                        `;
+                                <label class="form-label">Jumlah Kamar (${name})</label>
+                                <input type="number"
+                                    class="form-control qty-input-hotel"
+                                    name="hotel_data[${index}][${typeId}][jumlah]"
+                                    min="1"
+                                    value="1"
+                                    data-is-qty="true">
+
+                                <label class="form-label mt-2">Harga</label>
+                                <input type="text" class="form-control"
+                                    name="hotel_data[${index}][${typeId}][harga]"
+                                    value="${price.toLocaleString('id-ID')}" readonly>
+
+                                <input type="hidden"
+                                    name="hotel_data[${index}][${typeId}][type_name]"
+                                    value="${name}">
+                            `;
                             container.appendChild(div);
 
+                            // Pasang listener ke input baru agar total berubah saat diketik
                             const newInp = div.querySelector('.qty-input-hotel');
                             addQtyChangeListener(newInp, hotelForm);
-                            updateItemInCart(`hotel-${index}-type-${typeId}`, `Hotel - ${name}`, 1, price);
                         }
+
+                        // Hitung ulang total kamar setiap kali klik (tambah/hapus)
                         updateJumlahKamarTotal(hotelForm);
-                        updateCartUI();
                     }
+                });
+            }
+
+            // 5. Update Logika Tombol "Tambah Hotel"
+            // (Pastikan tombol ID 'addHotel' ada)
+            const addHotelBtn = document.getElementById('addHotel');
+            if (addHotelBtn) {
+                // Clone node untuk membersihkan listener lama jika ada
+                const newBtn = addHotelBtn.cloneNode(true);
+                addHotelBtn.parentNode.replaceChild(newBtn, addHotelBtn);
+
+                newBtn.addEventListener('click', () => {
+                    const template = document.createElement("div");
+                    template.classList.add("hotel-form", "bg-white", "p-3", "border", "mb-3");
+                    template.dataset.index = hotelCounter; // Gunakan counter global hotelCounter
+
+                    // Render HTML Form Hotel Baru
+                    template.innerHTML =
+                        `
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label fw-semibold">Tanggal Checkin</label><input type="date" class="form-control" name="tanggal_checkin[${hotelCounter}]"></div>
+                        <div class="col-md-6"><label class="form-label fw-semibold">Tanggal Checkout</label><input type="date" class="form-control" name="tanggal_checkout[${hotelCounter}]"></div>
+                        <div class="col-12"><label class="form-label fw-semibold">Nama Hotel</label><input type="text" class="form-control" name="nama_hotel[${hotelCounter}]" placeholder="Nama hotel"></div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Tipe Kamar</label>
+                            <div class="service-grid">
+                                @foreach ($types as $type)
+                                    <div class="type-item" data-type-id="{{ $type->id }}" data-price="{{ $type->jumlah }}" data-name="{{ $type->nama_tipe }}">
+                                        <div class="service-name">{{ $type->nama_tipe }}</div>
+                                        <input type="checkbox" name="type[]" value="{{ $type->nama_tipe }}" class="d-none">
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="type-input-container"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <label class="form-label">Total kamar</label>
+                        <input type="number" class="form-control" name="jumlah_kamar[${hotelCounter}]" min="0" value="0" readonly>
+                    </div>
+                    <div class="form-group mt-2"><label class="form-label">Keterangan</label><input type="text" class="form-control" name="keterangan[${hotelCounter}]"></div>
+                    <div class="mt-3 text-end"><button type="button" class="btn btn-danger btn-sm removeHotel">Hapus Hotel</button></div>`;
+
+                    document.getElementById("hotelWrapper").appendChild(template);
+                    hotelCounter++;
                 });
             }
 
