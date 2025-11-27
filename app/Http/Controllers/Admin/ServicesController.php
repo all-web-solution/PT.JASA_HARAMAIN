@@ -233,7 +233,7 @@ class ServicesController extends Controller
     public function create()
     {
         $data = [
-            'pelanggans' => Pelanggan::all(),
+            'pelanggans' => Pelanggan::where('status', 'active')->get(),
             'transportations' => Transportation::all(),
             'guides' => GuideItems::all(),
             'tours' => TourItem::all(),
@@ -287,7 +287,7 @@ class ServicesController extends Controller
             ]);
             DB::commit();
 
-            return redirect()->route('admin.services.show', $service)->with('success', 'Data service berhasil disimpan.');
+            return redirect()->route('admin.services')->with('success', 'Data service berhasil disimpan.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
