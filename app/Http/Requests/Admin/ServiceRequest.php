@@ -126,15 +126,56 @@ class ServiceRequest extends FormRequest
 
             // --- HANDLING ---
             'handlings' => $isHandlingSelected ? 'required|array|min:1' : 'nullable',
+
+            // Handling Hotel (Semua Wajib jika hotel dipilih)
             'nama_hotel_handling' => $isHandlingHotelSelected ? 'required|string|max:255' : 'nullable',
             'tanggal_hotel_handling' => $isHandlingHotelSelected ? 'required|date' : 'nullable',
             'harga_hotel_handling' => $isHandlingHotelSelected ? 'required|numeric|min:0' : 'nullable',
             'pax_hotel_handling' => $isHandlingHotelSelected ? 'required|integer|min:1' : 'nullable',
+            // File Handling Hotel (Required saat Create, Nullable saat Edit/Update)
+            'kode_booking_hotel_handling' => [
+                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingHotelSelected),
+                'nullable',
+                'file',
+                'mimes:jpg,jpeg,png,pdf',
+                'max:5120'
+            ],
+            'rumlis_hotel_handling' => [
+                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingHotelSelected),
+                'nullable',
+                'file',
+                'mimes:jpg,jpeg,png,pdf,xls,xlsx',
+                'max:5120'
+            ],
+            'identitas_hotel_handling' => [
+                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingHotelSelected),
+                'nullable',
+                'file',
+                'mimes:jpg,jpeg,png,pdf',
+                'max:5120'
+            ],
+
+            // Handling Bandara (Semua Wajib jika bandara dipilih)
             'nama_bandara_handling' => $isHandlingBandaraSelected ? 'required|string|max:255' : 'nullable',
             'jumlah_jamaah_handling' => $isHandlingBandaraSelected ? 'required|integer|min:1' : 'nullable',
             'harga_bandara_handling' => $isHandlingBandaraSelected ? 'required|numeric|min:0' : 'nullable',
             'kedatangan_jamaah_handling' => $isHandlingBandaraSelected ? 'required|date' : 'nullable',
             'nama_supir' => $isHandlingBandaraSelected ? 'required|string|max:255' : 'nullable',
+            // File Handling Bandara
+            'paket_info' => [
+                 Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingBandaraSelected),
+                'nullable',
+                'file',
+                'mimes:jpg,jpeg,png,pdf',
+                'max:5120'
+            ],
+            'identitas_koper_bandara_handling' => [
+                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingBandaraSelected),
+                'nullable',
+                'file',
+                'mimes:jpg,jpeg,png,pdf',
+                'max:5120'
+            ],
 
             // --- PENDAMPING ---
             'jumlah_pendamping' => [
@@ -395,19 +436,25 @@ class ServiceRequest extends FormRequest
             'dokumen_id.required_without' => 'Anda memilih layanan Dokumen, wajib memilih minimal satu jenis dokumen (Induk atau Turunan).',
             'child_documents.required_without' => 'Anda memilih layanan Dokumen, wajib memilih minimal satu jenis dokumen (Induk atau Turunan).',
 
-            // Handling
             'handlings.required' => 'Anda memilih layanan Handling, wajib memilih jenis handling (Hotel atau Bandara).',
 
-            'nama_hotel_handling.required' => 'Nama hotel (Handling) wajib diisi.',
-            'tanggal_hotel_handling.required' => 'Tanggal hotel (Handling) wajib diisi.',
-            'harga_hotel_handling.required' => 'Harga hotel (Handling) wajib diisi.',
-            'pax_hotel_handling.required' => 'Jumlah Pax hotel (Handling) wajib diisi.',
+            // Handling Hotel
+            'nama_hotel_handling.required' => 'Nama Hotel (Handling) wajib diisi.',
+            'tanggal_hotel_handling.required' => 'Tanggal pelaksanaan Handling Hotel wajib diisi.',
+            'harga_hotel_handling.required' => 'Harga Handling Hotel wajib diisi.',
+            'pax_hotel_handling.required' => 'Jumlah Pax Handling Hotel wajib diisi.',
+            'kode_booking_hotel_handling.required' => 'File Kode Booking wajib diupload untuk handling hotel.',
+            'rumlis_hotel_handling.required' => 'File Room List wajib diupload untuk handling hotel.',
+            'identitas_hotel_handling.required' => 'File Identitas Koper wajib diupload untuk handling hotel.',
 
-            'nama_bandara_handling.required' => 'Nama bandara wajib diisi.',
-            'jumlah_jamaah_handling.required' => 'Jumlah jamaah (Bandara) wajib diisi.',
-            'harga_bandara_handling.required' => 'Harga handling bandara wajib diisi.',
+            // Handling Bandara
+            'nama_bandara_handling.required' => 'Nama Bandara wajib diisi.',
+            'jumlah_jamaah_handling.required' => 'Jumlah jamaah (Handling Bandara) wajib diisi.',
+            'harga_bandara_handling.required' => 'Harga Handling Bandara wajib diisi.',
             'kedatangan_jamaah_handling.required' => 'Tanggal kedatangan jamaah wajib diisi.',
             'nama_supir.required' => 'Nama supir wajib diisi.',
+            'identitas_koper_bandara_handling.required' => 'File Identitas Koper Bandara wajib diupload.',
+            'paket_info'=> 'File Paket Info wajib diupload.',
 
             // Pendamping
             'jumlah_pendamping.required' => 'Data pendamping wajib diisi.',
@@ -444,5 +491,10 @@ class ServiceRequest extends FormRequest
             'harga_badal.*.required' => 'Harga badal wajib diisi.',
             'tanggal_pelaksanaan_badal.*.required' => 'Tanggal pelaksanaan badal wajib diisi.',
         ];
+    }
+
+    private function hasHandling($type)
+    {
+        return is_array($this->handlings) && in_array($type, $this->handlings);
     }
 }
