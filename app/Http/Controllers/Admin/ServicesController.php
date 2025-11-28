@@ -415,6 +415,9 @@ class ServicesController extends Controller
     public function update(Request $request, $id)
     {
         $service = Service::findOrFail($id);
+
+        
+
         $status = $request->input('action') === 'nego' ? 'nego' : 'deal';
 
         DB::transaction(function () use ($request, $service, $status) {
@@ -1588,15 +1591,34 @@ class ServicesController extends Controller
             $serverTotalAmount += ($contentCustomer->content->price ?? 0) * ($contentCustomer->jumlah ?? 0);
         }
 
-        // 11. Handling & Lainnya (Tambahkan logika handling jika handling memiliki harga fix per pax)
-        // Jika HandlingHotel / HandlingPlane punya harga dan jumlah, tambahkan disini.
-        // Contoh:
+        // 11. Handling & Lainnya (Perbaikan Error Null Given)
         foreach ($service->handlings as $handling) {
-            foreach ($handling->handlingHotels as $hh) {
-                $serverTotalAmount += ($hh->harga ?? 0) * ($hh->pax ?? 0);
+            // Cek handlingHotels
+            $hh = $handling->handlingHotels;
+            if ($hh) {
+                // Jika relasi mengembalikan Collection (banyak data)
+                if ($hh instanceof \Illuminate\Support\Collection) {
+                    foreach ($hh as $item) {
+                        $serverTotalAmount += ($item->harga ?? 0) * ($item->pax ?? 0);
+                    }
+                } else {
+                    // Jika relasi HasOne (satu data object)
+                    $serverTotalAmount += ($hh->harga ?? 0) * ($hh->pax ?? 0);
+                }
             }
-            foreach ($handling->handlingPlanes as $hp) {
-                $serverTotalAmount += ($hp->harga ?? 0) * ($hp->jumlah_jamaah ?? 0);
+
+            // Cek handlingPlanes
+            $hp = $handling->handlingPlanes;
+            if ($hp) {
+                // Jika relasi mengembalikan Collection (banyak data)
+                if ($hp instanceof \Illuminate\Support\Collection) {
+                    foreach ($hp as $item) {
+                        $serverTotalAmount += ($item->harga ?? 0) * ($item->jumlah_jamaah ?? 0);
+                    }
+                } else {
+                    // Jika relasi HasOne (satu data object)
+                    $serverTotalAmount += ($hp->harga ?? 0) * ($hp->jumlah_jamaah ?? 0);
+                }
             }
         }
 
