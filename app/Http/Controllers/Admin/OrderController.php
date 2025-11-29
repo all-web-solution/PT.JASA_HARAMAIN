@@ -322,11 +322,15 @@ class OrderController extends Controller
             $jumlahInput = (float) ($item->jumlah_input ?? 0);
             $total = $jumlahInput;
 
+        } elseif ($item instanceof HandlingHotel) {
+            $hargaFinal = (float) ($item->harga_jual ?? 0);
+            $total = $hargaFinal;
+        } elseif ($item instanceof HandlingPlanes) {
+            $hargaFinal = (float) ($item->harga_jual ?? 0);
+            $total = $hargaFinal;
         } elseif (
             $item instanceof Tour ||
-            $item instanceof Badal ||
-            $item instanceof HandlingHotel ||
-            $item instanceof HandlingPlanes
+            $item instanceof Badal
         ) {
             $total = $hargaJual; // Asumsi harga total
 

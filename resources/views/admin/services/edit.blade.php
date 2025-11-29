@@ -1590,6 +1590,15 @@
                         </div>
                     </div>
 
+                    @php
+                        // Ambil order terbaru yang terkait dengan service ini
+                        $latestOrder = $service->orders->last();
+
+                        // Cek apakah total_amount_final sudah terisi (lebih dari 0)
+                        // Jika order tidak ada, atau total_amount_final kosong/0, maka dianggap belum final
+                        $isHargaFinal = $latestOrder && $latestOrder->total_amount_final > 0;
+                    @endphp
+
                     {{-- Tombol Aksi --}}
                     <div class="form-actions">
                         <button type="submit" name="action" value="nego" class="btn btn-primary">Simpan

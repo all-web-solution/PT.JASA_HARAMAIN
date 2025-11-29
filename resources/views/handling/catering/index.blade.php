@@ -192,39 +192,33 @@
                         </thead>
                         <tbody>
 
-                                @foreach ($meals as $meal)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $meal->name}}</td>
-                                        <td>{{ $meal->price}}</td>
+                            @foreach ($meals as $meal)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $meal->name }}</td>
+                                    <td>{{ $meal->price }}</td>
 
-                                        <td>
+                                    <td>
 
-                                            <a href="{{ route('catering.edit', $meal->id) }}" title="Edit">
-                                                <button class="btn btn-warning">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                            </a>
-                                            <form id="delete-form-{{ $meal->id }}"
-                                                action="{{ route('catering.delete', $meal->id) }}" method="post"
-                                                style="display:inline-block">
-                                                @csrf
-                                                @method('delete')
-                                                <button type="button" class="btn btn-danger delete-confirm"
-                                                    data-id="{{ $meal->id }}"
-                                                    data-nama-menu="{{ $meal->mealItem->name ?? 'Menu Ini' }}"
-                                                    title="Hapus">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                            <a href="{{ route('catering.supplier.show', $meal->id) }}">
-                                                <button class="btn btn-info" title="Detail Supplier">
-                                                    <i class="bi bi-info-circle"></i>
-                                                </button>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                        <a href="{{ route('catering.edit', $meal->id) }}" title="Edit">
+                                            <button class="btn btn-warning">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </a>
+                                        <form id="delete-form-{{ $meal->id }}"
+                                            action="{{ route('catering.delete', $meal->id) }}" method="post"
+                                            style="display:inline-block">
+                                            @csrf
+                                            @method('delete')
+                                            <button type="button" class="btn btn-danger delete-confirm"
+                                                data-id="{{ $meal->id }}"
+                                                data-nama-menu="{{ $meal->mealItem->name ?? 'Menu Ini' }}" title="Hapus">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
 
 
 
