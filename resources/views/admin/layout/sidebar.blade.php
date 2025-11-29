@@ -1,6 +1,12 @@
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header text-center">
-        <div class="user-avatar rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2">JH</div>
+        <div class="user-avatar rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2"
+            style="width: 100px; height: 100px; overflow: hidden; background-color: #fff;">
+
+            <img src="{{ asset('assets/images/haramain-logo.jpeg') }}" alt="logo"
+                style="width: 100%; height: 100%; object-fit: cover;">
+
+        </div>
         <h5 class="mb-1 fw-bold" style="font-size: 1rem;">PT JASA HARAMAIN</h5>
         <small class="opacity-75">{{ auth()->user()->role }}</small>
     </div>
