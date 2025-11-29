@@ -151,16 +151,39 @@ class Service extends Model
         // 2. Handle relasi nested 'handlings' secara terpisah
         if ($this->relationLoaded('handlings')) {
             foreach ($this->handlings as $handling) {
-                // Pastikan relasi di dalam handling juga di-load
+                // Cek Handling Hotel
                 if ($handling->relationLoaded('handlingHotels')) {
-                    $allItems = $allItems->merge($handling->handlingHotels);
+                    $item = $handling->handlingHotels;
+                    $this->safeMerge($allItems, $item); // Gunakan helper safeMerge
                 }
+
+                // Cek Handling Planes
                 if ($handling->relationLoaded('handlingPlanes')) {
-                    $allItems = $allItems->merge($handling->handlingPlanes);
+                    $item = $handling->handlingPlanes;
+                    $this->safeMerge($allItems, $item); // Gunakan helper safeMerge
                 }
             }
         }
 
         return $allItems;
+    }
+
+    private function safeMerge($collection, $items)
+    {
+        if (!$items) return;
+
+        if ($items instanceof \Illuminate\Database\Eloquent\Collection) {
+            // Jika banyak (HasMany), gunakan merge
+            // Note: Kita assign balik karena merge mengembalikan collection baru
+            // Tapi karena $collection di-pass by reference (object), kita gunakan push untuk single,
+            // untuk merge kita harus memanipulasi collection utama.
+            // Cara paling aman untuk memodifikasi $collection asli adalah dengan loop:
+            foreach ($items as $item) {
+                $collection->push($item);
+            }
+        } elseif ($items instanceof \Illuminate\Database\Eloquent\Model) {
+            // Jika satu (HasOne/BelongsTo), gunakan push
+            $collection->push($items);
+        }
     }
 }
