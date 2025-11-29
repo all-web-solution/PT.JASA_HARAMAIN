@@ -303,10 +303,37 @@
         .form-actions {
             display: flex;
             justify-content: flex-end;
+            align-items: flex-start;
+            /* Agar tombol sejajar di atas jika ada teks dibawahnya */
             gap: 1rem;
             margin-top: 2rem;
             padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color)
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Wrapper untuk tombol Deal agar pesan error menempel padanya */
+        .deal-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            /* Rata kanan */
+        }
+
+        /* Style khusus untuk tombol disabled */
+        .btn-disabled {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Style pesan error kecil */
+        .error-message {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .hidden {
@@ -350,12 +377,27 @@
             }
 
             .form-actions {
-                flex-direction: column
+                flex-direction: column;
+                /* Tumpuk ke bawah */
+                gap: 1rem;
+                align-items: stretch;
+                /* Lebarkan full width */
+            }
+
+            .deal-wrapper {
+                width: 100%;
+                align-items: stretch;
+                /* Tombol jadi full width */
             }
 
             .form-actions .btn {
                 width: 100%;
-                justify-content: center
+                justify-content: center;
+            }
+
+            .error-message {
+                justify-content: center;
+                /* Teks error rata tengah di mobile */
             }
         }
     </style>
@@ -1797,12 +1839,36 @@
                         </div>
                     </div>
 
+                    @php
+                        // Ambil order terbaru yang terkait dengan service ini
+                        $latestOrder = $service->orders->last();
+
+                        // Cek apakah total_amount_final sudah terisi (lebih dari 0)
+                        // Jika order tidak ada, atau total_amount_final kosong/0, maka dianggap belum final
+                        $isHargaFinal = $latestOrder && $latestOrder->total_amount_final > 0;
+                    @endphp
+
                     {{-- Tombol Aksi --}}
                     <div class="form-actions">
-                        <button type="submit" name="action" value="nego" class="btn btn-secondary">Simpan
-                            sebagai Nego</button>
-                        <button type="submit" name="action" value="deal" class="btn btn-primary">Simpan dan
-                            Deal</button>
+                        <button type="submit" name="action" value="nego" class="btn btn-secondary">
+                            Simpan sebagai Nego
+                        </button>
+
+                        {{-- Wrapper untuk Tombol Deal & Pesan Error --}}
+                        <div class="deal-wrapper">
+                            <button type="submit" name="action" value="deal"
+                                class="btn btn-submit {{ !$isHargaFinal ? 'btn-disabled' : '' }}"
+                                @if (!$isHargaFinal) disabled @endif>
+                                <i class="bi bi-check-circle"></i> Simpan dan Deal
+                            </button>
+
+                            {{-- Pesan Error (Muncul di bawah tombol Deal) --}}
+                            @if (!$isHargaFinal)
+                                <small class="error-message text-danger">
+                                    <i class="bi bi-exclamation-circle-fill"></i> Total harga belum difinalisasi.
+                                </small>
+                            @endif
+                        </div>
                     </div>
                 </form>
             </div>
