@@ -71,14 +71,14 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" readonly id="email"
+                                    <input type="email" class="form-control" name="email" readonly id="email"
                                         value="{{ $service->pelanggan->email }}">
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Telepon</label>
-                                    <input type="tel" class="form-control" readonly id="phone"
+                                    <input type="tel" class="form-control" name="phone" readonly id="phone"
                                         value="{{ $service->pelanggan->phone }}">
                                 </div>
                             </div>
