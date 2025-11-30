@@ -731,17 +731,32 @@
                 @php
                     $order = $service->orders->first();
                     $totalAmount = $order ? $order->total_amount_final : 0;
+                    $totalProvosional = $order ? $order->total_estimasi : 0;
                 @endphp
                 <div class="form-section p-3" style="background: var(--haramain-light); border-radius: 8px;">
                     <h6 class="form-section-title">
                         <i class="bi bi-cash-coin"></i> Total Biaya
                     </h6>
                     <div class="detail-item" style="border: none;" id="travel">
-                        <span class="detail-label" style="font-size: 1.2rem;">Total Akhir</span>
-                        <br>
-                        <span class="detail-value" style="font-size: 1.5rem; color: var(--haramain-primary);">
-                            Rp {{ number_format($totalAmount, 0, ',', '.') }}
-                        </span>
+                        @if ($totalAmount)
+                            <span class="detail-label" style="font-size: 1.2rem;">Total Akhir</span>
+                            <br>
+                            <span class="detail-value" style="font-size: 1.5rem; color: var(--haramain-primary);">
+                                Rp {{ number_format($totalAmount, 0, ',', '.') }}
+                            </span>
+                        @else
+                            <div>
+                                <span class="detail-label" style="font-size: 1.2rem;">Total Estimasi</span>
+                                <br>
+                                <span class="detail-value" style="font-size: 0.7rem; color: var(--danger-color);">
+                                    <i class="bi bi-exclamation-circle"></i> Harga hanya estimasi belum final!
+                                </span>
+                            </div>
+                            <br>
+                            <span class="detail-value" style="font-size: 1.5rem; color: var(--haramain-primary);">
+                                Rp {{ number_format($totalProvosional, 0, ',', '.') }}
+                            </span>
+                        @endif
                     </div>
                 </div>
 
