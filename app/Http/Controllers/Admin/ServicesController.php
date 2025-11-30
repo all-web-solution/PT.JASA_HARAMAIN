@@ -416,8 +416,6 @@ class ServicesController extends Controller
     {
         $service = Service::findOrFail($id);
 
-        
-
         $status = $request->input('action') === 'nego' ? 'nego' : 'deal';
 
         DB::transaction(function () use ($request, $service, $status) {
