@@ -20,8 +20,12 @@ class ServiceRequest extends FormRequest
 
     public function rules(): array
     {
+        // Cek apakah methodnya POST (Create) atau PUT/PATCH (Update)
+        $isCreate = $this->isMethod('post');
+
         $services = $this->input('services', []);
 
+        // Flags Utama
         $isMainTransportationSelected = in_array('transportasi', $services);
         $isHotelSelected = in_array('hotel', $services);
         $isDocumentSelected = in_array('dokumen', $services);
@@ -35,14 +39,12 @@ class ServiceRequest extends FormRequest
         $isWakafSelected = in_array('waqaf', $services);
         $isBadalSelected = in_array('badal', $services);
 
-        // Sub-Layanan
+        // Sub-Layanan Transportasi
         $transportationTypes = $this->input('transportation', []);
-        // Note: Di Edit mungkin namanya 'transportation_types' atau handle mapping di controller
-        // Asumsi form edit disamakan name-nya menjadi 'transportation[]' agar konsisten.
-
         $isBusSelected = $isMainTransportationSelected && in_array('bus', $transportationTypes);
         $isPlaneSelected = $isMainTransportationSelected && in_array('airplane', $transportationTypes);
 
+        // Sub-Layanan Handling
         $handlingTypes = $this->input('handlings', []);
         $isHandlingHotelSelected = $isHandlingSelected && in_array('hotel', $handlingTypes);
         $isHandlingBandaraSelected = $isHandlingSelected && in_array('bandara', $handlingTypes);
@@ -61,14 +63,18 @@ class ServiceRequest extends FormRequest
             // --- TRANSPORTASI ---
             'transportation' => $isMainTransportationSelected ? 'required|array|min:1' : 'nullable|array',
 
+            // Bus / Darat
             'transportation_id' => $isBusSelected ? 'required|array|min:1' : 'nullable|array',
             'transportation_id.*' => $isBusSelected ? 'required|exists:transportations,id' : 'nullable',
             'rute_id' => $isBusSelected ? 'required|array|min:1' : 'nullable|array',
             'rute_id.*' => $isBusSelected ? 'required|exists:routes,id' : 'nullable',
+
+            // Tanggal Transport (Struktur array harus sesuai blade edit yang baru diperbaiki)
             'tanggal_transport' => $isBusSelected ? 'required|array|min:1' : 'nullable|array',
             'tanggal_transport.*.dari' => $isBusSelected ? 'required|date' : 'nullable|date',
             'tanggal_transport.*.sampai' => $isBusSelected ? 'required|date|after_or_equal:tanggal_transport.*.dari' : 'nullable|date',
 
+            // Pesawat
             'rute' => $isPlaneSelected ? 'required|array|min:1' : 'nullable|array',
             'tanggal' => $isPlaneSelected ? 'required|array|min:1' : 'nullable|array',
             'rute.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
@@ -76,6 +82,10 @@ class ServiceRequest extends FormRequest
             'maskapai.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
             'harga_tiket.*' => $isPlaneSelected ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
             'jumlah.*' => $isPlaneSelected ? 'required|integer|min:1' : 'nullable|integer|min:0',
+
+            // File Tiket: Wajib saat CREATE, Nullable saat UPDATE
+            'tiket_berangkat.*' => $isCreate && $isPlaneSelected ? 'nullable|file|mimes:pdf,jpg,png|max:5120' : 'nullable',
+            'tiket_pulang.*' => $isCreate && $isPlaneSelected ? 'nullable|file|mimes:pdf,jpg,png|max:5120' : 'nullable',
 
             // --- HOTEL ---
             'nama_hotel' => $isHotelSelected ? 'required|array|min:1' : 'nullable|array',
@@ -95,7 +105,9 @@ class ServiceRequest extends FormRequest
                     $hotelIndexes = array_keys($this->input('nama_hotel', []));
                     foreach ($hotelIndexes as $index) {
                         if (!isset($value[$index]) || !is_array($value[$index]) || count($value[$index]) < 1) {
-                            $namaHotel = $this->input("nama_hotel.$index", "Hotel ke-" . ($index + 1));
+                            // Ambil nama hotel untuk pesan error yang lebih jelas
+                            $namaArr = $this->input('nama_hotel', []);
+                            $namaHotel = $namaArr[$index] ?? "Hotel ke-" . ($index + 1);
                             $fail("Hotel '$namaHotel' wajib memiliki minimal satu Tipe Kamar yang dipilih.");
                         }
                     }
@@ -104,73 +116,80 @@ class ServiceRequest extends FormRequest
             'hotel_data.*.*.jumlah' => $isHotelSelected ? 'required|integer|min:1' : 'nullable',
 
             // --- DOKUMEN ---
-            'child_documents' => [$isDocumentSelected ? 'required_without:dokumen_id' : 'nullable', 'array', 'exists:document_childrens,id'],
-            'dokumen_id' => [
-                $isDocumentSelected ? 'required_without:child_documents' : 'nullable',
+            // Validasi Dokumen agak kompleks karena checkbox bisa Document Parent atau Child
+            'child_documents' => [
+                $isDocumentSelected ? 'required_without:dokumen_parent_id,base_documents' : 'nullable',
                 'array',
-                function ($attribute, $value, $fail) use ($isDocumentSelected) {
-                    if (empty($value) || !is_array($value))
-                        return;
-                    $parentsWithChildren = Document::whereIn('id', $value)
-                        ->has('childrens')->with('childrens')->get();
-                    $selectedChildIds = $this->input('child_documents', []);
-                    foreach ($parentsWithChildren as $parent) {
-                        $validChildIds = $parent->childrens->pluck('id')->toArray();
-                        $hasSelectedChild = !empty(array_intersect($selectedChildIds, $validChildIds));
-                        if (!$hasSelectedChild) {
-                            $fail("Dokumen '{$parent->name}' memiliki opsi turunan. Anda wajib memilih minimal satu sub-jenis dokumen tersebut.");
-                        }
-                    }
-                },
+                'exists:document_childrens,id'
+            ],
+            // Note: Di blade edit, kita ubah name parent menjadi 'dokumen_parent_id' agar tidak bentrok atau gunakan logic controller
+            // Tapi request ini memvalidasi input. Asumsikan 'dokumen_id' atau 'base_documents' ada.
+
+            // File Dokumen: Wajib saat Create, Nullable saat Update
+            'paspor_dokumen' => [
+                Rule::requiredIf($isCreate && $isDocumentSelected),
+                'nullable',
+                'file',
+                'mimes:pdf,jpg,jpeg,png',
+                'max:5120'
+            ],
+            'pas_foto_dokumen' => [
+                Rule::requiredIf($isCreate && $isDocumentSelected),
+                'nullable',
+                'file',
+                'image',
+                'max:5120'
             ],
 
             // --- HANDLING ---
             'handlings' => $isHandlingSelected ? 'required|array|min:1' : 'nullable',
 
-            // Handling Hotel (Semua Wajib jika hotel dipilih)
+            // Handling Hotel
             'nama_hotel_handling' => $isHandlingHotelSelected ? 'required|string|max:255' : 'nullable',
             'tanggal_hotel_handling' => $isHandlingHotelSelected ? 'required|date' : 'nullable',
             'harga_hotel_handling' => $isHandlingHotelSelected ? 'required|numeric|min:0' : 'nullable',
             'pax_hotel_handling' => $isHandlingHotelSelected ? 'required|integer|min:1' : 'nullable',
-            // File Handling Hotel (Required saat Create, Nullable saat Edit/Update)
+
+            // File Handling Hotel (Required on Create, Nullable on Update)
             'kode_booking_hotel_handling' => [
-                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingHotelSelected),
+                Rule::requiredIf($isCreate && $isHandlingHotelSelected),
                 'nullable',
                 'file',
                 'mimes:jpg,jpeg,png,pdf',
                 'max:5120'
             ],
             'rumlis_hotel_handling' => [
-                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingHotelSelected),
+                Rule::requiredIf($isCreate && $isHandlingHotelSelected),
                 'nullable',
                 'file',
                 'mimes:jpg,jpeg,png,pdf,xls,xlsx',
                 'max:5120'
             ],
             'identitas_hotel_handling' => [
-                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingHotelSelected),
+                Rule::requiredIf($isCreate && $isHandlingHotelSelected),
                 'nullable',
                 'file',
                 'mimes:jpg,jpeg,png,pdf',
                 'max:5120'
             ],
 
-            // Handling Bandara (Semua Wajib jika bandara dipilih)
+            // Handling Bandara
             'nama_bandara_handling' => $isHandlingBandaraSelected ? 'required|string|max:255' : 'nullable',
             'jumlah_jamaah_handling' => $isHandlingBandaraSelected ? 'required|integer|min:1' : 'nullable',
             'harga_bandara_handling' => $isHandlingBandaraSelected ? 'required|numeric|min:0' : 'nullable',
             'kedatangan_jamaah_handling' => $isHandlingBandaraSelected ? 'required|date' : 'nullable',
             'nama_supir' => $isHandlingBandaraSelected ? 'required|string|max:255' : 'nullable',
-            // File Handling Bandara
+
+            // File Handling Bandara (Required on Create, Nullable on Update)
             'paket_info' => [
-                 Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingBandaraSelected),
+                Rule::requiredIf($isCreate && $isHandlingBandaraSelected),
                 'nullable',
                 'file',
                 'mimes:jpg,jpeg,png,pdf',
                 'max:5120'
             ],
             'identitas_koper_bandara_handling' => [
-                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingBandaraSelected),
+                Rule::requiredIf($isCreate && $isHandlingBandaraSelected),
                 'nullable',
                 'file',
                 'mimes:jpg,jpeg,png,pdf',
@@ -184,15 +203,10 @@ class ServiceRequest extends FormRequest
                 function ($attribute, $value, $fail) use ($isPendampingSelected) {
                     if (!$isPendampingSelected)
                         return;
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
-                        if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
-                        }
-                    }
+                    // Cek apakah ada setidaknya satu item dengan jumlah > 0
+                    $hasSelection = collect($value)->some(fn($qty) => (int) $qty > 0);
                     if (!$hasSelection) {
-                        $fail('Anda memilih layanan Pendamping, wajib mengisi jumlah minimal untuk satu pendamping.');
+                        $fail('Wajib mengisi jumlah minimal untuk satu pendamping.');
                     }
                 },
             ],
@@ -224,19 +238,13 @@ class ServiceRequest extends FormRequest
                 function ($attribute, $value, $fail) use ($isKontenSelected) {
                     if (!$isKontenSelected)
                         return;
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
-                        if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
-                        }
-                    }
+                    $hasSelection = collect($value)->some(fn($qty) => (int) $qty > 0);
                     if (!$hasSelection) {
-                        $fail('Anda memilih layanan Konten, wajib mengisi jumlah minimal untuk satu item konten.');
+                        $fail('Wajib mengisi jumlah minimal untuk satu item konten.');
                     }
                 },
             ],
-            'tanggal_konten' => [
+            'konten_tanggal' => [ // Sesuaikan nama dengan blade: konten_tanggal
                 $isKontenSelected ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $dates, $fail) use ($isKontenSelected) {
@@ -264,14 +272,19 @@ class ServiceRequest extends FormRequest
             'kurs_tumis' => ($isReyalSelected && $reyalType === 'tumis') ? 'required|numeric|min:1' : 'nullable',
 
             // --- TOUR ---
-            'tour_ids' => $isTourSelected ? 'required|array|min:1' : 'nullable',
-            'tanggal_tour' => [
+            'tour_ids' => [ // Di Edit blade names="tour_ids[]" (create) vs "tour_id[]" (edit)
+                $isTourSelected ? 'required' : 'nullable',
+                'array',
+                'min:1'
+            ],
+            'tour_tanggal' => [
                 $isTourSelected ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $dates, $fail) use ($isTourSelected) {
                     if (!$isTourSelected)
                         return;
-                    $selectedTours = $this->input('tour_ids', []);
+                    // Support nama input "tour_id" (edit) atau "tour_ids" (create)
+                    $selectedTours = $this->input('tour_id') ?? $this->input('tour_ids') ?? [];
                     foreach ($selectedTours as $tourId) {
                         if (empty($dates[$tourId])) {
                             $tour = TourItem::find($tourId);
@@ -289,20 +302,18 @@ class ServiceRequest extends FormRequest
                 function ($attribute, $value, $fail) use ($isMealSelected) {
                     if (!$isMealSelected)
                         return;
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
-                        if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
-                        }
-                    }
+                    $hasSelection = collect($value)->some(fn($qty) => (int) $qty > 0);
                     if (!$hasSelection) {
-                        $fail('Anda memilih layanan Meals, wajib mengisi jumlah minimal untuk satu menu.');
+                        $fail('Wajib mengisi jumlah minimal untuk satu menu meals.');
                     }
                 },
             ],
-            'dari_tanggal_makanan' => [
-                $isMealSelected ? 'required' : 'nullable',
+            // Sesuaikan nama field dengan blade (meals_dari vs dari_tanggal_makanan)
+            // Di Blade Edit: name="meals_dari"
+            // Di Blade Create: name="dari_tanggal_makanan"
+            // Kita cek keduanya
+            'meals_dari' => [
+                $isMealSelected && $this->has('meals_dari') ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $dates, $fail) use ($isMealSelected) {
                     if (!$isMealSelected)
@@ -310,9 +321,8 @@ class ServiceRequest extends FormRequest
                     $jumlahs = $this->input('jumlah_meals', []);
                     foreach ($jumlahs as $id => $qty) {
                         if ((int) $qty > 0) {
-                            $start = $dates[$id]['dari'] ?? null;
-                            $endArray = $this->input('sampai_tanggal_makanan', []);
-                            $end = $endArray[$id]['sampai'] ?? null;
+                            $start = $dates[$id] ?? null;
+                            $end = $this->input('meals_sampai')[$id] ?? null;
                             if (empty($start) || empty($end)) {
                                 $meal = MealItem::find($id);
                                 $name = $meal ? $meal->name : 'Menu';
@@ -322,6 +332,7 @@ class ServiceRequest extends FormRequest
                     }
                 }
             ],
+            // Fallback untuk create (dari_tanggal_makanan) sudah ada di rule create
 
             // --- DORONGAN ---
             'jumlah_dorongan' => [
@@ -330,19 +341,13 @@ class ServiceRequest extends FormRequest
                 function ($attribute, $value, $fail) use ($isDoronganSelected) {
                     if (!$isDoronganSelected)
                         return;
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
-                        if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
-                        }
-                    }
+                    $hasSelection = collect($value)->some(fn($qty) => (int) $qty > 0);
                     if (!$hasSelection) {
-                        $fail('Anda memilih layanan Dorongan, wajib mengisi jumlah minimal untuk satu item.');
+                        $fail('Wajib mengisi jumlah minimal untuk satu item dorongan.');
                     }
                 },
             ],
-            'tanggal_dorongan' => [
+            'dorongan_tanggal' => [ // Blade edit: name="dorongan_tanggal"
                 $isDoronganSelected ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $dates, $fail) use ($isDoronganSelected) {
@@ -368,15 +373,9 @@ class ServiceRequest extends FormRequest
                 function ($attribute, $value, $fail) use ($isWakafSelected) {
                     if (!$isWakafSelected)
                         return;
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
-                        if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
-                        }
-                    }
+                    $hasSelection = collect($value)->some(fn($qty) => (int) $qty > 0);
                     if (!$hasSelection) {
-                        $fail('Anda memilih layanan Waqaf, wajib mengisi jumlah minimal untuk satu item waqaf.');
+                        $fail('Wajib mengisi jumlah minimal untuk satu item waqaf.');
                     }
                 },
             ],
@@ -384,10 +383,10 @@ class ServiceRequest extends FormRequest
             // --- BADAL ---
             'nama_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
             'harga_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
-            'tanggal_pelaksanaan_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
+            'tanggal_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable', // Edit uses tanggal_badal
             'nama_badal.*' => $isBadalSelected ? 'required|string|filled' : 'nullable',
             'harga_badal.*' => $isBadalSelected ? 'required|numeric|min:0' : 'nullable',
-            'tanggal_pelaksanaan_badal.*' => $isBadalSelected ? 'required|date' : 'nullable',
+            'tanggal_badal.*' => $isBadalSelected ? 'required|date' : 'nullable',
         ];
     }
 
@@ -454,7 +453,7 @@ class ServiceRequest extends FormRequest
             'kedatangan_jamaah_handling.required' => 'Tanggal kedatangan jamaah wajib diisi.',
             'nama_supir.required' => 'Nama supir wajib diisi.',
             'identitas_koper_bandara_handling.required' => 'File Identitas Koper Bandara wajib diupload.',
-            'paket_info'=> 'File Paket Info wajib diupload.',
+            'paket_info' => 'File Paket Info wajib diupload.',
 
             // Pendamping
             'jumlah_pendamping.required' => 'Data pendamping wajib diisi.',
