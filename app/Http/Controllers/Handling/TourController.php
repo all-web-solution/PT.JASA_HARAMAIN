@@ -126,7 +126,7 @@ class TourController extends Controller
         Session::flash('success', 'Order tour berhasil diperbarui.');
 
         // Redirect kembali ke halaman detail tour
-        return redirect()->route('tour.customer.show', $tour->id);
+        return redirect()->route('tour.customer.show', $tour->service_id);
     }
 
 
