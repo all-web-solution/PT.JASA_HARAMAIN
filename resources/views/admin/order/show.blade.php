@@ -698,9 +698,39 @@
                         <label for="catatan" class="form-label">Catatan</label>
                         <input type="text" class="form-control" id="catatan" name="catatan">
                     </div>
-                    <button type="submit" class="btn-submit">
-                        <i class="bi bi-check-circle"></i> Simpan Pembayaran
-                    </button>
+                    {{-- LOGIKA PENGAMAN --}}
+                    @php
+                        // Cek apakah total_amount_final sudah ada nilainya (> 0)
+                        $isReadyToPay = $order->total_amount_final > 0;
+
+                        // Opsional: Cek juga jika statusnya sudah lunas (biar ga bayar dobel)
+                        $isLunas = $order->status_pembayaran == 'lunas';
+                    @endphp
+                    <div class="d-flex flex-column align-items-end mt-4">
+                        <button type="submit" class="btn-submit" {{-- Tambahkan atribut disabled jika belum siap atau sudah lunas --}}
+                            @if (!$isReadyToPay || $isLunas) disabled
+                                style="background-color: #6c757d; border-color: #6c757d; cursor: not-allowed; opacity: 0.8;" @endif>
+
+                            <i class="bi bi-check-circle"></i>
+
+                            {{-- Ubah teks tombol sesuai kondisi --}}
+                            @if ($isLunas)
+                                Tagihan Lunas
+                            @elseif(!$isReadyToPay)
+                                Harga Belum Final
+                            @else
+                                Simpan Pembayaran
+                            @endif
+                        </button>
+
+                        {{-- Tambahkan pesan kecil di bawah tombol agar user paham --}}
+                        @if (!$isReadyToPay)
+                            <small class="text-danger mt-2">
+                                <i class="bi bi-exclamation-circle-fill"></i>
+                                Harap lakukan <b>Finalisasi Tagihan</b> terlebih dahulu.
+                            </small>
+                        @endif
+                    </div>
                 </form>
             </div>
         </div>

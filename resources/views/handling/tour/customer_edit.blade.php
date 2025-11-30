@@ -335,7 +335,7 @@
 
                     {{-- Tombol Aksi --}}
                     <div class="btn-container">
-                        <a href="{{ route('tour.customer.show', $tour->id) }}" class="btn btn-secondary">
+                        <a href="{{ route('tour.customer.show', $tour->service_id) }}" class="btn btn-secondary">
                             Batal
                         </a>
                         <button type="submit" class="btn-submit">
