@@ -412,7 +412,7 @@ class ServicesController extends Controller
 
         return view('admin.services.edit', $data);
     }
-    public function update(Request $request, $id)
+    public function update(ServiceRequest $request, $id)
     {
         $service = Service::findOrFail($id);
 
@@ -436,92 +436,95 @@ class ServicesController extends Controller
              * ✈️ UPDATE / TAMBAH / HAPUS DATA PESAWAT
              * ===================================================== */
 
-            // PERBAIKAN: Cek dulu apakah service 'transportasi' masih DIPILIH di form utama
+            // 1. Cek Service Utama 'transportasi'
             if ($request->has('services') && in_array('transportasi', $request->services)) {
 
-                // JIKA 'transportasi' MASIH DIPILIH:
-
-                // Cek apakah sub-service 'airplane' DIPILIH
-                if ($request->has('transportation_types') && in_array('airplane', $request->transportation_types)) {
+                // 2. Cek Sub-Service 'airplane' (Ganti 'transportation_types' jadi 'transportation')
+                if ($request->has('transportation') && in_array('airplane', $request->transportation)) {
                     $existingPlaneIds = collect($request->plane_id)->filter()->toArray();
 
-                    // Hapus tiket yang checkbox-nya dihapus oleh user
+                    // Hapus tiket yang tidak ada di form (dihapus user)
                     Plane::where('service_id', $service->id)
                         ->whereNotIn('id', $existingPlaneIds)
                         ->delete();
 
-                    // Update / Tambah tiket yang ada di form
-                    foreach ($request->rute as $i => $rute) {
-                        if (empty($rute))
-                            continue;
+                    // Update / Tambah tiket
+                    if ($request->has('rute')) { // Pastikan array rute ada
+                        foreach ($request->rute as $i => $rute) {
+                            if (empty($rute))
+                                continue;
 
-                        $plane = $service->planes()->find($request->plane_id[$i]) ?? new Plane();
+                            // Cari plane berdasarkan ID yg dikirim, atau buat baru
+                            $planeId = $request->plane_id[$i] ?? null;
+                            $plane = $planeId ? Plane::find($planeId) : new Plane();
 
-                        $plane->service_id = $service->id;
-                        $plane->tanggal_keberangkatan = $request->tanggal[$i] ?? now();
-                        $plane->rute = $rute;
-                        $plane->maskapai = $request->maskapai[$i] ?? null;
-                        $plane->harga = $request->harga_tiket[$i] ?? null;
-                        $plane->keterangan = $request->keterangan[$i] ?? null;
-                        $plane->jumlah_jamaah = $request->jumlah[$i] ?? 0;
+                            // Pastikan jika ID ada tapi data tidak ketemu (jarang terjadi), buat instance baru
+                            if (!$plane)
+                                $plane = new Plane();
 
-                        if ($request->hasFile("tiket_berangkat.$i")) {
-                            $plane->tiket_berangkat = $this->storeFileIfExists($request->file("tiket_berangkat.$i"), $i, 'tiket');
+                            $plane->service_id = $service->id;
+                            $plane->tanggal_keberangkatan = $request->tanggal[$i] ?? now();
+                            $plane->rute = $rute;
+                            $plane->maskapai = $request->maskapai[$i] ?? null;
+                            $plane->harga = $request->harga_tiket[$i] ?? 0;
+                            $plane->keterangan = $request->keterangan_tiket[$i] ?? '-';
+                            $plane->jumlah_jamaah = $request->jumlah[$i] ?? 0;
+
+                            if ($request->hasFile("tiket_berangkat.$i")) {
+                                $plane->tiket_berangkat = $this->storeFileIfExists([$request->file("tiket_berangkat.$i")], 0, 'tiket');
+                            }
+                            if ($request->hasFile("tiket_pulang.$i")) {
+                                $plane->tiket_pulang = $this->storeFileIfExists([$request->file("tiket_pulang.$i")], 0, 'tiket');
+                            }
+
+                            $plane->save();
                         }
-                        if ($request->hasFile("tiket_pulang.$i")) {
-                            $plane->tiket_pulang = $this->storeFileIfExists($request->file("tiket_pulang.$i"), $i, 'tiket');
-                        }
-
-                        $plane->save();
                     }
                 } else {
-                    // 'transportasi' DIPILIH, TAPI tidak ada data 'rute'.
-                    // Artinya user hanya memilih 'Transportasi Darat'
-                    // Kita hapus semua data Pesawat.
+                    // Jika checkbox 'airplane' tidak dicentang, hapus semua data pesawat
                     Plane::where('service_id', $service->id)->delete();
                 }
             } else {
-                // JIKA 'transportasi' TIDAK DIPILIH SAMA SEKALI
-                // Hapus semua data pesawat yang terkait dengan service ini.
+                // Jika service 'transportasi' utama tidak dicentang
                 Plane::where('service_id', $service->id)->delete();
             }
 
             /* =====================================================
-             * 🚌 TRANSPORTASI
+             * 🚌 TRANSPORTASI DARAT (BUS)
              * ===================================================== */
 
-            // PERBAIKAN: Cek dulu apakah service 'transportasi' masih DIPILIH di form utama
             if ($request->has('services') && in_array('transportasi', $request->services)) {
 
-                // JIKA 'transportasi' MASIH DIPILIH:
+                if ($request->has('transportation') && in_array('bus', $request->transportation)) {
 
-                // Cek apakah sub-service 'bus' DIPILIH
-                if ($request->has('transportation_types') && in_array('bus', $request->transportation_types)) {
-                    // Hapus semua item lama (logika delete-dan-recreate Anda sudah benar)
+                    // Hapus semua item lama lalu buat baru (Sederhana & Aman)
+                    // Atau jika ingin update, logika-nya mirip pesawat di atas.
+                    // Untuk saat ini kita ikuti logika delete-recreate yang sudah ada agar konsisten
                     TransportationItem::where('service_id', $service->id)->delete();
 
-                    // Buat ulang berdasarkan data form
-                    foreach ($request->transportation_id as $i => $transportId) {
-                        if (empty($transportId))
-                            continue;
+                    if ($request->has('transportation_id')) {
+                        foreach ($request->transportation_id as $i => $transportId) {
+                            if (empty($transportId))
+                                continue;
 
-                        TransportationItem::create([
-                            'service_id' => $service->id,
-                            'transportation_id' => $transportId,
-                            'route_id' => $request->rute_id[$i] ?? null,
-                            'dari_tanggal' => $request->transport_dari[$i] ?? null,
-                            'sampai_tanggal' => $request->transport_sampai[$i] ?? null,
-                        ]);
+                            // Perbaikan pengambilan data tanggal dari array multidimensi
+                            // Format di blade: tanggal_transport[$i]['dari']
+                            $tglDari = $request->tanggal_transport[$i]['dari'] ?? null;
+                            $tglSampai = $request->tanggal_transport[$i]['sampai'] ?? null;
+
+                            TransportationItem::create([
+                                'service_id' => $service->id,
+                                'transportation_id' => $transportId,
+                                'route_id' => $request->rute_id[$i] ?? null,
+                                'dari_tanggal' => $tglDari,
+                                'sampai_tanggal' => $tglSampai,
+                            ]);
+                        }
                     }
                 } else {
-                    // 'transportasi' DIPILIH, TAPI tidak ada data 'transportation_id'.
-                    // Artinya user hanya memilih 'Pesawat'.
-                    // Kita hapus semua data Transportasi Darat.
                     TransportationItem::where('service_id', $service->id)->delete();
                 }
             } else {
-                // JIKA 'transportasi' TIDAK DIPILIH SAMA SEKALI
-                // Hapus semua data transportasi darat yang terkait dengan service ini.
                 TransportationItem::where('service_id', $service->id)->delete();
             }
 
