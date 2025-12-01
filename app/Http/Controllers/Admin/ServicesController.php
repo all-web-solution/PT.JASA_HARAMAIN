@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ServiceRequest;
+use App\Http\Requests\Admin\EditServiceRequest;
 use App\Models\ContentCustomer;
 use App\Models\ContentItem;
 use App\Models\Exchange;
