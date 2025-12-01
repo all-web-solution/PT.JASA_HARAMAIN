@@ -74,7 +74,6 @@ class EditServiceRequest extends FormRequest
             'rute.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
             'tanggal.*' => $isPlaneSelected ? 'required|date' : 'nullable|date',
             'maskapai.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
-            'harga_tiket.*' => $isPlaneSelected ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
             'jumlah.*' => $isPlaneSelected ? 'required|integer|min:1' : 'nullable|integer|min:0',
 
             // --- HOTEL ---

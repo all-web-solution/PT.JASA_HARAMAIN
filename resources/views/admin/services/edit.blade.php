@@ -92,7 +92,6 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Kepulangan</label>
-                                    {{-- PERBAIKAN: Gunakan old() dengan fallback ke data service --}}
                                     <input type="date" class="form-control" name="tanggal_kepulangan" required
                                         value="{{ old('tanggal_kepulangan', $service->tanggal_kepulangan) }}">
                                 </div>
@@ -221,7 +220,6 @@
 
                             <div class="detail-section">
                                 <div class="service-grid">
-                                    {{-- PERBAIKAN: Gunakan variabel $is...Selected --}}
                                     <div class="transport-item {{ $isAirplaneSelected ? 'selected' : '' }}"
                                         data-transportasi="airplane">
                                         <div class="service-name">Pesawat</div>
@@ -244,14 +242,12 @@
                                         Tiket</button>
                                     <div id="ticketWrapper">
                                         @php
-                                            // PERBAIKAN: Gunakan 'plane_id' untuk looping karena hidden input ini PASTI terkirim
                                             $isOld = is_array(old('plane_id'));
                                             $planeData = $isOld ? old('plane_id') : $existingPlanes;
                                         @endphp
 
                                         @forelse($planeData as $index => $data)
                                             @php
-                                                // Jika old data, $data adalah value ID (bisa null/string). Jika DB, $data adalah object Plane.
                                                 $plane = $isOld ? null : $data;
                                                 $currentId = $isOld ? $data : $plane->id;
                                             @endphp
@@ -295,18 +291,6 @@
                                                             name="maskapai[{{ $index }}]"
                                                             value="{{ $isOld ? old('maskapai.' . $index) : $plane->maskapai }}">
                                                         @error('maskapai.' . $index)
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-
-                                                    {{-- Harga Tiket --}}
-                                                    <div class="col-md-6">
-                                                        <label class="form-label fw-semibold">Harga Tiket</label>
-                                                        <input type="number"
-                                                            class="form-control @error('harga_tiket.' . $index) is-invalid @enderror"
-                                                            name="harga_tiket[{{ $index }}]"
-                                                            value="{{ $isOld ? old('harga_tiket.' . $index) : $plane->harga }}">
-                                                        @error('harga_tiket.' . $index)
                                                             <div class="invalid-feedback">{{ $message }}</div>
                                                         @enderror
                                                     </div>
