@@ -412,7 +412,7 @@ class ServicesController extends Controller
 
         return view('admin.services.edit', $data);
     }
-    public function update(ServiceRequest $request, $id)
+    public function update(EditServiceRequest $request, $id)
     {
         $service = Service::findOrFail($id);
 

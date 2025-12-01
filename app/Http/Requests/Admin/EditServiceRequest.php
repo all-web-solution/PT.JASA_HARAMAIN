@@ -11,7 +11,7 @@ use App\Models\MealItem;
 use App\Models\Dorongan;
 use App\Models\ContentItem;
 
-class ServiceRequest extends FormRequest
+class EditServiceRequest extends FormRequest
 {
     public function authorize(): bool
     {
