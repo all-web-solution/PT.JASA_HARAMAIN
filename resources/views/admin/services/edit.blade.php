@@ -321,7 +321,6 @@
                                                 </div>
                                             </div>
                                         @empty
-                                            {{-- Kosong (User akan klik tombol tambah lewat JS Auto-Add) --}}
                                         @endforelse
                                     </div>
                                 </div>
@@ -340,7 +339,6 @@
                                         id="add-transport-btn">Tambah Transportasi</button>
 
                                     <div id="new-transport-forms">
-                                        {{-- PERBAIKAN: Gunakan 'item_id' untuk looping karena selalu terkirim --}}
                                         @if (is_array(old('item_id')))
                                             @foreach (old('item_id') as $index => $oldItemIdValue)
                                                 @php
@@ -482,7 +480,7 @@
                                                         @endforeach
                                                     </div>
 
-                                                    <div class="transport-details-wrapper"> {{-- Default visible jika dari DB --}}
+                                                    <div class="transport-details-wrapper">
                                                         <div class="route-select mt-3">
                                                             <label class="form-label">Pilih Rute:</label>
                                                             <select name="rute_id[{{ $index }}]"
@@ -523,7 +521,6 @@
                                                     </div>
                                                 </div>
                                             @empty
-                                                {{-- Kosong --}}
                                             @endforelse
                                         @endif
                                     </div>
@@ -539,285 +536,221 @@
 
                             <button type="button" class="btn btn-sm btn-primary mb-3" id="addHotel">Tambah
                                 Hotel</button>
+
                             <div id="hotelWrapper">
                                 @php
-                                    // 1. Grouping data existing agar tampil sebagai 1 Hotel dengan banyak Tipe
-                                    $groupedHotels = $existingHotels->groupBy(function ($item) {
-                                        return $item->nama_hotel .
-                                            '|' .
-                                            $item->tanggal_checkin .
-                                            '|' .
-                                            $item->tanggal_checkout;
-                                    });
+                                    $types = $types ?? collect();
+                                    // Prioritas Data:
+                                    // 1. Data Input Lama (old) -> Muncul saat validasi error / reload
+                                    // 2. Data Database ($existingHotels) -> Muncul saat pertama kali edit
 
-                                    // 2. Cek apakah ada data 'old' (jika validasi gagal)
-                                    $hasOldData = is_array(old('nama_hotel'));
-                                    $loopData = $hasOldData ? old('nama_hotel') : $groupedHotels;
+                                    $sourceData = [];
+                                    $isOldData = false;
+
+                                    if (old('nama_hotel')) {
+                                        // Skenario 1: Ada data lama (old)
+                                        $isOldData = true;
+                                        // Kita meloop berdasarkan array 'nama_hotel' karena itu field wajib
+                                        $sourceData = old('nama_hotel');
+                                    } else {
+                                        // Skenario 2: Data dari Database
+                                        // Grouping logic sama seperti sebelumnya
+                                        $sourceData = $service->hotels->groupBy(
+                                            fn($item) => $item->nama_hotel .
+                                                '|' .
+                                                $item->tanggal_checkin .
+                                                '|' .
+                                                $item->tanggal_checkout,
+                                        );
+                                    }
                                 @endphp
 
-                                @if ($hasOldData)
-                                    {{-- A. JIKA ADA DATA OLD (VALIDASI ERROR) --}}
-                                    @foreach (old('nama_hotel') as $index => $oldNamaHotel)
-                                        <div class="hotel-form bg-white p-3 border mb-3"
-                                            data-index="{{ $index }}">
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-semibold">Tanggal Checkin</label>
-                                                    <input type="date" class="form-control"
-                                                        name="tanggal_checkin[{{ $index }}]"
-                                                        value="{{ old('tanggal_checkin.' . $index) }}">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-semibold">Tanggal Checkout</label>
-                                                    <input type="date" class="form-control"
-                                                        name="tanggal_checkout[{{ $index }}]"
-                                                        value="{{ old('tanggal_checkout.' . $index) }}">
-                                                </div>
-                                                <div class="col-12">
-                                                    <label class="form-label fw-semibold">Nama Hotel</label>
-                                                    <input type="text" class="form-control"
-                                                        name="nama_hotel[{{ $index }}]" placeholder="Nama hotel"
-                                                        value="{{ $oldNamaHotel }}">
-                                                </div>
+                                @foreach ($sourceData as $key => $data)
+                                    @php
+                                        // Tentukan index loop.
+                                        // Jika old data, $key adalah index (0, 1, 2...).
+                                        // Jika DB data, $key adalah string grouping, jadi kita pakai $loop->index.
+                                        $currentIndex = $isOldData ? $key : $loop->index;
 
-                                                <div class="col-12">
-                                                    <label class="form-label fw-semibold">Tipe Kamar</label>
-                                                    <div class="service-grid">
-                                                        @php
-                                                            $oldHotelTypes = array_keys(
-                                                                old('hotel_data.' . $index, []),
-                                                            );
-                                                        @endphp
-                                                        @foreach ($types as $type)
-                                                            <div class="type-item {{ in_array($type->id, $oldHotelTypes) ? 'selected' : '' }}"
-                                                                data-type-id="{{ $type->id }}"
-                                                                data-price="{{ $type->jumlah }}"
-                                                                data-name="{{ $type->nama_tipe }}">
-                                                                <div class="service-name">{{ $type->nama_tipe }}</div>
-                                                                <input type="checkbox" name="type[]"
-                                                                    value="{{ $type->nama_tipe }}" class="d-none"
-                                                                    {{ in_array($type->id, $oldHotelTypes) ? 'checked' : '' }}>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
+                                        // Variabel Helper untuk Value
+                                        if ($isOldData) {
+                                            $valCheckin = old('tanggal_checkin.' . $currentIndex);
+                                            $valCheckout = old('tanggal_checkout.' . $currentIndex);
+                                            $valNama = old('nama_hotel.' . $currentIndex);
+                                            $valJmlKamar = old('jumlah_kamar.' . $currentIndex);
+                                            $valKet = old('keterangan.' . $currentIndex);
+                                            $valId = old('hotel_id.' . $currentIndex);
+                                            // Tipe Kamar (Array Keys)
+                                            $selectedTypes = array_keys(old('hotel_data.' . $currentIndex, []));
+                                        } else {
+                                            $firstItem = $data->first();
+                                            $valCheckin = $firstItem->tanggal_checkin;
+                                            $valCheckout = $firstItem->tanggal_checkout;
+                                            $valNama = $firstItem->nama_hotel;
+                                            $valJmlKamar = $firstItem->jumlah_kamar;
+                                            $valKet = $firstItem->catatan;
+                                            $valId = $firstItem->id; // ID salah satu item grup
+                                            $selectedTypes = $data
+                                                ->pluck('type')
+                                                ->map(fn($t) => $types->firstWhere('nama_tipe', $t)?->id)
+                                                ->filter()
+                                                ->toArray();
+                                        }
+                                    @endphp
 
-                                                    <div class="type-input-container">
-                                                        @if (isset($oldHotelTypes))
-                                                            @foreach ($oldHotelTypes as $oldTypeId)
-                                                                @php
-                                                                    $type = $types->firstWhere('id', $oldTypeId);
-                                                                    $oldTypeData = old(
-                                                                        'hotel_data.' . $index . '.' . $oldTypeId,
-                                                                    );
-                                                                @endphp
-                                                                @if ($type && $oldTypeData)
-                                                                    <div class="form-group mt-2 bg-white p-3 border rounded"
-                                                                        data-type-id="{{ $oldTypeId }}">
-                                                                        <label class="form-label">Jumlah Kamar
-                                                                            ({{ $type->nama_tipe }})
-                                                                        </label>
-                                                                        <input type="number"
-                                                                            class="form-control qty-input-hotel"
-                                                                            name="hotel_data[{{ $index }}][{{ $oldTypeId }}][jumlah]"
-                                                                            min="1"
-                                                                            value="{{ $oldTypeData['jumlah'] }}"
-                                                                            data-is-qty="true"
-                                                                            data-type-id="{{ $oldTypeId }}">
+                                    <div class="hotel-form bg-white p-3 border mb-3" data-index="{{ $currentIndex }}">
+                                        <input type="hidden" name="hotel_id[{{ $currentIndex }}]"
+                                            value="{{ $valId }}">
 
-                                                                        <label class="form-label mt-2">Harga
-                                                                            ({{ $type->nama_tipe }})</label>
-                                                                        <input type="text" class="form-control"
-                                                                            name="hotel_data[{{ $index }}][{{ $oldTypeId }}][harga]"
-                                                                            value="{{ $oldTypeData['harga'] }}" readonly>
-                                                                        <input type="hidden"
-                                                                            name="hotel_data[{{ $index }}][{{ $oldTypeId }}][type_name]"
-                                                                            value="{{ $type->nama_tipe }}">
-                                                                    </div>
-                                                                @endif
-                                                            @endforeach
-                                                        @endif
-                                                    </div>
-                                                </div>
+                                        <div class="row g-3">
+                                            {{-- TANGGAL CHECKIN --}}
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold">Tanggal Checkin</label>
+                                                <input type="date"
+                                                    class="form-control @error('tanggal_checkin.' . $currentIndex) is-invalid @enderror"
+                                                    name="tanggal_checkin[{{ $currentIndex }}]"
+                                                    value="{{ $valCheckin }}">
+                                                @error('tanggal_checkin.' . $currentIndex)
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
 
-                                            <div class="form-group mt-2">
-                                                <label class="form-label">Total kamar</label>
-                                                <input type="number" class="form-control"
-                                                    name="jumlah_kamar[{{ $index }}]" min="0"
-                                                    value="{{ old('jumlah_kamar.' . $index) }}" readonly>
+                                            {{-- TANGGAL CHECKOUT --}}
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold">Tanggal Checkout</label>
+                                                <input type="date"
+                                                    class="form-control @error('tanggal_checkout.' . $currentIndex) is-invalid @enderror"
+                                                    name="tanggal_checkout[{{ $currentIndex }}]"
+                                                    value="{{ $valCheckout }}">
+                                                @error('tanggal_checkout.' . $currentIndex)
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
-                                            <div class="form-group mt-2">
-                                                <label class="form-label">Keterangan</label>
-                                                <input type="text" class="form-control"
-                                                    name="keterangan[{{ $index }}]"
-                                                    value="{{ old('keterangan.' . $index) }}">
-                                            </div>
-                                            <div class="mt-3 text-end">
-                                                <button type="button" class="btn btn-danger btn-sm removeHotel">Hapus
-                                                    Hotel</button>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                @else
-                                    {{-- B. JIKA TIDAK ADA OLD, RENDER DARI DATABASE --}}
-                                    @php $index = 0; @endphp
-                                    @forelse($groupedHotels as $key => $group)
-                                        @php
-                                            $firstHotel = $group->first();
-                                            // Ambil ID tipe yang sudah dipilih berdasarkan nama tipe di database
-                                            // Kita perlu mapping nama tipe ke ID tipe dari master $types
-                                            $selectedTypeNames = $group->pluck('type')->toArray();
 
-                                            // Map data per tipe untuk mengisi input value (jumlah & harga)
-                                            $existingTypeData = $group->mapWithKeys(function ($item) use ($types) {
-                                                $masterType = $types->firstWhere('nama_tipe', $item->type);
-                                                return $masterType
-                                                    ? [
-                                                        $masterType->id => [
-                                                            'jumlah' => $item->jumlah_type,
-                                                            'harga' => $item->harga_perkamar,
-                                                        ],
-                                                    ]
-                                                    : [];
-                                            });
-                                        @endphp
+                                            {{-- NAMA HOTEL --}}
+                                            <div class="col-12">
+                                                <label class="form-label fw-semibold">Nama Hotel</label>
+                                                <input type="text"
+                                                    class="form-control @error('nama_hotel.' . $currentIndex) is-invalid @enderror"
+                                                    name="nama_hotel[{{ $currentIndex }}]" placeholder="Nama hotel"
+                                                    value="{{ $valNama }}">
+                                                @error('nama_hotel.' . $currentIndex)
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
 
-                                        <div class="hotel-form bg-white p-3 border mb-3"
-                                            data-index="{{ $index }}">
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-semibold">Tanggal Checkin</label>
-                                                    <input type="date" class="form-control"
-                                                        name="tanggal_checkin[{{ $index }}]"
-                                                        value="{{ $firstHotel->tanggal_checkin }}">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-semibold">Tanggal Checkout</label>
-                                                    <input type="date" class="form-control"
-                                                        name="tanggal_checkout[{{ $index }}]"
-                                                        value="{{ $firstHotel->tanggal_checkout }}">
-                                                </div>
-                                                <div class="col-12">
-                                                    <label class="form-label fw-semibold">Nama Hotel</label>
-                                                    <input type="text" class="form-control"
-                                                        name="nama_hotel[{{ $index }}]" placeholder="Nama hotel"
-                                                        value="{{ $firstHotel->nama_hotel }}">
+                                            {{-- TIPE KAMAR & JUMLAH (Validasi bersarang biasanya global atau per item) --}}
+                                            <div class="col-12">
+                                                <label class="form-label fw-semibold">Tipe Kamar</label>
+                                                <div class="service-grid">
+                                                    @foreach ($types as $type)
+                                                        <div class="type-item {{ in_array($type->id, $selectedTypes) ? 'selected' : '' }}"
+                                                            data-type-id="{{ $type->id }}"
+                                                            data-price="{{ $type->jumlah }}"
+                                                            data-name="{{ $type->nama_tipe }}">
+                                                            <div class="service-name">{{ $type->nama_tipe }}</div>
+                                                            <input type="checkbox" name="type[]"
+                                                                value="{{ $type->nama_tipe }}" class="d-none"
+                                                                {{ in_array($type->id, $selectedTypes) ? 'checked' : '' }}>
+                                                        </div>
+                                                    @endforeach
                                                 </div>
 
-                                                <div class="col-12">
-                                                    <label class="form-label fw-semibold">Tipe Kamar</label>
-                                                    <div class="service-grid">
-                                                        @foreach ($types as $type)
-                                                            @php
-                                                                $isSelected = in_array(
-                                                                    $type->nama_tipe,
-                                                                    $selectedTypeNames,
-                                                                );
-                                                            @endphp
-                                                            <div class="type-item {{ $isSelected ? 'selected' : '' }}"
-                                                                data-type-id="{{ $type->id }}"
-                                                                data-price="{{ $type->jumlah }}"
-                                                                data-name="{{ $type->nama_tipe }}">
-                                                                <div class="service-name">{{ $type->nama_tipe }}</div>
-                                                                <input type="checkbox" name="type[]"
-                                                                    value="{{ $type->nama_tipe }}" class="d-none"
-                                                                    {{ $isSelected ? 'checked' : '' }}>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
-
-                                                    <div class="type-input-container">
-                                                        @foreach ($existingTypeData as $typeId => $data)
+                                                <div class="type-input-container">
+                                                    @if ($isOldData)
+                                                        @foreach ($selectedTypes as $typeId)
                                                             @php
                                                                 $typeMaster = $types->firstWhere('id', $typeId);
+                                                                $oldDetail = old(
+                                                                    'hotel_data.' . $currentIndex . '.' . $typeId,
+                                                                );
                                                             @endphp
-                                                            @if ($typeMaster)
+                                                            @if ($typeMaster && $oldDetail)
                                                                 <div class="form-group mt-2 bg-white p-3 border rounded"
                                                                     data-type-id="{{ $typeId }}">
                                                                     <label class="form-label">Jumlah Kamar
-                                                                        ({{ $typeMaster->nama_tipe }})
-                                                                    </label>
+                                                                        ({{ $typeMaster->nama_tipe }})</label>
+
+                                                                    {{-- Validasi Jumlah Kamar per Tipe --}}
                                                                     <input type="number"
-                                                                        class="form-control qty-input-hotel"
-                                                                        name="hotel_data[{{ $index }}][{{ $typeId }}][jumlah]"
-                                                                        min="1" value="{{ $data['jumlah'] }}"
+                                                                        class="form-control qty-input-hotel @error('hotel_data.' . $currentIndex . '.' . $typeId . '.jumlah') is-invalid @enderror"
+                                                                        name="hotel_data[{{ $currentIndex }}][{{ $typeId }}][jumlah]"
+                                                                        min="1"
+                                                                        value="{{ $oldDetail['jumlah'] }}"
                                                                         data-is-qty="true"
                                                                         data-type-id="{{ $typeId }}">
+                                                                    @error('hotel_data.' . $currentIndex . '.' . $typeId .
+                                                                        '.jumlah')
+                                                                        <div class="invalid-feedback">{{ $message }}
+                                                                        </div>
+                                                                    @enderror
 
-                                                                    <label class="form-label mt-2">Harga
-                                                                        ({{ $typeMaster->nama_tipe }})</label>
+                                                                    <label class="form-label mt-2">Harga</label>
                                                                     <input type="text" class="form-control"
-                                                                        name="hotel_data[{{ $index }}][{{ $typeId }}][harga]"
-                                                                        value="{{ number_format($data['harga'], 0, ',', '.') }}"
-                                                                        readonly> <input type="hidden"
-                                                                        name="hotel_data[{{ $index }}][{{ $typeId }}][type_name]"
+                                                                        name="hotel_data[{{ $currentIndex }}][{{ $typeId }}][harga]"
+                                                                        value="{{ $oldDetail['harga'] }}" readonly>
+                                                                    <input type="hidden"
+                                                                        name="hotel_data[{{ $currentIndex }}][{{ $typeId }}][type_name]"
                                                                         value="{{ $typeMaster->nama_tipe }}">
                                                                 </div>
                                                             @endif
                                                         @endforeach
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group mt-2">
-                                                <label class="form-label">Total kamar</label>
-                                                {{-- Ambil jumlah kamar dari record pertama (asumsi total kamar disimpan per record atau hitung ulang) --}}
-                                                <input type="number" class="form-control"
-                                                    name="jumlah_kamar[{{ $index }}]" min="0"
-                                                    value="{{ $firstHotel->jumlah_kamar }}">
-                                            </div>
-                                            <div class="form-group mt-2">
-                                                <label class="form-label">Keterangan</label>
-                                                <input type="text" class="form-control"
-                                                    name="keterangan[{{ $index }}]"
-                                                    value="{{ $firstHotel->catatan }}">
-                                            </div>
-                                            <div class="mt-3 text-end">
-                                                <button type="button" class="btn btn-danger btn-sm removeHotel">Hapus
-                                                    Hotel</button>
-                                            </div>
-                                        </div>
-                                        @php $index++; @endphp
-                                    @empty
-                                        {{-- Template kosong jika tidak ada data --}}
-                                        <div class="hotel-form bg-white p-3 border mb-3" data-index="0">
-                                            <div class="row g-3">
-                                                <div class="col-md-6"><label class="form-label fw-semibold">Tanggal
-                                                        Checkin</label><input type="date" class="form-control"
-                                                        name="tanggal_checkin[0]"></div>
-                                                <div class="col-md-6"><label class="form-label fw-semibold">Tanggal
-                                                        Checkout</label><input type="date" class="form-control"
-                                                        name="tanggal_checkout[0]"></div>
-                                                <div class="col-12"><label class="form-label fw-semibold">Nama
-                                                        Hotel</label><input type="text" class="form-control"
-                                                        name="nama_hotel[0]" placeholder="Nama hotel"></div>
-                                                <div class="col-12">
-                                                    <label class="form-label fw-semibold">Tipe Kamar</label>
-                                                    <div class="service-grid">
-                                                        @foreach ($types as $type)
-                                                            <div class="type-item" data-type-id="{{ $type->id }}"
-                                                                data-price="{{ $type->jumlah }}"
-                                                                data-name="{{ $type->nama_tipe }}">
-                                                                <div class="service-name">{{ $type->nama_tipe }}</div>
-                                                                <input type="checkbox" name="type[]"
-                                                                    value="{{ $type->nama_tipe }}" class="d-none">
-                                                            </div>
+                                                    @else
+                                                        {{-- Render Input Detail Tipe Kamar dari DATABASE --}}
+                                                        @foreach ($data as $item)
+                                                            @php $typeMaster = $types->firstWhere('nama_tipe', $item->type); @endphp
+                                                            @if ($typeMaster)
+                                                                <div class="form-group mt-2 bg-white p-3 border rounded"
+                                                                    data-type-id="{{ $typeMaster->id }}">
+                                                                    <label class="form-label">Jumlah Kamar
+                                                                        ({{ $item->type }})</label>
+                                                                    <input type="number"
+                                                                        class="form-control qty-input-hotel"
+                                                                        name="hotel_data[{{ $currentIndex }}][{{ $typeMaster->id }}][jumlah]"
+                                                                        min="1" value="{{ $item->jumlah_type }}"
+                                                                        data-is-qty="true"
+                                                                        data-type-id="{{ $typeMaster->id }}">
+                                                                    <label class="form-label mt-2">Harga</label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="hotel_data[{{ $currentIndex }}][{{ $typeMaster->id }}][harga]"
+                                                                        value="{{ number_format($item->harga_perkamar, 0, ',', '.') }}"
+                                                                        readonly>
+                                                                    <input type="hidden"
+                                                                        name="hotel_data[{{ $currentIndex }}][{{ $typeMaster->id }}][type_name]"
+                                                                        value="{{ $item->type }}">
+                                                                </div>
+                                                            @endif
                                                         @endforeach
-                                                    </div>
-                                                    <div class="type-input-container"></div>
+                                                    @endif
                                                 </div>
                                             </div>
-                                            <div class="form-group mt-2"><label class="form-label">Total
-                                                    kamar</label><input type="number" class="form-control"
-                                                    name="jumlah_kamar[0]" min="0"></div>
-                                            <div class="form-group mt-2"><label
-                                                    class="form-label">Keterangan</label><input type="text"
-                                                    class="form-control" name="keterangan[0]" min="0"></div>
-                                            <div class="mt-3 text-end"><button type="button"
-                                                    class="btn btn-danger btn-sm removeHotel">Hapus Hotel</button></div>
                                         </div>
-                                    @endforelse
-                                @endif
+
+                                        {{-- TOTAL KAMAR --}}
+                                        <div class="form-group mt-2">
+                                            <label class="form-label">Total kamar</label>
+                                            <input type="number"
+                                                class="form-control @error('jumlah_kamar.' . $currentIndex) is-invalid @enderror"
+                                                name="jumlah_kamar[{{ $currentIndex }}]" min="0"
+                                                value="{{ $valJmlKamar }}" readonly>
+                                            @error('jumlah_kamar.' . $currentIndex)
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        {{-- KETERANGAN --}}
+                                        <div class="form-group mt-2">
+                                            <label class="form-label">Keterangan</label>
+                                            <input type="text" class="form-control"
+                                                name="keterangan[{{ $currentIndex }}]" value="{{ $valKet }}">
+                                        </div>
+
+                                        <div class="mt-3 text-end">
+                                            <button type="button" class="btn btn-danger btn-sm removeHotel">Hapus
+                                                Hotel</button>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
 
@@ -1587,25 +1520,23 @@
                         class="form-control" name="rute[]" placeholder="Contoh: CGK - JED"></div>
                 <div class="col-md-6"><label class="form-label fw-semibold">Maskapai</label><input type="text"
                         class="form-control" name="maskapai[]"></div>
-                <div class="col-md-6"><label class="form-label fw-semibold">Harga Tiket</label><input type="number"
-                        class="form-control" name="harga_tiket[]"></div>
                 <div class="col-md-6"><label class="form-label fw-semibold">Keterangan</label><input type="text"
                         class="form-control" name="keterangan_tiket[]"></div>
                 <div class="col-12"><label class="form-label">Jumlah (Jamaah)</label><input type="number"
                         class="form-control" name="jumlah[]"></div>
             </div>
-            <div class="mt-3 text-end"><button type="button"
-                    class="btn btn-danger btn-sm removeTicket">Hapus</button></div>
+            <div class="mt-3 text-end"><button type="button" class="btn btn-danger btn-sm removeTicket">Hapus</button>
+            </div>
         </div>
     </template>
 
     <template id="hotel-template">
         <div class="hotel-form bg-white p-3 border mb-3" data-index="0">
             <div class="row g-3">
-                <div class="col-md-6"><label class="form-label fw-semibold">Tanggal Checkin</label><input
-                        type="date" class="form-control" name="tanggal_checkin[]"></div>
-                <div class="col-md-6"><label class="form-label fw-semibold">Tanggal Checkout</label><input
-                        type="date" class="form-control" name="tanggal_checkout[]"></div>
+                <div class="col-md-6"><label class="form-label fw-semibold">Tanggal Checkin</label><input type="date"
+                        class="form-control" name="tanggal_checkin[]"></div>
+                <div class="col-md-6"><label class="form-label fw-semibold">Tanggal Checkout</label><input type="date"
+                        class="form-control" name="tanggal_checkout[]"></div>
                 <div class="col-12"><label class="form-label fw-semibold">Nama Hotel</label><input type="text"
                         class="form-control" name="nama_hotel[]" placeholder="Nama hotel"></div>
                 <div class="col-12">
@@ -1615,8 +1546,7 @@
                             <div class="type-item" data-type-id="{{ $type->id }}"
                                 data-price="{{ $type->jumlah }}" data-name="{{ $type->nama_tipe }}">
                                 <div class="service-name">{{ $type->nama_tipe }}</div>
-                                <input type="checkbox" name="type[]" value="{{ $type->nama_tipe }}"
-                                    class="d-none">
+                                <input type="checkbox" name="type[]" value="{{ $type->nama_tipe }}" class="d-none">
                             </div>
                         @endforeach
                     </div>
@@ -1722,8 +1652,7 @@
             });
 
             // PERBAIKAN: Inisialisasi counter berdasarkan jumlah data 'old' ATAU 'existing'
-            let hotelCounter =
-                {{ old('nama_hotel') ? count(old('nama_hotel')) : ($existingHotels->count() > 0 ? $existingHotels->count() : 1) }};
+            let hotelCounter = document.querySelectorAll('.hotel-form').length;
             let transportCounter =
                 {{ old('item_id') ? count(old('item_id')) : ($existingTransports->count() > 0 ? $existingTransports->count() : 0) }};
             let ticketCounter =
@@ -1831,14 +1760,16 @@
                     const checkbox = serviceItem.querySelector('input[type="checkbox"]');
                     const detailForm = document.getElementById(`${serviceType}-details`);
 
-                    // Toggle status
+                    // 1. Toggle Visual & Checkbox
                     serviceItem.classList.toggle('selected');
-                    const isSelected = serviceItem.classList.contains('selected'); // Dapatkan status baru
+                    const isSelected = serviceItem.classList.contains('selected');
                     checkbox.checked = isSelected;
 
+                    // 2. Toggle Form Visibility & Disabled State
                     if (detailForm) {
-                        detailForm.classList.toggle('hidden', !isSelected); // Sembunyikan/tampilkan form
+                        detailForm.classList.toggle('hidden', !isSelected);
 
+                        // Logic disable/enable input (seperti kode sebelumnya)
                         detailForm.querySelectorAll('input, select, textarea, button').forEach(el => {
                             if (!el.classList.contains('back-to-services-btn')) {
 
@@ -1871,11 +1802,22 @@
                                 el.disabled = !isSelected;
                             }
                         });
+
+                        // Scroll to view
                         if (isSelected) {
                             detailForm.scrollIntoView({
                                 behavior: 'smooth',
                                 block: 'start'
                             });
+                        }
+                    }
+
+                    // PERBAIKAN 2: AUTO ADD HOTEL FORM
+                    // Logika: Jika tipe Hotel dipilih, DAN wrapper masih kosong -> Klik Tambah
+                    if (serviceType === 'hotel' && isSelected) {
+                        const wrapper = document.getElementById('hotelWrapper');
+                        if (wrapper && wrapper.children.length === 0) {
+                            document.getElementById('addHotel').click();
                         }
                     }
                 }
@@ -2253,33 +2195,41 @@
 
             // Update logika tombol "Tambah Hotel" agar menggunakan data-index yang benar
             const addHotelBtn = document.getElementById('addHotel');
-            // Hapus event listener lama jika ada (tidak bisa remove anonymous func, jadi pastikan ini menggantikan logika sebelumnya)
-            // Atau timpa di dalam blok yang sama. Pastikan logika ini menggantikan logika `document.getElementById('addHotel').addEventListener` yang ada di kode sebelumnya.
+            if (addHotelBtn) {
+                // Clone button untuk clear event listener lama (best practice jika ada duplikasi script)
+                const newBtn = addHotelBtn.cloneNode(true);
+                addHotelBtn.parentNode.replaceChild(newBtn, addHotelBtn);
 
-            // PERBAIKAN LOGIKA ADD HOTEL (Gantikan yang ada di script sebelumnya)
-            addHotelBtn.replaceWith(addHotelBtn.cloneNode(true)); // Trik reset event listener
-            document.getElementById('addHotel').addEventListener('click', function() {
-                const template = document.getElementById('hotel-template').content.cloneNode(true);
-                const hotelForm = template.querySelector('.hotel-form');
+                newBtn.addEventListener('click', function() {
+                    const template = document.getElementById('hotel-template').content.cloneNode(true);
+                    const hotelForm = template.querySelector('.hotel-form');
 
-                // Set index baru
-                hotelForm.dataset.index = hotelCounter;
+                    // Gunakan Counter yang sudah disinkronkan dengan DOM
+                    hotelForm.dataset.index = hotelCounter;
 
-                // Update atribut name agar sesuai array
-                hotelForm.querySelector('[name="tanggal_checkin[]"]').name =
-                    `tanggal_checkin[${hotelCounter}]`;
-                hotelForm.querySelector('[name="tanggal_checkout[]"]').name =
-                    `tanggal_checkout[${hotelCounter}]`;
-                hotelForm.querySelector('[name="nama_hotel[]"]').name = `nama_hotel[${hotelCounter}]`;
-                hotelForm.querySelector('[name="jumlah_kamar[]"]').name = `jumlah_kamar[${hotelCounter}]`;
-                hotelForm.querySelector('[name="keterangan[]"]').name = `keterangan[${hotelCounter}]`;
+                    // Update attribut name
+                    hotelForm.querySelector('[name="tanggal_checkin[]"]').name =
+                        `tanggal_checkin[${hotelCounter}]`;
+                    hotelForm.querySelector('[name="tanggal_checkout[]"]').name =
+                        `tanggal_checkout[${hotelCounter}]`;
+                    hotelForm.querySelector('[name="nama_hotel[]"]').name = `nama_hotel[${hotelCounter}]`;
+                    hotelForm.querySelector('[name="jumlah_kamar[]"]').name =
+                        `jumlah_kamar[${hotelCounter}]`;
+                    hotelForm.querySelector('[name="keterangan[]"]').name = `keterangan[${hotelCounter}]`;
 
-                // Type grid checkbox tidak perlu diubah name-nya karena hanya dummy trigger,
-                // tapi input dinamis nanti akan pakai hotelCounter sebagai index.
+                    // Tambahkan hidden ID untuk row baru (agar konsisten dengan loop Blade)
+                    const hiddenId = document.createElement('input');
+                    hiddenId.type = 'hidden';
+                    hiddenId.name = `hotel_id[${hotelCounter}]`;
+                    hiddenId.value = ''; // Kosong karena baru
+                    hotelForm.prepend(hiddenId);
 
-                document.getElementById('hotelWrapper').appendChild(template);
-                hotelCounter++;
-            });
+                    document.getElementById('hotelWrapper').appendChild(template);
+
+                    // Increment counter
+                    hotelCounter++;
+                });
+            }
         });
     </script>
 @endpush
