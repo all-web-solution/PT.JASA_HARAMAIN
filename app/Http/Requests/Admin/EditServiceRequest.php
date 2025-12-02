@@ -198,44 +198,8 @@ class EditServiceRequest extends FormRequest
             ],
 
             // --- PENDAMPING ---
-            'jumlah_pendamping' => [
-                $isPendampingSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $value, $fail) use ($isPendampingSelected) {
-                    if (!$isPendampingSelected)
-                        return;
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
-                        if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
-                        }
-                    }
-                    if (!$hasSelection) {
-                        $fail('Anda memilih layanan Pendamping, wajib mengisi jumlah minimal untuk satu pendamping.');
-                    }
-                },
-            ],
-            'tanggal_pendamping' => [
-                $isPendampingSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $dates, $fail) use ($isPendampingSelected) {
-                    if (!$isPendampingSelected)
-                        return;
-                    $jumlahs = $this->input('jumlah_pendamping', []);
-                    foreach ($jumlahs as $guideId => $qty) {
-                        if ((int) $qty > 0) {
-                            $start = $dates[$guideId]['dari'] ?? null;
-                            $end = $dates[$guideId]['sampai'] ?? null;
-                            if (empty($start) || empty($end)) {
-                                $guide = GuideItems::find($guideId);
-                                $name = $guide ? $guide->nama : 'Pendamping';
-                                $fail("Tanggal 'Dari' dan 'Sampai' wajib diisi untuk $name.");
-                            }
-                        }
-                    }
-                }
-            ],
+            'jumlah_pendamping' => $isPendampingSelected ? 'required|array' : 'nullable',
+            'tanggal_pendamping' => $isPendampingSelected ? 'required|array' : 'nullable',
 
             // --- KONTEN ---
             'jumlah_konten' => [
@@ -411,6 +375,44 @@ class EditServiceRequest extends FormRequest
         ];
     }
 
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            if (in_array('pendamping', $this->input('services', []))) {
+                $jumlahs = $this->input('jumlah_pendamping', []);
+                $dates = $this->input('tanggal_pendamping', []);
+                $hasSelection = false;
+
+                foreach ($jumlahs as $id => $qty) {
+                    if ((int) $qty > 0) {
+                        $hasSelection = true;
+
+                        $start = $dates[$id]['dari'] ?? null;
+                        $end = $dates[$id]['sampai'] ?? null;
+
+                        if (empty($start)) {
+                            $validator->errors()->add("tanggal_pendamping.{$id}.dari", "Tanggal 'Dari' wajib diisi.");
+                        }
+                        if (empty($end)) {
+                            $validator->errors()->add("tanggal_pendamping.{$id}.sampai", "Tanggal 'Sampai' wajib diisi.");
+                        }
+
+                        if (!empty($start) && !empty($end)) {
+                            if ($end < $start) {
+                                $validator->errors()->add("tanggal_pendamping.{$id}.sampai", "Tanggal sampai tidak boleh kurang dari tanggal dari.");
+                            }
+                        }
+                    }
+                }
+
+                // Validasi Global (Minimal 1 dipilih)
+                if (!$hasSelection) {
+                    $validator->errors()->add('jumlah_pendamping', 'Anda memilih layanan Pendamping, wajib mengisi jumlah minimal untuk satu pendamping.');
+                }
+            }
+        });
+    }
+
     public function messages(): array
     {
         return [
@@ -483,7 +485,10 @@ class EditServiceRequest extends FormRequest
             'paket_info' => 'File Paket Info wajib diupload.',
 
             // Pendamping
-            'jumlah_pendamping.required' => 'Data pendamping wajib diisi.',
+            'jumlah_pendamping.required' => 'Anda memilih layanan Pendamping, wajib mengisi jumlah minimal untuk satu pendamping.',
+            'tanggal_pendamping.required' => 'Tanggal pendamping wajib diisi.',
+            'tanggal_pendamping.*.dari.required' => 'Tanggal "Dari" wajib diisi.',
+            'tanggal_pendamping.*.sampai.required' => 'Tanggal "Sampai" wajib diisi.',
 
             // Konten
             'jumlah_konten.required' => 'Data konten wajib diisi.',

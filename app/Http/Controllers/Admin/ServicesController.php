@@ -748,20 +748,23 @@ class ServicesController extends Controller
                 // Buat ulang data dari form
                 if ($request->has('jumlah_pendamping')) {
                     foreach ($request->jumlah_pendamping as $id => $jumlah) {
-                        // Hanya buat jika jumlah lebih dari 0 dan datanya dikirim (tidak disabled)
                         if ($jumlah !== null && $jumlah > 0) {
+
+                            $tglDari = $request->input("tanggal_pendamping.$id.dari");
+                            $tglSampai = $request->input("tanggal_pendamping.$id.sampai");
+
                             Guide::create([
                                 'service_id' => $service->id,
                                 'guide_id' => $id,
                                 'jumlah' => $jumlah,
-                                'muthowif_dari' => $request->pendamping_dari[$id] ?? null,
-                                'muthowif_sampai' => $request->pendamping_sampai[$id] ?? null,
+                                'keterangan' => null,
+                                'muthowif_dari' => $tglDari,
+                                'muthowif_sampai' => $tglSampai,
                             ]);
                         }
                     }
                 }
             } else {
-                // Tidak, service 'pendamping' di-uncheck. Hapus semua.
                 Guide::where('service_id', $service->id)->delete();
             }
 

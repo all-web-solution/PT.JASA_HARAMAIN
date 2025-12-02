@@ -204,15 +204,26 @@ class ServiceRequest extends FormRequest
                 function ($attribute, $dates, $fail) use ($isPendampingSelected) {
                     if (!$isPendampingSelected)
                         return;
+
                     $jumlahs = $this->input('jumlah_pendamping', []);
+
                     foreach ($jumlahs as $guideId => $qty) {
                         if ((int) $qty > 0) {
                             $start = $dates[$guideId]['dari'] ?? null;
                             $end = $dates[$guideId]['sampai'] ?? null;
+
                             if (empty($start) || empty($end)) {
                                 $guide = GuideItems::find($guideId);
                                 $name = $guide ? $guide->nama : 'Pendamping';
-                                $fail("Tanggal 'Dari' dan 'Sampai' wajib diisi untuk $name.");
+                                $fail("Tanggal 'Dari' dan 'Sampai' wajib diisi lengkap untuk $name.");
+                            }
+
+                            if (!empty($start) && !empty($end)) {
+                                if ($end < $start) {
+                                    $guide = GuideItems::find($guideId);
+                                    $name = $guide ? $guide->nama : 'Pendamping';
+                                    $fail("Tanggal 'Sampai' untuk $name tidak boleh sebelum Tanggal 'Dari'.");
+                                }
                             }
                         }
                     }
