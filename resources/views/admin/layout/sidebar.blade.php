@@ -3,7 +3,7 @@
         <div class="user-avatar rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2"
             style="width: 100px; height: 100px; overflow: hidden; background-color: #fff;">
 
-            <img src="{{ asset('assets/images/haramain-logo.jpeg') }}" alt="logo"
+            <img src="{{ asset('assets/images/haramain-logo.webp') }}" alt="logo"
                 style="width: 100%; height: 100%; object-fit: cover;">
 
         </div>
