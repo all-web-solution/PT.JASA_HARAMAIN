@@ -37,15 +37,17 @@ class EditServiceRequest extends FormRequest
 
         // Sub-Layanan
         $transportationTypes = $this->input('transportation', []);
-        // Note: Di Edit mungkin namanya 'transportation_types' atau handle mapping di controller
-        // Asumsi form edit disamakan name-nya menjadi 'transportation[]' agar konsisten.
-
         $isBusSelected = $isMainTransportationSelected && in_array('bus', $transportationTypes);
         $isPlaneSelected = $isMainTransportationSelected && in_array('airplane', $transportationTypes);
 
         $handlingTypes = $this->input('handlings', []);
         $isHandlingHotelSelected = $isHandlingSelected && in_array('hotel', $handlingTypes);
         $isHandlingBandaraSelected = $isHandlingSelected && in_array('bandara', $handlingTypes);
+
+        // ID Helper (Untuk mendeteksi apakah ini Update atau Insert baru saat Edit)
+        // Pastikan input hidden ini ada di edit.blade.php
+        $existingHandlingHotelId = $this->input('handling_hotel_id');
+        $existingHandlingBandaraId = $this->input('handling_bandara_id');
 
         $reyalType = $this->input('tipe');
 
@@ -140,53 +142,55 @@ class EditServiceRequest extends FormRequest
                 },
             ],
 
-            // --- HANDLING ---
+            // --- HANDLING (PERBAIKAN LOGIKA FILE REQUIRED) ---
             'handlings' => $isHandlingSelected ? 'required|array|min:1' : 'nullable',
 
-            // Handling Hotel (Semua Wajib jika hotel dipilih)
+            // Handling Hotel
             'nama_hotel_handling' => $isHandlingHotelSelected ? 'required|string|max:255' : 'nullable',
             'tanggal_hotel_handling' => $isHandlingHotelSelected ? 'required|date' : 'nullable',
             'harga_hotel_handling' => $isHandlingHotelSelected ? 'required|numeric|min:0' : 'nullable',
             'pax_hotel_handling' => $isHandlingHotelSelected ? 'required|integer|min:1' : 'nullable',
-            // File Handling Hotel (Required saat Create, Nullable saat Edit/Update)
+
+            // File: Wajib JIKA Hotel dipilih DAN (Data Baru / ID Kosong)
             'kode_booking_hotel_handling' => [
-                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingHotelSelected),
+                Rule::requiredIf(fn() => $isHandlingHotelSelected && empty($existingHandlingHotelId)),
                 'nullable',
                 'file',
                 'mimes:jpg,jpeg,png,pdf',
                 'max:5120'
             ],
             'rumlis_hotel_handling' => [
-                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingHotelSelected),
+                Rule::requiredIf(fn() => $isHandlingHotelSelected && empty($existingHandlingHotelId)),
                 'nullable',
                 'file',
                 'mimes:jpg,jpeg,png,pdf,xls,xlsx',
                 'max:5120'
             ],
             'identitas_hotel_handling' => [
-                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingHotelSelected),
+                Rule::requiredIf(fn() => $isHandlingHotelSelected && empty($existingHandlingHotelId)),
                 'nullable',
                 'file',
                 'mimes:jpg,jpeg,png,pdf',
                 'max:5120'
             ],
 
-            // Handling Bandara (Semua Wajib jika bandara dipilih)
+            // Handling Bandara
             'nama_bandara_handling' => $isHandlingBandaraSelected ? 'required|string|max:255' : 'nullable',
             'jumlah_jamaah_handling' => $isHandlingBandaraSelected ? 'required|integer|min:1' : 'nullable',
             'harga_bandara_handling' => $isHandlingBandaraSelected ? 'required|numeric|min:0' : 'nullable',
             'kedatangan_jamaah_handling' => $isHandlingBandaraSelected ? 'required|date' : 'nullable',
             'nama_supir' => $isHandlingBandaraSelected ? 'required|string|max:255' : 'nullable',
-            // File Handling Bandara
+
+            // File: Wajib JIKA Bandara dipilih DAN (Data Baru / ID Kosong)
             'paket_info' => [
-                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingBandaraSelected),
+                Rule::requiredIf(fn() => $isHandlingBandaraSelected && empty($existingHandlingBandaraId)),
                 'nullable',
                 'file',
                 'mimes:jpg,jpeg,png,pdf',
                 'max:5120'
             ],
             'identitas_koper_bandara_handling' => [
-                Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingBandaraSelected),
+                Rule::requiredIf(fn() => $isHandlingBandaraSelected && empty($existingHandlingBandaraId)),
                 'nullable',
                 'file',
                 'mimes:jpg,jpeg,png,pdf',
@@ -460,6 +464,8 @@ class EditServiceRequest extends FormRequest
             'tanggal_hotel_handling.required' => 'Tanggal pelaksanaan Handling Hotel wajib diisi.',
             'harga_hotel_handling.required' => 'Harga Handling Hotel wajib diisi.',
             'pax_hotel_handling.required' => 'Jumlah Pax Handling Hotel wajib diisi.',
+            'harga_hotel_handling.numeric' => 'Harga Handling Hotel harus berupa angka.',
+            'pax_hotel_handling.integer' => 'Jumlah Pax Handling Hotel harus berupa angka bulat.',
             'kode_booking_hotel_handling.required' => 'File Kode Booking wajib diupload untuk handling hotel.',
             'rumlis_hotel_handling.required' => 'File Room List wajib diupload untuk handling hotel.',
             'identitas_hotel_handling.required' => 'File Identitas Koper wajib diupload untuk handling hotel.',
@@ -467,7 +473,10 @@ class EditServiceRequest extends FormRequest
             // Handling Bandara
             'nama_bandara_handling.required' => 'Nama Bandara wajib diisi.',
             'jumlah_jamaah_handling.required' => 'Jumlah jamaah (Handling Bandara) wajib diisi.',
+            'jumlah_jamaah_handling.integer' => 'Jumlah jamaah (Handling Bandara) harus berupa angka bulat.',
+            'jumlah_jamaah_handling.min' => 'Jumlah jamaah (Handling Bandara) minimal 1.',
             'harga_bandara_handling.required' => 'Harga Handling Bandara wajib diisi.',
+            'harga_bandara_handling.numeric' => 'Harga Handling Bandara harus berupa angka.',
             'kedatangan_jamaah_handling.required' => 'Tanggal kedatangan jamaah wajib diisi.',
             'nama_supir.required' => 'Nama supir wajib diisi.',
             'identitas_koper_bandara_handling.required' => 'File Identitas Koper Bandara wajib diupload.',
