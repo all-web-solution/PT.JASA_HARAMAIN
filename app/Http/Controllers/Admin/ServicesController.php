@@ -40,7 +40,6 @@ use App\Models\HandlingPlanes;
 use App\Models\WakafCustomer;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 
 class ServicesController extends Controller
 {

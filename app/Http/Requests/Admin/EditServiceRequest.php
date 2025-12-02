@@ -74,7 +74,6 @@ class EditServiceRequest extends FormRequest
             'rute.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
             'tanggal.*' => $isPlaneSelected ? 'required|date' : 'nullable|date',
             'maskapai.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
-            'harga_tiket.*' => $isPlaneSelected ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
             'jumlah.*' => $isPlaneSelected ? 'required|integer|min:1' : 'nullable|integer|min:0',
 
             // --- HOTEL ---
@@ -92,11 +91,16 @@ class EditServiceRequest extends FormRequest
                 function ($attribute, $value, $fail) use ($isHotelSelected) {
                     if (!$isHotelSelected)
                         return;
-                    $hotelIndexes = array_keys($this->input('nama_hotel', []));
+
+                    $allHotels = request()->input('nama_hotel', []);
+                    $hotelIndexes = array_keys($allHotels);
+
                     foreach ($hotelIndexes as $index) {
                         if (!isset($value[$index]) || !is_array($value[$index]) || count($value[$index]) < 1) {
-                            $namaHotel = $this->input("nama_hotel.$index", "Hotel ke-" . ($index + 1));
-                            $fail("Hotel '$namaHotel' wajib memiliki minimal satu Tipe Kamar yang dipilih.");
+                            $nama = $allHotels[$index] ?? null;
+                            $label = !empty($nama) ? "'$nama'" : "ke-" . ($index + 1);
+
+                            $fail("Hotel $label wajib memiliki minimal satu Tipe Kamar yang dipilih.");
                         }
                     }
                 },
@@ -419,6 +423,7 @@ class EditServiceRequest extends FormRequest
             'jumlah.*.min' => 'Jumlah jamaah harus minimal 1.',
 
             // Hotel
+            'hotel_data.required' => 'Data detail hotel wajib diisi (Mohon pilih tipe kamar).',
             'nama_hotel.required' => 'Anda memilih layanan Hotel, wajib mengisi data minimal satu hotel.',
             'nama_hotel.*.required' => 'Nama hotel wajib diisi.',
             'nama_hotel.*.filled' => 'Nama hotel tidak boleh kosong.',
