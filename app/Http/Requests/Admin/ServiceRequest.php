@@ -37,9 +37,6 @@ class ServiceRequest extends FormRequest
 
         // Sub-Layanan
         $transportationTypes = $this->input('transportation', []);
-        // Note: Di Edit mungkin namanya 'transportation_types' atau handle mapping di controller
-        // Asumsi form edit disamakan name-nya menjadi 'transportation[]' agar konsisten.
-
         $isBusSelected = $isMainTransportationSelected && in_array('bus', $transportationTypes);
         $isPlaneSelected = $isMainTransportationSelected && in_array('airplane', $transportationTypes);
 
@@ -449,6 +446,8 @@ class ServiceRequest extends FormRequest
             'tanggal_hotel_handling.required' => 'Tanggal pelaksanaan Handling Hotel wajib diisi.',
             'harga_hotel_handling.required' => 'Harga Handling Hotel wajib diisi.',
             'pax_hotel_handling.required' => 'Jumlah Pax Handling Hotel wajib diisi.',
+            'harga_hotel_handling.numeric' => 'Harga Handling Hotel harus berupa angka.',
+            'pax_hotel_handling.integer' => 'Jumlah Pax Handling Hotel harus berupa angka bulat.',
             'kode_booking_hotel_handling.required' => 'File Kode Booking wajib diupload untuk handling hotel.',
             'rumlis_hotel_handling.required' => 'File Room List wajib diupload untuk handling hotel.',
             'identitas_hotel_handling.required' => 'File Identitas Koper wajib diupload untuk handling hotel.',
@@ -456,7 +455,10 @@ class ServiceRequest extends FormRequest
             // Handling Bandara
             'nama_bandara_handling.required' => 'Nama Bandara wajib diisi.',
             'jumlah_jamaah_handling.required' => 'Jumlah jamaah (Handling Bandara) wajib diisi.',
+            'jumlah_jamaah_handling.integer' => 'Jumlah jamaah (Handling Bandara) harus berupa angka bulat.',
+            'jumlah_jamaah_handling.min' => 'Jumlah jamaah (Handling Bandara) minimal 1.',
             'harga_bandara_handling.required' => 'Harga Handling Bandara wajib diisi.',
+            'harga_bandara_handling.numeric' => 'Harga Handling Bandara harus berupa angka.',
             'kedatangan_jamaah_handling.required' => 'Tanggal kedatangan jamaah wajib diisi.',
             'nama_supir.required' => 'Nama supir wajib diisi.',
             'identitas_koper_bandara_handling.required' => 'File Identitas Koper Bandara wajib diupload.',

@@ -918,29 +918,29 @@
                         <div class="detail-form {{ in_array('handling', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="handling-details">
                             @php
-                                // (1) Ambil data handling yang sudah ada
+                                // Logic PHP untuk penentuan checked/selected tetap sama seperti sebelumnya
                                 $hotelHandling = $service->handlings->firstWhere('name', 'hotel');
                                 $existingHotelHandling = $hotelHandling?->handlingHotels;
-
                                 $planeHandling = $service->handlings->firstWhere('name', 'bandara');
                                 $existingPlaneHandling = $planeHandling?->handlingPlanes;
-
-                                // (2) Cek 'old' input jika ada error validasi
                                 $oldHandlingTypes = old('handlings');
 
-                                // (3) TENTUKAN APAKAH CHECKBOX HARUS AKTIF
                                 if (!is_null($oldHandlingTypes)) {
-                                    // Jika ada 'old' input, gunakan itu
                                     $isHandlingHotelSelected = in_array('hotel', $oldHandlingTypes);
                                     $isHandlingPlaneSelected = in_array('bandara', $oldHandlingTypes);
                                 } else {
-                                    // Jika tidak ada 'old' input, cek dari data database
                                     $isHandlingHotelSelected = !is_null($existingHotelHandling);
                                     $isHandlingPlaneSelected = !is_null($existingPlaneHandling);
                                 }
                             @endphp
+
                             <h6 class="detail-title"><i class="bi bi-briefcase"></i> Handling</h6>
                             <div style="clear: both;"></div>
+
+                            {{-- Error Global Checkbox Handling --}}
+                            @error('handlings')
+                                <div class="alert alert-danger py-2 mb-3">{{ $message }}</div>
+                            @enderror
 
                             <div class="detail-section">
                                 <div class="service-grid">
@@ -958,109 +958,195 @@
                                     </div>
                                 </div>
                             </div>
+
+                            {{-- HOTEL HANDLING FORM --}}
                             <div class="form-group {{ $isHandlingHotelSelected ? '' : 'hidden' }}"
                                 id="hotel-handling-form">
                                 <input type="hidden" name="handling_hotel_id"
                                     value="{{ $existingHotelHandling?->id }}">
+
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Nama Hotel</label><input
-                                            type="text" class="form-control" name="nama_hotel_handling"
+                                    <div class="form-col">
+                                        <label class="form-label">Nama Hotel</label>
+                                        <input type="text"
+                                            class="form-control @error('nama_hotel_handling') is-invalid @enderror"
+                                            name="nama_hotel_handling"
                                             value="{{ old('nama_hotel_handling', $existingHotelHandling?->nama) }}">
+                                        @error('nama_hotel_handling')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    <div class="form-col"><label class="form-label">Tanggal</label><input type="date"
-                                            class="form-control" name="tanggal_hotel_handling"
+                                    <div class="form-col">
+                                        <label class="form-label">Tanggal</label>
+                                        <input type="date"
+                                            class="form-control @error('tanggal_hotel_handling') is-invalid @enderror"
+                                            name="tanggal_hotel_handling"
                                             value="{{ old('tanggal_hotel_handling', $existingHotelHandling?->tanggal?->format('Y-m-d')) }}">
+                                        @error('tanggal_hotel_handling')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Harga</label><input type="text"
-                                            class="form-control" name="harga_hotel_handling"
+                                    <div class="form-col">
+                                        <label class="form-label">Harga</label>
+                                        <input type="number"
+                                            class="form-control @error('harga_hotel_handling') is-invalid @enderror"
+                                            name="harga_hotel_handling"
                                             value="{{ old('harga_hotel_handling', $existingHotelHandling?->harga) }}">
+                                        @error('harga_hotel_handling')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    <div class="form-col"><label class="form-label">Pax</label><input type="text"
-                                            class="form-control" name="pax_hotel_handling"
-                                            value="{{ old('pax_hotel_handling', $existingHotelHandling?->pax) }}"></div>
+                                    <div class="form-col">
+                                        <label class="form-label">Pax</label>
+                                        <input type="number"
+                                            class="form-control @error('pax_hotel_handling') is-invalid @enderror"
+                                            name="pax_hotel_handling" min="1"
+                                            value="{{ old('pax_hotel_handling', $existingHotelHandling?->pax) }}">
+                                        @error('pax_hotel_handling')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
+
                                 <div class="form-row">
                                     <div class="form-col">
                                         <label class="form-label">Kode Booking</label>
-                                        <input type="file" class="form-control" name="kode_booking_hotel_handling">
+                                        <input type="file"
+                                            class="form-control @error('kode_booking_hotel_handling') is-invalid @enderror"
+                                            name="kode_booking_hotel_handling">
+                                        @error('kode_booking_hotel_handling')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                         @if ($existingHotelHandling?->kode_booking)
-                                            <small class="d-block mt-1">File saat ini:
-                                                <a href="{{ Storage::url($existingHotelHandling->kode_booking) }}"
-                                                    target="_blank">Lihat File</a>
-                                            </small>
+                                            <small class="d-block mt-1">File saat ini: <a
+                                                    href="{{ Storage::url($existingHotelHandling->kode_booking) }}"
+                                                    target="_blank">Lihat File</a></small>
                                         @endif
                                     </div>
                                     <div class="form-col">
                                         <label class="form-label">Rumlis</label>
-                                        <input type="file" class="form-control" name="rumlis_hotel_handling">
+                                        <input type="file"
+                                            class="form-control @error('rumlis_hotel_handling') is-invalid @enderror"
+                                            name="rumlis_hotel_handling">
+                                        @error('rumlis_hotel_handling')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                         @if ($existingHotelHandling?->rumlis)
-                                            <small class="d-block mt-1">File saat ini:
-                                                <a href="{{ Storage::url($existingHotelHandling->rumlis) }}"
-                                                    target="_blank">Lihat File</a>
-                                            </small>
+                                            <small class="d-block mt-1">File saat ini: <a
+                                                    href="{{ Storage::url($existingHotelHandling->rumlis) }}"
+                                                    target="_blank">Lihat File</a></small>
                                         @endif
                                     </div>
                                 </div>
-                                <div class="form-group">
+
+                                <div class="form-group mt-2">
                                     <label class="form-label">Identitas Koper</label>
-                                    <input type="file" class="form-control" name="identitas_hotel_handling">
+                                    <input type="file"
+                                        class="form-control @error('identitas_hotel_handling') is-invalid @enderror"
+                                        name="identitas_hotel_handling">
+                                    @error('identitas_hotel_handling')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                     @if ($existingHotelHandling?->identitas_koper)
-                                        <small class="d-block mt-1">File saat ini:
-                                            <a href="{{ Storage::url($existingHotelHandling->identitas_koper) }}"
-                                                target="_blank">Lihat File</a>
-                                        </small>
+                                        <small class="d-block mt-1">File saat ini: <a
+                                                href="{{ Storage::url($existingHotelHandling->identitas_koper) }}"
+                                                target="_blank">Lihat File</a></small>
                                     @endif
                                 </div>
                             </div>
+
+                            {{-- BANDARA HANDLING FORM --}}
                             <div class="form-group {{ $isHandlingPlaneSelected ? '' : 'hidden' }}"
                                 id="bandara-handling-form">
                                 <input type="hidden" name="handling_bandara_id"
                                     value="{{ $existingPlaneHandling?->id }}">
+
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Nama Bandara</label><input
-                                            type="text" class="form-control" name="nama_bandara_handling"
+                                    <div class="form-col">
+                                        <label class="form-label">Nama Bandara</label>
+                                        <input type="text"
+                                            class="form-control @error('nama_bandara_handling') is-invalid @enderror"
+                                            name="nama_bandara_handling"
                                             value="{{ old('nama_bandara_handling', $existingPlaneHandling?->nama_bandara) }}">
+                                        @error('nama_bandara_handling')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    <div class="form-col"><label class="form-label">Jumlah Jamaah</label><input
-                                            type="text" class="form-control" name="jumlah_jamaah_handling"
+                                    <div class="form-col">
+                                        <label class="form-label">Jumlah Jamaah</label>
+                                        <input type="number"
+                                            class="form-control @error('jumlah_jamaah_handling') is-invalid @enderror"
+                                            name="jumlah_jamaah_handling" min="1"
                                             value="{{ old('jumlah_jamaah_handling', $existingPlaneHandling?->jumlah_jamaah) }}">
+                                        @error('jumlah_jamaah_handling')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    <div class="form-col"><label class="form-label">Harga</label><input type="text"
-                                            class="form-control" name="harga_bandara_handling"
+                                    <div class="form-col">
+                                        <label class="form-label">Harga</label>
+                                        <input type="number"
+                                            class="form-control @error('harga_bandara_handling') is-invalid @enderror"
+                                            name="harga_bandara_handling"
                                             value="{{ old('harga_bandara_handling', $existingPlaneHandling?->harga) }}">
+                                        @error('harga_bandara_handling')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+
                                 <div class="form-row">
-                                    <div class="form-col"><label class="form-label">Kedatangan Jamaah</label><input
-                                            type="date" class="form-control" name="kedatangan_jamaah_handling"
+                                    <div class="form-col">
+                                        <label class="form-label">Kedatangan Jamaah</label>
+                                        <input type="date"
+                                            class="form-control @error('kedatangan_jamaah_handling') is-invalid @enderror"
+                                            name="kedatangan_jamaah_handling"
                                             value="{{ old('kedatangan_jamaah_handling', $existingPlaneHandling?->kedatangan_jamaah?->format('Y-m-d')) }}">
+                                        @error('kedatangan_jamaah_handling')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    <div class="form-col"><label class="form-label">Nama Sopir</label><input
-                                            type="text" class="form-control" name="nama_supir"
-                                            value="{{ old('nama_supir', $existingPlaneHandling?->nama_supir) }}"></div>
+                                    <div class="form-col">
+                                        <label class="form-label">Nama Sopir</label>
+                                        <input type="text"
+                                            class="form-control @error('nama_supir') is-invalid @enderror"
+                                            name="nama_supir"
+                                            value="{{ old('nama_supir', $existingPlaneHandling?->nama_supir) }}">
+                                        @error('nama_supir')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
+
                                 <div class="form-row">
                                     <div class="form-col">
                                         <label class="form-label">Paket Info</label>
-                                        <input type="file" class="form-control" name="paket_info">
+                                        <input type="file"
+                                            class="form-control @error('paket_info') is-invalid @enderror"
+                                            name="paket_info">
+                                        @error('paket_info')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                         @if ($existingPlaneHandling?->paket_info)
-                                            <small class="d-block mt-1">File saat ini:
-                                                <a href="{{ Storage::url($existingPlaneHandling->paket_info) }}"
-                                                    target="_blank">Lihat File</a>
-                                            </small>
+                                            <small class="d-block mt-1">File saat ini: <a
+                                                    href="{{ Storage::url($existingPlaneHandling->paket_info) }}"
+                                                    target="_blank">Lihat File</a></small>
                                         @endif
                                     </div>
                                     <div class="form-col">
                                         <label class="form-label">Identitas Koper</label>
-                                        <input type="file" class="form-control"
+                                        <input type="file"
+                                            class="form-control @error('identitas_koper_bandara_handling') is-invalid @enderror"
                                             name="identitas_koper_bandara_handling">
+                                        @error('identitas_koper_bandara_handling')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                         @if ($existingPlaneHandling?->identitas_koper)
-                                            <small class="d-block mt-1">File saat ini:
-                                                <a href="{{ Storage::url($existingPlaneHandling->identitas_koper) }}"
-                                                    target="_blank">Lihat File</a>
-                                            </small>
+                                            <small class="d-block mt-1">File saat ini: <a
+                                                    href="{{ Storage::url($existingPlaneHandling->identitas_koper) }}"
+                                                    target="_blank">Lihat File</a></small>
                                         @endif
                                     </div>
                                 </div>

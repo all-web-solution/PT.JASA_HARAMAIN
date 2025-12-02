@@ -450,32 +450,61 @@
                         </div>
                     @endif
 
-                    {{-- HANDLING (Perbaikan) --}}
+                    {{-- HANDLING --}}
                     @if ($service->handlings?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-briefcase"></i> Handling</h6>
                             @foreach ($service->handlings as $handling)
                                 <div class="p-3 mb-2" style="background: var(--haramain-light); border-radius: 8px;">
-                                    {{-- Ambil tipe dari $handling->name --}}
                                     <strong>Handling {{ ucfirst($handling->name ?? 'N/A') }}</strong>
+
                                     @if (strtolower($handling->name ?? '') == 'hotel')
-                                        @php $detail = $handling->handlingHotels?->first(); @endphp
-                                        <div class="detail-item"><span class="detail-label">Hotel</span><span
-                                                class="detail-value">{{ $detail?->nama ?? 'N/A' }}</span></div>
-                                        <div class="detail-item"><span class="detail-label">Tanggal</span><span
-                                                class="detail-value">{{ $detail?->tanggal ? \Carbon\Carbon::parse($detail->tanggal)->format('d M Y') : 'N/A' }}</span>
+
+                                        @php $detail = $handling->handlingHotels; @endphp
+
+                                        <div class="detail-item">
+                                            <span class="detail-label">Hotel</span>
+                                            <span class="detail-value">{{ $detail?->nama ?? 'N/A' }}</span>
                                         </div>
-                                        <div class="detail-item"><span class="detail-label">Pax</span><span
-                                                class="detail-value">{{ $detail?->pax ?? 0 }}</span></div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Tanggal</span>
+                                            <span class="detail-value">
+                                                {{ $detail?->tanggal ? \Carbon\Carbon::parse($detail->tanggal)->format('d M Y') : 'N/A' }}
+                                            </span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Pax</span>
+                                            <span class="detail-value">{{ $detail?->pax ?? 0 }}</span>
+                                        </div>
+                                        @if ($detail?->kode_booking)
+                                            <div class="detail-item">
+                                                <span class="detail-label">Kode Booking</span>
+                                                <span class="detail-value"><a
+                                                        href="{{ \Illuminate\Support\Facades\Storage::url($detail->kode_booking) }}"
+                                                        target="_blank">Lihat File</a></span>
+                                            </div>
+                                        @endif
                                     @elseif (strtolower($handling->name ?? '') == 'bandara')
-                                        @php $detail = $handling->handlingPlanes?->first(); @endphp
-                                        <div class="detail-item"><span class="detail-label">Bandara</span><span
-                                                class="detail-value">{{ $detail?->nama_bandara ?? 'N/A' }}</span></div>
-                                        <div class="detail-item"><span class="detail-label">Kedatangan</span><span
-                                                class="detail-value">{{ $detail?->kedatangan_jamaah ? \Carbon\Carbon::parse($detail->kedatangan_jamaah)->format('d M Y') : 'N/A' }}</span>
+                                        @php $detail = $handling->handlingPlanes; @endphp
+
+                                        <div class="detail-item">
+                                            <span class="detail-label">Bandara</span>
+                                            <span class="detail-value">{{ $detail?->nama_bandara ?? 'N/A' }}</span>
                                         </div>
-                                        <div class="detail-item"><span class="detail-label">Jamaah</span><span
-                                                class="detail-value">{{ $detail?->jumlah_jamaah ?? 0 }}</span></div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Kedatangan</span>
+                                            <span class="detail-value">
+                                                {{ $detail?->kedatangan_jamaah ? \Carbon\Carbon::parse($detail->kedatangan_jamaah)->format('d M Y') : 'N/A' }}
+                                            </span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Jamaah</span>
+                                            <span class="detail-value">{{ $detail?->jumlah_jamaah ?? 0 }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Sopir</span>
+                                            <span class="detail-value">{{ $detail?->nama_supir ?? '-' }}</span>
+                                        </div>
                                     @endif
                                 </div>
                             @endforeach

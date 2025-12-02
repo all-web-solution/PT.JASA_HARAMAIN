@@ -831,32 +831,48 @@
                                 <div class="form-row">
                                     <div class="form-col">
                                         <label class="form-label">Harga</label>
-                                        <input type="text"
+                                        <input type="number"
                                             class="form-control @error('harga_hotel_handling') is-invalid @enderror"
                                             name="harga_hotel_handling" value="{{ old('harga_hotel_handling') }}">
                                         @error('harga_hotel_handling')
-                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-col">
                                         <label class="form-label">Pax</label>
-                                        <input type="text"
+                                        <input type="number"
                                             class="form-control @error('pax_hotel_handling') is-invalid @enderror"
-                                            name="pax_hotel_handling" value="{{ old('pax_hotel_handling') }}">
+                                            name="pax_hotel_handling" min="1"
+                                            value="{{ old('pax_hotel_handling') }}">
                                         @error('pax_hotel_handling')
-                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Kode Booking</label>
-                                    <input type="file" class="form-control" name="kode_booking_hotel_handling">
+                                    <input type="file"
+                                        class="form-control @error('kode_booking_hotel_handling') is-invalid @enderror"
+                                        name="kode_booking_hotel_handling">
+                                    @error('kode_booking_hotel_handling')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
 
                                     <label class="form-label mt-2">Room List</label>
-                                    <input type="file" class="form-control" name="rumlis_hotel_handling">
+                                    <input type="file"
+                                        class="form-control @error('rumlis_hotel_handling') is-invalid @enderror"
+                                        name="rumlis_hotel_handling">
+                                    @error('rumlis_hotel_handling')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
 
                                     <label class="form-label mt-2">Identitas Koper</label>
-                                    <input type="file" class="form-control" name="identitas_hotel_handling">
+                                    <input type="file"
+                                        class="form-control @error('identitas_hotel_handling') is-invalid @enderror"
+                                        name="identitas_hotel_handling">
+                                    @error('identitas_hotel_handling')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -870,25 +886,26 @@
                                             class="form-control @error('nama_bandara_handling') is-invalid @enderror"
                                             name="nama_bandara_handling" value="{{ old('nama_bandara_handling') }}">
                                         @error('nama_bandara_handling')
-                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-col">
                                         <label class="form-label">Jumlah Jamaah</label>
-                                        <input type="text"
+                                        <input type="number"
                                             class="form-control @error('jumlah_jamaah_handling') is-invalid @enderror"
-                                            name="jumlah_jamaah_handling" value="{{ old('jumlah_jamaah_handling') }}">
+                                            name="jumlah_jamaah_handling" min="1"
+                                            value="{{ old('jumlah_jamaah_handling') }}">
                                         @error('jumlah_jamaah_handling')
-                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-col">
                                         <label class="form-label">Harga</label>
-                                        <input type="text"
+                                        <input type="number"
                                             class="form-control @error('harga_bandara_handling') is-invalid @enderror"
                                             name="harga_bandara_handling" value="{{ old('harga_bandara_handling') }}">
                                         @error('harga_bandara_handling')
-                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -900,12 +917,17 @@
                                             name="kedatangan_jamaah_handling"
                                             value="{{ old('kedatangan_jamaah_handling') }}">
                                         @error('kedatangan_jamaah_handling')
-                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-col">
                                         <label class="form-label">Paket Info</label>
-                                        <input type="file" class="form-control" name="paket_info">
+                                        <input type="file"
+                                            class="form-control @error('paket_info') is-invalid @enderror"
+                                            name="paket_info">
+                                        @error('paket_info')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="form-row">
@@ -915,13 +937,17 @@
                                             class="form-control @error('nama_supir') is-invalid @enderror"
                                             name="nama_supir" value="{{ old('nama_supir') }}">
                                         @error('nama_supir')
-                                            <div class="validation-error-message mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-col">
                                         <label class="form-label">Identitas Koper</label>
-                                        <input type="file" class="form-control"
+                                        <input type="file"
+                                            class="form-control @error('identitas_koper_bandara_handling') is-invalid @enderror"
                                             name="identitas_koper_bandara_handling">
+                                        @error('identitas_koper_bandara_handling')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
