@@ -669,7 +669,8 @@
                                                                 <div class="form-group mt-2 bg-white p-3 border rounded"
                                                                     data-type-id="{{ $typeId }}">
                                                                     <label class="form-label">Jumlah Kamar
-                                                                        ({{ $typeMaster->nama_tipe }})</label>
+                                                                        ({{ $typeMaster->nama_tipe }})
+                                                                    </label>
 
                                                                     {{-- Validasi Jumlah Kamar per Tipe --}}
                                                                     <input type="number"
@@ -703,7 +704,8 @@
                                                                 <div class="form-group mt-2 bg-white p-3 border rounded"
                                                                     data-type-id="{{ $typeMaster->id }}">
                                                                     <label class="form-label">Jumlah Kamar
-                                                                        ({{ $item->type }})</label>
+                                                                        ({{ $item->type }})
+                                                                    </label>
                                                                     <input type="number"
                                                                         class="form-control qty-input-hotel"
                                                                         name="hotel_data[{{ $currentIndex }}][{{ $typeMaster->id }}][jumlah]"
@@ -760,6 +762,10 @@
                             <h6 class="detail-title"><i class="bi bi-file-text"></i> Dokumen</h6>
                             <div style="clear: both;"></div>
 
+                            @error('dokumen_parent_id')
+                                <div class="alert alert-danger py-2 mb-3">{{ $message }}</div>
+                            @enderror
+
                             <div class="detail-section">
                                 <div class="service-grid">
                                     @php
@@ -781,20 +787,37 @@
                             </div>
                             <div id="document-forms-container">
                                 @php
-                                    $oldDocChildQtys = old('jumlah_doc_child');
-                                    $oldDocChildIds = old('dokumen_id');
+                                    // 1. Helper Variables untuk Persistensi Data (Agar data tidak hilang saat error)
+                                    $oldBaseDocs = old('base_documents');
+                                    $oldChildDocs = old('child_documents');
+
+                                    // 2. LOGIKA SORTING (SOLUSI URUTAN TAMPILAN)
+                                    $sortedDocuments = $documents->sortBy(function ($doc) {
+                                        return $doc->childrens->isEmpty();
+                                    });
                                 @endphp
-                                @foreach ($documents as $document)
+
+                                @foreach ($sortedDocuments as $document)
+                                    {{-- KONDISI 1: DOKUMEN DENGAN TURUNAN (CONTOH: VISA/VAKSIN) --}}
                                     @if ($document->childrens->isNotEmpty())
                                         <div class="form-group {{ in_array($document->id, $oldDocParentsChecked) ? '' : 'hidden' }} document-child-form"
                                             data-parent-id="{{ $document->id }}">
-                                            <label class="form-label fw-bold">{{ $document->name }}</label>
+
+                                            <label class="form-label fw-bold mt-3">{{ $document->name }} (Pilih
+                                                Jenis)</label>
+
                                             <div class="cars">
                                                 @foreach ($document->childrens as $child)
                                                     @php
-                                                        $isChildSelected = !is_null($oldDocChildIds)
-                                                            ? in_array($child->id, $oldDocChildIds)
-                                                            : array_key_exists($child->id, $selectedDocChildren);
+                                                        // Logika Selected Child
+                                                        if (!is_null($oldChildDocs)) {
+                                                            $isChildSelected = in_array($child->id, $oldChildDocs);
+                                                        } else {
+                                                            $isChildSelected = array_key_exists(
+                                                                $child->id,
+                                                                $selectedDocChildren,
+                                                            );
+                                                        }
                                                     @endphp
                                                     <div class="child-item {{ $isChildSelected ? 'selected' : '' }}"
                                                         data-child-id="{{ $child->id }}"
@@ -806,60 +829,85 @@
                                                     </div>
                                                 @endforeach
                                             </div>
+
                                             <div class="child-forms-wrapper mt-3">
                                                 @foreach ($document->childrens as $child)
                                                     @php
-                                                        $isChildSelected = !is_null($oldDocChildIds)
-                                                            ? in_array($child->id, $oldDocChildIds)
-                                                            : array_key_exists($child->id, $selectedDocChildren);
-                                                        $selectedChildData = $selectedDocChildren[$child->id] ?? null;
-                                                        $oldChildIndex = !is_null($oldDocChildIds)
-                                                            ? array_search($child->id, $oldDocChildIds)
-                                                            : false;
+                                                        // Hitung ulang status selected
+                                                        if (!is_null($oldChildDocs)) {
+                                                            $isChildSelected = in_array($child->id, $oldChildDocs);
+                                                        } else {
+                                                            $isChildSelected = array_key_exists(
+                                                                $child->id,
+                                                                $selectedDocChildren,
+                                                            );
+                                                        }
+
+                                                        // Ambil Value Jumlah (Database atau Old Input)
+                                                        $dbQty = $selectedDocChildren[$child->id]['jumlah'] ?? 1;
+                                                        $valQty = old('jumlah_child_doc.' . $child->id, $dbQty);
                                                     @endphp
+
                                                     <div id="doc-child-form-{{ $child->id }}"
                                                         class="form-group mt-2 bg-white p-3 border rounded {{ $isChildSelected ? '' : 'hidden' }}">
-                                                        <input type="hidden" name="customer_document_id[]"
-                                                            value="{{ $oldChildIndex !== false ? old('customer_document_id.' . $oldChildIndex) : $selectedChildData['id'] ?? '' }}">
-                                                        {{-- (PERUBAHAN 1) Ganti 'name' agar spesifik untuk 'child' --}}
+
+                                                        {{-- Input Hidden ID --}}
                                                         <input type="hidden" class="dokumen_id_input"
                                                             name="child_documents[]" value="{{ $child->id }}"
                                                             {{ !$isChildSelected ? 'disabled' : '' }}>
-                                                        <label class="form-label">Jumlah
-                                                            {{ $child->name }}</label>
-                                                        {{-- (PERUBAHAN 2) Ganti 'name' menjadi array asosiatif [ID => jumlah] --}}
-                                                        <input type="number" class="form-control jumlah_doc_child_input"
+
+                                                        <label class="form-label">Jumlah {{ $child->name }}</label>
+
+                                                        {{-- Input Jumlah --}}
+                                                        <input type="number"
+                                                            class="form-control jumlah_doc_child_input @error('jumlah_child_doc.' . $child->id) is-invalid @enderror"
                                                             name="jumlah_child_doc[{{ $child->id }}]" min="1"
-                                                            value="{{ $oldChildIndex !== false ? old('jumlah_doc_child.' . $oldChildIndex) : $selectedChildData['jumlah'] ?? 1 }}"
+                                                            value="{{ $valQty }}"
                                                             {{ !$isChildSelected ? 'disabled' : '' }}>
+
+                                                        {{-- Error Message --}}
+                                                        @error('jumlah_child_doc.' . $child->id)
+                                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 @endforeach
                                             </div>
                                         </div>
+
+                                        {{-- KONDISI 2: DOKUMEN TANPA TURUNAN / BASE (CONTOH: SISKOPATUH) --}}
                                     @else
                                         @php
-                                            $isBaseSelected = !is_null($oldDocChildIds)
-                                                ? in_array($document->id, $oldDocChildIds)
-                                                : array_key_exists($document->id, $selectedBaseDocs);
-                                            $selectedBaseData = $selectedBaseDocs[$document->id] ?? null;
-                                            $oldBaseIndex = !is_null($oldDocChildIds)
-                                                ? array_search($document->id, $oldDocChildIds)
-                                                : false;
+                                            // Logika Selected Base
+                                            if (!is_null($oldBaseDocs)) {
+                                                $isBaseSelected = in_array($document->id, $oldBaseDocs);
+                                            } else {
+                                                $isBaseSelected = array_key_exists($document->id, $selectedBaseDocs);
+                                            }
+
+                                            // Ambil Value Jumlah
+                                            $dbQty = $selectedBaseDocs[$document->id]['jumlah'] ?? 1;
+                                            $valQty = old('jumlah_base_doc.' . $document->id, $dbQty);
                                         @endphp
-                                        <div class="form-group {{ $isBaseSelected ? '' : 'hidden' }} document-base-form"
+
+                                        <div class="form-group {{ $isBaseSelected ? '' : 'hidden' }} document-base-form mt-3 bg-white p-3 border rounded"
                                             id="doc-{{ $document->id }}-form" data-document-id="{{ $document->id }}">
-                                            <input type="hidden" name="customer_document_id[]"
-                                                value="{{ $oldBaseIndex !== false ? old('customer_document_id.' . $oldBaseIndex) : $selectedBaseData['id'] ?? '' }}">
-                                            {{-- (PERUBAHAN 1) Ganti 'name' agar spesifik untuk 'base' --}}
+
+                                            {{-- Input Hidden ID --}}
                                             <input type="hidden" class="dokumen_id_input" name="base_documents[]"
                                                 value="{{ $document->id }}" {{ !$isBaseSelected ? 'disabled' : '' }}>
-                                            <label class="form-label fw-bold">Jumlah
-                                                {{ $document->name }}</label>
-                                            {{-- (PERUBAHAN 2) Ganti 'name' menjadi array asosiatif [ID => jumlah] --}}
-                                            <input type="number" class="form-control jumlah_doc_child_input"
+
+                                            <label class="form-label fw-bold">Jumlah {{ $document->name }}</label>
+
+                                            {{-- Input Jumlah --}}
+                                            <input type="number"
+                                                class="form-control jumlah_doc_child_input @error('jumlah_base_doc.' . $document->id) is-invalid @enderror"
                                                 name="jumlah_base_doc[{{ $document->id }}]" min="1"
-                                                value="{{ $oldBaseIndex !== false ? old('jumlah_doc_child.' . $oldBaseIndex) : $selectedBaseData['jumlah'] ?? 1 }}"
-                                                {{ !$isBaseSelected ? 'disabled' : '' }}>
+                                                value="{{ $valQty }}" {{ !$isBaseSelected ? 'disabled' : '' }}>
+
+                                            {{-- Error Message --}}
+                                            @error('jumlah_base_doc.' . $document->id)
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     @endif
                                 @endforeach
