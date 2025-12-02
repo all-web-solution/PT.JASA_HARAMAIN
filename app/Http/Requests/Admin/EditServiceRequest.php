@@ -108,19 +108,31 @@ class EditServiceRequest extends FormRequest
             'hotel_data.*.*.jumlah' => $isHotelSelected ? 'required|integer|min:1' : 'nullable',
 
             // --- DOKUMEN ---
-            'child_documents' => [$isDocumentSelected ? 'required_without:dokumen_id' : 'nullable', 'array', 'exists:document_childrens,id'],
-            'dokumen_id' => [
-                $isDocumentSelected ? 'required_without:child_documents' : 'nullable',
+            'child_documents' => 'nullable|array',
+            'child_documents.*' => 'exists:document_childrens,id',
+            'base_documents' => 'nullable|array',
+            'base_documents.*' => 'exists:documents,id',
+
+            // Validasi utama menggunakan 'dokumen_parent_id' karena ini adalah checkbox yang di-submit dari blade edit
+            'dokumen_parent_id' => [
+                $isDocumentSelected ? 'required' : 'nullable', // Wajib ada minimal 1 parent terpilih jika service aktif
                 'array',
                 function ($attribute, $value, $fail) use ($isDocumentSelected) {
-                    if (empty($value) || !is_array($value))
+                    if (!$isDocumentSelected || empty($value) || !is_array($value))
                         return;
+
+                    // Ambil dokumen parent yang memiliki children
                     $parentsWithChildren = Document::whereIn('id', $value)
                         ->has('childrens')->with('childrens')->get();
+
+                    // Ambil input child yang dipilih user
                     $selectedChildIds = $this->input('child_documents', []);
+
                     foreach ($parentsWithChildren as $parent) {
                         $validChildIds = $parent->childrens->pluck('id')->toArray();
+                        // Cek apakah ada irisan antara child yang dipilih dengan child milik parent ini
                         $hasSelectedChild = !empty(array_intersect($selectedChildIds, $validChildIds));
+
                         if (!$hasSelectedChild) {
                             $fail("Dokumen '{$parent->name}' memiliki opsi turunan. Anda wajib memilih minimal satu sub-jenis dokumen tersebut.");
                         }
@@ -438,8 +450,8 @@ class EditServiceRequest extends FormRequest
             'hotel_data.*.*.jumlah.min' => 'Jumlah kamar untuk tipe yang dipilih minimal 1.',
 
             // Dokumen
-            'dokumen_id.required_without' => 'Anda memilih layanan Dokumen, wajib memilih minimal satu jenis dokumen (Induk atau Turunan).',
-            'child_documents.required_without' => 'Anda memilih layanan Dokumen, wajib memilih minimal satu jenis dokumen (Induk atau Turunan).',
+            'dokumen_parent_id.required' => 'Anda memilih layanan Dokumen, wajib memilih minimal satu jenis dokumen.',
+            'dokumen_parent_id.array' => 'Format dokumen tidak valid.',
 
             'handlings.required' => 'Anda memilih layanan Handling, wajib memilih jenis handling (Hotel atau Bandara).',
 

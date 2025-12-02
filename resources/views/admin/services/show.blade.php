@@ -406,13 +406,20 @@
                             <h6 class="service-detail-title"><i class="bi bi-file-text"></i> Dokumen</h6>
 
                             @php
+                                // 1. Grouping dokumen berdasarkan Parent ID
                                 $groupedDocs = $service->documents->groupBy(
                                     fn($doc) => $doc->document?->id ?? $doc->document_id,
                                 );
+
+                                // 2. SORTING LOGIC:
+                                $sortedGroupedDocs = $groupedDocs->sortBy(function ($docs) {
+                                    $hasChildren = $docs->contains(fn($d) => !is_null($d->document_children_id));
+                                    return $hasChildren ? 0 : 1;
+                                });
                             @endphp
 
                             <ul class="list-group summary-list">
-                                @foreach ($groupedDocs as $parentId => $docs)
+                                @foreach ($sortedGroupedDocs as $parentId => $docs)
                                     @php
                                         $parentName =
                                             optional($docs->first()->document)->name ?? 'Dokumen Tidak Dikenal';
