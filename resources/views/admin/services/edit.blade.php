@@ -299,17 +299,6 @@
                                                         @enderror
                                                     </div>
 
-                                                    {{-- Harga Tiket --}}
-                                                    <div class="col-md-6">
-                                                        <label class="form-label fw-semibold">Harga Tiket</label>
-                                                        <input type="number"
-                                                            class="form-control @error('harga_tiket.' . $index) is-invalid @enderror"
-                                                            name="harga_tiket[{{ $index }}]"
-                                                            value="{{ $isOld ? old('harga_tiket.' . $index) : $plane->harga }}">
-                                                        @error('harga_tiket.' . $index)
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
 
                                                     {{-- Keterangan (Gunakan 'keterangan_tiket' agar tidak bentrok) --}}
                                                     <div class="col-md-6">
