@@ -918,7 +918,6 @@
                         <div class="detail-form {{ in_array('handling', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="handling-details">
                             @php
-                                // Logic PHP untuk penentuan checked/selected tetap sama seperti sebelumnya
                                 $hotelHandling = $service->handlings->firstWhere('name', 'hotel');
                                 $existingHotelHandling = $hotelHandling?->handlingHotels;
                                 $planeHandling = $service->handlings->firstWhere('name', 'bandara');
@@ -936,8 +935,6 @@
 
                             <h6 class="detail-title"><i class="bi bi-briefcase"></i> Handling</h6>
                             <div style="clear: both;"></div>
-
-                            {{-- Error Global Checkbox Handling --}}
                             @error('handlings')
                                 <div class="alert alert-danger py-2 mb-3">{{ $message }}</div>
                             @enderror
@@ -1156,54 +1153,113 @@
                         {{-- PENDAMPING (MUTHOWIF) FORM --}}
                         <div class="detail-form {{ in_array('pendamping', $oldOrSelectedServices) ? '' : 'hidden' }}"
                             id="pendamping-details">
-                            <h6 class="detail-title"><i class="bi bi-people"></i> Muthowif</h6>
+                            <h6 class="detail-title"><i class="bi bi-people"></i> Pendamping / Muthowif</h6>
                             <div style="clear: both;"></div>
 
+                            {{-- Global Error --}}
+                            @error('jumlah_pendamping')
+                                <div class="alert alert-danger py-2 mb-2">{{ $message }}</div>
+                            @enderror
+
+                            {{-- GRID PILIHAN --}}
                             <div class="service-grid">
                                 @foreach ($guides as $guide)
                                     @php
-                                        // Cek old() dulu, baru existing
-                                        $isGuideSelected = !is_null($oldPendampingQty)
-                                            ? array_key_exists($guide->id, $oldPendampingQty)
-                                            : $selectedGuides->has($guide->id);
+                                        // LOGIKA PERSISTENCE:
+                                        // 1. Jika ada 'old' session (habis submit & error), gunakan data itu.
+                                        // 2. Jika tidak, gunakan data dari database ($selectedGuides).
+                                        if (old('jumlah_pendamping')) {
+                                            // Cek apakah di input sebelumnya guide ini memiliki jumlah > 0
+                                            $oldQty = old("jumlah_pendamping.{$guide->id}");
+                                            $isGuideSelected = !empty($oldQty) && $oldQty > 0;
+                                        } else {
+                                            $isGuideSelected = $selectedGuides->has($guide->id);
+                                        }
                                     @endphp
                                     <div class="pendamping-item {{ $isGuideSelected ? 'selected' : '' }}"
                                         data-id="{{ $guide->id }}" data-type="pendamping">
                                         <div class="service-name">{{ $guide->nama }}</div>
                                         <div class="service-desc">Rp {{ number_format($guide->harga) }}</div>
+                                        {{-- Checkbox Helper --}}
+                                        <input type="checkbox" class="d-none" {{ $isGuideSelected ? 'checked' : '' }}>
                                     </div>
                                 @endforeach
                             </div>
+
+                            {{-- FORM INPUT DETAIL --}}
                             <div class="detail-section">
                                 @foreach ($guides as $guide)
                                     @php
+                                        // Hitung ulang status selected untuk Form
+                                        if (old('jumlah_pendamping')) {
+                                            $oldQty = old("jumlah_pendamping.{$guide->id}");
+                                            $isGuideSelected = !empty($oldQty) && $oldQty > 0;
+                                        } else {
+                                            $isGuideSelected = $selectedGuides->has($guide->id);
+                                        }
+
                                         $selectedGuide = $selectedGuides->get($guide->id);
-                                        $isGuideSelected = !is_null($oldPendampingQty)
-                                            ? array_key_exists($guide->id, $oldPendampingQty)
-                                            : $selectedGuides->has($guide->id);
+
+                                        // Ambil Value (Prioritas: Old Input -> Database -> Default 0)
+                                        $valQty = old(
+                                            "jumlah_pendamping.{$guide->id}",
+                                            $selectedGuide ? $selectedGuide->jumlah : 0,
+                                        );
+                                        $valDari = old(
+                                            "tanggal_pendamping.{$guide->id}.dari",
+                                            $selectedGuide ? $selectedGuide->muthowif_dari : '',
+                                        );
+                                        $valSampai = old(
+                                            "tanggal_pendamping.{$guide->id}.sampai",
+                                            $selectedGuide ? $selectedGuide->muthowif_sampai : '',
+                                        );
                                     @endphp
+
                                     <div id="form-pendamping-{{ $guide->id }}"
-                                        class="form-group {{ $isGuideSelected ? '' : 'hidden' }} bg-white p-3 border rounded">
+                                        class="form-group {{ $isGuideSelected ? '' : 'hidden' }} bg-white p-3 border rounded mt-2">
+
                                         <label class="form-label fw-bold">Jumlah {{ $guide->nama }}</label>
-                                        {{-- PERBAIKAN: Gunakan old() dengan fallback --}}
-                                        <input type="number" class="form-control"
+
+                                        {{-- INPUT JUMLAH --}}
+                                        <input type="number"
+                                            class="form-control @error('jumlah_pendamping.' . $guide->id) is-invalid @enderror"
                                             name="jumlah_pendamping[{{ $guide->id }}]" min="0"
-                                            value="{{ old('jumlah_pendamping.' . $guide->id, $selectedGuide ? $selectedGuide->jumlah : 0) }}">
+                                            value="{{ $valQty }}" {{ !$isGuideSelected ? 'disabled' : '' }}>
+
+                                        {{-- PESAN ERROR PER ITEM --}}
+                                        @error("jumlah_pendamping.{$guide->id}")
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
 
                                         <div class="form-row mt-3">
+                                            {{-- INPUT TANGGAL DARI --}}
                                             <div class="form-col">
                                                 <label class="form-label">Dari Tanggal</label>
-                                                {{-- PERBAIKAN: Gunakan old() dengan fallback --}}
-                                                <input type="date" class="form-control"
-                                                    name="pendamping_dari[{{ $guide->id }}]"
-                                                    value="{{ old('pendamping_dari.' . $guide->id, $selectedGuide ? $selectedGuide->muthowif_dari : '') }}">
+                                                <input type="date"
+                                                    class="form-control @error('tanggal_pendamping.' . $guide->id . '.dari') is-invalid @enderror"
+                                                    name="tanggal_pendamping[{{ $guide->id }}][dari]"
+                                                    value="{{ $valDari }}"
+                                                    {{ !$isGuideSelected ? 'disabled' : '' }}>
+
+                                                {{-- PESAN ERROR SPESIFIK --}}
+                                                @error("tanggal_pendamping.{$guide->id}.dari")
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
                                             </div>
+
+                                            {{-- INPUT TANGGAL SAMPAI --}}
                                             <div class="form-col">
                                                 <label class="form-label">Sampai Tanggal</label>
-                                                {{-- PERBAIKAN: Gunakan old() dengan fallback --}}
-                                                <input type="date" class="form-control"
-                                                    name="pendamping_sampai[{{ $guide->id }}]"
-                                                    value="{{ old('pendamping_sampai.' . $guide->id, $selectedGuide ? $selectedGuide->muthowif_sampai : '') }}">
+                                                <input type="date"
+                                                    class="form-control @error('tanggal_pendamping.' . $guide->id . '.sampai') is-invalid @enderror"
+                                                    name="tanggal_pendamping[{{ $guide->id }}][sampai]"
+                                                    value="{{ $valSampai }}"
+                                                    {{ !$isGuideSelected ? 'disabled' : '' }}>
+
+                                                {{-- PESAN ERROR SPESIFIK --}}
+                                                @error("tanggal_pendamping.{$guide->id}.sampai")
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
                                     </div>
