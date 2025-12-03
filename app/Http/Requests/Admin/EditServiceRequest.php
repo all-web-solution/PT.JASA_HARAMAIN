@@ -326,7 +326,7 @@ class EditServiceRequest extends FormRequest
                     }
                 },
             ],
-            'tanggal_dorongan' => [
+            'dorongan_tanggal' => [
                 $isDoronganSelected ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $dates, $fail) use ($isDoronganSelected) {
@@ -512,6 +512,7 @@ class EditServiceRequest extends FormRequest
 
             // Dorongan
             'jumlah_dorongan.required' => 'Data dorongan wajib diisi.',
+            'dorongan_tanggal' => 'Tanggal Dorongan wajib diisi',
 
             // Pesan Error Waqaf
             'jumlah_wakaf.required' => 'Data waqaf wajib diisi.',
