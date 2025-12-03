@@ -1558,34 +1558,64 @@
                             <h6 class="detail-title"><i class="bi bi-gift"></i> Waqaf</h6>
                             <div style="clear: both;"></div>
 
+                            {{-- Global Error --}}
+                            @error('jumlah_wakaf')
+                                <div class="alert alert-danger py-2 mb-2">{{ $message }}</div>
+                            @enderror
+
                             <div class="service-grid">
                                 @foreach ($wakaf as $item)
                                     @php
-                                        $isWakafSelected = !is_null($oldWakafQty)
-                                            ? array_key_exists($item->id, $oldWakafQty)
-                                            : $selectedWakaf->has($item->id);
+                                        // LOGIKA PERSISTENCE:
+                                        // 1. Jika ada 'old' session (habis submit & error), gunakan data itu.
+                                        // 2. Jika tidak, gunakan data dari database ($selectedWakaf).
+                                        if (old('jumlah_wakaf')) {
+                                            // Cek apakah di input sebelumnya guide ini memiliki jumlah > 0
+                                            $oldQty = old("jumlah_wakaf.{$item->id}");
+                                            $isWakafSelected = !empty($oldQty) && $oldQty > 0;
+                                        } else {
+                                            $isWakafSelected = $selectedWakaf->has($item->id);
+                                        }
                                     @endphp
                                     <div class="wakaf-item {{ $isWakafSelected ? 'selected' : '' }}"
                                         data-id="{{ $item->id }}" data-type="wakaf">
                                         <div class="service-name">{{ $item->nama }}</div>
                                         <div class="service-desc">Rp. {{ number_format($item->harga) }}</div>
+                                        {{-- Checkbox Helper --}}
+                                        <input type="checkbox" class="d-none" {{ $isWakafSelected ? 'checked' : '' }}>
                                     </div>
                                 @endforeach
                             </div>
                             <div class="detail-section">
                                 @foreach ($wakaf as $item)
                                     @php
+                                        // Hitung ulang status selected untuk Form
+                                        if (old('jumlah_wakaf')) {
+                                            $oldQty = old("jumlah_wakaf.{$item->id}");
+                                            $isWakafSelected = !empty($oldQty) && $oldQty > 0;
+                                        } else {
+                                            $isWakafSelected = $selectedWakaf->has($item->id);
+                                        }
                                         $selectedItem = $selectedWakaf->get($item->id);
-                                        $isWakafSelected = !is_null($oldWakafQty)
-                                            ? array_key_exists($item->id, $oldWakafQty)
-                                            : $selectedWakaf->has($item->id);
+
+                                        // Ambil Value (Prioritas: Old Input -> Database -> Default 0)
+                                        $valQty = old(
+                                            "jumlah_wakaf.{$item->id}",
+                                            $selectedItem ? $selectedItem->jumlah : 0,
+                                        );
                                     @endphp
                                     <div id="form-wakaf-{{ $item->id }}"
-                                        class="form-group {{ $isWakafSelected ? '' : 'hidden' }} bg-white p-3 border rounded">
+                                        class="form-group {{ $isWakafSelected ? '' : 'hidden' }} bg-white p-3 border rounded mt-2">
                                         <label class="form-label fw-bold">Jumlah {{ $item->nama }}</label>
-                                        <input type="number" class="form-control"
+                                        <input type="number"
+                                            class="form-control @error('jumlah_wakaf.' . $item->id) is-invalid @enderror"
                                             name="jumlah_wakaf[{{ $item->id }}]" min="0"
-                                            value="{{ old('jumlah_wakaf.' . $item->id, $selectedItem ? $selectedItem->jumlah : 0) }}">
+                                            value="{{ $valQty }}" {{ !$isWakafSelected ? 'disabled' : '' }}>
+
+                                        {{-- PESAN ERROR PER ITEM --}}
+                                        @error("jumlah_wakaf.{$item->id}")
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 @endforeach
                             </div>
