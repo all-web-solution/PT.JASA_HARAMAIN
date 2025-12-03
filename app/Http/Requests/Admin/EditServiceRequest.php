@@ -368,10 +368,10 @@ class EditServiceRequest extends FormRequest
             // --- BADAL ---
             'nama_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
             'harga_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
-            'tanggal_pelaksanaan_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
+            'tanggal_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
             'nama_badal.*' => $isBadalSelected ? 'required|string|filled' : 'nullable',
             'harga_badal.*' => $isBadalSelected ? 'required|numeric|min:0' : 'nullable',
-            'tanggal_pelaksanaan_badal.*' => $isBadalSelected ? 'required|date' : 'nullable',
+            'tanggal_badal.*' => $isBadalSelected ? 'required|date' : 'nullable',
         ];
     }
 
@@ -520,7 +520,7 @@ class EditServiceRequest extends FormRequest
             'nama_badal.required' => 'Data jamaah badal wajib diisi.',
             'nama_badal.*.required' => 'Nama jamaah yang dibadalkan wajib diisi.',
             'harga_badal.*.required' => 'Harga badal wajib diisi.',
-            'tanggal_pelaksanaan_badal.*.required' => 'Tanggal pelaksanaan badal wajib diisi.',
+            'tanggal_badal.*.required' => 'Tanggal pelaksanaan badal wajib diisi.',
         ];
     }
 
