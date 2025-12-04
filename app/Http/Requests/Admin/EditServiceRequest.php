@@ -10,6 +10,7 @@ use App\Models\TourItem;
 use App\Models\MealItem;
 use App\Models\Dorongan;
 use App\Models\ContentItem;
+use App\Models\Meal;
 
 class EditServiceRequest extends FormRequest
 {
@@ -285,7 +286,7 @@ class EditServiceRequest extends FormRequest
                     }
                 },
             ],
-            'dari_tanggal_makanan' => [
+            'meals_dari' => [
                 $isMealSelected ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $dates, $fail) use ($isMealSelected) {
@@ -294,13 +295,28 @@ class EditServiceRequest extends FormRequest
                     $jumlahs = $this->input('jumlah_meals', []);
                     foreach ($jumlahs as $id => $qty) {
                         if ((int) $qty > 0) {
-                            $start = $dates[$id]['dari'] ?? null;
-                            $endArray = $this->input('sampai_tanggal_makanan', []);
-                            $end = $endArray[$id]['sampai'] ?? null;
-                            if (empty($start) || empty($end)) {
-                                $meal = MealItem::find($id);
-                                $name = $meal ? $meal->name : 'Menu';
-                                $fail("Tanggal 'Dari' dan 'Sampai' wajib diisi untuk $name.");
+                            if (empty($dates[$id])) {
+                                $item = Meal::find($id);
+                                $name = $item ? $item->name : 'Meals';
+                                $fail("Tanggal awal pelaksanaan wajib diisi untuk $name.");
+                            }
+                        }
+                    }
+                }
+            ],
+            'meals_sampai' => [
+                $isMealSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $dates, $fail) use ($isMealSelected) {
+                    if (!$isMealSelected)
+                        return;
+                    $jumlahs = $this->input('jumlah_meals', []);
+                    foreach ($jumlahs as $id => $qty) {
+                        if ((int) $qty > 0) {
+                            if (empty($dates[$id])) {
+                                $item = Meal::find($id);
+                                $name = $item ? $item->name : 'Meals';
+                                $fail("Tanggal akhir pelaksanaan wajib diisi untuk $name.");
                             }
                         }
                     }
