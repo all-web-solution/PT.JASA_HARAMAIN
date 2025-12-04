@@ -1276,32 +1276,55 @@
                             <div class="service-grid">
                                 @foreach ($contents as $content)
                                     @php
-                                        $isContentSelected = !is_null($oldContentsQty)
-                                            ? array_key_exists($content->id, $oldContentsQty)
-                                            : $selectedContents->has($content->id);
+                                        // LOGIKA PERSISTENCE:
+                                        // 1. Jika ada 'old' session (habis submit & error), gunakan data itu.
+                                        // 2. Jika tidak, gunakan data dari database ($selectedContents).
+                                        if (old('jumlah_konten')) {
+                                            // Cek apakah di input sebelumnya content ini memiliki jumlah > 0
+                                            $oldQty = old("jumlah_konten.{$content->id}");
+                                            $isContentSelected = !empty($oldQty) && $oldQty > 0;
+                                        } else {
+                                            $isContentSelected = $selectedContents->has($content->id);
+                                        }
                                     @endphp
                                     <div class="content-item {{ $isContentSelected ? 'selected' : '' }}"
                                         data-id="{{ $content->id }}" data-type="konten">
                                         <div class="service-name">{{ $content->name }}</div> {{-- Ganti ke 'name' --}}
                                         <div class="service-desc">Rp {{ number_format($content->price) }}</div>
-                                        {{-- Ganti ke 'price' --}}
+                                        {{-- Checkbox Helper --}}
+                                        <input type="checkbox" class="d-none" {{ $isGuideSelected ? 'checked' : '' }}>
                                     </div>
                                 @endforeach
                             </div>
                             <div class="detail-section">
                                 @foreach ($contents as $content)
                                     @php
+                                        // Hitung ulang status selected untuk Form
+                                        if (old('jumlah_konten')) {
+                                            $oldQty = old("jumlah_konten.{$content->id}");
+                                            $isContentSelected = !empty($oldQty) && $oldQty > 0;
+                                        } else {
+                                            $isContentSelected = $selectedContents->has($content->id);
+                                        }
                                         $selectedContent = $selectedContents->get($content->id);
-                                        $isContentSelected = !is_null($oldContentsQty)
-                                            ? array_key_exists($content->id, $oldContentsQty)
-                                            : $selectedContents->has($content->id);
+
+                                        // Ambil Value (Prioritas: Old Input -> Database -> Default 0)
+                                        $valQty = old(
+                                            "jumlah_konten.{$content->id}",
+                                            $selectedContent ? $selectedContent->jumlah : 0,
+                                        );
                                     @endphp
                                     <div id="form-konten-{{ $content->id }}"
                                         class="form-group {{ $isContentSelected ? '' : 'hidden' }} bg-white p-3 border rounded">
                                         <label class="form-label fw-bold">Jumlah {{ $content->name }}</label>
                                         <input type="number" class="form-control"
-                                            name="jumlah_konten[{{ $content->id }}]" min="0"
-                                            value="{{ old('jumlah_konten.' . $content->id, $selectedContent ? $selectedContent->jumlah : 0) }}">
+                                            name="jumlah_konten[{{ $content->id }}]" min="1"
+                                            value="{{ $valQty }}" {{ !$isContentSelected ? 'disabled' : '' }}>
+
+                                        {{-- PESAN ERROR PER ITEM --}}
+                                        @error("jumlah_konten.{$content->id}")
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
 
                                         <label class="form-label mt-2">Tanggal Pelaksanaan</label>
                                         <input type="date" class="form-control"
