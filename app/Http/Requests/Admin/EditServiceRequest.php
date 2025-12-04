@@ -221,7 +221,7 @@ class EditServiceRequest extends FormRequest
                     }
                 },
             ],
-            'tanggal_konten' => [
+            'konten_tanggal' => [
                 $isKontenSelected ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $dates, $fail) use ($isKontenSelected) {
