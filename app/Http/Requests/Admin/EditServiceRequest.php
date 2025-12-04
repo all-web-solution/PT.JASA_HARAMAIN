@@ -249,14 +249,14 @@ class EditServiceRequest extends FormRequest
             'kurs_tumis' => ($isReyalSelected && $reyalType === 'tumis') ? 'required|numeric|min:1' : 'nullable',
 
             // --- TOUR ---
-            'tour_ids' => $isTourSelected ? 'required|array|min:1' : 'nullable',
-            'tanggal_tour' => [
+            'tour_id' => $isTourSelected ? 'required|array|min:1' : 'nullable',
+            'tour_tanggal' => [
                 $isTourSelected ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $dates, $fail) use ($isTourSelected) {
                     if (!$isTourSelected)
                         return;
-                    $selectedTours = $this->input('tour_ids', []);
+                    $selectedTours = $this->input('tour_id', []);
                     foreach ($selectedTours as $tourId) {
                         if (empty($dates[$tourId])) {
                             $tour = TourItem::find($tourId);
@@ -266,6 +266,7 @@ class EditServiceRequest extends FormRequest
                     }
                 }
             ],
+            'tour_transport' => $isTourSelected ? 'required|array' : 'nullable',
 
             // --- MEALS ---
             'jumlah_meals' => [
@@ -521,7 +522,8 @@ class EditServiceRequest extends FormRequest
             'kurs_tumis.required' => 'Kurs Tumis wajib diisi.',
 
             // Tour
-            'tour_ids.required' => 'Mohon pilih minimal satu lokasi tour.',
+            'tour_id.required' => 'Mohon pilih minimal satu lokasi tour.',
+            'tour_transport' => 'Jenis transportasi wajib diisi.',
 
             // Meals
             'jumlah_meals.required' => 'Data meals wajib diisi.',
