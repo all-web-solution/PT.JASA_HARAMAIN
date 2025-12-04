@@ -1463,31 +1463,56 @@
                             <div class="service-grid">
                                 @foreach ($meals as $meal)
                                     @php
-                                        $isMealSelected = !is_null($oldMealsQty)
-                                            ? array_key_exists($meal->id, $oldMealsQty)
-                                            : $selectedMeals->has($meal->id);
+                                        // LOGIKA PERSISTENCE:
+                                        // 1. Jika ada 'old' session (habis submit & error), gunakan data itu.
+                                        // 2. Jika tidak, gunakan data dari database ($selectedMeals).
+                                        if (old('jumlah_meals')) {
+                                            // Cek apakah di input sebelumnya meal ini memiliki jumlah > 0
+                                            $oldQty = old("jumlah_meals.{$meal->id}");
+                                            $isMealSelected = !empty($oldQty) && $oldQty > 0;
+                                        } else {
+                                            $isMealSelected = $selectedMeals->has($meal->id);
+                                        }
                                     @endphp
                                     <div class="meal-item {{ $isMealSelected ? 'selected' : '' }}"
                                         data-id="{{ $meal->id }}" data-type="meal">
                                         <div class="service-name">{{ $meal->name }}</div>
                                         <div class="service-desc">Rp. {{ number_format($meal->price) }}</div>
+                                        {{-- Checkbox Helper --}}
+                                        <input type="checkbox" class="d-none" {{ $isMealSelected ? 'checked' : '' }}>
                                     </div>
                                 @endforeach
                             </div>
                             <div class="detail-section">
                                 @foreach ($meals as $meal)
                                     @php
+                                        // Hitung ulang status selected untuk Form
+                                        if (old('jumlah_meals')) {
+                                            $oldQty = old("jumlah_meals.{$meal->id}");
+                                            $isMealSelected = !empty($oldQty) && $oldQty > 0;
+                                        } else {
+                                            $isMealSelected = $selectedMeals->has($meal->id);
+                                        }
+
                                         $selectedMeal = $selectedMeals->get($meal->id);
-                                        $isMealSelected = !is_null($oldMealsQty)
-                                            ? array_key_exists($meal->id, $oldMealsQty)
-                                            : $selectedMeals->has($meal->id);
+
+                                        // Ambil Value (Prioritas: Old Input -> Database -> Default 0)
+                                        $valQty = old(
+                                            "jumlah_meals.{$meal->id}",
+                                            $selectedMeal ? $selectedMeal->jumlah : 0,
+                                        );
                                     @endphp
                                     <div id="form-meal-{{ $meal->id }}"
                                         class="form-group {{ $isMealSelected ? '' : 'hidden' }} bg-white p-3 border rounded">
                                         <label class="form-label fw-bold">Jumlah {{ $meal->name }}</label>
                                         <input type="number" class="form-control"
                                             name="jumlah_meals[{{ $meal->id }}]" min="0"
-                                            value="{{ old('jumlah_meals.' . $meal->id, $selectedMeal ? $selectedMeal->jumlah : 0) }}">
+                                            value="{{ $valQty }}" {{ !$isMealSelected ? 'disabled' : '' }}>
+
+                                        {{-- PESAN ERROR PER ITEM --}}
+                                        @error("jumlah_meals.{$meal->id}")
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
 
                                         <div class="form-row mt-3">
                                             <div class="form-col">
@@ -1600,7 +1625,7 @@
                                         // 1. Jika ada 'old' session (habis submit & error), gunakan data itu.
                                         // 2. Jika tidak, gunakan data dari database ($selectedWakaf).
                                         if (old('jumlah_wakaf')) {
-                                            // Cek apakah di input sebelumnya guide ini memiliki jumlah > 0
+                                            // Cek apakah di input sebelumnya wakaf ini memiliki jumlah > 0
                                             $oldQty = old("jumlah_wakaf.{$item->id}");
                                             $isWakafSelected = !empty($oldQty) && $oldQty > 0;
                                         } else {
