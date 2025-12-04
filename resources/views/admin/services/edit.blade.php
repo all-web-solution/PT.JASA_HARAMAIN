@@ -1797,10 +1797,25 @@
 
                     {{-- Tombol Aksi --}}
                     <div class="form-actions">
-                        <button type="submit" name="action" value="nego" class="btn btn-primary">Simpan
-                            (Nego)</button>
-                        <button type="submit" name="action" value="deal" class="btn btn-success">Simpan
-                            (Deal)</button>
+                        <button type="submit" name="action" value="nego" class="btn btn-secondary">
+                            Simpan sebagai Nego
+                        </button>
+
+                        {{-- Wrapper untuk Tombol Deal & Pesan Error --}}
+                        <div class="deal-wrapper">
+                            <button type="submit" name="action" value="deal"
+                                class="btn btn-primary {{ !$isHargaFinal ? 'btn-disabled' : '' }}"
+                                @if (!$isHargaFinal) disabled @endif>
+                                <i class="bi bi-check-circle"></i> Simpan dan Deal
+                            </button>
+
+                            {{-- Pesan Error (Muncul di bawah tombol Deal) --}}
+                            @if (!$isHargaFinal)
+                                <small class="error-message text-danger">
+                                    <i class="bi bi-exclamation-circle-fill"></i> Total harga belum difinalisasi.
+                                </small>
+                            @endif
+                        </div>
                     </div>
                 </form>
             </div>
