@@ -64,7 +64,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('{order}/bayar', [ServicesController::class, 'bayar'])->name('orders.bayar');
     Route::get('/order/bayar/{order}', [OrderController::class, 'show'])->name('order.show');
     Route::put('/order/{order}/calculate-final', [OrderController::class, 'calculateFinalTotal'])->name('order.calculateFinal');
-    Route::get('/invoice/{service}', [InvoiceController::class, 'show'])->name('invoice.show');
+    Route::get('/invoice/{id}', [InvoiceController::class, 'show'])->name('invoice.show');
     Route::get('/invoice/{service}/download', [InvoiceController::class, 'download'])->name('invoice.download');
     Route::get('/invoice/{id}/cetak', [InvoiceController::class, 'cetak'])->name('invoice.cetak');
     Route::get('/payment_proff/{order}', [OrderController::class, 'payment_proff'])->name('payment.proff');
