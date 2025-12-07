@@ -34,21 +34,24 @@ class TourController extends Controller
         Session::flash('success', 'Tour berhasil ditambahkan.');
         return redirect()->route('handling.tour.index');
     }
-    public function edit(TourItem $tour)
+    public function edit($id)
     {
+        $tour = TourItem::findOrFail($id);
         return view('handling.tour.edit', compact('tour'));
     }
-    public function update(Request $request, TourItem $tour)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
+        $tour = TourItem::findOrFail($id);
         $tour->update($request->only('name'));
         Session::flash('success', 'Tour berhasil diperbarui.');
         return redirect()->route('handling.tour.index');
     }
-    public function destroy(TourItem $tour)
+    public function destroy($id)
     {
+        $tour = TourItem::findOrFail($id);
         $tour->delete();
         Session::flash('success', 'Tour berhasil dihapus.');
         return redirect()->route('handling.tour.index');
