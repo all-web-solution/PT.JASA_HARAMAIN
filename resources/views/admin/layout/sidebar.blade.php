@@ -39,7 +39,7 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('user.index*') || request()->routeIs('user*') ? 'active' : '' }}"
                     href="{{ route('user.index') }}">
-                    <i class="bi bi-people-fill"></i> USERS
+                    <i class="bi bi-people-fill"></i> EMPLOYEE
                 </a>
             </li>
         </ul>
