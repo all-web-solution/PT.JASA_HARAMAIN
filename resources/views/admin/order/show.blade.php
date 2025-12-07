@@ -495,9 +495,15 @@
                     <i class="bi bi-person-badge"></i>
                     <span class="title-text">Detail Customer</span>
                 </h5>
-                <a href="{{ route('admin.order') }}" class="btn-secondary"> {{-- Arahkan ke index payment --}}
-                    <i class="bi bi-arrow-left"></i> Kembali
-                </a>
+                <div id="action_button">
+                    <a href="{{ route('invoice.show', $order->id) }}" target="_blank" class="btn-secondary">
+                        {{-- Arahkan ke index payment --}}
+                        <i class="bi bi-receipt-cutoff"></i> Invoice
+                    </a>
+                    <a href="{{ route('admin.order') }}" class="btn-secondary"> {{-- Arahkan ke index payment --}}
+                        <i class="bi bi-arrow-left"></i> Kembali
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 @if ($order->service?->pelanggan)

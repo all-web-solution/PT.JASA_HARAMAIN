@@ -357,7 +357,7 @@
                             <strong>Handling Bandara: {{ $handling->handlingPlanes->nama_bandara }}</strong><br>
                             <small>Supir: {{ $handling->handlingPlanes->nama_supir }}</small>
                         </td>
-                        <td class="text-center">{{ $handling->handlingPlanes->jumlah_jamaah }} Org</td>
+                        <td class="text-center">{{ $handling->handlingPlanes->jumlah_jamaah }} Jamaah</td>
                         @if ($handling->handlingPlanes->harga_jual && $handling->handlingPlanes->harga_jual > 0)
                             <td class="text-right">Rp
                                 {{ number_format($handling->handlingPlanes->harga_jual, 0, ',', '.') }} <br>
@@ -413,13 +413,15 @@
                     @php
                         if ($tour->harga_jual) {
                             $subtotal = $tour->harga_jual;
-                            tourDesc = 'Harga Final';
+                            $tourDesc = 'Harga Final';
                         } else {
                             $subtotal = ($tour->tourItem->price ?? 0) + ($tour->transportation->harga ?? 0);
-                            tourDesc = 'Harga Estimasi';
+                            $tourDesc = 'Harga Estimasi';
                         }
                     @endphp
-                    <td class="text-right">Rp {{ number_format($subtotal, 0, ',', '.') }} <br> <small>{{ $tourDesc }}</small></td>
+                    <td class="text-right">Rp {{ number_format($subtotal, 0, ',', '.') }} <br>
+                        <small>{{ $tourDesc }}</small>
+                    </td>
                 </tr>
             @endforeach
 
@@ -429,12 +431,17 @@
                     <td class="text-center">{{ $no++ }}</td>
                     <td><strong>Meals: {{ $meal->mealItem->name ?? 'Menu' }}</strong></td>
                     <td class="text-center">{{ $meal->jumlah }} Pcs</td>
-                    @if ($meal)
-
+                    @if ($meal->harga_jual)
+                        <td class="text-right">Rp
+                            {{ number_format(($meal->harga_jual ?? 0) * $meal->jumlah, 0, ',', '.') }} <br>
+                            <small>Harga Final</small>
+                        </td>
                     @else
-
+                        <td class="text-right">Rp
+                            {{ number_format(($meal->mealItem->price ?? 0) * $meal->jumlah, 0, ',', '.') }} <br>
+                            <small>Harga Estimasi</small>
+                        </td>
                     @endif
-                    <td class="text-right">Rp {{ number_format(($meal->mealItem->price ?? 0) * $meal->jumlah, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
 
@@ -444,8 +451,17 @@
                     <td class="text-center">{{ $no++ }}</td>
                     <td><strong>Muthowif: {{ $guide->guideItem->nama ?? 'Guide' }}</strong></td>
                     <td class="text-center">{{ $guide->jumlah }} Orang</td>
-                    <td class="text-right">Rp
-                        {{ number_format(($guide->guideItem->harga ?? 0) * $guide->jumlah, 0, ',', '.') }}</td>
+                    @if ($guide->harga_jual && $guide->harga_jual > 0)
+                        <td class="text-right">Rp
+                            {{ number_format(($guide->harga_jual ?? 0) * $guide->jumlah, 0, ',', '.') }} <br>
+                            <small>Harga Final</small>
+                        </td>
+                    @else
+                        <td class="text-right">Rp
+                            {{ number_format(($guide->guideItem->harga ?? 0) * $guide->jumlah, 0, ',', '.') }} <br>
+                            <small>Harga Estimasi</small>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
 
@@ -455,10 +471,19 @@
                     <td class="text-center">{{ $no++ }}</td>
                     <td>
                         <strong>Badal Umrah</strong><br>
+                        <small>Tanggal: {{ $badal->tanggal_pelaksanaan }}</small>
+                    </td>
+                    <td class="text-center">1 Jiwa<br>
                         <small>Atas Nama: {{ $badal->name }}</small>
                     </td>
-                    <td class="text-center">1 Jiwa</td>
-                    <td class="text-right">Rp {{ number_format($badal->price, 0, ',', '.') }}</td>
+                    @if ($badal->harga_jual && $badal->harga_jual > 0)
+                        <td class="text-right">Rp {{ number_format($badal->harga_jual, 0, ',', '.') }} <br>
+                            <small>Harga Final</small>
+                        </td>
+                    @else
+                        <td class="text-right">Rp {{ number_format($badal->price, 0, ',', '.') }} <br> <small>Harga
+                                Estimasi</small></td>
+                    @endif
                 </tr>
             @endforeach
 
@@ -467,9 +492,18 @@
                 <tr>
                     <td class="text-center">{{ $no++ }}</td>
                     <td><strong>Wakaf: {{ $wakaf->wakaf->nama ?? 'Wakaf' }}</strong></td>
-                    <td class="text-center">{{ $wakaf->jumlah }} Paket</td>
-                    <td class="text-right">Rp
-                        {{ number_format(($wakaf->wakaf->harga ?? 0) * $wakaf->jumlah, 0, ',', '.') }}</td>
+                    <td class="text-center">{{ $wakaf->jumlah }} Pcs</td>
+                    @if ($wakaf->harga_jual && $wakaf->harga_jual > 0)
+                        <td class="text-right">Rp
+                            {{ number_format(($wakaf->harga_jual ?? 0) * $wakaf->jumlah, 0, ',', '.') }}
+                            <br><small>Harga Final</small>
+                        </td>
+                    @else
+                        <td class="text-right">Rp
+                            {{ number_format(($wakaf->wakaf->harga ?? 0) * $wakaf->jumlah, 0, ',', '.') }}
+                            <br><small>Harga Estimasi</small>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
 
@@ -479,8 +513,17 @@
                     <td class="text-center">{{ $no++ }}</td>
                     <td><strong>Sewa Dorongan: {{ $dorongan->dorongan->name ?? 'Kursi Roda' }}</strong></td>
                     <td class="text-center">{{ $dorongan->jumlah }} Unit</td>
-                    <td class="text-right">Rp
-                        {{ number_format(($dorongan->dorongan->price ?? 0) * $dorongan->jumlah, 0, ',', '.') }}</td>
+                    @if ($dorongan->harga_jual && $dorongan->harga_jual > 0)
+                        <td class="text-right">
+                            Rp{{ number_format(($dorongan->harga_jual ?? 0) * $dorongan->jumlah, 0, ',', '.') }}
+                            <br><small>Harga Final</small>
+                        </td>
+                    @else
+                        <td class="text-right">
+                            Rp{{ number_format(($dorongan->dorongan->price ?? 0) * $dorongan->jumlah, 0, ',', '.') }}
+                            <br><small>Harga Estimasi</small>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
 
@@ -488,10 +531,21 @@
             @foreach ($service->contents as $content)
                 <tr>
                     <td class="text-center">{{ $no++ }}</td>
-                    <td><strong>Dokumentasi: {{ $content->content->name ?? 'Foto/Video' }}</strong></td>
+                    <td><strong>Dokumentasi: {{ $content->content->name ?? 'Foto/Video' }}</strong>
+                        <br><small>{{ $content->tanggal_pelaksanaan }}</small>
+                    </td>
                     <td class="text-center">{{ $content->jumlah }} Pcs</td>
-                    <td class="text-right">Rp
-                        {{ number_format(($content->content->price ?? 0) * $content->jumlah, 0, ',', '.') }}</td>
+                    @if ($content->harga_jual && $content->harga_jual > 0)
+                        <td class="text-right">Rp
+                            {{ number_format(($content->harga_jual ?? 0) * $content->jumlah, 0, ',', '.') }}
+                            <br><small>Harga Final</small>
+                        </td>
+                    @else
+                        <td class="text-right">Rp
+                            {{ number_format(($content->content->price ?? 0) * $content->jumlah, 0, ',', '.') }}
+                            <br><small>Harga Estimasi</small>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
 
@@ -499,8 +553,8 @@
             @foreach ($service->exchanges as $reyal)
                 <tr>
                     <td class="text-center">{{ $no++ }}</td>
-                    <td><strong>Dokumentasi: {{ $reyal->tipe ?? '' }}</strong></td>
-                    <td class="text-center">{{ $reyal->jumlah ?? '' }} Pcs</td>
+                    <td><strong>Tipe: {{ $reyal->tipe ?? '' }}</strong></td>
+                    <td class="text-center">1</td>
                     <td class="text-right">Rp
                         {{ $reyal->jumlah_input }}</td>
                 </tr>
