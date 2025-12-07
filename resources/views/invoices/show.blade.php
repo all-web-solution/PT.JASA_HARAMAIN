@@ -1,367 +1,573 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
-    <meta charset="utf-8">
-    <title>Invoice #{{ str_pad($pelanggan->id, 3, '0', STR_PAD_LEFT) }}</title>
+    <meta charset="UTF-8">
+    <title>Invoice {{ $order->invoice }}</title>
     <style>
         body {
-            font-family: DejaVu Sans, sans-serif;
+            font-family: sans-serif;
             font-size: 12px;
             color: #333;
         }
 
         .header {
+            width: 100%;
+            border-bottom: 2px solid #1a4b8c;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a4b8c;
+        }
+
+        .company-info {
+            float: left;
+            text-align: left;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .invoice-details {
+            width: 100%;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        .invoice-details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        /* Style untuk label dan value agar rapi */
+        .info-label {
+            font-weight: bold;
+            width: 100px;
+            vertical-align: top;
+            /* Lebar label tetap */
+            padding: 3px 0;
+        }
+
+        .info-value {
+            padding: 3px 0;
+        }
+
+        .section-title {
             text-align: center;
-            margin-bottom: 20px;
+            margin: 0 0 20px 0;
+            color: #1a4b8c;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .header h2 {
-            color: #e38d00;
-            margin: 0;
-        }
-
-        .info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .info div {
-            width: 45%;
-        }
-
-        table {
+        table.items {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
 
-        table th,
-        table td {
-            border: 1px solid #ddd;
-            padding: 6px;
+        table.items th {
+            background-color: #f0f7ff;
+            color: #1a4b8c;
+            padding: 10px;
             text-align: left;
+            border-bottom: 1px solid #ccc;
+            font-size: 11px;
+            text-transform: uppercase;
         }
 
-        table th {
-            background: #f5f5f5;
+        table.items td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
         }
 
-        .total {
+        .total-section {
+            width: 100%;
             text-align: right;
-            margin-top: 20px;
+        }
+
+        .grand-total {
+            font-size: 16px;
+            color: #1a4b8c;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 10px;
+            color: #777;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        /* Helper */
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            color: white;
+            background: #28a745;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .badge-warning {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .badge-danger {
+            background: #dc3545;
+        }
+
+        strong {
+            color: #000;
+        }
+
+        small {
+            color: #666;
+            font-size: 11px;
         }
     </style>
 </head>
 
 <body>
 
+    {{-- HEADER --}}
     <div class="header">
-        <h2>PT JASA HARAMAIN GRUP</h2>
-        <p>
-            Jl. Mesjid Taqwa, No. 57 <br>
-            Desa Seutui, Kec. Baiturrahman, Kota Banda Aceh, 23243 <br>
-            (+62) 823 6462 3556
-        </p>
+        <div class="logo">{{ $company['name'] }}</div>
+        <div class="company-info">
+            {{ $company['address'] }}<br>
+            Telp: {{ $company['phone'] }} | Email: {{ $company['email'] }}
+        </div>
+        <div style="clear: both;"></div>
     </div>
 
-    <p><strong>Invoice #{{ str_pad($pelanggan->id, 3, '0', STR_PAD_LEFT) }}</strong></p>
-    <p>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</p>
+    {{-- INFO CUSTOMER & INVOICE --}}
+    <h2 class="section-title">INVOICE</h2>
 
-    <div class="info">
-        <div>
-            <strong>BILL TO</strong><br>
-            {{ $pelanggan->nama_travel ?? '-' }} <br>
-            {{ $pelanggan->alamat ?? 'Alamat tidak tersedia' }}
-        </div>
-        <div>
-            <strong>FOR</strong><br>
-            Hotel Reservation: <br>
-            {{ $pelanggan->tanggal_keberangkatan }} to {{ $pelanggan->tanggal_kepulangan }}
-        </div>
+    {{-- INFO CUSTOMER & INVOICE (Menggunakan Tabel Layout 2 Kolom) --}}
+    <div class="invoice-details">
+        <table width="100%">
+            <tr>
+                {{-- KOLOM KIRI: Info Customer --}}
+                <td width="50%" valign="top">
+                    <table>
+                        <tr>
+                            <td class="info-label">Ditujukan Kepada</td>
+                            <td class="info-value">: <strong>{{ $client->nama_travel }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Attn</td>
+                            <td class="info-value">: {{ $client->penanggung_jawab }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">No. Telepon</td>
+                            <td class="info-value">: {{ $client->phone }}</td>
+                        </tr>
+                    </table>
+                </td>
+
+                {{-- KOLOM KANAN: Info Invoice --}}
+                <td width="50%" valign="top">
+                    <table align="right"> {{-- align right agar tabel anak mepet kanan --}}
+                        <tr>
+                            <td class="info-label">No. Invoice</td>
+                            <td class="info-value">: {{ $order->invoice }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Tanggal</td>
+                            <td class="info-value">: {{ $order->created_at->format('d M Y') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Status</td>
+                            <td class="info-value">
+                                @php
+                                    $statusLabel = strtoupper(str_replace('_', ' ', $order->status_pembayaran));
+                                    $color = '#000'; // Default hitam
+                                    if ($order->status_pembayaran == 'lunas') {
+                                        $color = '#28a745';
+                                    }
+                                    // Hijau
+                                    elseif ($order->status_pembayaran == 'belum_lunas') {
+                                        $color = '#ffc107';
+                                    }
+                                    // Kuning/Oranye
+                                    elseif ($order->status_pembayaran == 'belum_bayar') {
+                                        $color = '#dc3545';
+                                    } // Merah
+                                @endphp
+                                : <span
+                                    style="font-weight: bold; color: {{ $color }};">{{ $statusLabel }}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
     </div>
 
-    <table>
+    {{-- TABEL ITEM --}}
+    <table class="items">
         <thead>
             <tr>
-                <th>DETAIL</th>
-                <th>QTY</th>
-                <th>UNIT</th>
-                <th>PRICE</th>
-                <th>AMOUNT</th>
+                <th width="5%" class="text-center">No</th>
+                <th width="50%">Deskripsi Layanan</th>
+                <th width="35%" class="text-center"></th>
+                <th width="15%" class="text-right">Jumlah (IDR)</th>
             </tr>
         </thead>
         <tbody>
-            @php $grandTotal = 0; @endphp
+            @php $no = 1; @endphp
 
-            {{-- Hotels --}}
-            @foreach ($pelanggan->services as $service)
-                @foreach ($service->hotels as $hotel)
+            {{-- 1. Hotel --}}
+            @foreach ($service->hotels as $hotel)
+                <tr>
+                    <td class="text-center">{{ $no++ }}</td>
+                    <td>
+                        <strong>Hotel: {{ $hotel->nama_hotel }}</strong><br>
+                        <small>{{ $hotel->type }} | Checkin:
+                            {{ \Carbon\Carbon::parse($hotel->tanggal_checkin)->format('d M') }} - Checkout:
+                            {{ \Carbon\Carbon::parse($hotel->tanggal_checkout)->format('d M') }}</small>
+                    </td>
+                    <td class="text-center">
+                        {{ $hotel->jumlah_type }} Kamar<br>
+                    </td>
+                    {{-- Rumus: (Harga * Jml Tipe) * Malam --}}
                     @php
-                        // total harga hotel (basic: durasi * harga per kamar)
-                        $amount = ($hotel->durasi ?? 1) * ($hotel->harga_perkamar ?? 0);
-                        $grandTotal += $amount;
+                        $malam =
+                            \Carbon\Carbon::parse($hotel->tanggal_checkin)->diffInDays($hotel->tanggal_checkout) ?: 1;
+                        if ($hotel->harga_jual && $hotel->harga_jual > 0) {
+                            $subtotal = $hotel->harga_jual * $hotel->jumlah_type * $malam;
+                            $desc = 'Harga Final';
+                        } else {
+                            $subtotal = $hotel->harga_perkamar * $hotel->jumlah_type * $malam;
+                            $desc = 'Harga Estimasi';
+                        }
+                        $subtotal = $hotel->harga_perkamar * $hotel->jumlah_type * $malam;
                     @endphp
-                    <tr>
-                        <td>[H] Hotel: {{ $hotel->nama_hotel }} - {{ $hotel->type }}</td>
-                        <td>{{ $hotel->durasi ?? 1 }}</td>
-                        <td>Days</td>
-                        <td>SAR {{ number_format($hotel->harga_perkamar ?? 0, 2, ',', '.') }}</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                    </tr>
-
-                    {{-- Detail tipe kamar --}}
-                    {{-- @foreach ($hotel->typeHotels as $type)
-                            @php
-                                $typeAmount = ($type->jumlah ?? 1) * ($hotel->harga_perkamar ?? 0);
-                                $grandTotal += $typeAmount;
-                            @endphp
-                            <tr>
-                                <td class="ps-4">↳ Type: {{ $type->nama_tipe }}</td>
-                                <td>{{ $type->jumlah ?? 1 }}</td>
-                                <td>Room(s)</td>
-                                <td>SAR {{ number_format($hotel->harga_perkamar ?? 0, 2, ',', '.') }}</td>
-                                <td>SAR {{ number_format($typeAmount, 2, ',', '.') }}</td>
-                            </tr>
-                        @endforeach --}}
-                @endforeach
+                    <td class="text-right">Rp {{ number_format($subtotal, 0, ',', '.') }} <br>
+                        <small>{{ $desc }}</small>
+                    </td>
+                </tr>
             @endforeach
 
-
-
-            {{-- Flights --}}
-            @foreach ($pelanggan->services as $service)
-                @foreach ($service->planes as $plane)
-                    @php
-                        $amount = ($plane->qty ?? 1) * $plane->harga;
-                        $grandTotal += $amount;
-                    @endphp
-                    <tr>
-                        <td>[TIK] Flight: {{ $plane->maskapai }} ({{ $plane->rute }})</td>
-                        <td>{{ $plane->qty ?? 1 }}</td>
-                        <td>Ticket</td>
-                        <td>SAR {{ number_format($plane->harga, 2, ',', '.') }}</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                    </tr>
-                @endforeach
-            @endforeach
-
-            {{-- Transportasi --}}
-            @foreach ($pelanggan->services as $service)
-                @foreach ($service->transportationItem as $t)
-                    @php
-                        $amount = ($t->qty ?? 1) * $t->harga;
-                        $grandTotal += $amount;
-                    @endphp
-                    <tr>
-                        <td>[T] Transport: {{ $t->Transportation->nama }}</td>
-                        <td>1</td>
-                        <td>Unit</td>
-                        <td>SAR {{ $t->Transportation->harga }}</td>
-                        <td>SAR {{ $t->Transportation->kapasitas }}</td>
-                    </tr>
-                @endforeach
-            @endforeach
-
-            {{-- Meals --}}
-            @foreach ($pelanggan->services as $service)
-                @foreach ($service->meals as $meal)
-                    @php
-                        $amount = ($meal->qty ?? 1) * $meal->mealItem->price;
-                        $grandTotal += $amount;
-                    @endphp
-                    <tr>
-                        <td>[M] Meal: {{ $meal->mealItem->name }}</td>
-                        <td>{{ $meal->qty ?? 1 }}</td>
-                        <td>Porsi</td>
-                        <td>SAR {{ number_format($meal->mealItem->price, 2, ',', '.') }}</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                    </tr>
-                @endforeach
-            @endforeach
-
-
-            {{-- Guides (Pendamping) --}}
-            {{-- Guides (Pendamping) --}}
-            @foreach ($pelanggan->services as $service)
-                @foreach ($service->guides as $g)
-                    @php
-                        $amount = ($g->jumlah ?? 1) * ($g->guideItem->harga ?? 0);
-                        $grandTotal += $amount;
-                    @endphp
-                    <tr>
-                        <td>[P] Guide: {{ $g->guideItem->nama ?? '-' }}</td>
-                        <td>{{ $g->jumlah ?? 1 }}</td>
-                        <td>Days</td>
-                        <td>SAR {{ number_format($g->guideItem->harga ?? 0, 2, ',', '.') }}</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                    </tr>
-                @endforeach
-            @endforeach
-
-            {{-- Wakaf --}}
-            @foreach ($pelanggan->services as $service)
-                @foreach ($service->wakafs as $w)
-                    @php
-                        $amount = $w->jumlah * $w->Wakaf->harga;
-                        $grandTotal += $amount;
-                    @endphp
-                    <tr>
-                        <td>[W] Wakaf - {{ $w->Wakaf->nama }}</td>
-                        <td>{{ $w->jumlah }}</td>
-                        <td>Paket</td>
-                        <td>SAR {{ number_format($w->Wakaf->harga, 2, ',', '.') }}</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                    </tr>
-                @endforeach
-            @endforeach
-
-
-            {{-- Badal --}}
-            @foreach ($pelanggan->services as $service)
-                @foreach ($service->badals as $b)
-                    @php
-                        $amount = $b->price ?? 0;
-                        $grandTotal += $amount;
-                    @endphp
-                    <tr>
-                        <td>[BD] Badal: {{ $b->name }}</td>
-                        <td>1</td>
-                        <td>Paket</td>
-                        <td>SAR {{ number_format($b->price, 2, ',', '.') }}</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                    </tr>
-                @endforeach
-            @endforeach
-
-            {{-- Documents --}}
-            @foreach ($pelanggan->services as $service)
-                {{-- Documents --}}
-                @foreach ($service->documents as $cd)
-                    @php
-                        $amount = ($cd->jumlah ?? 1) * ($cd->harga ?? 0);
-                        $grandTotal += $amount;
-                    @endphp
-                    <tr>
-                        <td>[D] Dokumen: {{ $cd->documents->name ?? '-' }}
-                            @if ($cd->DocumentChildren)
-                                ({{ $cd->DocumentChildren->name }})
-                            @endif
+            {{-- 2. Pesawat --}}
+            @foreach ($service->planes as $plane)
+                <tr>
+                    <td class="text-center">{{ $no++ }}</td>
+                    <td>
+                        <strong>Tiket Pesawat: {{ $plane->maskapai }}</strong><br>
+                        <small>Rute: {{ $plane->rute }} | Tgl:
+                            {{ \Carbon\Carbon::parse($plane->tanggal_keberangkatan)->format('d M Y') }}</small>
+                    </td>
+                    <td class="text-center">{{ $plane->jumlah_jamaah }} Seat</td>
+                    @if ($plane->harga_jual)
+                        <td class="text-right">Rp
+                            {{ number_format($plane->harga_jual * $plane->jumlah_jamaah, 0, ',', '.') }} <br>
+                            <small>Harga Final</small>
                         </td>
-                        <td>{{ $cd->jumlah }}</td>
-                        <td>Paket</td>
-                        <td>SAR {{ $cd->harga }}</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                    </tr>
-                @endforeach
+                    @else
+                        <td class="text-right">Rp
+                            {{ number_format($plane->harga * $plane->jumlah_jamaah, 0, ',', '.') }} <br> <small>Harga
+                                Estimasi</small> </td>
+                    @endif
+                </tr>
             @endforeach
 
-
-
-            {{-- Handling --}}
-            @foreach ($pelanggan->services as $service)
-                @foreach ($service->handlings as $hdl)
+            {{-- 3. Transportasi Darat --}}
+            @foreach ($service->transportationItem as $trans)
+                <tr>
+                    <td class="text-center">{{ $no++ }}</td>
+                    <td>
+                        <strong>Transportasi Darat: {{ $trans->transportation->nama ?? 'Bus' }}</strong><br>
+                        <small>
+                            Rute: {{ $trans->route->route ?? '-' }} |
+                            {{ \Carbon\Carbon::parse($trans->dari_tanggal)->format('d M') }} s/d
+                            {{ \Carbon\Carbon::parse($trans->sampai_tanggal)->format('d M') }}
+                        </small>
+                    </td>
+                    <td class="text-center">
+                        @php $days = \Carbon\Carbon::parse($trans->dari_tanggal)->diffInDays($trans->sampai_tanggal) + 1; @endphp
+                        {{ $days }} Hari
+                    </td>
+                    {{-- Rumus: ((Harga Harian * Hari) + Harga Rute) --}}
                     @php
-                        $amount = $hdl->harga ?? 0;
-                        $grandTotal += $amount;
+                        if ($trans->harga_jual) {
+                            $dailyPrice = $trans->harga_jual ?? 0;
+                            $transDesc = 'Harga Final';
+                        } else {
+                            $dailyPrice = $trans->transportation->harga ?? 0;
+                            $transDesc = 'Harga Estimasi';
+                        }
+                        $routePrice = $trans->route->price ?? 0;
+                        $subtotal = $dailyPrice * $days + $routePrice;
                     @endphp
-                    <tr>
-                        <td>[HDL] Handling - {{ $hdl->name }}</td>
-                        <td>1</td>
-                        <td>Paket</td>
-                        <td>SAR {{ number_format($hdl->harga, 2, ',', '.') }}</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                    </tr>
-                @endforeach
+                    <td class="text-right">Rp {{ number_format($subtotal, 0, ',', '.') }} <br>
+                        <small>{{ $transDesc }}</small>
+                    </td>
+                </tr>
             @endforeach
 
-
-            {{-- Tours --}}
-            @foreach ($pelanggan->services as $service)
-                @foreach ($service->tours as $tour)
-                    @php
-                        $amount = $tour->transportation->harga ?? 0;
-                        $grandTotal += $amount;
-                    @endphp
+            {{-- 4. Handling (Hotel & Bandara) --}}
+            @foreach ($service->handlings as $handling)
+                {{-- Handling Hotel --}}
+                @if ($handling->handlingHotels)
                     <tr>
-                        <td>[TO] Tour: {{ $tour->transportation->nama }}</td>
-                        <td>1</td>
-                        <td>Paket</td>
-                        <td>SAR {{ number_format($tour->transportation->harga, 2, ',', '.') }}</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
+                        <td class="text-center">{{ $no++ }}</td>
+                        <td>
+                            <strong>Handling Hotel: {{ $handling->handlingHotels->nama }}</strong><br>
+                            <small>Tgl:
+                                {{ \Carbon\Carbon::parse($handling->handlingHotels->tanggal)->format('d M Y') }}</small>
+                        </td>
+                        <td class="text-center">{{ $handling->handlingHotels->pax }} Pax</td>
+                        @if ($handling->handlingHotels->harga_jual && $handling->handlingHotels->harga_jual > 0)
+                            <td class="text-right">Rp
+                                {{ number_format($handling->handlingHotels->harga_jual, 0, ',', '.') }} <br>
+                                <small>Harga Final</small>
+                            </td>
+                        @else
+                            <td class="text-right">Rp
+                                {{ number_format($handling->handlingHotels->harga, 0, ',', '.') }} <br> <small>Harga
+                                    Estimasi</small>
+                            </td>
+                        @endif
                     </tr>
-                @endforeach
+                @endif
+
+                {{-- Handling Bandara --}}
+                @if ($handling->handlingPlanes)
+                    <tr>
+                        <td class="text-center">{{ $no++ }}</td>
+                        <td>
+                            <strong>Handling Bandara: {{ $handling->handlingPlanes->nama_bandara }}</strong><br>
+                            <small>Supir: {{ $handling->handlingPlanes->nama_supir }}</small>
+                        </td>
+                        <td class="text-center">{{ $handling->handlingPlanes->jumlah_jamaah }} Org</td>
+                        @if ($handling->handlingPlanes->harga_jual && $handling->handlingPlanes->harga_jual > 0)
+                            <td class="text-right">Rp
+                                {{ number_format($handling->handlingPlanes->harga_jual, 0, ',', '.') }} <br>
+                                <small>Harga Final</small>
+                            </td>
+                        @else
+                            <td class="text-right">Rp
+                                {{ number_format($handling->handlingPlanes->harga, 0, ',', '.') }} <br> <small>Harga
+                                    Estimasi</small>
+                            </td>
+                        @endif
+                    </tr>
+                @endif
             @endforeach
 
-
-            {{-- Dorongan --}}
-            @foreach ($pelanggan->services as $service)
-                @foreach ($service->dorongans as $dr)
-                    @php
-                        $amount = $dr->jumlah * $dr->dorongan->price;
-                        $grandTotal += $amount;
-
-                    @endphp
-                    <tr>
-                        <td>[DR] {{ $dr->dorongan->name }}</td>
-                        <td>{{ $dr->jumlah }}</td>
-                        <td>Paket</td>
-                        <td>SAR {{ number_format($dr->dorongan->price, 2, ',', '.') }}</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                    </tr>
-                @endforeach
+            {{-- 5. Dokumen --}}
+            @foreach ($service->documents as $doc)
+                <tr>
+                    <td class="text-center">{{ $no++ }}</td>
+                    <td>
+                        <strong>Dokumen: {{ $doc->document->name ?? 'Dokumen' }}</strong>
+                        @if ($doc->documentChild)
+                            <br><small>({{ $doc->documentChild->name }})</small>
+                        @endif
+                    </td>
+                    <td class="text-center">{{ $doc->jumlah }} Pcs</td>
+                    @if ($doc->harga_jual && $doc->harga_jual > 0)
+                        <td class="text-right">Rp
+                            {{ number_format($doc->harga_jual * $doc->jumlah, 0, ',', '.') }} <br>
+                            <small>Harga Final</small>
+                        </td>
+                    @else
+                        <td class="text-right">Rp
+                            {{ number_format($doc->harga * $doc->jumlah, 0, ',', '.') }} <br> <small>Harga
+                                Estimasi</small>
+                        </td>
+                    @endif
+                    {{-- <td class="text-right">Rp {{ number_format($doc->harga * $doc->jumlah, 0, ',', '.') }}</td> --}}
+                </tr>
             @endforeach
 
-
-            {{-- Konten --}}
-            @foreach ($pelanggan->services as $service)
-                @foreach ($service->contents as $c)
+            {{-- 6. Tour --}}
+            @foreach ($service->tours as $tour)
+                <tr>
+                    <td class="text-center">{{ $no++ }}</td>
+                    <td>
+                        <strong>Paket Tour: {{ $tour->tourItem->name ?? 'City Tour' }}</strong><br>
+                        <small>Transport: {{ $tour->transportation->nama ?? '-' }} | Tgl:
+                            {{ \Carbon\Carbon::parse($tour->tanggal_keberangkatan)->format('d M Y') }}</small>
+                    </td>
+                    <td class="text-center">1 Paket</td>
+                    {{-- Rumus: Harga Tour + Harga Transport --}}
                     @php
-                        $amount = $c->content->price;
-                        $grandTotal += $amount;
+                        if ($tour->harga_jual) {
+                            $subtotal = $tour->harga_jual;
+                            tourDesc = 'Harga Final';
+                        } else {
+                            $subtotal = ($tour->tourItem->price ?? 0) + ($tour->transportation->harga ?? 0);
+                            tourDesc = 'Harga Estimasi';
+                        }
                     @endphp
-                    <tr>
-                        <td>[K] Konten - {{ $c->content->name }}</td>
-                        <td>{{ $c->jumlah }}</td>
-                        <td>Paket</td>
-                        <td>SAR {{ number_format($c->content->price, 2, ',', '.') }}</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                    </tr>
-                @endforeach
+                    <td class="text-right">Rp {{ number_format($subtotal, 0, ',', '.') }} <br> <small>{{ $tourDesc }}</small></td>
+                </tr>
             @endforeach
 
+            {{-- 7. Meals --}}
+            @foreach ($service->meals as $meal)
+                <tr>
+                    <td class="text-center">{{ $no++ }}</td>
+                    <td><strong>Meals: {{ $meal->mealItem->name ?? 'Menu' }}</strong></td>
+                    <td class="text-center">{{ $meal->jumlah }} Pcs</td>
+                    @if ($meal)
 
-            {{-- Reyal (Currency Exchange) --}}
-            @foreach ($pelanggan->services as $service)
-                @foreach ($service->reyals as $r)
-                    @php
-                        $amount = $r->jumlah ?? 0;
-                        $grandTotal += $amount;
-                    @endphp
-                    <tr>
-                        <td>[R] Tukar Riyal</td>
-                        <td>1</td>
-                        <td>Paket</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                        <td>SAR {{ number_format($amount, 2, ',', '.') }}</td>
-                    </tr>
-                @endforeach
+                    @else
+
+                    @endif
+                    <td class="text-right">Rp {{ number_format(($meal->mealItem->price ?? 0) * $meal->jumlah, 0, ',', '.') }}</td>
+                </tr>
+            @endforeach
+
+            {{-- 8. Guides (Muthowif) --}}
+            @foreach ($service->guides as $guide)
+                <tr>
+                    <td class="text-center">{{ $no++ }}</td>
+                    <td><strong>Muthowif: {{ $guide->guideItem->nama ?? 'Guide' }}</strong></td>
+                    <td class="text-center">{{ $guide->jumlah }} Orang</td>
+                    <td class="text-right">Rp
+                        {{ number_format(($guide->guideItem->harga ?? 0) * $guide->jumlah, 0, ',', '.') }}</td>
+                </tr>
+            @endforeach
+
+            {{-- 9. Badal Umrah --}}
+            @foreach ($service->badals as $badal)
+                <tr>
+                    <td class="text-center">{{ $no++ }}</td>
+                    <td>
+                        <strong>Badal Umrah</strong><br>
+                        <small>Atas Nama: {{ $badal->name }}</small>
+                    </td>
+                    <td class="text-center">1 Jiwa</td>
+                    <td class="text-right">Rp {{ number_format($badal->price, 0, ',', '.') }}</td>
+                </tr>
+            @endforeach
+
+            {{-- 10. Wakaf --}}
+            @foreach ($service->wakafs as $wakaf)
+                <tr>
+                    <td class="text-center">{{ $no++ }}</td>
+                    <td><strong>Wakaf: {{ $wakaf->wakaf->nama ?? 'Wakaf' }}</strong></td>
+                    <td class="text-center">{{ $wakaf->jumlah }} Paket</td>
+                    <td class="text-right">Rp
+                        {{ number_format(($wakaf->wakaf->harga ?? 0) * $wakaf->jumlah, 0, ',', '.') }}</td>
+                </tr>
+            @endforeach
+
+            {{-- 11. Dorongan (Kursi Roda) --}}
+            @foreach ($service->dorongans as $dorongan)
+                <tr>
+                    <td class="text-center">{{ $no++ }}</td>
+                    <td><strong>Sewa Dorongan: {{ $dorongan->dorongan->name ?? 'Kursi Roda' }}</strong></td>
+                    <td class="text-center">{{ $dorongan->jumlah }} Unit</td>
+                    <td class="text-right">Rp
+                        {{ number_format(($dorongan->dorongan->price ?? 0) * $dorongan->jumlah, 0, ',', '.') }}</td>
+                </tr>
+            @endforeach
+
+            {{-- 12. Konten --}}
+            @foreach ($service->contents as $content)
+                <tr>
+                    <td class="text-center">{{ $no++ }}</td>
+                    <td><strong>Dokumentasi: {{ $content->content->name ?? 'Foto/Video' }}</strong></td>
+                    <td class="text-center">{{ $content->jumlah }} Pcs</td>
+                    <td class="text-right">Rp
+                        {{ number_format(($content->content->price ?? 0) * $content->jumlah, 0, ',', '.') }}</td>
+                </tr>
+            @endforeach
+
+            {{-- 13. Reyal --}}
+            @foreach ($service->exchanges as $reyal)
+                <tr>
+                    <td class="text-center">{{ $no++ }}</td>
+                    <td><strong>Dokumentasi: {{ $reyal->tipe ?? '' }}</strong></td>
+                    <td class="text-center">{{ $reyal->jumlah ?? '' }} Pcs</td>
+                    <td class="text-right">Rp
+                        {{ $reyal->jumlah_input }}</td>
+                </tr>
             @endforeach
 
         </tbody>
-
     </table>
 
-    {{-- TOTAL --}}
-    <div class="total">
-        <p>SUBTOTAL: SAR {{ number_format($grandTotal, 2, ',', '.') }}</p>
-        <h3>TOTAL: SAR {{ number_format($grandTotal, 2, ',', '.') }}</h3>
+    {{-- TOTAL SECTION --}}
+    <table width="100%">
+        <tr>
+            <td width="60%"></td> {{-- Spacer kiri --}}
+            <td width="40%">
+                <table width="100%">
+                    <tr>
+                        <td class="text-right" style="padding: 5px; vertical-align: top;"><strong>Total
+                                Tagihan:</strong>
+                        </td>
+                        <td class="text-right grand-total" style="padding: 5px;">Rp
+                            {{ number_format($order->total_amount_final ?? $order->total_estimasi, 0, ',', '.') }} <br>
+                            <small>{{ $order->total_amount_final ? 'Harga Final' : 'Harga Estimasi' }}</small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" style="padding: 5px;">Sudah Dibayar:</td>
+                        <td class="text-right" style="padding: 5px;">Rp
+                            {{ number_format($order->total_yang_dibayarkan, 0, ',', '.') }}</td>
+                    </tr>
+                    <tr style="border-top: 1px dashed #ccc;">
+                        <td class="text-right"
+                            style="padding: 10px 5px; color: {{ $order->sisa_hutang > 0 ? '#dc3545' : '#28a745' }}">
+                            <strong>Sisa Pembayaran:</strong>
+                        </td>
+                        <td class="text-right"
+                            style="padding: 10px 5px; font-size: 14px; font-weight: bold; color: {{ $order->sisa_hutang > 0 ? '#dc3545' : '#28a745' }}">
+                            Rp {{ number_format($order->sisa_hutang, 0, ',', '.') }}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    {{-- FOOTER / INFO PEMBAYARAN --}}
+    <div
+        style="margin-top: 40px; border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; border-radius: 5px; font-size: 11px;">
+        <strong>Silakan lakukan pembayaran ke:</strong><br>
+        <table width="100%" style="margin-top: 5px;">
+            <tr>
+                <td width="15%">Nama Bank</td>
+                <td>: <strong>Bank Syariah Indonesia (BSI)</strong></td>
+            </tr>
+            <tr>
+                <td>No. Rekening</td>
+                <td>: <strong>1234-5678-90</strong></td>
+            </tr>
+            <tr>
+                <td>Atas Nama</td>
+                <td>: <strong>PT Jasa Haramain</strong></td>
+            </tr>
+        </table>
     </div>
 
-    <p>Make all checks payable to <strong>PT JASA HARAMAIN GRUP</strong></p>
-    <p>Contact: Ali Ridha, (+62) 811 6814 994, jasaharamainagrup@gmail.com</p>
-    <p><strong>THANK YOU FOR YOUR BUSINESS!</strong></p>
+    <div class="footer">
+        <p>Invoice ini sah dan diproses secara komputerisasi oleh sistem PT Jasa Haramain.</p>
+        <p>Terima kasih atas kepercayaan Anda menggunakan jasa kami.</p>
+    </div>
 
 </body>
 
