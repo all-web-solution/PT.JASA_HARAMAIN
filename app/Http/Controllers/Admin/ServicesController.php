@@ -413,6 +413,7 @@ class ServicesController extends Controller
 
         return view('admin.services.edit', $data);
     }
+
     public function update(EditServiceRequest $request, $id)
     {
         $service = Service::findOrFail($id);
@@ -749,20 +750,23 @@ class ServicesController extends Controller
                 // Buat ulang data dari form
                 if ($request->has('jumlah_pendamping')) {
                     foreach ($request->jumlah_pendamping as $id => $jumlah) {
-                        // Hanya buat jika jumlah lebih dari 0 dan datanya dikirim (tidak disabled)
                         if ($jumlah !== null && $jumlah > 0) {
+
+                            $tglDari = $request->input("tanggal_pendamping.$id.dari");
+                            $tglSampai = $request->input("tanggal_pendamping.$id.sampai");
+
                             Guide::create([
                                 'service_id' => $service->id,
                                 'guide_id' => $id,
                                 'jumlah' => $jumlah,
-                                'muthowif_dari' => $request->pendamping_dari[$id] ?? null,
-                                'muthowif_sampai' => $request->pendamping_sampai[$id] ?? null,
+                                'keterangan' => null,
+                                'muthowif_dari' => $tglDari,
+                                'muthowif_sampai' => $tglSampai,
                             ]);
                         }
                     }
                 }
             } else {
-                // Tidak, service 'pendamping' di-uncheck. Hapus semua.
                 Guide::where('service_id', $service->id)->delete();
             }
 
@@ -1031,11 +1035,673 @@ class ServicesController extends Controller
                 // Tidak, service 'tour' di-uncheck. Hapus semua data tour.
                 Tour::where('service_id', $service->id)->delete();
             }
-        });
+
+            /* =====================================================
+             * 🔄 KALKULASI ULANG HARGA & UPDATE ORDER (LOGIKA BARU)
+             * ===================================================== */
+
+            // 1. Hitung ulang total harga berdasarkan data yang baru saja di-update
+            // Method ini akan otomatis melakukan $service->load(...) relasi terbaru
+            $newServerTotalAmount = $this->calculateTotalServicePrice($service);
+
+            // 2. Cari Order yang terkait dengan Service ini
+            $order = Order::where('service_id', $service->id)->first();
+
+            if ($order) {
+                // 3. Update Total Estimasi dengan harga baru
+                $order->total_estimasi = $newServerTotalAmount;
+
+                // 4. Hitung ulang Sisa Hutang
+                // Rumus: Total Estimasi Baru - Total Yang Sudah Dibayar
+                $sisaHutangBaru = $newServerTotalAmount - $order->total_yang_dibayarkan;
+
+                // Pastikan sisa hutang tidak minus (Opsional: Jika minus berarti refund,
+                // tapi di sini kita biarkan angka aslinya atau bisa diset 0 jika kebijakan tidak ada refund)
+                // $sisaHutangBaru = max(0, $sisaHutangBaru);
+
+                $order->sisa_hutang = $sisaHutangBaru;
+
+                // 5. Update Status Pembayaran (Otomatis menyesuaikan)
+                if ($sisaHutangBaru <= 0 && $order->total_yang_dibayarkan > 0) {
+                    $order->status_pembayaran = 'lunas';
+                } elseif ($order->total_yang_dibayarkan > 0) {
+                    $order->status_pembayaran = 'sudah_bayar'; // Ada sisa tagihan karena harga naik
+                } else {
+                    $order->status_pembayaran = 'belum_bayar';
+                }
+
+                $order->save();
+            }
+
+        }); // END DB::transaction
 
         return redirect()->route('admin.services.show', $service)
-            ->with('success', 'Data service dan seluruh relasinya berhasil diperbarui.');
+            ->with('success', 'Data service berhasil diperbarui dan harga order telah dihitung ulang.');
     }
+
+    // public function update(EditServiceRequest $request, $id)
+    // {
+    //     $service = Service::findOrFail($id);
+
+    //     $status = $request->input('action') === 'nego' ? 'nego' : 'deal';
+
+    //     DB::transaction(function () use ($request, $service, $status) {
+
+    //         /* =====================================================
+    //          * 🔁 UPDATE DATA SERVICE UTAMA
+    //          * ===================================================== */
+    //         $service->update([
+    //             'pelanggan_id' => $request->travel,
+    //             'services' => json_encode($request->services),
+    //             'tanggal_keberangkatan' => $request->tanggal_keberangkatan,
+    //             'tanggal_kepulangan' => $request->tanggal_kepulangan,
+    //             'total_jamaah' => $request->total_jamaah,
+    //             'status' => $status,
+    //         ]);
+
+    //         /* =====================================================
+    //          * ✈️ UPDATE / TAMBAH / HAPUS DATA PESAWAT
+    //          * ===================================================== */
+
+    //         // 1. Cek Service Utama 'transportasi'
+    //         if ($request->has('services') && in_array('transportasi', $request->services)) {
+
+    //             // 2. Cek Sub-Service 'airplane' (Ganti 'transportation_types' jadi 'transportation')
+    //             if ($request->has('transportation') && in_array('airplane', $request->transportation)) {
+    //                 $existingPlaneIds = collect($request->plane_id)->filter()->toArray();
+
+    //                 // Hapus tiket yang tidak ada di form (dihapus user)
+    //                 Plane::where('service_id', $service->id)
+    //                     ->whereNotIn('id', $existingPlaneIds)
+    //                     ->delete();
+
+    //                 // Update / Tambah tiket
+    //                 if ($request->has('rute')) { // Pastikan array rute ada
+    //                     foreach ($request->rute as $i => $rute) {
+    //                         if (empty($rute))
+    //                             continue;
+
+    //                         // Cari plane berdasarkan ID yg dikirim, atau buat baru
+    //                         $planeId = $request->plane_id[$i] ?? null;
+    //                         $plane = $planeId ? Plane::find($planeId) : new Plane();
+
+    //                         // Pastikan jika ID ada tapi data tidak ketemu (jarang terjadi), buat instance baru
+    //                         if (!$plane)
+    //                             $plane = new Plane();
+
+    //                         $plane->service_id = $service->id;
+    //                         $plane->tanggal_keberangkatan = $request->tanggal[$i] ?? now();
+    //                         $plane->rute = $rute;
+    //                         $plane->maskapai = $request->maskapai[$i] ?? null;
+    //                         $plane->harga = $request->harga_tiket[$i] ?? 0;
+    //                         $plane->keterangan = $request->keterangan_tiket[$i] ?? '-';
+    //                         $plane->jumlah_jamaah = $request->jumlah[$i] ?? 0;
+
+    //                         if ($request->hasFile("tiket_berangkat.$i")) {
+    //                             $plane->tiket_berangkat = $this->storeFileIfExists([$request->file("tiket_berangkat.$i")], 0, 'tiket');
+    //                         }
+    //                         if ($request->hasFile("tiket_pulang.$i")) {
+    //                             $plane->tiket_pulang = $this->storeFileIfExists([$request->file("tiket_pulang.$i")], 0, 'tiket');
+    //                         }
+
+    //                         $plane->save();
+    //                     }
+    //                 }
+    //             } else {
+    //                 // Jika checkbox 'airplane' tidak dicentang, hapus semua data pesawat
+    //                 Plane::where('service_id', $service->id)->delete();
+    //             }
+    //         } else {
+    //             // Jika service 'transportasi' utama tidak dicentang
+    //             Plane::where('service_id', $service->id)->delete();
+    //         }
+
+    //         /* =====================================================
+    //          * 🚌 TRANSPORTASI DARAT (BUS)
+    //          * ===================================================== */
+
+    //         if ($request->has('services') && in_array('transportasi', $request->services)) {
+
+    //             if ($request->has('transportation') && in_array('bus', $request->transportation)) {
+
+    //                 // Hapus semua item lama lalu buat baru (Sederhana & Aman)
+    //                 // Atau jika ingin update, logika-nya mirip pesawat di atas.
+    //                 // Untuk saat ini kita ikuti logika delete-recreate yang sudah ada agar konsisten
+    //                 TransportationItem::where('service_id', $service->id)->delete();
+
+    //                 if ($request->has('transportation_id')) {
+    //                     foreach ($request->transportation_id as $i => $transportId) {
+    //                         if (empty($transportId))
+    //                             continue;
+
+    //                         // Perbaikan pengambilan data tanggal dari array multidimensi
+    //                         // Format di blade: tanggal_transport[$i]['dari']
+    //                         $tglDari = $request->tanggal_transport[$i]['dari'] ?? null;
+    //                         $tglSampai = $request->tanggal_transport[$i]['sampai'] ?? null;
+
+    //                         TransportationItem::create([
+    //                             'service_id' => $service->id,
+    //                             'transportation_id' => $transportId,
+    //                             'route_id' => $request->rute_id[$i] ?? null,
+    //                             'dari_tanggal' => $tglDari,
+    //                             'sampai_tanggal' => $tglSampai,
+    //                         ]);
+    //                     }
+    //                 }
+    //             } else {
+    //                 TransportationItem::where('service_id', $service->id)->delete();
+    //             }
+    //         } else {
+    //             TransportationItem::where('service_id', $service->id)->delete();
+    //         }
+
+    //         /* =====================================================
+    //          * 📄 DOKUMEN
+    //          * ===================================================== */
+
+    //         // PERIKSA: Apakah 'dokumen' ada di array service utama?
+    //         if ($request->has('services') && in_array('dokumen', $request->services)) {
+
+    //             // JIKA YA: Hapus data lama untuk diganti dengan data baru
+    //             CustomerDocument::where('service_id', $service->id)->delete();
+
+    //             // --- (FIX) Ambil data master ---
+    //             $childDocs = DocumentChildren::get()->keyBy('id');
+
+    //             // --- (FIX) PROSES BASE DOCUMENTS (Siskopatuh, dll) ---
+    //             // Kita baca array 'base_documents[]' yang baru kita buat di view
+    //             if ($request->has('base_documents')) {
+    //                 // Ambil array asosiatif [ID => jumlah]
+    //                 $baseDocumentQuantities = $request->input('jumlah_base_doc', []);
+
+    //                 foreach ($request->base_documents as $baseDocId) {
+    //                     if (empty($baseDocId))
+    //                         continue;
+
+    //                     // Ambil jumlah dari array asosiatif
+    //                     $jumlah = $baseDocumentQuantities[$baseDocId] ?? 0;
+
+    //                     if ($jumlah > 0) {
+    //                         CustomerDocument::create([
+    //                             'service_id' => $service->id,
+    //                             'jumlah' => $jumlah,
+    //                             'document_id' => $baseDocId, // ID Parent (Misal: Siskopatuh)
+    //                             'document_children_id' => null, // Ini adalah dokumen dasar, jadi null
+    //                             'harga' => 0, // Asumsi base doc tidak ada harga
+    //                         ]);
+    //                     }
+    //                 }
+    //             }
+
+    //             // --- (FIX) PROSES CHILD DOCUMENTS (Visa Ziarah, dll) ---
+    //             // Kita baca array 'child_documents[]' yang baru kita buat di view
+    //             if ($request->has('child_documents')) {
+    //                 // Ambil array asosiatif [ID => jumlah]
+    //                 $childDocumentQuantities = $request->input('jumlah_child_doc', []);
+
+    //                 foreach ($request->child_documents as $childDocId) {
+    //                     if (empty($childDocId))
+    //                         continue;
+
+    //                     // Ambil data child dari collection
+    //                     $child = $childDocs->get($childDocId);
+
+    //                     if ($child) { // Pastikan child-nya ada
+    //                         // Ambil jumlah dari array asosiatif
+    //                         $jumlah = $childDocumentQuantities[$childDocId] ?? 0;
+
+    //                         if ($jumlah > 0) {
+    //                             CustomerDocument::create([
+    //                                 'service_id' => $service->id,
+    //                                 'jumlah' => $jumlah,
+    //                                 'document_id' => $child->document_id, // ID Parent (Misal: Visa)
+    //                                 'document_children_id' => $childDocId, // ID Child (Misal: Visa Ziarah)
+    //                                 'harga' => $child->price ?? 0,
+    //                             ]);
+    //                         }
+    //                     }
+    //                 }
+    //             }
+
+    //         } else {
+    //             // JIKA TIDAK: 'dokumen' di-uncheck, HAPUS SEMUA data dokumen
+    //             CustomerDocument::where('service_id', $service->id)->delete();
+    //         }
+
+    //         /* =====================================================
+    //          * 🏨 HANDLING HOTEL & 🛬 HANDLING BANDARA
+    //          * ===================================================== */
+
+    //         if ($request->has('services') && in_array('handling', $request->services)) {
+
+    //             // (PERBAIKAN) Cek sub-item 'hotel'
+    //             if ($request->has('handlings') && in_array('hotel', $request->handlings)) {
+
+    //                 // Cari parent 'Handling' dulu, atau buat baru
+    //                 $handlingModel = $service->handlings()->firstOrCreate(['name' => 'hotel']);
+
+    //                 // Cari HandlingHotel, atau buat baru
+    //                 $handlingHotel = $handlingModel->handlingHotels()->first() ?? new HandlingHotel();
+
+    //                 // Siapkan data
+    //                 $hotelData = [
+    //                     'nama' => $request->nama_hotel_handling,
+    //                     'tanggal' => $request->tanggal_hotel_handling,
+    //                     'harga' => $request->harga_hotel_handling,
+    //                     'pax' => $request->pax_hotel_handling,
+    //                 ];
+
+    //                 // Handle file uploads
+    //                 if ($request->hasFile('kode_booking_hotel_handling')) {
+    //                     if ($handlingHotel->kode_booking) {
+    //                         Storage::disk('public')->delete($handlingHotel->kode_booking);
+    //                     }
+    //                     $hotelData['kode_booking'] = $request->file('kode_booking_hotel_handling')->store('handling/hotel', 'public');
+    //                 }
+    //                 if ($request->hasFile('rumlis_hotel_handling')) {
+    //                     if ($handlingHotel->rumlis) {
+    //                         Storage::disk('public')->delete($handlingHotel->rumlis);
+    //                     }
+    //                     $hotelData['rumlis'] = $request->file('rumlis_hotel_handling')->store('handling/hotel', 'public');
+    //                 }
+    //                 if ($request->hasFile('identitas_hotel_handling')) {
+    //                     if ($handlingHotel->identitas_koper) {
+    //                         Storage::disk('public')->delete($handlingHotel->identitas_koper);
+    //                     }
+    //                     $hotelData['identitas_koper'] = $request->file('identitas_hotel_handling')->store('handling/hotel', 'public');
+    //                 }
+
+    //                 // Simpan data
+    //                 $handlingModel->handlingHotels()->updateOrCreate(['id' => $handlingHotel->id], $hotelData);
+
+    //             } else {
+    //                 // 'hotel' tidak dicentang, hapus datanya
+    //                 $handlingModel = $service->handlings()->where('name', 'hotel')->first();
+    //                 if ($handlingModel) {
+    //                     // Hapus file terkait sebelum menghapus record
+    //                     if ($handlingModel->handlingHotels) {
+    //                         if ($handlingModel->handlingHotels->kode_booking)
+    //                             Storage::disk('public')->delete($handlingModel->handlingHotels->kode_booking);
+    //                         if ($handlingModel->handlingHotels->rumlis)
+    //                             Storage::disk('public')->delete($handlingModel->handlingHotels->rumlis);
+    //                         if ($handlingModel->handlingHotels->identitas_koper)
+    //                             Storage::disk('public')->delete($handlingModel->handlingHotels->identitas_koper);
+    //                     }
+    //                     $handlingModel->handlingHotels()->delete(); // Hapus child
+    //                     $handlingModel->delete(); // Hapus parent
+    //                 }
+    //             }
+
+    //             // Cek sub-item 'bandara'
+    //             if ($request->has('handlings') && in_array('bandara', $request->handlings)) {
+
+    //                 $handlingModel = $service->handlings()->firstOrCreate(['name' => 'bandara']);
+    //                 $handlingPlanes = $handlingModel->handlingPlanes()->first() ?? new HandlingPlanes();
+
+    //                 $planeData = [
+    //                     'nama_bandara' => $request->nama_bandara_handling,
+    //                     'jumlah_jamaah' => $request->jumlah_jamaah_handling,
+    //                     'harga' => $request->harga_bandara_handling,
+    //                     'kedatangan_jamaah' => $request->kedatangan_jamaah_handling,
+    //                     'nama_supir' => $request->nama_supir,
+    //                 ];
+
+    //                 // Handle file uploads
+    //                 if ($request->hasFile('paket_info')) {
+    //                     if ($handlingPlanes->paket_info) {
+    //                         Storage::disk('public')->delete($handlingPlanes->paket_info);
+    //                     }
+    //                     $planeData['paket_info'] = $request->file('paket_info')->store('handling/bandara', 'public');
+    //                 }
+    //                 if ($request->hasFile('identitas_koper_bandara_handling')) {
+    //                     if ($handlingPlanes->identitas_koper) {
+    //                         Storage::disk('public')->delete($handlingPlanes->identitas_koper);
+    //                     }
+    //                     $planeData['identitas_koper'] = $request->file('identitas_koper_bandara_handling')->store('handling/bandara', 'public');
+    //                 }
+
+    //                 // Simpan data
+    //                 $handlingModel->handlingPlanes()->updateOrCreate(['id' => $handlingPlanes->id], $planeData);
+
+    //             } else {
+    //                 // 'bandara' tidak dicentang, hapus datanya
+    //                 $handlingModel = $service->handlings()->where('name', 'bandara')->first();
+    //                 if ($handlingModel) {
+    //                     // Hapus file terkait sebelum menghapus record
+    //                     if ($handlingModel->handlingPlanes) {
+    //                         if ($handlingModel->handlingPlanes->paket_info)
+    //                             Storage::disk('public')->delete($handlingModel->handlingPlanes->paket_info);
+    //                         if ($handlingModel->handlingPlanes->identitas_koper)
+    //                             Storage::disk('public')->delete($handlingModel->handlingPlanes->identitas_koper);
+    //                     }
+    //                     $handlingModel->handlingPlanes()->delete(); // Hapus child
+    //                     $handlingModel->delete(); // Hapus parent
+    //                 }
+    //             }
+
+    //         } else {
+    //             // 'handling' utama tidak dicentang, hapus semua
+    //             $service->handlings()->each(function ($handling) {
+    //                 // Hapus semua file terkait
+    //                 if ($handling->handlingHotels) {
+    //                     if ($handling->handlingHotels->kode_booking)
+    //                         Storage::disk('public')->delete($handling->handlingHotels->kode_booking);
+    //                     if ($handling->handlingHotels->rumlis)
+    //                         Storage::disk('public')->delete($handling->handlingHotels->rumlis);
+    //                     if ($handling->handlingHotels->identitas_koper)
+    //                         Storage::disk('public')->delete($handling->handlingHotels->identitas_koper);
+    //                 }
+    //                 if ($handling->handlingPlanes) {
+    //                     if ($handling->handlingPlanes->paket_info)
+    //                         Storage::disk('public')->delete($handling->handlingPlanes->paket_info);
+    //                     if ($handling->handlingPlanes->identitas_koper)
+    //                         Storage::disk('public')->delete($handling->handlingPlanes->identitas_koper);
+    //                 }
+
+    //                 $handling->handlingHotels()->delete();
+    //                 $handling->handlingPlanes()->delete();
+    //                 $handling->delete();
+    //             });
+    //         }
+
+    //         /* =====================================================
+    //          * 👥 PENDAMPING (GUIDES) - PERBAIKAN
+    //          * ===================================================== */
+    //         // Cek apakah service 'pendamping' aktif
+    //         if ($request->has('services') && in_array('pendamping', $request->services)) {
+    //             // Ya, service aktif. Hapus data lama.
+    //             Guide::where('service_id', $service->id)->delete();
+
+    //             // Buat ulang data dari form
+    //             if ($request->has('jumlah_pendamping')) {
+    //                 foreach ($request->jumlah_pendamping as $id => $jumlah) {
+    //                     // Hanya buat jika jumlah lebih dari 0 dan datanya dikirim (tidak disabled)
+    //                     if ($jumlah !== null && $jumlah > 0) {
+    //                         Guide::create([
+    //                             'service_id' => $service->id,
+    //                             'guide_id' => $id,
+    //                             'jumlah' => $jumlah,
+    //                             'muthowif_dari' => $request->pendamping_dari[$id] ?? null,
+    //                             'muthowif_sampai' => $request->pendamping_sampai[$id] ?? null,
+    //                         ]);
+    //                     }
+    //                 }
+    //             }
+    //         } else {
+    //             // Tidak, service 'pendamping' di-uncheck. Hapus semua.
+    //             Guide::where('service_id', $service->id)->delete();
+    //         }
+
+    //         /* =====================================================
+    //          * 📸 KONTEN (CONTENT) - PERBAIKAN
+    //          * ===================================================== */
+    //         if ($request->has('services') && in_array('konten', $request->services)) {
+    //             // Service aktif, hapus data lama
+    //             ContentCustomer::where('service_id', $service->id)->delete();
+
+    //             // Buat ulang dari form
+    //             if ($request->has('jumlah_konten')) {
+    //                 foreach ($request->jumlah_konten as $id => $jumlah) {
+    //                     if ($jumlah !== null && $jumlah > 0) {
+    //                         ContentCustomer::create([
+    //                             'service_id' => $service->id,
+    //                             'content_id' => $id,
+    //                             'jumlah' => $jumlah,
+    //                             'tanggal_pelaksanaan' => $request->konten_tanggal[$id] ?? null,
+    //                         ]);
+    //                     }
+    //                 }
+    //             }
+    //         } else {
+    //             // Service tidak aktif, hapus semua
+    //             ContentCustomer::where('service_id', $service->id)->delete();
+    //         }
+
+    //         /* =====================================================
+    //          * 🍱 MEALS - PERBAIKAN
+    //          * ===================================================== */
+    //         if ($request->has('services') && in_array('meals', $request->services)) {
+    //             // Service aktif, hapus data lama
+    //             Meal::where('service_id', $service->id)->delete();
+
+    //             // Buat ulang dari form
+    //             if ($request->has('jumlah_meals')) {
+    //                 foreach ($request->jumlah_meals as $id => $jumlah) {
+    //                     if ($jumlah !== null && $jumlah > 0) {
+    //                         Meal::create([
+    //                             'service_id' => $service->id,
+    //                             'meal_id' => $id,
+    //                             'jumlah' => $jumlah,
+    //                             'dari_tanggal' => $request->meals_dari[$id] ?? null,
+    //                             'sampai_tanggal' => $request->meals_sampai[$id] ?? null,
+    //                         ]);
+    //                     }
+    //                 }
+    //             }
+    //         } else {
+    //             // Service tidak aktif, hapus semua
+    //             Meal::where('service_id', $service->id)->delete();
+    //         }
+
+    //         /* =====================================================
+    //          * 💸 DORONGAN - PERBAIKAN
+    //          * ===================================================== */
+    //         if ($request->has('services') && in_array('dorongan', $request->services)) {
+    //             // Service aktif, hapus data lama
+    //             DoronganOrder::where('service_id', $service->id)->delete();
+
+    //             // Buat ulang dari form
+    //             if ($request->has('jumlah_dorongan')) {
+    //                 foreach ($request->jumlah_dorongan as $id => $jumlah) {
+    //                     if ($jumlah !== null && $jumlah > 0) {
+    //                         DoronganOrder::create([
+    //                             'service_id' => $service->id,
+    //                             'dorongan_id' => $id,
+    //                             'jumlah' => $jumlah,
+    //                             'tanggal_pelaksanaan' => $request->dorongan_tanggal[$id] ?? null,
+    //                         ]);
+    //                     }
+    //                 }
+    //             }
+    //         } else {
+    //             // Service tidak aktif, hapus semua
+    //             DoronganOrder::where('service_id', $service->id)->delete();
+    //         }
+
+    //         /* =====================================================
+    //          * 💰 WAKAF - PERBAIKAN
+    //          * ===================================================== */
+    //         if ($request->has('services') && in_array('waqaf', $request->services)) {
+    //             // Service aktif, hapus data lama
+    //             WakafCustomer::where('service_id', $service->id)->delete();
+
+    //             // Buat ulang dari form
+    //             if ($request->has('jumlah_wakaf')) {
+    //                 foreach ($request->jumlah_wakaf as $id => $jumlah) {
+    //                     if ($jumlah !== null && $jumlah > 0) {
+    //                         WakafCustomer::create([
+    //                             'service_id' => $service->id,
+    //                             'wakaf_id' => $id,
+    //                             'jumlah' => $jumlah,
+    //                         ]);
+    //                     }
+    //                 }
+    //             }
+    //         } else {
+    //             // Service tidak aktif, hapus semua
+    //             WakafCustomer::where('service_id', $service->id)->delete();
+    //         }
+
+    //         /* =====================================================
+    //          * 💸 REYAL - PERBAIKAN BARU
+    //          * ===================================================== */
+    //         // Cek apakah service 'reyal' aktif
+    //         if ($request->has('services') && in_array('reyal', $request->services)) {
+
+    //             // Ya, service aktif. Hapus data lama (jika ada)
+    //             Exchange::where('service_id', $service->id)->delete();
+
+    //             // Validasi data baru (diambil dari 'handleReyalItems')
+    //             $validatedData = $request->validate([
+    //                 'tipe' => 'required|in:tamis,tumis',
+    //                 'tanggal_penyerahan' => 'required|date',
+    //                 'jumlah_rupiah' => 'required_if:tipe,tamis|nullable|numeric|min:0',
+    //                 'kurs_tamis' => 'required_if:tipe,tamis|nullable|numeric|min:0',
+    //                 'hasil_tamis' => 'required_if:tipe,tamis|nullable|numeric|min:0',
+    //                 'jumlah_reyal' => 'required_if:tipe,tumis|nullable|numeric|min:0',
+    //                 'kurs_tumis' => 'required_if:tipe,tumis|nullable|numeric|min:0',
+    //                 'hasil_tumis' => 'required_if:tipe,tumis|nullable|numeric|min:0',
+    //             ]);
+
+    //             // Buat data Reyal yang baru
+    //             if ($validatedData['tipe'] === 'tamis') {
+    //                 $service->exchanges()->create([
+    //                     'tipe' => 'tamis',
+    //                     'jumlah_input' => $validatedData['jumlah_rupiah'],
+    //                     'kurs' => $validatedData['kurs_tamis'],
+    //                     'hasil' => $validatedData['hasil_tamis'],
+    //                     'tanggal_penyerahan' => $validatedData['tanggal_penyerahan'],
+    //                 ]);
+    //             } else if ($validatedData['tipe'] === 'tumis') {
+    //                 $service->exchanges()->create([
+    //                     'tipe' => 'tumis',
+    //                     'jumlah_input' => $validatedData['jumlah_reyal'],
+    //                     'kurs' => $validatedData['kurs_tumis'],
+    //                     'hasil' => $validatedData['hasil_tumis'],
+    //                     'tanggal_penyerahan' => $validatedData['tanggal_penyerahan'],
+    //                 ]);
+    //             }
+
+    //         } else {
+    //             // Tidak, service 'reyal' di-uncheck. Hapus semua data Reyal.
+    //             Exchange::where('service_id', $service->id)->delete();
+    //         }
+
+    //         /* =====================================================
+    //          * 🕋 BADAL - PERBAIKAN
+    //          * ===================================================== */
+    //         // Cek apakah service 'badal' (layanan utama) masih aktif
+    //         if ($request->has('services') && in_array('badal', $request->services)) {
+
+    //             // Ya, service aktif. Hapus semua data badal lama.
+    //             Badal::where('service_id', $service->id)->delete();
+
+    //             // Buat ulang data dari form, HANYA JIKA 'nama_badal' dikirim
+    //             if ($request->has('nama_badal')) {
+    //                 foreach ($request->nama_badal as $i => $nama) {
+    //                     if (empty($nama))
+    //                         continue;
+
+    //                     Badal::create([
+    //                         'service_id' => $service->id,
+    //                         'name' => $nama,
+    //                         'price' => $request->harga_badal[$i] ?? 0,
+    //                         'tanggal_pelaksanaan' => $request->tanggal_badal[$i] ?? null,
+    //                     ]);
+    //                 }
+    //             }
+
+    //         } else {
+    //             // Tidak, service 'badal' di-uncheck. Hapus semua data badal.
+    //             Badal::where('service_id', $service->id)->delete();
+    //         }
+
+    //         /* =====================================================
+    //          * 🏨 HOTEL
+    //          * ===================================================== */
+
+    //         if ($request->has('services') && in_array('hotel', $request->services)) {
+
+    //             // 1. Hapus data lama terlebih dahulu agar tidak duplikat
+    //             Hotel::where('service_id', $service->id)->delete();
+
+    //             // 2. Proses Data Baru (Menggunakan struktur 'hotel_data')
+    //             if ($request->filled('hotel_data')) {
+
+    //                 foreach ($request->hotel_data as $i => $types) {
+    //                     // $i = index hotel (0, 1, 2...)
+    //                     // $types = array tipe kamar yang dipilih untuk hotel tersebut
+
+    //                     $namaHotel = $request->nama_hotel[$i] ?? null;
+
+    //                     // Validasi: Lewati jika nama hotel kosong
+    //                     if (empty($namaHotel))
+    //                         continue;
+
+    //                     // Loop setiap TIPE KAMAR yang dipilih di form
+    //                     foreach ($types as $typeId => $typeData) {
+
+    //                         $jumlahPerTipe = $typeData['jumlah'] ?? 0;
+
+    //                         // Hanya simpan jika jumlah tipe > 0
+    //                         if ($jumlahPerTipe > 0) {
+    //                             Hotel::create([
+    //                                 'service_id' => $service->id,
+
+    //                                 // Data Umum Hotel
+    //                                 'nama_hotel' => $namaHotel,
+    //                                 'tanggal_checkin' => $request->tanggal_checkin[$i] ?? null,
+    //                                 'tanggal_checkout' => $request->tanggal_checkout[$i] ?? null,
+    //                                 'jumlah_kamar' => $request->jumlah_kamar[$i] ?? 0, // Total seluruh kamar
+    //                                 'catatan' => $request->keterangan[$i] ?? null,
+
+    //                                 // Data Spesifik Tipe Kamar (Dari hotel_data)
+    //                                 'type' => $typeData['type_name'] ?? 'Standard',
+    //                                 'jumlah_type' => $jumlahPerTipe,
+    //                                 'harga_perkamar' => str_replace(['.', ','], '', $typeData['harga'] ?? 0),
+    //                             ]);
+    //                         }
+    //                     }
+    //                 }
+    //             }
+
+    //         } else {
+    //             Hotel::where('service_id', $service->id)->delete();
+    //         }
+
+    //         /* =====================================================
+    //          * 🗺️ TOUR - PERBAIKAN
+    //          * ===================================================== */
+    //         // Cek apakah service 'tour' (layanan utama) masih aktif
+    //         if ($request->has('services') && in_array('tour', $request->services)) {
+
+    //             // Ya, service aktif. Hapus semua data tour lama.
+    //             Tour::where('service_id', $service->id)->delete();
+
+    //             // Buat ulang data dari form, HANYA JIKA ada tour_id yang dikirim
+    //             // tour_id adalah array checkbox yang dicentang di view
+    //             if ($request->has('tour_id') && is_array($request->tour_id)) {
+
+    //                 // Loop SEMUA tour_id yang dicentang
+    //                 foreach ($request->tour_id as $tourItemId) {
+    //                     if (empty($tourItemId))
+    //                         continue; // Lewati jika ada nilai kosong
+
+    //                     // Ambil data transport & tanggal yang sesuai dari array asosiatif
+    //                     $transportId = $request->input("tour_transport.$tourItemId") ?? null;
+    //                     $tanggal = $request->input("tour_tanggal.$tourItemId") ?? null;
+
+    //                     // Hanya simpan jika tanggal diisi (sesuai logika 'create')
+    //                     if ($tanggal) {
+    //                         Tour::create([
+    //                             'service_id' => $service->id,
+    //                             'tour_id' => $tourItemId, // Ini adalah ID dari master tour_items
+    //                             'transportation_id' => $transportId,
+    //                             'tanggal_keberangkatan' => $tanggal,
+    //                         ]);
+    //                     }
+    //                 }
+    //             }
+
+    //         } else {
+    //             // Tidak, service 'tour' di-uncheck. Hapus semua data tour.
+    //             Tour::where('service_id', $service->id)->delete();
+    //         }
+    //     });
+
+    //     return redirect()->route('admin.services.show', $service)
+    //         ->with('success', 'Data service dan seluruh relasinya berhasil diperbarui.');
+    // }
 
     private function storeFileIfExists(array $files, int $index, string $path)
     {
