@@ -133,7 +133,7 @@ class ServiceRequest extends FormRequest
             'nama_hotel_handling' => $isHandlingHotelSelected ? 'required|string|max:255' : 'nullable',
             'tanggal_hotel_handling' => $isHandlingHotelSelected ? 'required|date' : 'nullable',
             'harga_hotel_handling' => $isHandlingHotelSelected ? 'required|numeric|min:0' : 'nullable',
-            'pax_hotel_handling' => $isHandlingHotelSelected ? 'required|integer|min:1' : 'nullable',
+            'pax_hotel_handling' => $isHandlingHotelSelected ? 'required|string|min:1' : 'nullable',
             // File Handling Hotel (Required saat Create, Nullable saat Edit/Update)
             'kode_booking_hotel_handling' => [
                 Rule::requiredIf(fn() => $this->isMethod('post') && $isHandlingHotelSelected),
