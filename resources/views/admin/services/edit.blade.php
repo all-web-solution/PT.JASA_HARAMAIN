@@ -1273,14 +1273,19 @@
                             <h6 class="detail-title"><i class="bi bi-camera"></i> Konten</h6>
                             <div style="clear: both;"></div>
 
+                            {{-- Global Error --}}
+                            @error('jumlah_konten')
+                                <div class="alert alert-danger py-2 mb-3">{{ $message }}</div>
+                            @enderror
+
+                            {{-- GRID PILIHAN (CHECKBOX VISUAL) --}}
                             <div class="service-grid">
                                 @foreach ($contents as $content)
                                     @php
-                                        // LOGIKA PERSISTENCE:
-                                        // 1. Jika ada 'old' session (habis submit & error), gunakan data itu.
-                                        // 2. Jika tidak, gunakan data dari database ($selectedContents).
+                                        // LOGIKA PERSISTENCE (Sama seperti Pendamping):
+                                        // 1. Cek old data (jika validasi error) -> Cek jumlah > 0
+                                        // 2. Jika tidak ada old, cek database
                                         if (old('jumlah_konten')) {
-                                            // Cek apakah di input sebelumnya content ini memiliki jumlah > 0
                                             $oldQty = old("jumlah_konten.{$content->id}");
                                             $isContentSelected = !empty($oldQty) && $oldQty > 0;
                                         } else {
@@ -1289,13 +1294,15 @@
                                     @endphp
                                     <div class="content-item {{ $isContentSelected ? 'selected' : '' }}"
                                         data-id="{{ $content->id }}" data-type="konten">
-                                        <div class="service-name">{{ $content->name }}</div> {{-- Ganti ke 'name' --}}
+                                        <div class="service-name">{{ $content->name }}</div>
                                         <div class="service-desc">Rp {{ number_format($content->price) }}</div>
                                         {{-- Checkbox Helper --}}
-                                        <input type="checkbox" class="d-none" {{ $isGuideSelected ? 'checked' : '' }}>
+                                        <input type="checkbox" class="d-none" {{ $isContentSelected ? 'checked' : '' }}>
                                     </div>
                                 @endforeach
                             </div>
+
+                            {{-- FORM INPUT DETAIL --}}
                             <div class="detail-section">
                                 @foreach ($contents as $content)
                                     @php
@@ -1308,28 +1315,69 @@
                                         }
                                         $selectedContent = $selectedContents->get($content->id);
 
-                                        // Ambil Value (Prioritas: Old Input -> Database -> Default 0)
+                                        // Hitung ulang status selected untuk Form
+                                        if (old('jumlah_konten')) {
+                                            $oldQty = old("jumlah_konten.{$content->id}");
+                                            $isContentSelected = !empty($oldQty) && $oldQty > 0;
+                                        } else {
+                                            $isContentSelected = $selectedContents->has($content->id);
+                                        }
+
+                                        // Ambil Value
                                         $valQty = old(
                                             "jumlah_konten.{$content->id}",
                                             $selectedContent ? $selectedContent->jumlah : 0,
                                         );
+                                        $valDate = old(
+                                            "tanggal_konten.{$content->id}",
+                                            $selectedContent ? $selectedContent->tanggal_pelaksanaan : '',
+                                        );
+                                        $valKet = old(
+                                            "keterangan_konten.{$content->id}",
+                                            $selectedContent ? $selectedContent->keterangan : '',
+                                        );
                                     @endphp
+
                                     <div id="form-konten-{{ $content->id }}"
-                                        class="form-group {{ $isContentSelected ? '' : 'hidden' }} bg-white p-3 border rounded">
+                                        class="form-group {{ $isContentSelected ? '' : 'hidden' }} bg-white p-3 border rounded mt-2">
+
                                         <label class="form-label fw-bold">Jumlah {{ $content->name }}</label>
-                                        <input type="number" class="form-control"
-                                            name="jumlah_konten[{{ $content->id }}]" min="1"
+
+                                        {{-- INPUT JUMLAH --}}
+                                        <input type="number"
+                                            class="form-control @error('jumlah_konten.' . $content->id) is-invalid @enderror"
+                                            name="jumlah_konten[{{ $content->id }}]" min="0"
                                             value="{{ $valQty }}" {{ !$isContentSelected ? 'disabled' : '' }}>
 
-                                        {{-- PESAN ERROR PER ITEM --}}
                                         @error("jumlah_konten.{$content->id}")
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
 
-                                        <label class="form-label mt-2">Tanggal Pelaksanaan</label>
-                                        <input type="date" class="form-control"
-                                            name="konten_tanggal[{{ $content->id }}]"
-                                            value="{{ old('konten_tanggal.' . $content->id, $selectedContent ? $selectedContent->tanggal_pelaksanaan : '') }}">
+                                        <div class="form-row mt-3">
+                                            {{-- INPUT TANGGAL --}}
+                                            <div class="form-col">
+                                                <label class="form-label">Tanggal Pelaksanaan</label>
+                                                <input type="date"
+                                                    class="form-control @error('tanggal_konten.' . $content->id) is-invalid @enderror"
+                                                    name="tanggal_konten[{{ $content->id }}]"
+                                                    value="{{ $valDate }}"
+                                                    {{ !$isContentSelected ? 'disabled' : '' }}>
+
+                                                @error("tanggal_konten.{$content->id}")
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        {{-- KETERANGAN --}}
+                                        <div class="form-group mt-2">
+                                            <label class="form-label">Keterangan</label>
+                                            <input type="text" class="form-control"
+                                                name="keterangan_konten[{{ $content->id }}]"
+                                                value="{{ $valKet }}"
+                                                placeholder="Contoh: Dokumentasi Video di Jabal Rahmah"
+                                                {{ !$isContentSelected ? 'disabled' : '' }}>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>

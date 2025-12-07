@@ -235,28 +235,44 @@ class ServiceRequest extends FormRequest
                 $isKontenSelected ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $value, $fail) use ($isKontenSelected) {
-                    if (!$isKontenSelected)
+                    if (!$isKontenSelected) return;
+
+                    // 1. Ambil ID yang BENAR-BENAR dicentang (Checkbox)
+                    $selectedIds = $this->input('content_id', []);
+
+                    // Jika tidak ada yang dicentang, tapi service konten aktif -> Error
+                    if (empty($selectedIds)) {
+                        $fail('Anda memilih layanan Konten, wajib memilih minimal satu jenis konten.');
                         return;
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
+                    }
+
+                    // 2. Validasi: Loop HANYA pada ID yang dicentang
+                    $hasValidItem = false;
+                    foreach ($selectedIds as $id) {
+                        $qty = $this->input("jumlah_konten.$id");
                         if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
+                            $hasValidItem = true;
                         }
                     }
-                    if (!$hasSelection) {
-                        $fail('Anda memilih layanan Konten, wajib mengisi jumlah minimal untuk satu item konten.');
+
+                    if (!$hasValidItem) {
+                        $fail('Mohon isi jumlah minimal untuk konten yang Anda pilih.');
                     }
                 },
             ],
+
             'tanggal_konten' => [
                 $isKontenSelected ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $dates, $fail) use ($isKontenSelected) {
-                    if (!$isKontenSelected)
-                        return;
-                    $jumlahs = $this->input('jumlah_konten', []);
-                    foreach ($jumlahs as $contentId => $qty) {
+                    if (!$isKontenSelected) return;
+
+                    $selectedIds = $this->input('content_id', []);
+
+                    foreach ($selectedIds as $contentId) {
+                        $qty = $this->input("jumlah_konten.$contentId");
+
+                        // Cek tanggal hanya jika (Dicenyang AND Jumlah > 0)
                         if ((int) $qty > 0) {
                             if (empty($dates[$contentId])) {
                                 $content = ContentItem::find($contentId);
@@ -267,6 +283,7 @@ class ServiceRequest extends FormRequest
                     }
                 }
             ],
+            'keterangan_konten' => 'nullable|array',
 
             // --- REYAL ---
             'tipe' => $isReyalSelected ? 'required|in:tamis,tumis' : 'nullable',
