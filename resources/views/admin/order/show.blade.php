@@ -496,7 +496,7 @@
                     <span class="title-text">Detail Customer</span>
                 </h5>
                 <div id="action_button">
-                    <a href="{{ route('invoice.show', $order->id) }}" target="_blank" class="btn-secondary">
+                    <a href="{{ route('invoice.show', $order->id) }}" target="_blank" class="btn-primary">
                         {{-- Arahkan ke index payment --}}
                         <i class="bi bi-receipt-cutoff"></i> Invoice
                     </a>
