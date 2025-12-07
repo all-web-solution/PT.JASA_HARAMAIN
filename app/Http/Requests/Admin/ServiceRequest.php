@@ -311,6 +311,7 @@ class ServiceRequest extends FormRequest
                     }
                 }
             ],
+            'tour_transport' => $isTourSelected ? 'required|array' : 'nullable',
 
             // --- MEALS ---
             'jumlah_meals' => [
@@ -511,6 +512,7 @@ class ServiceRequest extends FormRequest
 
             // Tour
             'tour_ids.required' => 'Mohon pilih minimal satu lokasi tour.',
+            'tour_transport' => 'Jenis transportasi wajib diisi.',
 
             // Meals
             'jumlah_meals.required' => 'Data meals wajib diisi.',

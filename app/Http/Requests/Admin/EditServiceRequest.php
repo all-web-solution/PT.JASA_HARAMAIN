@@ -10,6 +10,7 @@ use App\Models\TourItem;
 use App\Models\MealItem;
 use App\Models\Dorongan;
 use App\Models\ContentItem;
+use App\Models\Meal;
 
 class EditServiceRequest extends FormRequest
 {
@@ -215,14 +216,14 @@ class EditServiceRequest extends FormRequest
             'kurs_tumis' => ($isReyalSelected && $reyalType === 'tumis') ? 'required|numeric|min:1' : 'nullable',
 
             // --- TOUR ---
-            'tour_ids' => $isTourSelected ? 'required|array|min:1' : 'nullable',
-            'tanggal_tour' => [
+            'tour_id' => $isTourSelected ? 'required|array|min:1' : 'nullable',
+            'tour_tanggal' => [
                 $isTourSelected ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $dates, $fail) use ($isTourSelected) {
                     if (!$isTourSelected)
                         return;
-                    $selectedTours = $this->input('tour_ids', []);
+                    $selectedTours = $this->input('tour_id', []);
                     foreach ($selectedTours as $tourId) {
                         if (empty($dates[$tourId])) {
                             $tour = TourItem::find($tourId);
@@ -232,6 +233,7 @@ class EditServiceRequest extends FormRequest
                     }
                 }
             ],
+            'tour_transport' => $isTourSelected ? 'required|array' : 'nullable',
 
             // --- MEALS ---
             'jumlah_meals' => [
@@ -252,7 +254,7 @@ class EditServiceRequest extends FormRequest
                     }
                 },
             ],
-            'dari_tanggal_makanan' => [
+            'meals_dari' => [
                 $isMealSelected ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $dates, $fail) use ($isMealSelected) {
@@ -261,13 +263,28 @@ class EditServiceRequest extends FormRequest
                     $jumlahs = $this->input('jumlah_meals', []);
                     foreach ($jumlahs as $id => $qty) {
                         if ((int) $qty > 0) {
-                            $start = $dates[$id]['dari'] ?? null;
-                            $endArray = $this->input('sampai_tanggal_makanan', []);
-                            $end = $endArray[$id]['sampai'] ?? null;
-                            if (empty($start) || empty($end)) {
-                                $meal = MealItem::find($id);
-                                $name = $meal ? $meal->name : 'Menu';
-                                $fail("Tanggal 'Dari' dan 'Sampai' wajib diisi untuk $name.");
+                            if (empty($dates[$id])) {
+                                $item = Meal::find($id);
+                                $name = $item ? $item->name : 'Meals';
+                                $fail("Tanggal awal pelaksanaan wajib diisi untuk $name.");
+                            }
+                        }
+                    }
+                }
+            ],
+            'meals_sampai' => [
+                $isMealSelected ? 'required' : 'nullable',
+                'array',
+                function ($attribute, $dates, $fail) use ($isMealSelected) {
+                    if (!$isMealSelected)
+                        return;
+                    $jumlahs = $this->input('jumlah_meals', []);
+                    foreach ($jumlahs as $id => $qty) {
+                        if ((int) $qty > 0) {
+                            if (empty($dates[$id])) {
+                                $item = Meal::find($id);
+                                $name = $item ? $item->name : 'Meals';
+                                $fail("Tanggal akhir pelaksanaan wajib diisi untuk $name.");
                             }
                         }
                     }
@@ -293,7 +310,7 @@ class EditServiceRequest extends FormRequest
                     }
                 },
             ],
-            'tanggal_dorongan' => [
+            'dorongan_tanggal' => [
                 $isDoronganSelected ? 'required' : 'nullable',
                 'array',
                 function ($attribute, $dates, $fail) use ($isDoronganSelected) {
@@ -335,10 +352,10 @@ class EditServiceRequest extends FormRequest
             // --- BADAL ---
             'nama_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
             'harga_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
-            'tanggal_pelaksanaan_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
+            'tanggal_badal' => $isBadalSelected ? 'required|array|min:1' : 'nullable',
             'nama_badal.*' => $isBadalSelected ? 'required|string|filled' : 'nullable',
             'harga_badal.*' => $isBadalSelected ? 'required|numeric|min:0' : 'nullable',
-            'tanggal_pelaksanaan_badal.*' => $isBadalSelected ? 'required|date' : 'nullable',
+            'tanggal_badal.*' => $isBadalSelected ? 'required|date' : 'nullable',
         ];
     }
 
@@ -492,13 +509,15 @@ class EditServiceRequest extends FormRequest
             'kurs_tumis.required' => 'Kurs Tumis wajib diisi.',
 
             // Tour
-            'tour_ids.required' => 'Mohon pilih minimal satu lokasi tour.',
+            'tour_id.required' => 'Mohon pilih minimal satu lokasi tour.',
+            'tour_transport' => 'Jenis transportasi wajib diisi.',
 
             // Meals
             'jumlah_meals.required' => 'Data meals wajib diisi.',
 
             // Dorongan
             'jumlah_dorongan.required' => 'Data dorongan wajib diisi.',
+            'dorongan_tanggal' => 'Tanggal Dorongan wajib diisi',
 
             // Pesan Error Waqaf
             'jumlah_wakaf.required' => 'Data waqaf wajib diisi.',
@@ -507,7 +526,7 @@ class EditServiceRequest extends FormRequest
             'nama_badal.required' => 'Data jamaah badal wajib diisi.',
             'nama_badal.*.required' => 'Nama jamaah yang dibadalkan wajib diisi.',
             'harga_badal.*.required' => 'Harga badal wajib diisi.',
-            'tanggal_pelaksanaan_badal.*.required' => 'Tanggal pelaksanaan badal wajib diisi.',
+            'tanggal_badal.*.required' => 'Tanggal pelaksanaan badal wajib diisi.',
         ];
     }
 
