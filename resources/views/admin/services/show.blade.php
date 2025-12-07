@@ -459,7 +459,6 @@
                                     <strong>Handling {{ ucfirst($handling->name ?? 'N/A') }}</strong>
 
                                     @if (strtolower($handling->name ?? '') == 'hotel')
-
                                         @php $detail = $handling->handlingHotels; @endphp
 
                                         <div class="detail-item">
@@ -534,20 +533,34 @@
                         </div>
                     @endif
 
-                    {{-- KONTEN (Perbaikan - Bukan Pivot) --}}
+                    {{-- KONTEN --}}
                     @if ($service->contents?->isNotEmpty())
                         <div class="service-detail-block">
                             <h6 class="service-detail-title"><i class="bi bi-camera"></i> Konten</h6>
-                            <ul class="list-group summary-list">
-                                @foreach ($service->contents as $content)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        {{-- Ambil nama dari relasi content --}}
-                                        {{ $content->content?->name ?? 'N/A' }}
-                                        {{-- Ambil jumlah dari model ContentCustomer --}}
-                                        <span class="badge rounded-pill">{{ $content->jumlah ?? 0 }} Pax</span>
-                                    </li>
-                                @endforeach
-                            </ul>
+
+                            {{-- Ubah dari List Group biasa menjadi detail block per item agar rapi --}}
+                            @foreach ($service->contents as $content)
+                                <div class="p-3 mb-2" style="background: var(--haramain-light); border-radius: 8px;">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <strong>{{ $content->content?->name ?? 'N/A' }}</strong>
+                                        <span class="badge bg-primary rounded-pill">{{ $content->jumlah ?? 0 }} Pax</span>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <span class="detail-label">Tanggal</span>
+                                        <span class="detail-value">
+                                            {{ $content->tanggal_pelaksanaan ? \Carbon\Carbon::parse($content->tanggal_pelaksanaan)->format('d M Y') : '-' }}
+                                        </span>
+                                    </div>
+
+                                    @if ($content->keterangan)
+                                        <div class="detail-item">
+                                            <span class="detail-label">Keterangan</span>
+                                            <span class="detail-value">{{ $content->keterangan }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
                         </div>
                     @endif
 

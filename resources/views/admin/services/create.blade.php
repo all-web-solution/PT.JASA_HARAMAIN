@@ -1029,14 +1029,23 @@
                         {{-- KONTEN FORM --}}
                         <div class="detail-form {{ in_array('konten', $oldServices) ? '' : 'hidden' }}"
                             id="konten-details">
-                            <h6 class="detail-title"><i class="bi bi-camera"></i> Content</h6>
+                            <h6 class="detail-title"><i class="bi bi-camera"></i> Konten</h6>
+                            <div style="clear: both;"></div>
 
-                            {{-- 1. GRID KONTEN (PILIHAN) --}}
+                            {{-- Error Global --}}
+                            @error('jumlah_konten')
+                                <div class="alert alert-danger py-2 mb-3">{{ $message }}</div>
+                            @enderror
+
+                            {{-- PERBAIKAN LOOP KONTEN --}}
                             <div class="detail-section">
+                                {{-- 1. GRID KONTEN (CHECKBOX) --}}
                                 <div class="service-grid">
                                     @foreach ($contents as $content)
                                         @php
-                                            // UBAH LOGIKA: Cek berdasarkan ID Checkbox, bukan jumlah
+                                            // Cek apakah item ini ada di old('content_id')
+                                            // Gunakan is_array untuk keamanan jika old kosong
+                                            $oldContentIds = old('content_id', []);
                                             $isSelected = in_array($content->id, $oldContentIds);
                                         @endphp
                                         <div class="content-item {{ $isSelected ? 'selected' : '' }}"
@@ -1046,14 +1055,14 @@
                                             <div class="service-name">{{ $content->name }}</div>
                                             <div class="service-desc">Rp. {{ number_format($content->price) }}</div>
 
-                                            {{-- TAMBAHKAN CHECKBOX 'content_id' DI SINI --}}
+                                            {{-- CHECKBOX: Wajib ada class d-none agar styling button berfungsi --}}
                                             <input type="checkbox" name="content_id[]" value="{{ $content->id }}"
                                                 class="d-none" {{ $isSelected ? 'checked' : '' }}>
                                         </div>
                                     @endforeach
                                 </div>
 
-                                {{-- ERROR MESSAGE --}}
+                                {{-- Tampilkan Error Global --}}
                                 @error('jumlah_konten')
                                     <div class="validation-error-message mt-2">{{ $message }}</div>
                                 @enderror
@@ -1066,10 +1075,12 @@
                             <div class="detail-section">
                                 @foreach ($contents as $content)
                                     @php
+                                        $oldContentIds = old('content_id', []);
                                         $isSelected = in_array($content->id, $oldContentIds);
-                                        $oldQty = $oldKontenQtyValues[$content->id] ?? '';
-                                        $oldDate = old('tanggal_konten.' . $content->id);
-                                        $oldKet = old('keterangan_konten.' . $content->id);
+
+                                        $oldQty = old("jumlah_konten.{$content->id}");
+                                        $oldDate = old("tanggal_konten.{$content->id}");
+                                        $oldKet = old("keterangan_konten.{$content->id}");
                                     @endphp
                                     <div id="form-konten-{{ $content->id }}"
                                         class="form-group {{ $isSelected ? '' : 'hidden' }}">
@@ -1078,10 +1089,8 @@
                                             <div class="form-col">
                                                 <label class="form-label">Jumlah {{ $content->name }}</label>
                                                 <input type="number" class="form-control jumlah-item"
-                                                    data-id="{{ $content->id }}" data-name="{{ $content->name }}"
-                                                    data-price="{{ $content->price }}" data-type="konten"
                                                     name="jumlah_konten[{{ $content->id }}]" min="1"
-                                                    value="{{ $oldQty }}" {{-- Disabled jika tidak dipilih agar tidak terkirim --}}
+                                                    value="{{ $oldQty }}" {{-- PENTING: Disabled jika tidak dipilih --}}
                                                     {{ !$isSelected ? 'disabled' : '' }}>
                                             </div>
                                             <div class="form-col">
@@ -1540,7 +1549,12 @@
             </div>
         </div>
     </div>
+    <button type="button" id="backToServicesBtn" class="btn btn-primary" title="Kembali ke Pilihan Layanan">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+@endsection
 
+@push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.detail-form.hidden').forEach(detailForm => {
@@ -2239,7 +2253,4 @@
             });
         });
     </script>
-    <button type="button" id="backToServicesBtn" class="btn btn-primary" title="Kembali ke Pilihan Layanan">
-        <i class="bi bi-arrow-up"></i>
-    </button>
-@endsection
+@endpush

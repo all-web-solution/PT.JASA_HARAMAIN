@@ -202,42 +202,9 @@ class EditServiceRequest extends FormRequest
             'tanggal_pendamping' => $isPendampingSelected ? 'required|array' : 'nullable',
 
             // --- KONTEN ---
-            'jumlah_konten' => [
-                $isKontenSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $value, $fail) use ($isKontenSelected) {
-                    if (!$isKontenSelected)
-                        return;
-                    $hasSelection = false;
-                    foreach ($value as $qty) {
-                        if ((int) $qty > 0) {
-                            $hasSelection = true;
-                            break;
-                        }
-                    }
-                    if (!$hasSelection) {
-                        $fail('Anda memilih layanan Konten, wajib mengisi jumlah minimal untuk satu item konten.');
-                    }
-                },
-            ],
-            'tanggal_konten' => [
-                $isKontenSelected ? 'required' : 'nullable',
-                'array',
-                function ($attribute, $dates, $fail) use ($isKontenSelected) {
-                    if (!$isKontenSelected)
-                        return;
-                    $jumlahs = $this->input('jumlah_konten', []);
-                    foreach ($jumlahs as $contentId => $qty) {
-                        if ((int) $qty > 0) {
-                            if (empty($dates[$contentId])) {
-                                $content = ContentItem::find($contentId);
-                                $name = $content ? $content->name : 'Konten';
-                                $fail("Tanggal pelaksanaan wajib diisi untuk $name.");
-                            }
-                        }
-                    }
-                }
-            ],
+            'jumlah_konten' => $isKontenSelected ? 'required|array' : 'nullable',
+            'tanggal_konten' => $isKontenSelected ? 'required|array' : 'nullable',
+            'keterangan_konten' => 'nullable|array',
 
             // --- REYAL ---
             'tipe' => $isReyalSelected ? 'required|in:tamis,tumis' : 'nullable',
@@ -378,7 +345,8 @@ class EditServiceRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            if (in_array('pendamping', $this->input('services', []))) {
+            $services = $this->input('services', []);
+            if (in_array('pendamping', $services)) {
                 $jumlahs = $this->input('jumlah_pendamping', []);
                 $dates = $this->input('tanggal_pendamping', []);
                 $hasSelection = false;
@@ -405,9 +373,28 @@ class EditServiceRequest extends FormRequest
                     }
                 }
 
-                // Validasi Global (Minimal 1 dipilih)
                 if (!$hasSelection) {
                     $validator->errors()->add('jumlah_pendamping', 'Anda memilih layanan Pendamping, wajib mengisi jumlah minimal untuk satu pendamping.');
+                }
+            }
+
+            if (in_array('konten', $services)) {
+                $jumlahs = $this->input('jumlah_konten', []);
+                $dates = $this->input('tanggal_konten', []);
+                $hasSelection = false;
+
+                foreach ($jumlahs as $id => $qty) {
+                    if ((int) $qty > 0) {
+                        $hasSelection = true;
+
+                        if (empty($dates[$id])) {
+                            $validator->errors()->add("tanggal_konten.{$id}", "Tanggal pelaksanaan konten wajib diisi.");
+                        }
+                    }
+                }
+
+                if (!$hasSelection) {
+                    $validator->errors()->add('jumlah_konten', 'Anda memilih layanan Konten, wajib mengisi jumlah minimal untuk satu item konten.');
                 }
             }
         });

@@ -779,11 +779,18 @@ class ServicesController extends Controller
                 if ($request->has('jumlah_konten')) {
                     foreach ($request->jumlah_konten as $id => $jumlah) {
                         if ($jumlah !== null && $jumlah > 0) {
+
+                            // PERBAIKAN:
+                            // 1. Ubah 'konten_tanggal' menjadi 'tanggal_konten' (sesuai Blade)
+                            // 2. Tambahkan input 'keterangan_konten'
+
                             ContentCustomer::create([
                                 'service_id' => $service->id,
                                 'content_id' => $id,
                                 'jumlah' => $jumlah,
-                                'tanggal_pelaksanaan' => $request->konten_tanggal[$id] ?? null,
+                                // Gunakan input() untuk array agar lebih aman
+                                'tanggal_pelaksanaan' => $request->input("tanggal_konten.$id"),
+                                'keterangan' => $request->input("keterangan_konten.$id"),
                             ]);
                         }
                     }
@@ -1477,6 +1484,7 @@ class ServicesController extends Controller
                         'content_id' => $contentId,
                         'jumlah' => $jumlah,
                         'tanggal_pelaksanaan' => $request->input("tanggal_konten.$contentId") ?? null,
+                        'keterangan' => $request->input("keterangan_konten.$contentId") ?? null,
                     ]);
                 }
             }
