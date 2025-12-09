@@ -181,7 +181,7 @@ class Service extends Model
             foreach ($items as $item) {
                 $collection->push($item);
             }
-        } elseif ($items instanceof \Illuminate\Database\Eloquent\Model) {
+        } elseif ($items instanceof Model) {
             // Jika satu (HasOne/BelongsTo), gunakan push
             $collection->push($items);
         }

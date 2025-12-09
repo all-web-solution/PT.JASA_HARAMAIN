@@ -362,28 +362,24 @@
                                                         'id',
                                                         $oldTransportId,
                                                     );
-                                                    $oldRouteId = old('rute_id.' . $index);
                                                 @endphp
                                                 <div class="transport-set card p-3 mt-3"
                                                     data-index="{{ $index }}">
                                                     <div class="cars">
                                                         @foreach ($transportations as $i => $data)
                                                             <div class="service-car {{ $oldTransportId == $data->id ? 'selected' : '' }}"
-                                                                data-id="{{ $data->id }}"
-                                                                data-routes='@json($data->routes)'
-                                                                data-name="{{ $data->nama }}"
-                                                                data-price="{{ $data->harga }}">
+                                                                data-id="{{ $data->id }}">
                                                                 <div class="service-name">{{ $data->nama }}</div>
                                                                 <div class="service-desc">Kapasitas:
                                                                     {{ $data->kapasitas }}</div>
                                                                 <div class="service-desc">Fasilitas:
                                                                     {{ $data->fasilitas }}</div>
-                                                                <div class="service-desc">Harga:
+                                                                <div class="service-desc">Harga Sewa:
                                                                     {{ number_format($data->harga) }}/hari</div>
                                                                 <input type="radio"
                                                                     name="transportation_id[{{ $index }}]"
                                                                     value="{{ $data->id }}"
-                                                                    {{ $oldTransportId == $data->id ? 'checked' : '' }}>
+                                                                    {{ $oldTransportId == $data->id ? 'checked' : '' }} class="d-none">
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -391,48 +387,55 @@
                                                         <div class="validation-error-message mt-1">{{ $message }}</div>
                                                     @enderror
 
-                                                    <div class="route-select {{ $selectedTransport ? '' : 'hidden' }}">
-                                                        <label class="form-label mt-2">Pilih Rute:</label>
-                                                        <select name="rute_id[{{ $index }}]" class="form-control">
-                                                            <option value="">-- Pilih Rute --</option>
-                                                            @if ($selectedTransport)
-                                                                @foreach ($selectedTransport->routes as $route)
-                                                                    <option value="{{ $route->id }}"
-                                                                        {{ $oldRouteId == $route->id ? 'selected' : '' }}>
-                                                                        {{ $route->route }} - Rp.
-                                                                        {{ number_format($route->price) }}
-                                                                    </option>
-                                                                @endforeach
-                                                            @endif
-                                                        </select>
-                                                        @error('rute_id.' . $index)
-                                                            <div class="validation-error-message mt-1">Rute wajib dipilih untuk
-                                                                setiap transportasi darat.</div>
-                                                        @enderror
-                                                    </div>
-
-                                                    <div class="route-select">
-                                                        <label class="form-label mt-2">Dari tanggal:</label>
-                                                        <input type="date"
-                                                            name="tanggal_transport[{{ $index }}][dari]"
-                                                            class="form-control"
-                                                            value="{{ old('tanggal_transport.' . $index . '.dari') }}">
-                                                        @error('tanggal_transport.' . $index . '.dari')
-                                                            <div class="validation-error-message mt-1">Tanggal "Dari" wajib
-                                                                diisi untuk setiap transportasi darat.</div>
-                                                        @enderror
-                                                    </div>
-
-                                                    <div class="route-select">
-                                                        <label class="form-label mt-2">Sampai tanggal:</label>
-                                                        <input type="date"
-                                                            name="tanggal_transport[{{ $index }}][sampai]"
-                                                            class="form-control"
-                                                            value="{{ old('tanggal_transport.' . $index . '.sampai') }}">
-                                                        @error('tanggal_transport.' . $index . '.sampai')
-                                                            <div class="validation-error-message mt-1">{{ $message }}
+                                                    {{-- INPUT RUTE MANUAL --}}
+                                                    {{-- Class 'hidden' dihapus jika mobil sudah dipilih --}}
+                                                    <div
+                                                        class="route-input-group {{ $selectedTransport ? '' : 'hidden' }} mt-3">
+                                                        <div class="row g-2">
+                                                            <div class="col-md-6">
+                                                                <label class="form-label">Nama Rute</label>
+                                                                <input type="text" class="form-control"
+                                                                    name="route_name[{{ $index }}]"
+                                                                    placeholder="Contoh: Bandara - Hotel"
+                                                                    value="{{ old('route_name.' . $index) }}">
+                                                                @error('route_name.' . $index)
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
                                                             </div>
-                                                        @enderror
+                                                            <div class="col-md-6">
+                                                                <label class="form-label">Harga Rute</label>
+                                                                <input type="number" class="form-control"
+                                                                    name="route_price[{{ $index }}]"
+                                                                    placeholder="0"
+                                                                    value="{{ old('route_price.' . $index) }}">
+                                                                @error('route_price.' . $index)
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row g-2 mt-2">
+                                                            <div class="col-md-6">
+                                                                <label class="form-label">Dari Tanggal</label>
+                                                                <input type="date"
+                                                                    name="tanggal_transport[{{ $index }}][dari]"
+                                                                    class="form-control"
+                                                                    value="{{ old('tanggal_transport.' . $index . '.dari') }}">
+                                                                @error('tanggal_transport.' . $index . '.dari')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label class="form-label">Sampai Tanggal</label>
+                                                                <input type="date"
+                                                                    name="tanggal_transport[{{ $index }}][sampai]"
+                                                                    class="form-control"
+                                                                    value="{{ old('tanggal_transport.' . $index . '.sampai') }}">
+                                                                @error('tanggal_transport.' . $index . '.sampai')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
                                                     </div>
 
                                                     <div class="mt-2 text-end">
@@ -442,58 +445,53 @@
                                                 </div>
                                             @endforeach
                                         @else
-                                            {{-- Default form (INDEX 0) - DITAMBAHKAN ERROR CHECK --}}
+                                            {{-- DEFAULT FORM (INDEX 0) --}}
                                             <div class="transport-set card p-3 mt-3" data-index="0">
                                                 <div class="cars">
                                                     @foreach ($transportations as $i => $data)
-                                                        <div class="service-car" data-id="{{ $data->id }}"
-                                                            data-routes='@json($data->routes)'
-                                                            data-name="{{ $data->nama }}"
-                                                            data-price="{{ $data->harga }}">
+                                                        <div class="service-car" data-id="{{ $data->id }}">
                                                             <div class="service-name">{{ $data->nama }}</div>
                                                             <div class="service-desc">Kapasitas: {{ $data->kapasitas }}
                                                             </div>
                                                             <div class="service-desc">Fasilitas: {{ $data->fasilitas }}
                                                             </div>
-                                                            <div class="service-desc">Harga:
+                                                            <div class="service-desc">Harga Sewa:
                                                                 {{ number_format($data->harga) }}/hari</div>
                                                             <input type="radio" name="transportation_id[0]"
-                                                                value="{{ $data->id }}">
+                                                                value="{{ $data->id }}" class="d-none">
                                                         </div>
                                                     @endforeach
                                                 </div>
-                                                @error('transportation_id.0')
-                                                    <div class="validation-error-message mt-1">{{ $message }}</div>
-                                                @enderror
 
-                                                <div class="route-select hidden">
-                                                    <label class="form-label mt-2">Pilih Rute:</label>
-                                                    <select name="rute_id[0]" class="form-control">
-                                                        <option value="">-- Pilih Rute --</option>
-                                                    </select>
-                                                    @error('rute_id.0')
-                                                        <div class="validation-error-message mt-1">Rute wajib dipilih untuk
-                                                            setiap transportasi darat.</div>
-                                                    @enderror
+                                                {{-- INPUT RUTE MANUAL (Hidden by default) --}}
+                                                <div class="route-input-group hidden mt-3">
+                                                    <div class="row g-2">
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Nama Rute</label>
+                                                            <input type="text" class="form-control"
+                                                                name="route_name[0]"
+                                                                placeholder="Contoh: Bandara - Hotel">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Harga Rute</label>
+                                                            <input type="number" class="form-control"
+                                                                name="route_price[0]" placeholder="0">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row g-2 mt-2">
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Dari Tanggal</label>
+                                                            <input type="date" name="tanggal_transport[0][dari]"
+                                                                class="form-control">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Sampai Tanggal</label>
+                                                            <input type="date" name="tanggal_transport[0][sampai]"
+                                                                class="form-control">
+                                                        </div>
+                                                    </div>
                                                 </div>
 
-                                                <div class="route-select">
-                                                    <label class="form-label mt-2">Dari tanggal:</label>
-                                                    <input type="date" name="tanggal_transport[0][dari]"
-                                                        class="form-control">
-                                                    @error('tanggal_transport.0.dari')
-                                                        <div class="validation-error-message mt-1">Tanggal "Dari" wajib diisi
-                                                            untuk setiap transportasi darat.</div>
-                                                    @enderror
-                                                </div>
-                                                <div class="route-select">
-                                                    <label class="form-label mt-2">Sampai tanggal:</label>
-                                                    <input type="date" name="tanggal_transport[0][sampai]"
-                                                        class="form-control">
-                                                    @error('tanggal_transport.0.sampai')
-                                                        <div class="validation-error-message mt-1">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
                                                 <div class="mt-2 text-end">
                                                     <button type="button"
                                                         class="btn btn-danger btn-sm remove-transport">Hapus</button>
@@ -1265,7 +1263,7 @@
                                                 <input type="radio" name="tour_transport[{{ $tour->id }}]"
                                                     value="{{ $trans->id }}"
                                                     {{ $oldTourTransport == $trans->id ? 'checked' : '' }}
-                                                    {{ !$isSelected ? 'disabled' : '' }}>
+                                                    {{ !$isSelected ? 'disabled' : '' }} class="d-none">
                                             </div>
                                         @endforeach
                                     </div>
@@ -1728,17 +1726,47 @@
             document.getElementById("add-transport-btn").addEventListener("click", function() {
                 const wrapper = document.getElementById("new-transport-forms");
                 const template = `
-            <div class="transport-set card p-3 mt-3" data-index="${transportCounter}">
-                <div class="cars">
-                    @foreach ($transportations as $data)
-                        <div class="service-car" data-id="{{ $data->id }}" data-routes='@json($data->routes)' data-name="{{ $data->nama }}" data-price="{{ $data->harga }}"><div class="service-name">{{ $data->nama }}</div><div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div><div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div><div class="service-desc">Harga: {{ number_format($data->harga) }}/hari</div><input type="radio" name="transportation_id[${transportCounter}]" value="{{ $data->id }}" class="d-none"></div>
-                    @endforeach
+    <div class="transport-set card p-3 mt-3" data-index="${transportCounter}">
+        <div class="cars">
+            @foreach ($transportations as $data)
+                <div class="service-car" data-id="{{ $data->id }}">
+                    <div class="service-name">{{ $data->nama }}</div>
+                    <div class="service-desc">Kapasitas: {{ $data->kapasitas }}</div>
+                    <div class="service-desc">Fasilitas: {{ $data->fasilitas }}</div>
+                    <div class="service-desc">Harga: {{ number_format($data->harga) }}/hari</div>
+                    <input type="radio" name="transportation_id[${transportCounter}]" value="{{ $data->id }}" class="d-none">
                 </div>
-                <div class="route-select hidden"><label class="form-label mt-2">Pilih Rute:</label><select name="rute_id[${transportCounter}]" class="form-control"><option value="">-- Pilih Rute --</option></select></div>
-                <div class="route-select"><label class="form-label mt-2">Dari tanggal:</label><input type="date" name="tanggal_transport[${transportCounter}][dari]" class="form-control"></div>
-                <div class="route-select"><label class="form-label mt-2">Sampai tanggal:</label><input type="date" name="tanggal_transport[${transportCounter}][sampai]" class="form-control"></div>
-                <div class="mt-2 text-end"><button type="button" class="btn btn-danger btn-sm remove-transport">Hapus</button></div>
-            </div>`;
+            @endforeach
+        </div>
+
+        <div class="route-input-group hidden mt-3">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">Nama Rute</label>
+                    <input type="text" class="form-control" name="route_name[${transportCounter}]" placeholder="Contoh: Bandara - Hotel">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Harga Rute</label>
+                    <input type="number" class="form-control" name="route_price[${transportCounter}]" placeholder="0">
+                </div>
+            </div>
+            <div class="row g-2 mt-2">
+                <div class="col-md-6">
+                    <label class="form-label">Dari Tanggal</label>
+                    <input type="date" name="tanggal_transport[${transportCounter}][dari]" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Sampai Tanggal</label>
+                    <input type="date" name="tanggal_transport[${transportCounter}][sampai]" class="form-control">
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-2 text-end">
+            <button type="button" class="btn btn-danger btn-sm remove-transport">Hapus</button>
+        </div>
+    </div>`;
+
                 wrapper.insertAdjacentHTML('beforeend', template);
                 transportCounter++;
             });
@@ -1792,26 +1820,24 @@
                     const transportSet = carItem.closest('.transport-set');
                     const radioButton = carItem.querySelector('input[type="radio"]');
 
+                    // Reset visual semua mobil di set ini
                     transportSet.querySelectorAll('.service-car').forEach(car => {
                         car.classList.remove('selected');
                         const rb = car.querySelector('input[type="radio"]');
                         if (rb) rb.checked = false;
                     });
 
+                    // Pilih mobil yang diklik
                     carItem.classList.add('selected');
                     if (radioButton) radioButton.checked = true;
 
-                    const routes = JSON.parse(carItem.dataset.routes || '[]');
-                    const select = transportSet.querySelector('select[name^="rute_id"]');
-                    const routeSelectDiv = transportSet.querySelector('.route-select');
+                    // Tampilkan form input rute (Manual)
+                    const routeInputGroup = transportSet.querySelector('.route-input-group');
+                    if (routeInputGroup) {
+                        routeInputGroup.classList.remove('hidden');
+                    }
 
-                    select.innerHTML = `<option value="">-- Pilih Rute --</option>`;
-                    routes.forEach(route => {
-                        select.insertAdjacentHTML('beforeend',
-                            `<option value="${route.id}" data-price="${route.price}" data-car-name="${carItem.dataset.name}">${route.route} - Rp. ${parseInt(route.price).toLocaleString('id-ID')}</option>`
-                        );
-                    });
-                    if (routeSelectDiv) routeSelectDiv.classList.remove('hidden');
+                    // CATATAN: Bagian request AJAX/dropdown Rute dihapus karena diganti input manual.
                 }
 
                 // 2. Dokumen Induk
