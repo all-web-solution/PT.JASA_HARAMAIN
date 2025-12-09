@@ -33,20 +33,20 @@ class InvoiceController extends Controller
 
         // 2. Siapkan Data Tambahan (Opsional)
         $data = [
-            'order'   => $order,
+            'order' => $order,
             'service' => $order->service,
-            'client'  => $order->service->pelanggan,
+            'client' => $order->service->pelanggan,
             'company' => [
-                'name'    => 'PT. JASA HARAMAIN GRUP',
+                'name' => 'PT. JASA HARAMAIN GRUP',
                 'address' => 'Jl. Mesjid Taqwa, No. 57, Desa Seutui, Kec. Baiturrahman, Kota Banda Aceh, 23243', // Ganti dengan alamat asli
-                'phone'   => '+62 823 6462 3556',
-                'email'   => 'jasaharamainagrup@gmail.com',
+                'phone' => '+62 823 6462 3556',
+                'email' => 'jasaharamainagrup@gmail.com',
             ]
         ];
 
         // 3. Render PDF
         $pdf = Pdf::loadView('invoices.show', $data)
-                ->setPaper('A4', 'portrait');
+            ->setPaper('A4', 'portrait');
 
         // 4. Stream (Tampilkan di browser) atau Download
         return $pdf->stream('Invoice_' . $order->invoice . '.pdf');
@@ -64,17 +64,35 @@ class InvoiceController extends Controller
 
     public function cetak($id)
     {
-        $service = Service::with([
-            'hotels', 'transportationItem', 'meals', 'guides',
-            'dorongans.dorongan', 'wakafs.wakaf', 'badals.badal',
-            'tours','handlings', 'contents', 'exchanges'
+        $order = Order::with([
+            'service.pelanggan',
+            'service.hotels',
+            'service.planes',
+            'service.transportationItem.transportation',
+            'service.meals.mealItem',
+            'service.guides.guideItem',
+            'service.dorongans.dorongan',
+            'service.wakafs.wakaf',
+            'service.badals',
+            'service.tours.tourItem',
+            'service.documents.document',
+            'service.handlings',
+            'service.contents.content',
+            'service.exchanges',
         ])->findOrFail($id);
 
-        $pdf = Pdf::loadView('invoices.cetak', compact('service'))
-                  ->setPaper('A4', 'portrait');
+        $data = [
+            'order' => $order,
+            'service' => $order->service,
+            'client' => $order->service->pelanggan,
+            'company' => [
+                'name' => 'PT. JASA HARAMAIN GRUP',
+                'address' => 'Jl. Mesjid Taqwa, No. 57, Desa Seutui, Kec. Baiturrahman, Kota Banda Aceh, 23243',
+                'phone' => '+62 823 6462 3556',
+                'email' => 'jasaharamainagrup@gmail.com',
+            ]
+        ];
 
-        return $pdf->stream('Invoice_'.$service->id.'.pdf');
-        // kalau mau langsung download:
-        // return $pdf->download('Invoice_'.$service->id.'.pdf');
+        return view('invoices.cetak', $data);
     }
 }

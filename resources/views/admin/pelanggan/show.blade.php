@@ -502,8 +502,8 @@
                                     <td data-label="Aksi">
                                         <div class="d-flex justify-content-center gap-2 flex-wrap"> {{-- Bungkus tombol --}}
                                             {{-- Sesuaikan nama route Anda --}}
-                                            <a href="{{-- route('admin.invoice.print', $order->id) --}}" class="btn btn-sm btn-outline-primary"
-                                                title="Cetak Invoice" onclick="alert('Under Maintenance'); return false;">
+                                            <a href="{{ route('invoice.cetak', $order->id) }}" target="_blank"
+                                                class="btn btn-sm btn-outline-primary" title="Cetak Invoice">
                                                 <i class="bi bi-printer"></i> Cetak
                                             </a>
                                             @if ($order->status_pembayaran !== 'lunas')
