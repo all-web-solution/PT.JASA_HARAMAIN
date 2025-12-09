@@ -446,7 +446,7 @@
                                     @endif
                                 </div>
                                 <div class="image-item">
-                                    <span class="label">Foto Rumlis</span>
+                                    <span class="label">Foto Room List</span>
                                     @if ($hotel->rumlis)
                                         <a href="{{ url('storage/' . $hotel->rumlis) }}" target="_blank">
                                             <img src="{{ url('storage/' . $hotel->rumlis) }}" alt="Rumlis">

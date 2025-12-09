@@ -314,7 +314,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="rumlis" class="form-label">Ganti Foto Rumlis</label>
+                                <label for="rumlis" class="form-label">Ganti Foto Room List</label>
                                 <input type="file" id="rumlis" name="rumlis"
                                     class="form-control @error('rumlis') is-invalid @enderror">
                                 @error('rumlis')
