@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\EditServiceRequest;
 use App\Models\ContentCustomer;
 use App\Models\ContentItem;
 use App\Models\Exchange;
+use App\Models\Route;
 use Carbon\Carbon;
 use App\Models\File;
 use App\Models\Guide;
@@ -498,9 +499,8 @@ class ServicesController extends Controller
 
                 if ($request->has('transportation') && in_array('bus', $request->transportation)) {
 
-                    // Hapus semua item lama lalu buat baru (Sederhana & Aman)
-                    // Atau jika ingin update, logika-nya mirip pesawat di atas.
-                    // Untuk saat ini kita ikuti logika delete-recreate yang sudah ada agar konsisten
+                    // 1. Hapus semua item lama lalu buat baru (Reset Strategy)
+                    // Ini memastikan tidak ada data ganda atau data usang yang tertinggal
                     TransportationItem::where('service_id', $service->id)->delete();
 
                     if ($request->has('transportation_id')) {
@@ -508,18 +508,43 @@ class ServicesController extends Controller
                             if (empty($transportId))
                                 continue;
 
-                            // Perbaikan pengambilan data tanggal dari array multidimensi
-                            // Format di blade: tanggal_transport[$i]['dari']
-                            $tglDari = $request->tanggal_transport[$i]['dari'] ?? null;
-                            $tglSampai = $request->tanggal_transport[$i]['sampai'] ?? null;
+                            // 2. Ambil Input Manual (Nama Rute & Harga)
+                            // Perhatikan cara mengambil input array dengan index $i
+                            $routeName = $request->input("route_name.$i");
+                            $routePrice = $request->input("route_price.$i");
 
-                            TransportationItem::create([
-                                'service_id' => $service->id,
-                                'transportation_id' => $transportId,
-                                'route_id' => $request->rute_id[$i] ?? null,
-                                'dari_tanggal' => $tglDari,
-                                'sampai_tanggal' => $tglSampai,
-                            ]);
+                            // 3. Ambil Tanggal
+                            // Format di blade: tanggal_transport[$i]['dari']
+                            $tglDari = $request->input("tanggal_transport.$i.dari");
+                            $tglSampai = $request->input("tanggal_transport.$i.sampai");
+
+                            // 4. Logika Route: Cari Existing atau Buat Baru
+                            // Hanya proses jika Nama Rute diisi
+                            if ($routeName) {
+                                // Cek di tabel 'routes':
+                                // Apakah ada rute dengan Mobil ID ini + Nama Rute ini + Harga ini?
+                                // Jika ADA -> Pakai ID-nya.
+                                // Jika TIDAK -> Buat baru, lalu pakai ID-nya.
+                                $route = Route::firstOrCreate(
+                                    [
+                                        'transportation_id' => $transportId,
+                                        'route' => $routeName,
+                                        'price' => $routePrice // Penting: Harga masuk kriteria pencarian unik
+                                    ],
+                                    [
+                                        // Array kedua kosong (tidak ada field tambahan untuk create)
+                                    ]
+                                );
+
+                                // 5. Simpan TransportationItem dengan ID Route yang didapat
+                                TransportationItem::create([
+                                    'service_id' => $service->id,
+                                    'transportation_id' => $transportId,
+                                    'route_id' => $route->id, // Kita simpan ID dari tabel routes
+                                    'dari_tanggal' => $tglDari,
+                                    'sampai_tanggal' => $tglSampai,
+                                ]);
+                            }
                         }
                     }
                 } else {
@@ -1851,22 +1876,42 @@ class ServicesController extends Controller
         // 🚌 Transportasi Darat (Bus)
         if ($request->filled('transportation') && in_array('bus', $request->transportation)) {
 
-            // 2. Jika validasi lolos, kita bisa yakin data LENGKAP
             $transportationIds = $request->input('transportation_id', []);
 
             foreach ($transportationIds as $index => $transportId) {
 
-                // Kita bisa yakin data ini ada karena sudah lolos validasi
-                $ruteId = $request->input("rute_id.$index");
+                // Ambil Input Manual
+                $routeName = $request->input("route_name.$index");
+                $routePrice = $request->input("route_price.$index");
+
+                // Ambil Input Tanggal
                 $dariTanggal = $request->input("tanggal_transport.$index.dari");
                 $sampaiTanggal = $request->input("tanggal_transport.$index.sampai");
 
+                if ($transportId && $routeName) {
 
-                // 'if' ini sekarang hanya sebagai formalitas (karena validasi sudah menangani)
-                if ($transportId && $ruteId && $dariTanggal && $sampaiTanggal) {
+                    // 🟡 LOGIKA UTAMA: Cari atau Buat Rute di Tabel 'routes'
+                    // Kita gunakan firstOrCreate.
+                    // Jika ada rute dengan (Mobil ID + Nama Rute + Harga) yang sama persis -> Pakai ID lama.
+                    // Jika beda (misal harga di-nego jadi beda), dia akan buat data baru di master route.
+                    // Ini aman karena tidak merusak history transaksi lama yang harganya berbeda.
+
+                    $route = Route::firstOrCreate(
+                        [
+                            'transportation_id' => $transportId,
+                            'route' => $routeName,
+                            'price' => $routePrice
+                        ],
+                        [
+                            // Kosongkan array kedua jika tidak ada kolom tambahan
+                        ]
+                    );
+
+                    // Simpan ke TransportationItem menggunakan route_id yang didapat
                     $service->transportationItem()->create([
+                        'service_id' => $service->id,
                         'transportation_id' => $transportId,
-                        'route_id' => $ruteId,
+                        'route_id' => $route->id, // ID dari tabel routes
                         'dari_tanggal' => $dariTanggal,
                         'sampai_tanggal' => $sampaiTanggal,
                     ]);
