@@ -1047,7 +1047,7 @@
                                         @endif
                                     </div>
                                     <div class="form-col">
-                                        <label class="form-label">Rumlis</label>
+                                        <label class="form-label">Room List</label>
                                         <input type="file"
                                             class="form-control @error('rumlis_hotel_handling') is-invalid @enderror"
                                             name="rumlis_hotel_handling">
