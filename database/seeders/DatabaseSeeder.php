@@ -291,5 +291,8 @@ class DatabaseSeeder extends Seeder
         foreach ($pelanggans as $pelanggan) {
             Pelanggan::create($pelanggan);
         }
+        // $this->call([
+        //     ServiceSeeder::class,
+        // ]);
     }
 }
