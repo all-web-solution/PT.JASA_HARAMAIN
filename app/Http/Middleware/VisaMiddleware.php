@@ -17,7 +17,7 @@ class VisaMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if(!Auth::check() || Auth::user()->role !== 'visa dan acara') {
-            return abort(403, 'Hanya seseorag  visa dan acara yang bisa mengakses halaman ini.');
+            return abort(403, 'Hanya seseorang  visa dan acara yang bisa mengakses halaman ini.');
         }
         return $next($request);
     }
