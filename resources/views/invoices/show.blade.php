@@ -22,11 +22,12 @@
             font-size: 24px;
             font-weight: bold;
             color: #1a4b8c;
+            text-align: center;
         }
 
         .company-info {
-            float: left;
-            text-align: left;
+            /* float: left; */
+            text-align: center;
             font-size: 10px;
             line-height: 1.4;
         }
