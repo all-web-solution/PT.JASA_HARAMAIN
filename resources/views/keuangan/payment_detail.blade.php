@@ -531,16 +531,16 @@
     <div class="payment-container">
         <!-- Order Details Card -->
         <div class="card mb-4 border-0 shadow-sm">
-            <div class="card-header bg-white border-bottom py-3">
-                <div class="d-flex justify-content-between align-items-center">
+            <div class="card-header bg-white border-bottom py-3 justify-content-between">
+                <div class="d-flex align-items-center">
                     <h5 class="card-title mb-0 text-haramain fw-bold">
                         <i class="bi bi-receipt-cutoff me-2"></i>
                         Detail Order <span class="text-secondary fw-normal">#{{ $order->invoice }}</span>
                     </h5>
-                    <a href="{{ route('admin.order') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                        <i class="bi bi-arrow-left me-1"></i> Kembali
-                    </a>
                 </div>
+                <a href="{{ route('keuangan.payment') }}" class="btn btn-sm btn-outline-secondary rounded px-3">
+                    <i class="bi bi-arrow-left me-1"></i> Kembali
+                </a>
             </div>
 
             <div class="card-body p-4 bg-soft">
