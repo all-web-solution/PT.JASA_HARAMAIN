@@ -313,10 +313,7 @@ class OrderController extends Controller
             $total = $hargaJual * (int) ($item->jumlah ?? 1);
 
         } elseif ($item instanceof TransportationItem) {
-            $jumlahHari = Carbon::parse($item->dari_tanggal)->diffInDays($item->sampai_tanggal);
-            if ($jumlahHari <= 0)
-                $jumlahHari = 1;
-            $total = $hargaJual * $jumlahHari;
+            $total = $hargaJual;
 
         } elseif ($item instanceof Exchange) {
             $jumlahInput = (float) ($item->jumlah_input ?? 0);
