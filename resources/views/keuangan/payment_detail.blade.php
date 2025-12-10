@@ -24,6 +24,142 @@
             background-color: #f8fafd;
         }
 
+        /* === UTILITY CLASSES === */
+        .text-haramain {
+            color: var(--haramain-primary);
+        }
+
+        .bg-soft {
+            background-color: #f8fafd;
+        }
+
+        /* === INFO BOX (Customer & Trip) === */
+        .info-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: 100%;
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .info-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-box-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px dashed var(--border-color);
+            font-weight: 700;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-table td {
+            padding: 4px 0;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .info-table td:first-child {
+            color: var(--text-secondary);
+            width: 130px;
+            font-weight: 500;
+        }
+
+        /* === SERVICE CARDS === */
+        .service-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .service-card-header {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Warna Header Card Berdasarkan Kategori */
+        .service-card.transport .service-card-header {
+            background: linear-gradient(to right, #e3f2fd, #fff);
+            color: #0c5460;
+        }
+
+        .service-card.hotel .service-card-header {
+            background: linear-gradient(to right, #e3f2fd, #fff);
+            color: #0c5460;
+        }
+
+        .service-card.document .service-card-header {
+            background: linear-gradient(to right, #e3f2fd, #fff);
+            color: #0c5460;
+        }
+
+        .service-card.tour .service-card-header {
+            background: linear-gradient(to right, #e3f2fd, #fff);
+            color: #0c5460;
+        }
+
+        .service-card.other .service-card-header {
+            background: linear-gradient(to right, #e3f2fd, #fff);
+            color: #0c5460;
+        }
+
+        .service-card-body {
+            padding: 1rem;
+        }
+
+        .service-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .service-list li {
+            position: relative;
+            padding-left: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .service-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .service-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--haramain-secondary);
+            font-weight: bold;
+        }
+
+        .badge-details {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
         /* ===== Card Styling ===== */
         .card {
             border-radius: 12px;
@@ -394,192 +530,382 @@
 
     <div class="payment-container">
         <!-- Order Details Card -->
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">
-                    <i class="bi bi-receipt-cutoff"></i>
-                    <span class="full-text">Detail Order: {{ $order->invoice }}</span>
-                    <span class="short-text" style="display: none;">#{{ $order->invoice }}</span>
-                </h5>
-                <div>
-                    <a href="{{ route('keuangan.payment') }}" class="btn-secondary">
-                        <i class="bi bi-arrow-left"></i>
-                        Kembali
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-haramain fw-bold">
+                        <i class="bi bi-receipt-cutoff me-2"></i>
+                        Detail Order <span class="text-secondary fw-normal">#{{ $order->invoice }}</span>
+                    </h5>
+                    <a href="{{ route('admin.order') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                        <i class="bi bi-arrow-left me-1"></i> Kembali
                     </a>
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Kode Unik</th>
-                            <th>Customer/Travel</th>
-                            <th>Keberangkatan</th>
-                            <th>Kepulangan</th>
-                            <th>Jamaah</th>
-                            <th>Layanan Dipilih</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($order->service)
-                            <tr>
-                                <td data-label="Kode Unik">{{ $order->service->unique_code }}</td>
-                                <td data-label="Customer">{{ $order->service->pelanggan->nama_travel }}</td>
-                                <td data-label="Berangkat">{{ $order->service->tanggal_keberangkatan }}</td>
-                                <td data-label="Pulang">{{ $order->service->tanggal_kepulangan }}</td>
-                                <td data-label="Jamaah">{{ $order->service->total_jamaah }}</td>
+            <div class="card-body p-4 bg-soft">
+                @if ($order->service)
+                    {{-- 1. INFORMASI UTAMA (GRID LAYOUT) --}}
+                    <div class="row g-4 mb-4">
+                        {{-- Info Customer --}}
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <div class="info-box-header">
+                                    <i class="bi bi-person-badge fs-5 text-primary"></i>
+                                    <span>Informasi Pelanggan</span>
+                                </div>
+                                <table class="info-table w-100">
+                                    <tr>
+                                        <td>Nama Travel</td>
+                                        <td class="fw-bold">{{ $order->service->pelanggan->nama_travel }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Penanggung Jawab</td>
+                                        <td class="fw-bold">{{ $order->service->pelanggan->penanggung_jawab }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kontak</td>
+                                        <td>{{ $order->service->pelanggan->phone }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kode Service</td>
+                                        <td class="text-haramain fw-bold">{{ $order->service->unique_code }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
 
-                                <td data-label="Layanan Dipilih" class="service-details">
-                                    @php $hasContent = false; @endphp
+                        {{-- Info Keberangkatan --}}
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <div class="info-box-header">
+                                    <i class="bi bi-calendar-range fs-5 text-success"></i>
+                                    <span>Detail Perjalanan</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center px-2 mb-3">
+                                    <div class="text-center">
+                                        <small class="text-secondary text-uppercase d-block mb-1"
+                                            style="font-size: 0.7rem;">Berangkat</small>
+                                        <div class="fw-bold fs-6">
+                                            {{ \Carbon\Carbon::parse($order->service->tanggal_keberangkatan)->format('d M Y') }}
+                                        </div>
+                                    </div>
+                                    <div class="text-secondary"><i class="bi bi-arrow-right fs-4"></i></div>
+                                    <div class="text-center">
+                                        <small class="text-secondary text-uppercase d-block mb-1"
+                                            style="font-size: 0.7rem;">Pulang</small>
+                                        <div class="fw-bold fs-6">
+                                            {{ \Carbon\Carbon::parse($order->service->tanggal_kepulangan)->format('d M Y') }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-light rounded p-2 text-center border">
+                                    <span class="text-secondary small me-2">Total Jamaah:</span>
+                                    <span class="fw-bold text-dark">{{ $order->service->total_jamaah }} Orang</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                                    {{-- Makanan --}}
-                                    @if ($order->service->meals->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Makanan:</strong><br>
-                                        @foreach ($order->service->meals as $meal)
-                                            {{-- Asumsi: relasi 'mealItem' dan properti 'name' & 'price' --}}
-                                            - {{ $meal->mealItem?->name ?? 'N/A' }} (Rp.
-                                            {{ number_format($meal->mealItem?->price ?? 0, 0, ',', '.') }})<br>
-                                        @endforeach
-                                    @endif
+                    {{-- 2. RINCIAN LAYANAN (CARD GRID) --}}
+                    <h6 class="fw-bold text-haramain mb-3 d-flex align-items-center">
+                        <span class="bg-primary rounded-circle me-2"
+                            style="width: 8px; height: 8px; display: inline-block;"></span>
+                        Rincian Layanan
+                    </h6>
 
-                                    {{-- Transportasi (Udara & Darat) --}}
-                                    @if ($order->service->planes->isNotEmpty() || $order->service->transportationItem->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Transportasi:</strong><br>
-                                        @foreach ($order->service->planes as $plane)
-                                            - (Udara) {{ $plane->maskapai }} [{{ $plane->rute }}]<br>
-                                        @endforeach
-                                        @foreach ($order->service->transportationItem as $item)
-                                            {{-- Asumsi: relasi 'transportation' & 'route' --}}
-                                            - (Darat) {{ $item->transportation?->nama }} [{{ $item->route?->route }}]<br>
-                                        @endforeach
-                                    @endif
+                    <div class="row g-3">
+                        @php $hasContent = false; @endphp
 
-                                    {{-- Hotel --}}
-                                    @if ($order->service->hotels->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Hotel:</strong><br>
-                                        @foreach ($order->service->hotels as $hotel)
-                                            - {{ $hotel->nama_hotel }}<br>
-                                        @endforeach
-                                    @endif
-
-                                    {{-- Tour --}}
-                                    @if ($order->service->tours->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Tour:</strong><br>
-                                        @foreach ($order->service->tours as $tour)
-                                            {{-- Asumsi: properti 'name' --}}
-                                            - {{ $tour->name ?? 'N/A' }}<br>
-                                        @endforeach
-                                    @endif
-
-                                    {{-- Guide --}}
-                                    @if ($order->service->guides->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Guide:</strong><br>
-                                        @foreach ($order->service->guides as $guide)
-                                            {{-- Asumsi: properti 'name' --}}
-                                            - {{ $guide->name ?? 'N/A' }}<br>
-                                        @endforeach
-                                    @endif
-
-                                    {{-- Dokumen --}}
-                                    @if ($order->service->documents->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Dokumen:</strong><br>
-                                        @foreach ($order->service->documents as $document)
-                                            {{-- Asumsi: relasi 'document' dan properti 'name' --}}
-                                            - {{ $document->document?->name ?? 'N/A' }} ({{ $document->jumlah }} pcs)<br>
-                                        @endforeach
-                                    @endif
-
-                                    {{-- Konten --}}
-                                    @if ($order->service->contents->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Konten:</strong><br>
-                                        @foreach ($order->service->contents as $content)
-                                            {{-- Asumsi: relasi 'content' dan properti 'name' --}}
-                                            - {{ $content->content?->name ?? 'N/A' }} ({{ $content->jumlah }} pcs)<br>
-                                        @endforeach
-                                    @endif
-
-                                    {{-- Handling --}}
-                                    @if ($order->service->handlings->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Handling:</strong><br>
-                                        @foreach ($order->service->handlings as $handling)
-                                            {{-- Asumsi: properti 'name' atau 'description' --}}
-                                            - {{ $handling->name ?? ($handling->description ?? 'N/A') }}<br>
-                                        @endforeach
-                                    @endif
-
-                                    {{-- Badal --}}
-                                    @if ($order->service->badals->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Badal:</strong><br>
-                                        @foreach ($order->service->badals as $badal)
-                                            {{-- Asumsi: properti 'name' --}}
-                                            - {{ $badal->name ?? 'N/A' }}<br>
-                                        @endforeach
-                                    @endif
-
-                                    {{-- Wakaf --}}
-                                    @if ($order->service->wakafs->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Wakaf:</strong><br>
-                                        @foreach ($order->service->wakafs as $wakaf)
-                                            {{-- Asumsi: properti 'name' --}}
-                                            - {{ $wakaf->name ?? 'N/A' }}<br>
-                                        @endforeach
-                                    @endif
-
-                                    {{-- Dorongan --}}
-                                    @if ($order->service->dorongans->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Dorongan:</strong><br>
-                                        @foreach ($order->service->dorongans as $dorongan)
-                                            {{-- Asumsi: properti 'name' atau 'item_name' --}}
-                                            - {{ $dorongan->name ?? ($dorongan->item_name ?? 'N/A') }}<br>
-                                        @endforeach
-                                    @endif
-
-                                    {{-- Exchange --}}
-                                    @if ($order->service->exchanges->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Exchange:</strong><br>
-                                        @foreach ($order->service->exchanges as $exchange)
-                                            - {{ $exchange->amount ?? 0 }} {{ $exchange->currency_from }} ke
-                                            {{ $exchange->currency_to }}<br>
-                                        @endforeach
-                                    @endif
-
-                                    {{-- File --}}
-                                    @if ($order->service->filess->isNotEmpty())
-                                        @php $hasContent = true; @endphp
-                                        <strong>Files:</strong><br>
-                                        @foreach ($order->service->filess as $file)
-                                            {{-- Asumsi: properti 'name' atau 'file_name' --}}
-                                            - {{ $file->name ?? ($file->file_name ?? 'N/A') }}<br>
-                                        @endforeach
-                                    @endif
-
-                                    {{-- Final Check --}}
-                                    @if (!$hasContent)
-                                        <span>Tidak ada detail layanan.</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @else
-                            <tr>
-                                <td colspan="6" class="text-center" style="text-align: center;">Tidak ada layanan yang
-                                    terkait dengan order ini.</td>
-                            </tr>
+                        {{-- A. HOTEL --}}
+                        @if ($order->service->hotels->isNotEmpty())
+                            @php $hasContent = true; @endphp
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card hotel">
+                                    <div class="service-card-header">
+                                        <i class="bi bi-building"></i> Hotel
+                                    </div>
+                                    <div class="service-card-body">
+                                        <ul class="service-list">
+                                            @foreach ($order->service->hotels as $hotel)
+                                                <li>
+                                                    <span class="fw-bold">{{ $hotel->nama_hotel }}</span>
+                                                    <br><small class="text-muted">{{ $hotel->type }} |
+                                                        {{ $hotel->jumlah_kamar }} Kamar</small>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         @endif
-                    </tbody>
-                </table>
+
+                        {{-- B. TRANSPORTASI (Pesawat & Darat) --}}
+                        @if ($order->service->planes->isNotEmpty() || $order->service->transportationItem->isNotEmpty())
+                            @php $hasContent = true; @endphp
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card transport">
+                                    <div class="service-card-header">
+                                        <i class="bi bi-airplane-engines"></i> Transportasi
+                                    </div>
+                                    <div class="service-card-body">
+                                        <ul class="service-list">
+                                            @foreach ($order->service->planes as $plane)
+                                                <li>
+                                                    <span class="badge bg-info text-dark badge-details ms-0">Udara</span>
+                                                    {{ $plane->maskapai }} <small
+                                                        class="text-muted">({{ $plane->rute }})</small>
+                                                </li>
+                                            @endforeach
+                                            @foreach ($order->service->transportationItem as $item)
+                                                <li>
+                                                    <span class="badge bg-secondary badge-details ms-0">Darat</span>
+                                                    {{ $item->transportation->nama ?? 'Bus' }}
+                                                    <br><small class="text-muted ps-1">Rute:
+                                                        {{ $item->route->route ?? '-' }}</small>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- C. DOKUMEN --}}
+                        @if ($order->service->documents->isNotEmpty())
+                            @php $hasContent = true; @endphp
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card document">
+                                    <div class="service-card-header">
+                                        <i class="bi bi-file-earmark-text"></i> Dokumen
+                                    </div>
+                                    <div class="service-card-body">
+                                        <ul class="service-list">
+                                            @foreach ($order->service->documents as $doc)
+                                                <li>
+                                                    {{ $doc->document->name ?? 'Dokumen' }}
+                                                    @if ($doc->documentChild)
+                                                        <small class="text-muted">({{ $doc->documentChild->name }})</small>
+                                                    @endif
+                                                    <span
+                                                        class="badge bg-light text-dark border badge-details">{{ $doc->jumlah }}
+                                                        Pcs</span>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- D. TOUR --}}
+                        @if ($order->service->tours->isNotEmpty())
+                            @php $hasContent = true; @endphp
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card tour">
+                                    <div class="service-card-header">
+                                        <i class="bi bi-map"></i> Paket Tour
+                                    </div>
+                                    <div class="service-card-body">
+                                        <ul class="service-list">
+                                            @foreach ($order->service->tours as $tour)
+                                                <li>
+                                                    {{ $tour->tourItem->name ?? 'Tour' }}
+                                                    <br><small class="text-muted"><i class="bi bi-bus-front"></i>
+                                                        {{ $tour->transportation->nama ?? '-' }}</small>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- E. MEALS --}}
+                        @if ($order->service->meals->isNotEmpty())
+                            @php $hasContent = true; @endphp
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card other">
+                                    <div class="service-card-header">
+                                        <i class="bi bi-egg-fried"></i> Katering (Meals)
+                                    </div>
+                                    <div class="service-card-body">
+                                        <ul class="service-list">
+                                            @foreach ($order->service->meals as $meal)
+                                                <li>{{ $meal->mealItem->name ?? 'Menu' }} <span
+                                                        class="badge bg-light text-dark border badge-details">{{ $meal->jumlah }}
+                                                        Pcs</span></li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- F. HANDLING --}}
+                        @if ($order->service->handlings->isNotEmpty())
+                            @php $hasContent = true; @endphp
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card other">
+                                    <div class="service-card-header">
+                                        <i class="bi bi-briefcase"></i> Handling
+                                    </div>
+                                    <div class="service-card-body">
+                                        <ul class="service-list">
+                                            @foreach ($order->service->handlings as $handling)
+                                                <li>{{ ucfirst($handling->name) }} @if ($handling->handlingHotels)
+                                                        ({{ $handling->handlingHotels->nama }})
+                                                    @elseif ($handling->handlingPlanes)
+                                                        ({{ $handling->handlingPlanes->nama_bandara }})
+                                                    @endif
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- G. GUIDE --}}
+                        @if ($order->service->guides->isNotEmpty())
+                            @php $hasContent = true; @endphp
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card other">
+                                    <div class="service-card-header">
+                                        <i class="bi bi-people"></i> Muthowif / Guide
+                                    </div>
+                                    <div class="service-card-body">
+                                        <ul class="service-list">
+                                            @foreach ($order->service->guides as $guide)
+                                                <li>{{ $guide->guideItem->nama ?? 'Guide' }} ({{ $guide->jumlah }} Orang)
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- H. BADAL UMRAH --}}
+                        @if ($order->service->badals->isNotEmpty())
+                            @php $hasContent = true; @endphp
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card other">
+                                    <div class="service-card-header">
+                                        <i class="bi bi-heart"></i> Badal Umrah
+                                    </div>
+                                    <div class="service-card-body">
+                                        <ul class="service-list">
+                                            @foreach ($order->service->badals as $badal)
+                                                <li>An. {{ $badal->name }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- I. WAKAF --}}
+                        @if ($order->service->wakafs->isNotEmpty())
+                            @php $hasContent = true; @endphp
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card other">
+                                    <div class="service-card-header">
+                                        <i class="bi bi-gift"></i> Wakaf
+                                    </div>
+                                    <div class="service-card-body">
+                                        <ul class="service-list">
+                                            @foreach ($order->service->wakafs as $wakaf)
+                                                <li>{{ $wakaf->wakaf->nama ?? 'Wakaf' }} ({{ $wakaf->jumlah }})</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- J. DORONGAN --}}
+                        @if ($order->service->dorongans->isNotEmpty())
+                            @php $hasContent = true; @endphp
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card other">
+                                    <div class="service-card-header">
+                                        <i class="bi bi-person-wheelchair"></i> Kursi Roda
+                                    </div>
+                                    <div class="service-card-body">
+                                        <ul class="service-list">
+                                            @foreach ($order->service->dorongans as $dorongan)
+                                                <li>{{ $dorongan->dorongan->name ?? 'Kursi Roda' }}
+                                                    ({{ $dorongan->jumlah }})
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- K. KONTEN --}}
+                        @if ($order->service->contents->isNotEmpty())
+                            @php $hasContent = true; @endphp
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card other">
+                                    <div class="service-card-header">
+                                        <i class="bi bi-camera"></i> Dokumentasi
+                                    </div>
+                                    <div class="service-card-body">
+                                        <ul class="service-list">
+                                            @foreach ($order->service->contents as $content)
+                                                <li>{{ $content->content->name ?? 'Paket' }} ({{ $content->jumlah }})</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- L. EXCHANGE --}}
+                        @if ($order->service->exchanges->isNotEmpty())
+                            @php $hasContent = true; @endphp
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card other">
+                                    <div class="service-card-header">
+                                        <i class="bi bi-currency-exchange"></i> Penukaran Uang
+                                    </div>
+                                    <div class="service-card-body">
+                                        <ul class="service-list">
+                                            @foreach ($order->service->exchanges as $exchange)
+                                                <li>{{ strtoupper($exchange->tipe) }}:
+                                                    {{ number_format($exchange->jumlah_input) }} -> {{ $exchange->hasil }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- EMPTY STATE --}}
+                        @if (!$hasContent)
+                            <div class="col-12">
+                                <div class="alert alert-secondary d-flex align-items-center" role="alert">
+                                    <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+                                    <div>Tidak ada layanan spesifik yang tercatat untuk order ini.</div>
+                                </div>
+                            </div>
+                        @endif
+
+                    </div>
+                @else
+                    {{-- JIKA SERVICE NULL --}}
+                    <div class="text-center py-5">
+                        <div class="text-muted mb-3 opacity-50">
+                            <i class="bi bi-folder-x fs-1"></i>
+                        </div>
+                        <h6 class="text-secondary fw-bold">Data Service Tidak Ditemukan</h6>
+                        <p class="small text-muted">Mungkin data service telah dihapus.</p>
+                    </div>
+                @endif
             </div>
         </div>
 
