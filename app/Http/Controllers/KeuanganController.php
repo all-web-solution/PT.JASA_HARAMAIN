@@ -102,7 +102,7 @@ class KeuanganController extends Controller
     }
     public function payment()
     {
-        $orders = Order::all();
+        $orders = Order::latest()->get();
         $data = $orders->unique('service_id');
         return view('keuangan.payment', compact('data'));
     }
