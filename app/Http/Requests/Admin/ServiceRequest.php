@@ -74,6 +74,7 @@ class ServiceRequest extends FormRequest
             'rute' => $isPlaneSelected ? 'required|array|min:1' : 'nullable|array',
             'tanggal' => $isPlaneSelected ? 'required|array|min:1' : 'nullable|array',
             'rute.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
+            'keterangan_tiket.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
             'tanggal.*' => $isPlaneSelected ? 'required|date' : 'nullable|date',
             'maskapai.*' => $isPlaneSelected ? 'required|string' : 'nullable|string',
             'harga_tiket.*' => $isPlaneSelected ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
@@ -460,6 +461,7 @@ class ServiceRequest extends FormRequest
             'harga_tiket.*.required' => 'Harga tiket wajib diisi untuk setiap penerbangan.',
             'jumlah.*.required' => 'Jumlah jamaah wajib diisi untuk setiap penerbangan.',
             'jumlah.*.min' => 'Jumlah jamaah harus minimal 1.',
+            'keterangan_tiket.*.required' => 'Keterangan Pesawat wajib diisi. Jika tidak ada isi dengan "-"',
 
             // Hotel
             'hotel_data.required' => 'Data detail hotel wajib diisi (Mohon pilih tipe kamar).',
