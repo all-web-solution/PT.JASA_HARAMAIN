@@ -65,7 +65,7 @@ class HotelController extends Controller
     public function edit(Hotel $hotel)
     {
         $services = Service::with('pelanggan')->get();
-        $statuses = ['nego', 'deal', 'batal', 'done'];
+        $statuses = ['nego', 'deal', 'batal', 'tahap persiapan', 'tahap produksi', 'done'];
 
         return view('hotel.edit', compact(
             'hotel',

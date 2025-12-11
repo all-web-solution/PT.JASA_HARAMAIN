@@ -15,6 +15,20 @@
             --warning-bg: rgba(255, 193, 7, 0.1);
             --danger-bg: rgba(220, 53, 69, 0.1);
             --primary-bg: var(--haramain-light);
+
+            /* === STATUS COLORS === */
+            --status-nego: #ffc107;
+            /* Kuning/Orange */
+            --status-deal: #0d6efd;
+            /* Biru (Default Haramain) */
+            --status-persiapan: #6f42c1;
+            /* Ungu */
+            --status-produksi: #0dcaf0;
+            /* Cyan/Biru Muda */
+            --status-selesai: #198754;
+            /* Hijau */
+            --status-batal: #dc3545;
+            /* Merah */
         }
 
         .payment-container {
@@ -144,13 +158,54 @@
             margin-bottom: 0;
         }
 
+        /* Default Bullet Color */
         .service-list li::before {
             content: "•";
             position: absolute;
             left: 0;
             color: var(--haramain-secondary);
             font-weight: bold;
+            font-size: 1.2em;
+            line-height: 1;
+            top: 0;
         }
+
+        /* === INDICATOR STATUS COLORS (Override Bullet Color) === */
+        .service-list li.status-nego::before {
+            color: var(--status-nego);
+        }
+
+        .service-list li.status-deal::before {
+            color: var(--status-deal);
+        }
+
+        .service-list li.status-tahap-persiapan::before {
+            color: var(--status-persiapan);
+        }
+
+        .service-list li.status-tahap-produksi::before {
+            color: var(--status-produksi);
+        }
+
+        .service-list li.status-selesai::before {
+            color: var(--status-selesai);
+        }
+
+        .service-list li.status-batal::before {
+            color: var(--status-batal);
+        }
+
+        /* Optional: Add slight background for Batal to make it clear text is strike-through or dimmed if needed (optional) */
+        .service-list li.status-batal {
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .service-list li.status-batal::before {
+            text-decoration: none;
+        }
+
+        /* Keep bullet normal */
 
         .badge-details {
             font-size: 0.7rem;
@@ -158,6 +213,33 @@
             border-radius: 4px;
             margin-left: 5px;
             vertical-align: middle;
+        }
+
+        /* === LEGEND SECTION === */
+        .status-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border-color);
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
         }
 
         /* ===== Card Styling ===== */
@@ -168,7 +250,6 @@
             margin-bottom: 2rem;
             background-color: #fff;
             overflow: hidden;
-            /* Ensures child elements respect border radius */
         }
 
         .card-header {
@@ -249,7 +330,6 @@
             flex-grow: 1;
         }
 
-
         .info-item {
             display: flex;
             flex-direction: column;
@@ -320,7 +400,6 @@
             padding: 1.1rem;
             vertical-align: top;
             text-align: center;
-            /* Changed to top for better alignment of long content */
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -396,8 +475,9 @@
         }
 
         .btn-secondary {
-            background-color: var(--haramain-secondary);
-            color: white;
+            background-color: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 0.625rem 1.25rem;
             font-weight: 600;
@@ -405,15 +485,8 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s ease;
-            border: none;
             text-decoration: none;
             font-size: 0.9rem;
-        }
-
-        .btn-secondary {
-            background-color: white;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
         }
 
         .btn-secondary:hover {
@@ -421,7 +494,6 @@
             border-color: var(--haramain-secondary);
             color: var(--haramain-secondary);
         }
-
 
         /* ===== Responsiveness ===== */
         @media (max-width: 992px) {
@@ -476,7 +548,6 @@
                 margin-right: 1rem;
             }
 
-            /* Special handling for the long service details column */
             .table td.service-details {
                 flex-direction: column;
                 align-items: flex-start;
@@ -501,35 +572,20 @@
 
         // Hitung item yang BELUM final (statusnya 'nego')
         $itemsBelumFinal = $items->where('status', 'nego')->count();
-
-        // Hitung item yang SUDAH final (status BUKAN 'nego')
         $itemsSudahFinal = $totalItems - $itemsBelumFinal;
-
-        // Tombol aktif JIKA SEMUA item sudah TIDAK 'nego' lagi
         $semuaFinal = $totalItems > 0 && $itemsBelumFinal === 0;
 
-        // --- LOGIKA BARU UNTUK KALKULASI TOTAL ---
-        // $order adalah SEMUA tagihan (termasuk cicilan) untuk service_id ini
-
-        // 1. Total Tagihan Induk (ambil dari order paling LAMA)
-        $orderInduk = $order; // .last() karena controller sort by desc
+        // --- LOGIKA KEUANGAN ---
+        $orderInduk = $order;
         $totalTagihanInduk = $orderInduk->total_amount_final ?? ($orderInduk->total_estimasi ?? 0);
-
-        // 2. Total Dibayar Akumulatif (jumlahkan semua pembayaran)
         $totalDibayarAkumulatif = $transactions->sum('jumlah_bayar');
-
-        // 3. Sisa Hutang Saat Ini (ambil dari order paling BARU)
-        $orderAktif = $order; // .first() karena controller sort by desc
+        $orderAktif = $order;
         $sisaHutangSaatIni = $orderAktif->sisa_hutang ?? 0;
         $statusPembayaranSaatIni = $orderAktif->status_pembayaran ?? 'estimasi';
-
-        // === PERBAIKAN DI SINI ===
-        // Cek status harga pada ORDER INDUK (Tagihan Pertama), bukan order saat ini
         $hargaSudahFinal = $orderInduk->status_harga == 'final';
     @endphp
 
     <div class="payment-container">
-        <!-- Order Details Card -->
         <div class="card mb-4 border-0 shadow-sm">
             <div class="card-header bg-white border-bottom py-3 justify-content-between">
                 <div class="d-flex align-items-center">
@@ -628,7 +684,8 @@
                                     <div class="service-card-body">
                                         <ul class="service-list">
                                             @foreach ($order->service->hotels as $hotel)
-                                                <li>
+                                                <li class="status-{{ Str::slug($hotel->status ?? 'deal') }}"
+                                                    title="Status: {{ ucfirst($hotel->status ?? 'Deal') }}">
                                                     <span class="fw-bold">{{ $hotel->nama_hotel }}</span>
                                                     <br><small class="text-muted">{{ $hotel->type }} |
                                                         {{ $hotel->jumlah_kamar }} Kamar</small>
@@ -651,14 +708,16 @@
                                     <div class="service-card-body">
                                         <ul class="service-list">
                                             @foreach ($order->service->planes as $plane)
-                                                <li>
+                                                <li class="status-{{ Str::slug($plane->status ?? 'deal') }}"
+                                                    title="Status: {{ ucfirst($plane->status ?? 'Deal') }}">
                                                     <span class="badge bg-info text-dark badge-details ms-0">Udara</span>
                                                     {{ $plane->maskapai }} <small
                                                         class="text-muted">({{ $plane->rute }})</small>
                                                 </li>
                                             @endforeach
                                             @foreach ($order->service->transportationItem as $item)
-                                                <li>
+                                                <li class="status-{{ Str::slug($item->status ?? 'deal') }}"
+                                                    title="Status: {{ ucfirst($item->status ?? 'Deal') }}">
                                                     <span class="badge bg-secondary badge-details ms-0">Darat</span>
                                                     {{ $item->transportation->nama ?? 'Bus' }}
                                                     <br><small class="text-muted ps-1">Rute:
@@ -682,7 +741,8 @@
                                     <div class="service-card-body">
                                         <ul class="service-list">
                                             @foreach ($order->service->documents as $doc)
-                                                <li>
+                                                <li class="status-{{ Str::slug($doc->status ?? 'deal') }}"
+                                                    title="Status: {{ ucfirst($doc->status ?? 'Deal') }}">
                                                     {{ $doc->document->name ?? 'Dokumen' }}
                                                     @if ($doc->documentChild)
                                                         <small class="text-muted">({{ $doc->documentChild->name }})</small>
@@ -709,7 +769,8 @@
                                     <div class="service-card-body">
                                         <ul class="service-list">
                                             @foreach ($order->service->tours as $tour)
-                                                <li>
+                                                <li class="status-{{ Str::slug($tour->status ?? 'deal') }}"
+                                                    title="Status: {{ ucfirst($tour->status ?? 'Deal') }}">
                                                     {{ $tour->tourItem->name ?? 'Tour' }}
                                                     <br><small class="text-muted"><i class="bi bi-bus-front"></i>
                                                         {{ $tour->transportation->nama ?? '-' }}</small>
@@ -732,7 +793,9 @@
                                     <div class="service-card-body">
                                         <ul class="service-list">
                                             @foreach ($order->service->meals as $meal)
-                                                <li>{{ $meal->mealItem->name ?? 'Menu' }} <span
+                                                <li class="status-{{ Str::slug($meal->status ?? 'deal') }}"
+                                                    title="Status: {{ ucfirst($meal->status ?? 'Deal') }}">
+                                                    {{ $meal->mealItem->name ?? 'Menu' }} <span
                                                         class="badge bg-light text-dark border badge-details">{{ $meal->jumlah }}
                                                         Pcs</span></li>
                                             @endforeach
@@ -753,12 +816,18 @@
                                     <div class="service-card-body">
                                         <ul class="service-list">
                                             @foreach ($order->service->handlings as $handling)
-                                                <li>{{ ucfirst($handling->name) }} @if ($handling->handlingHotels)
+                                                {{ ucfirst($handling->name) }}
+                                                @if ($handling->handlingHotels)
+                                                    <li class="status-{{ Str::slug($handling->handlingHotels->status ?? 'deal') }}"
+                                                        title="Status: {{ ucfirst($handling->handlingHotels->status ?? 'Deal') }}">
                                                         ({{ $handling->handlingHotels->nama }})
-                                                    @elseif ($handling->handlingPlanes)
+                                                    </li>
+                                                @elseif ($handling->handlingPlanes)
+                                                    <li class="status-{{ Str::slug($handling->handlingPlanes->status ?? 'deal') }}"
+                                                        title="Status: {{ ucfirst($handling->handlingPlanes->status ?? 'Deal') }}">
                                                         ({{ $handling->handlingPlanes->nama_bandara }})
-                                                    @endif
-                                                </li>
+                                                    </li>
+                                                @endif
                                             @endforeach
                                         </ul>
                                     </div>
@@ -777,7 +846,9 @@
                                     <div class="service-card-body">
                                         <ul class="service-list">
                                             @foreach ($order->service->guides as $guide)
-                                                <li>{{ $guide->guideItem->nama ?? 'Guide' }} ({{ $guide->jumlah }} Orang)
+                                                <li class="status-{{ Str::slug($guide->status ?? 'deal') }}"
+                                                    title="Status: {{ ucfirst($guide->status ?? 'Deal') }}">
+                                                    {{ $guide->guideItem->nama ?? 'Guide' }} ({{ $guide->jumlah }} Orang)
                                                 </li>
                                             @endforeach
                                         </ul>
@@ -797,7 +868,10 @@
                                     <div class="service-card-body">
                                         <ul class="service-list">
                                             @foreach ($order->service->badals as $badal)
-                                                <li>An. {{ $badal->name }}</li>
+                                                <li class="status-{{ Str::slug($badal->status ?? 'deal') }}"
+                                                    title="Status: {{ ucfirst($badal->status ?? 'Deal') }}">
+                                                    An. {{ $badal->name }}
+                                                </li>
                                             @endforeach
                                         </ul>
                                     </div>
@@ -816,7 +890,10 @@
                                     <div class="service-card-body">
                                         <ul class="service-list">
                                             @foreach ($order->service->wakafs as $wakaf)
-                                                <li>{{ $wakaf->wakaf->nama ?? 'Wakaf' }} ({{ $wakaf->jumlah }})</li>
+                                                <li class="status-{{ Str::slug($wakaf->status ?? 'deal') }}"
+                                                    title="Status: {{ ucfirst($wakaf->status ?? 'Deal') }}">
+                                                    {{ $wakaf->wakaf->nama ?? 'Wakaf' }} ({{ $wakaf->jumlah }})
+                                                </li>
                                             @endforeach
                                         </ul>
                                     </div>
@@ -835,7 +912,9 @@
                                     <div class="service-card-body">
                                         <ul class="service-list">
                                             @foreach ($order->service->dorongans as $dorongan)
-                                                <li>{{ $dorongan->dorongan->name ?? 'Kursi Roda' }}
+                                                <li class="status-{{ Str::slug($dorongan->status ?? 'deal') }}"
+                                                    title="Status: {{ ucfirst($dorongan->status ?? 'Deal') }}">
+                                                    {{ $dorongan->dorongan->name ?? 'Kursi Roda' }}
                                                     ({{ $dorongan->jumlah }})
                                                 </li>
                                             @endforeach
@@ -856,7 +935,10 @@
                                     <div class="service-card-body">
                                         <ul class="service-list">
                                             @foreach ($order->service->contents as $content)
-                                                <li>{{ $content->content->name ?? 'Paket' }} ({{ $content->jumlah }})</li>
+                                                <li class="status-{{ Str::slug($content->status ?? 'deal') }}"
+                                                    title="Status: {{ ucfirst($content->status ?? 'Deal') }}">
+                                                    {{ $content->content->name ?? 'Paket' }} ({{ $content->jumlah }})
+                                                </li>
                                             @endforeach
                                         </ul>
                                     </div>
@@ -875,7 +957,9 @@
                                     <div class="service-card-body">
                                         <ul class="service-list">
                                             @foreach ($order->service->exchanges as $exchange)
-                                                <li>{{ strtoupper($exchange->tipe) }}:
+                                                <li class="status-{{ Str::slug($exchange->status ?? 'deal') }}"
+                                                    title="Status: {{ ucfirst($exchange->status ?? 'Deal') }}">
+                                                    {{ strtoupper($exchange->tipe) }}:
                                                     {{ number_format($exchange->jumlah_input) }} -> {{ $exchange->hasil }}
                                                 </li>
                                             @endforeach
@@ -894,8 +978,33 @@
                                 </div>
                             </div>
                         @endif
-
                     </div>
+
+                    {{-- LEGEND (KETERANGAN WARNA STATUS) --}}
+                    @if ($hasContent)
+                        <div class="status-legend">
+                            <div class="legend-item">
+                                <span class="legend-dot" style="background-color: var(--status-nego);"></span> Nego
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot" style="background-color: var(--status-deal);"></span> Deal
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot" style="background-color: var(--status-persiapan);"></span> Tahap
+                                Persiapan
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot" style="background-color: var(--status-produksi);"></span> Tahap
+                                Produksi
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot" style="background-color: var(--status-selesai);"></span> Selesai
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot" style="background-color: var(--status-batal);"></span> Batal
+                            </div>
+                        </div>
+                    @endif
                 @else
                     {{-- JIKA SERVICE NULL --}}
                     <div class="text-center py-5">
@@ -966,16 +1075,11 @@
                                     {{ number_format($sisaHutangSaatIni ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
-                        {{-- <div class="info-item">
-                            <span class="label">Status Pembayaran</span>
-                            <span class="value badge {{ $statusClass }}">{{ $order->status_pembayaran }}</span>
-                        </div> --}}
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Payment Form Card -->
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
@@ -992,45 +1096,6 @@
                 @endforeach
             </div>
         </div>
-
-        {{-- <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">
-                    <i class="bi bi-credit-card"></i>
-                    <span>Input Pembayaran</span>
-                </h5>
-            </div>
-            <div class="payment-form-container">
-                <form action="{{ route('keuangan.payment.pay', $order->service_id) }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    <div class="form-group">
-                        <label for="jumlah_bayar" class="form-label">Jumlah yang Dibayarkan (SAR)</label>
-                        <input type="number" step="any" class="form-control" id="jumlah_bayar" name="jumlah_bayar"
-                            placeholder="Contoh: 1500.50" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="foto" class="form-label">Bukti Pembayaran</label>
-                        <input type="file" class="form-control" id="foto" name="bukti_pembayaran" accept="image/*">
-                    </div>
-                    <div class="form-group">
-                        <label for="jumlah_bayar" class="form-label">Status bukti pembayaran</label>
-                        <select class="form-control" name="status" id="travel-select" required>
-                            <option value="">Pilih status</option>
-                            <option value="approve">Approve</option>
-                            <option value="unapprove">Unapprove</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="catatan" class="form-label">Catatan</label>
-                        <input type="text" class="form-control" id="catatan" name="catatan">
-                    </div>
-                    <button type="submit" class="btn-submit">
-                        <i class="bi bi-check-circle"></i> Simpan Pembayaran
-                    </button>
-                </form>
-            </div>
-        </div> --}}
 
         <div class="card">
             <div class="card-header">
