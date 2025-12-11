@@ -127,7 +127,7 @@ class TransportationController extends Controller
 
         // Asumsi status diambil dari model atau enum
         // (Jika 'status' tidak ada di model Anda, hapus baris ini dan dropdown-nya)
-        $statuses = ['nego', 'deal', 'batal', 'done']; // Sesuaikan dengan kebutuhan
+        $statuses = ['nego', 'deal', 'batal', 'tahap produksi', 'tahap persiapan', 'done']; // Sesuaikan dengan kebutuhan
 
         return view('transportasi.mobil.customer_edit', compact(
             'item', // Mengirim data dengan nama $item
