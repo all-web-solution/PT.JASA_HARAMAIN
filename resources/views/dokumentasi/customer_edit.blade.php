@@ -306,8 +306,8 @@
                             <div class="form-group">
                                 <label for="keterangan" class="form-label">Keterangan</label>
                                 <input type="text" id="keterangan" name="keterangan"
-                                    class="form-control @error('keterangan') is-invalid @enderror"
-                                    rows="4">{{ old('keterangan', $contentCustomer->keterangan) }}</input>
+                                    class="form-control @error('keterangan') is-invalid @enderror" rows="4"
+                                    value="{{ old('keterangan', $contentCustomer->keterangan) }}">
                                 @error('keterangan')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
