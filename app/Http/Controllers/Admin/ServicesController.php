@@ -276,9 +276,14 @@ class ServicesController extends Controller
 
             $serverTotalAmount = $this->calculateTotalServicePrice($service);
 
+            $year = date('Y');
+            $lastOrder = Order::whereYear('created_at', $year)->orderBy('id', 'desc')->first();
+            $increment = $lastOrder ? (int) substr($lastOrder->invoice, -3) + 1 : 1;
+            $newInvoice = 'INV-' . $year . str_pad($increment, 3, '0', STR_PAD_LEFT);
+
             Order::create([
                 'service_id' => $service->id,
-                'invoice' => 'INV-' . time(),
+                'invoice' => $newInvoice,
                 'total_estimasi' => $serverTotalAmount,
                 'total_amount_final' => null,
                 'total_yang_dibayarkan' => 0,
@@ -2423,7 +2428,10 @@ class ServicesController extends Controller
 
             // Kalau masih ada hutang → buat order baru khusus sisa hutang
             if ($sisaHutangBaru > 0) {
-                $newInvoice = 'INV-' . date('YmdHis') . '-' . mt_rand(100, 999);
+                $tahun = date('Y');
+                $lastOrder = Order::whereYear('created_at', $tahun)->orderBy('id', 'desc')->first();
+                $increment = $lastOrder ? (int) substr($lastOrder->invoice, -3) + 1 : 1;
+                $newInvoice = 'INV-' . $tahun . str_pad($increment, 3, '0', STR_PAD_LEFT);
 
                 Order::create([
                     'service_id' => $order->service_id,
