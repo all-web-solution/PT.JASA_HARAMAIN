@@ -94,14 +94,20 @@ class OrderController extends Controller
 
         $order = Order::where('service_id', $request->pelanggan_id)->first();
 
-        if ($order) {
-            $order->total_amount += $request->total_harga;
-            $order->save();
-        } else {
+        if (!$order) {
+            $tahun = date('Y');
+            $lastOrder = Order::whereYear('created_at', $tahun)->orderBy('id', 'desc')->first();
+            $increment = $lastOrder ? (int) substr($lastOrder->invoice, -3) + 1 : 1;
+            $newInvoice = 'INV-' . $tahun . str_pad($increment, 3, '0', STR_PAD_LEFT);
+
             $order = Order::create([
                 'service_id' => $request->pelanggan_id,
+                'invoice' => $newInvoice,
                 'total_amount' => $request->total_harga,
             ]);
+        } else {
+            $order->total_amount += $request->total_harga;
+            $order->save();
         }
 
         return redirect()->route('admin.order')->with('success', 'Order berhasil disimpan');
