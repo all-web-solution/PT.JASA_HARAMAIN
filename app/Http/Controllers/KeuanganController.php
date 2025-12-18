@@ -112,10 +112,14 @@ class KeuanganController extends Controller
         // Ambil satu order utama (misalnya untuk detail utama)
         $order = Order::where('service_id', $id)->firstOrFail();
 
-        // Ambil semua order dengan service_id yang sama (misal untuk riwayat pembayaran)
-        $transactions = Transaction::where('order_id', $id)->get();
+        $orders = Order::where('service_id', $order->service_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return view('keuangan.payment_detail', compact('order', 'transactions'));
+        // Ambil semua order dengan service_id yang sama (misal untuk riwayat pembayaran)
+        $transactions = Transaction::where('order_id', $order->id)->get();
+
+        return view('keuangan.payment_detail', compact('order', 'orders', 'transactions'));
     }
 
     public function pay(Request $request, $service_id)
