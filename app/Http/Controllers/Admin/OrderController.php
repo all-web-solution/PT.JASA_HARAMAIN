@@ -145,7 +145,7 @@ class OrderController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $transactions = Transaction::where('order_id', $order->service_id)->get();
+        $transactions = Transaction::where('order_id', $order->id)->get();
 
         $semuaItem = $order->service->getAllItemsFromService();
 

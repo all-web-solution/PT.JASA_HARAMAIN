@@ -1189,79 +1189,7 @@
             </div>
         </div>
 
-        {{-- CARD 4: INPUT PEMBAYARAN --}}
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">
-                    <i class="bi bi-credit-card"></i>
-                    <span>Input Pembayaran</span>
-                </h5>
-            </div>
-            <div class="payment-form-container">
-                <form action="{{ route('keuangan.payment.pay', $order->service_id) }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    <div class="form-group">
-                        <label for="jumlah_bayar" class="form-label">Jumlah yang Dibayarkan (SAR)</label>
-                        <input type="number" step="any" class="form-control" id="jumlah_bayar" name="jumlah_bayar"
-                            placeholder="Contoh: 1500.50" required>
-                    </div>
-                    <div class="form-column">
-                        <div class="form-group">
-                            <label for="foto" class="form-label">Bukti Pembayaran</label>
-                            <input type="file" class="form-control" id="foto" name="bukti_pembayaran"
-                                accept="image/*">
-                        </div>
-                        <div class="form-group">
-                            <label for="tanggal_bayar" class="form-label">Tanggal Bayar</label>
-                            <input type="date" class="form-control" id="tanggal_bayar" name="tanggal_bayar">
-                        </div>
-                        <div class="form-group">
-                            <label for="jumlah_bayar" class="form-label">Status bukti pembayaran</label>
-                            <select class="form-control" name="status" id="travel-select" required>
-                                <option value="">Pilih status</option>
-                                <option value="approve">Approve</option>
-                                <option value="unapprove">Unapprove</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="catatan" class="form-label">Catatan</label>
-                        <input type="text" class="form-control" id="catatan" name="catatan">
-                    </div>
-
-                    @php
-                        // Cek apakah total_amount_final sudah ada nilainya (> 0)
-                        $isReadyToPay = $order->total_amount_final > 0;
-                        // Opsional: Cek juga jika statusnya sudah lunas (biar ga bayar dobel)
-                        $isLunas = $order->status_pembayaran == 'lunas';
-                    @endphp
-                    <div class="d-flex flex-column align-items-end mt-4">
-                        <button type="submit" class="btn-submit"
-                            @if (!$isReadyToPay || $isLunas) disabled
-                                style="background-color: #6c757d; border-color: #6c757d; cursor: not-allowed; opacity: 0.8;" @endif>
-                            <i class="bi bi-check-circle"></i>
-                            @if ($isLunas)
-                                Tagihan Lunas
-                            @elseif(!$isReadyToPay)
-                                Harga Belum Final
-                            @else
-                                Simpan Pembayaran
-                            @endif
-                        </button>
-
-                        @if (!$isReadyToPay)
-                            <small class="text-danger mt-2">
-                                <i class="bi bi-exclamation-circle-fill"></i>
-                                Harap lakukan <b>Finalisasi Tagihan</b> terlebih dahulu.
-                            </small>
-                        @endif
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        {{-- CARD 5: RIWAYAT TABLE --}}
+        {{-- CARD 4: RIWAYAT TABLE --}}
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
@@ -1301,14 +1229,12 @@
                                     <td data-label="Tanggal Bayar">{{ $item->tanggal_bayar->format('d M y') }}</td>
                                     <td data-label="Total Dibayar">Rp
                                         {{ number_format($item->jumlah_bayar ?? 0, 0, ',', '.') }}</td>
-                                    <td data-label="Status"><span
-                                            class="badge {{ $statusClass }}">{{ $item->status }}</span></td>
+                                    <td data-label="Status"><span>{{ $item->status }}</span></td>
                                     <td data-label="Bukti">
                                         @if ($item->bukti_pembayaran)
                                             <a href="{{ asset('storage/' . $item->bukti_pembayaran) }}" target="_blank"
-                                                class="btn-action btn-view" title="Lihat Bukti"
-                                                style="background-color: var(--haramain-accent);">
-                                                <i class="bi bi-image-fill"></i>
+                                                class="btn-action btn-view" title="Lihat Bukti">
+                                                <i class="bi bi-image-fill" style="color: var(--haramain-accent)"></i>
                                             </a>
                                         @else
                                             -
