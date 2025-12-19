@@ -18,7 +18,7 @@ class TransportationItem extends Model
         'supplier',
     ];
 
-     public function service()
+    public function service()
     {
         return $this->belongsTo(Service::class);
     }
@@ -27,7 +27,8 @@ class TransportationItem extends Model
     {
         return $this->belongsTo(Transportation::class);
     }
-    public function route(){
+    public function route()
+    {
         return $this->belongsTo(Route::class);
     }
 }

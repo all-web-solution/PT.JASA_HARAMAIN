@@ -72,10 +72,16 @@
                             <h5 class="fw-bold mb-0" style="color: var(--haramain-primary);">
                                 <i class="bi bi-clock-history me-2"></i>Recent Activity
                             </h5>
-                            <a href="{{ route('admin.services') }}"
-                                class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
-                            </a>
+                            <div class="d-flex gap-2">
+                                <a href="{{ route('admin.agenda.index') }}"
+                                    class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm d-flex align-items-center">
+                                    <i class="bi bi-calendar-week me-2"></i> Timeline Agenda
+                                </a>
+                                <a href="{{ route('admin.services') }}"
+                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body px-0 pt-3">
@@ -93,7 +99,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- PERFORMANCE IMPROVEMENT: Gunakan with('pelanggan') --}}
                                     @php
                                         $recentServices = \App\Models\Service::with('pelanggan')
                                             ->latest()

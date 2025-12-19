@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\ServicesController;
+use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\DoronganController;
@@ -290,4 +291,10 @@ Route::middleware(['auth', 'keuangan'])->group(function () {
     Route::get('/payment/detail/{id}', [App\Http\Controllers\KeuanganController::class, 'payment_detail'])->name('keuangan.payment.detail');
     Route::post('/payment/pay/{service_id}', [App\Http\Controllers\KeuanganController::class, 'pay'])->name('keuangan.payment.pay');
     // Route::post('/payment/pay/{service_id}', [App\Http\Controllers\KeuanganController::class, 'pay'])->name('keuangan.payment.pay');
+});
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/agenda', [AgendaController::class, 'index'])->name('admin.agenda.index');
+    Route::get('/api/agenda/events', [AgendaController::class, 'getEvents'])->name('api.agenda.events');
 });
