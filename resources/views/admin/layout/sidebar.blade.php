@@ -238,4 +238,13 @@
             </li>
         </ul>
     @endif
+    @if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'keuangan')
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('admin.agenda.index') ? 'active' : '' }}"
+                href="{{ route('admin.agenda.index') }}">
+                <i class="bi bi-calendar-event"></i>
+                <span>Timeline Agenda</span>
+            </a>
+        </li>
+    @endif
 </div>

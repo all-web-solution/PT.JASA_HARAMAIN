@@ -11,9 +11,8 @@ class HandlingPlanes extends Model
     protected $casts = [
         'kedatangan_jamaah' => 'date',
     ];
-    
     public function handling()
     {
-        return $this->belongsTo(Handling::class);
+        return $this->belongsTo(Handling::class, 'handling_id');
     }
 }

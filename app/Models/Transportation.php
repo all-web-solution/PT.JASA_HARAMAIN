@@ -9,11 +9,18 @@ class Transportation extends Model
 {
     protected $fillable = ['nama', 'kapasitas', 'fasilitas', 'harga'];
 
-    public function tours(){
+    public function tours()
+    {
         return $this->hasMany(Tour::class, 'transportation_id');
     }
 
-    public function routes(){
+    public function routes()
+    {
         return $this->hasMany(Route::class, 'transportation_id');
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id');
     }
 }
