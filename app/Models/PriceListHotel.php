@@ -10,17 +10,21 @@ class PriceListHotel extends Model
         'tanggal',
         'nama_hotel',
         'tipe_kamar',
-        'harga'
+        'harga',
+
+        // --- KOLOM BARU ---
+        'tanggal_checkIn',
+        'tanggal_checkOut',
+        'catatan',
+        'add_on',
+        'supplier_utama',
+        'kontak_supplier_utama',
+        'supplier_cadangan',
+        'kontak_supplier_cadangan',
     ];
 
     public function hotel()
     {
         return $this->belongsTo(Hotel::class, 'hotel_id');
     }
-
-    public function details()
-    {
-        return $this->hasMany(PriceListDetail::class, 'price_list_id');
-    }
-
 }
