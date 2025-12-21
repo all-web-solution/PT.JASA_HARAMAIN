@@ -11,6 +11,12 @@ use App\Models\HandlingPlanes;
 use App\Models\Hotel;
 use App\Models\Plane;
 use App\Models\TransportationItem;
+use App\Models\Meal;
+use App\Models\Tour;
+use App\Models\Badal;
+use App\Models\WakafCustomer;
+use App\Models\DoronganOrder;
+use App\Models\Exchange;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
@@ -37,7 +43,13 @@ class AgendaController extends Controller
             $this->getDocumentEvents($user),
             $this->getHandlingEvents($user),
             $this->getGuideEvents($user),
-            $this->getContentEvents($user)
+            $this->getContentEvents($user),
+            $this->getMealEvents($user),
+            $this->getTourEvents($user),
+            $this->getBadalEvents($user),
+            $this->getWakafEvents($user),
+            $this->getDoronganEvents($user),
+            $this->getExchangeEvents($user)
         );
 
         return response()->json($events);
@@ -395,6 +407,266 @@ class AgendaController extends Controller
                     'start' => $item->tanggal_pelaksanaan,
                     'allDay' => true,
                     'color' => '#17a2b8',
+                    'textColor' => '#fff',
+                    'extendedProps' => ['description' => $desc]
+                ];
+            }
+        }
+
+        return $events;
+    }
+
+    /**
+     * 7. CATERING / MEALS DIVISION
+     */
+    private function getMealEvents($user): array
+    {
+        // Sesuaikan role dengan database Anda, misal 'konsumsi' atau 'catering'
+        if (!in_array($user->role, ['admin', 'handling'])) {
+            return [];
+        }
+
+        $events = [];
+        $meals = Meal::with(['service.pelanggan', 'mealItem'])->get();
+
+        foreach ($meals as $item) {
+            if ($item->dari_tanggal) {
+                $pelanggan = $item->service->pelanggan->nama_travel ?? 'N/A';
+                $menu = $item->mealItem->name ?? 'Menu Catering';
+
+                $desc = "🍱 DETAIL CATERING (MEALS)\n-------------------\n";
+                $desc .= "Menu: $menu\n";
+                $desc .= "Customer: $pelanggan\n";
+                $desc .= "Periode: " . date('d M', strtotime($item->dari_tanggal));
+                if ($item->sampai_tanggal) {
+                    $desc .= " s/d " . date('d M', strtotime($item->sampai_tanggal));
+                }
+                $desc .= "\n";
+                $desc .= "Jumlah: " . ($item->jumlah ?? '-') . " Pax\n";
+                $desc .= "Supplier: " . ($item->supplier ?? '-') . "\n";
+                $desc .= "Status: " . ($item->status ?? '-') . "\n";
+
+                // Event Start
+                $events[] = [
+                    'title' => "🍱 START: {$menu} ({$pelanggan})",
+                    'start' => $item->dari_tanggal,
+                    'allDay' => true,
+                    'color' => '#d63384', // Pink
+                    'textColor' => '#fff',
+                    'extendedProps' => ['description' => $desc]
+                ];
+
+                // Event End (Jika tanggal beda)
+                if ($item->sampai_tanggal && $item->sampai_tanggal != $item->dari_tanggal) {
+                    $events[] = [
+                        'title' => "🍱 END: {$menu}",
+                        'start' => $item->sampai_tanggal,
+                        'allDay' => true,
+                        'color' => '#e6a4c4', // Pink Soft
+                        'textColor' => '#000',
+                        'extendedProps' => ['description' => $desc]
+                    ];
+                }
+            }
+        }
+
+        return $events;
+    }
+
+    /**
+     * 8. TOUR DIVISION
+     */
+    private function getTourEvents($user): array
+    {
+        if (!in_array($user->role, ['admin', 'handling'])) {
+            return [];
+        }
+
+        $events = [];
+        $tours = Tour::with(['service.pelanggan', 'tourItem', 'transportation'])->get();
+
+        foreach ($tours as $item) {
+            if ($item->tanggal_keberangkatan) {
+                $pelanggan = $item->service->pelanggan->nama_travel ?? 'N/A';
+                $destinasi = $item->tourItem->name ?? 'City Tour';
+                $transport = $item->transportation->nama ?? '-';
+                $supplier = $item->supplier ?? '-';
+
+                $desc = "🗺️ DETAIL PAKET TOUR\n-------------------\n";
+                $desc .= "Destinasi: $destinasi\n";
+                $desc .= "Tanggal: " . date('d M Y', strtotime($item->tanggal_keberangkatan)) . "\n";
+                $desc .= "Customer: $pelanggan\n";
+                $desc .= "Transport: $transport\n";
+                $desc .= "Supplier: $supplier\n";
+                $desc .= "Status: " . ($item->status ?? '-') . "\n";
+
+                $events[] = [
+                    'title' => "🗺️ Tour: {$destinasi} ({$pelanggan})",
+                    'start' => $item->tanggal_keberangkatan,
+                    'allDay' => true,
+                    'color' => '#20c997', // Teal
+                    'textColor' => '#fff',
+                    'extendedProps' => ['description' => $desc]
+                ];
+            }
+        }
+
+        return $events;
+    }
+
+    /**
+     * 9. BADAL UMRAH DIVISION
+     */
+    private function getBadalEvents($user): array
+    {
+        if (!in_array($user->role, ['admin', 'palugada'])) {
+            return [];
+        }
+
+        $events = [];
+        $badals = Badal::with('service.pelanggan')->get();
+
+        foreach ($badals as $item) {
+            if ($item->tanggal_pelaksanaan) {
+                $pelanggan = $item->service->pelanggan->nama_travel ?? 'N/A';
+
+                $desc = "🕋 DETAIL BADAL UMRAH\n-------------------\n";
+                $desc .= "Atas Nama: " . ($item->name ?? '-') . "\n";
+                $desc .= "Pelaksanaan: " . date('d M Y', strtotime($item->tanggal_pelaksanaan)) . "\n";
+                $desc .= "Customer: $pelanggan\n";
+                $desc .= "Harga: Rp " . number_format($item->price ?? 0) . "\n";
+                $desc .= "Supplier: " . ($item->supplier ?? '-') . "\n";
+                $desc .= "Status: " . ($item->status ?? '-') . "\n";
+
+                $events[] = [
+                    'title' => "🕋 Badal: {$item->name} ({$pelanggan})",
+                    'start' => $item->tanggal_pelaksanaan,
+                    'allDay' => true,
+                    'color' => '#6f42c1', // Purple
+                    'textColor' => '#fff',
+                    'extendedProps' => ['description' => $desc]
+                ];
+            }
+        }
+
+        return $events;
+    }
+
+    /**
+     * 10. WAKAF DIVISION
+     */
+    private function getWakafEvents($user): array
+    {
+        if (!in_array($user->role, ['admin', 'palugada'])) {
+            return [];
+        }
+
+        $events = [];
+        $wakafs = WakafCustomer::with(['service.pelanggan', 'wakaf'])->get();
+
+        foreach ($wakafs as $item) {
+            // Karena wakaf biasanya tidak ada 'tanggal pelaksanaan' spesifik di schema sebelumnya,
+            // Kita gunakan created_at sebagai tanggal pencatatan, atau service departure jika ada.
+            // Di sini saya gunakan created_at.
+            $tgl = $item->created_at ? $item->created_at->format('Y-m-d') : null;
+
+            if ($tgl) {
+                $pelanggan = $item->service->pelanggan->nama_travel ?? 'N/A';
+                $jenisWakaf = $item->wakaf->nama ?? 'Wakaf';
+
+                $desc = "🎁 DETAIL WAKAF\n-------------------\n";
+                $desc .= "Jenis: $jenisWakaf\n";
+                $desc .= "Customer: $pelanggan\n";
+                $desc .= "Tanggal Catat: " . date('d M Y', strtotime($tgl)) . "\n";
+                $desc .= "Jumlah: " . ($item->jumlah ?? 0) . " Paket\n";
+                $desc .= "Supplier: " . ($item->supplier ?? '-') . "\n";
+                $desc .= "Status: " . ($item->status ?? '-') . "\n";
+
+                $events[] = [
+                    'title' => "🎁 {$jenisWakaf} ({$item->jumlah} Pax)",
+                    'start' => $tgl,
+                    'allDay' => true,
+                    'color' => '#198754', // Green Success
+                    'textColor' => '#fff',
+                    'extendedProps' => ['description' => $desc]
+                ];
+            }
+        }
+
+        return $events;
+    }
+
+    /**
+     * 11. DORONGAN / WHEELCHAIR DIVISION
+     */
+    private function getDoronganEvents($user): array
+    {
+        if (!in_array($user->role, ['admin', 'palugada'])) {
+            return [];
+        }
+
+        $events = [];
+        $dorongans = DoronganOrder::with(['service.pelanggan', 'dorongan'])->get();
+
+        foreach ($dorongans as $item) {
+            if ($item->tanggal_pelaksanaan) {
+                $pelanggan = $item->service->pelanggan->nama_travel ?? 'N/A';
+                $tipe = $item->dorongan->name ?? 'Kursi Roda';
+
+                $desc = "♿ DETAIL DORONGAN\n-------------------\n";
+                $desc .= "Tipe: $tipe\n";
+                $desc .= "Tanggal: " . date('d M Y', strtotime($item->tanggal_pelaksanaan)) . "\n";
+                $desc .= "Customer: $pelanggan\n";
+                $desc .= "Jumlah: " . ($item->jumlah ?? 0) . " Unit\n";
+                $desc .= "Supplier: " . ($item->supplier ?? '-') . "\n";
+                $desc .= "Status: " . ($item->status ?? '-') . "\n";
+
+                $events[] = [
+                    'title' => "♿ {$tipe}: {$item->jumlah} Unit ({$pelanggan})",
+                    'start' => $item->tanggal_pelaksanaan,
+                    'allDay' => true,
+                    'color' => '#0dcaf0', // Cyan
+                    'textColor' => '#000',
+                    'extendedProps' => ['description' => $desc]
+                ];
+            }
+        }
+
+        return $events;
+    }
+
+    /**
+     * 12. EXCHANGE / REYAL DIVISION
+     */
+    private function getExchangeEvents($user): array
+    {
+        if (!in_array($user->role, ['admin', 'reyal'])) {
+            return [];
+        }
+
+        $events = [];
+        $exchanges = Exchange::with('service.pelanggan')->get();
+
+        foreach ($exchanges as $item) {
+            if ($item->tanggal_penyerahan) {
+                $pelanggan = $item->service->pelanggan->nama_travel ?? 'N/A';
+                $tipe = strtoupper($item->tipe ?? 'Tukar'); // TAMIS / TUMIS
+
+                $desc = "💱 DETAIL PENUKARAN UANG\n-------------------\n";
+                $desc .= "Tipe: $tipe\n";
+                $desc .= "Tanggal: " . date('d M Y', strtotime($item->tanggal_penyerahan)) . "\n";
+                $desc .= "Customer: $pelanggan\n";
+                $desc .= "Input: " . number_format($item->jumlah_input ?? 0) . "\n";
+                $desc .= "Hasil: " . ($item->hasil ?? '-') . "\n";
+                $desc .= "Kurs: " . ($item->kurs ?? '-') . "\n";
+                $desc .= "Supplier: " . ($item->supplier ?? '-') . "\n";
+                $desc .= "Status: " . ($item->status ?? '-') . "\n";
+
+                $events[] = [
+                    'title' => "💱 {$tipe} ({$pelanggan})",
+                    'start' => $item->tanggal_penyerahan,
+                    'allDay' => true,
+                    'color' => '#343a40', // Dark Grey
                     'textColor' => '#fff',
                     'extendedProps' => ['description' => $desc]
                 ];
