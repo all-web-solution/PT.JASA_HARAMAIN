@@ -11,7 +11,7 @@ class PriceListHotelController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PriceListHotel::query();
+        $query = PriceListHotel::query()->latest();
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -37,9 +37,18 @@ class PriceListHotelController extends Controller
             'nama_hotel' => 'required|string|max:255',
             'tipe_kamar' => 'required|string|max:255',
             'harga' => 'required|numeric|min:0',
+
+            // Tambahan untuk field input baru
+            'tanggal_checkOut' => 'nullable|date|after_or_equal:tanggal', // Validasi Logis
+            'catatan' => 'nullable|string',
+            'add_on' => 'nullable|string',
+            'supplier_utama' => 'nullable|string|max:255',
+            'kontak_supplier_utama' => 'nullable|string|max:255',
+            'supplier_cadangan' => 'nullable|string|max:255',
+            'kontak_supplier_cadangan' => 'nullable|string|max:255',
         ]);
 
-        PriceListHotel::create($request->only('tanggal', 'nama_hotel', 'tipe_kamar', 'harga'));
+        PriceListHotel::create($request->all());
 
         return redirect()->route('hotel.price.index')->with('success', 'Harga hotel berhasil ditambahkan!');
     }
@@ -59,12 +68,36 @@ class PriceListHotelController extends Controller
             'nama_hotel' => 'required|string|max:255',
             'tipe_kamar' => 'required|string|max:255',
             'harga' => 'required|numeric|min:0',
+
+            // Tambahan untuk field input baru
+            'tanggal_checkOut' => 'nullable|date|after_or_equal:tanggal', // Validasi Logis
+            'catatan' => 'nullable|string',
+            'add_on' => 'nullable|string',
+            'supplier_utama' => 'nullable|string|max:255',
+            'kontak_supplier_utama' => 'nullable|string|max:255',
+            'supplier_cadangan' => 'nullable|string|max:255',
+            'kontak_supplier_cadangan' => 'nullable|string|max:255',
         ]);
 
         $priceList = PriceListHotel::findOrFail($id);
-        $priceList->update($request->only('tanggal', 'nama_hotel', 'tipe_kamar', 'harga'));
+        $priceList->update($request->all());
 
         return redirect()->route('hotel.price.index')->with('success', 'Harga hotel berhasil diperbarui!');
+    }
+
+    public function show($id)
+    {
+        $priceList = PriceListHotel::findOrFail($id);
+
+        // Hitung durasi malam jika check-in dan check-out tersedia
+        $durasi = 0;
+        if ($priceList->tanggal && $priceList->tanggal_checkOut) {
+            $checkIn = \Carbon\Carbon::parse($priceList->tanggal);
+            $checkOut = \Carbon\Carbon::parse($priceList->tanggal_checkOut);
+            $durasi = $checkIn->diffInDays($checkOut);
+        }
+
+        return view('hotel.price_list.show', compact('priceList', 'durasi'));
     }
 
     public function destroy(string $id)

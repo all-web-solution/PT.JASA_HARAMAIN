@@ -82,6 +82,7 @@ Route::middleware(['auth', 'hotel'])->group(function () {
     Route::delete('hotel/{id}/delete', [HotelController::class, 'destroy'])->name('hotel.destroy');
     // Routes untuk Price List
     Route::get('/price', [PriceListHotelController::class, 'index'])->name('hotel.price.index');
+    Route::get('/price/show/{id}', [PriceListHotelController::class, 'show'])->name('hotel.price.show');
     Route::get('/price/create', [PriceListHotelController::class, 'create'])->name('hotel.price.create');
     Route::post('/price/store', [PriceListHotelController::class, 'store'])->name('hotel.price.store');
     Route::get('/price/edit/{id}', [PriceListHotelController::class, 'edit'])->name('hotel.price.edit');
