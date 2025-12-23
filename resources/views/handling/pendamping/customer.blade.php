@@ -67,7 +67,6 @@
             border-collapse: separate;
             border-spacing: 0 0.75rem;
             margin-top: -0.75rem;
-            /* Counteract spacing */
         }
 
         .table thead th {
@@ -111,6 +110,17 @@
             border-top-right-radius: 8px;
             border-bottom-right-radius: 8px;
         }
+
+        /* Actions Button Styling */
+        .actions-container {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .actions-container .btn {
+            padding: 0.375rem 0.75rem;
+        }
     </style>
 @endpush
 @section('content')
@@ -133,39 +143,55 @@
                                 <th>Aksi</th>
                             </tr>
                         </thead>
+
                         <tbody>
-                            @forelse ($guides as $serviceId => $group)
-                                @php
-                                    $firstGuide = $group->first();
-                                    $service = $firstGuide->service;
-                                    $pelanggan = $service?->pelanggan;
-                                @endphp
+                            @forelse ($services as $service)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $pelanggan->nama_travel }} </td>
+                                    <td>{{ ($services->currentPage() - 1) * $services->perPage() + $loop->iteration }}</td>
+
+                                    <td>{{ $service->pelanggan->nama_travel ?? '-' }}</td>
+
                                     <td>
-                                        {{ $group->sum('jumlah') }}
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('pendamping.customer.show',  $firstGuide->service->id) }}">
-                                            <button class="btn btn-primary btn-sm">
-                                                <i class="bi bi-eye"></i> Lihat Pendamping
-                                            </button>
-                                        </a>
+                                        {{ $service->guides->sum('jumlah') }}
                                     </td>
 
-
+                                    <td>
+                                        <div class="actions-container">
+                                            <a href="{{ route('pendamping.customer.show', $service->id) }}"
+                                                class="btn btn-info btn-sm" title="Lihat Pendamping">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </a>
+                                        </div>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-4">Belum ada data customer pendamping.</td>
+                                    <td colspan="4" class="text-center py-4">Belum ada data customer pendamping.</td>
                                 </tr>
                             @endforelse
                         </tbody>
-
-
                     </table>
                 </div>
+            </div>
+
+            <div class="pagination-container">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item {{ $services->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $services->previousPageUrl() ?? '#' }}" tabindex="-1">&laquo;</a>
+                        </li>
+
+                        @foreach ($services->getUrlRange(1, $services->lastPage()) as $page => $url)
+                            <li class="page-item {{ $services->currentPage() == $page ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+
+                        <li class="page-item {{ !$services->hasMorePages() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $services->nextPageUrl() ?? '#' }}">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

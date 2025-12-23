@@ -388,7 +388,6 @@
                 </a>
             </div>
 
-            {{-- Logika Badge Status --}}
             @php
                 $status = strtolower($hotel->status);
                 $statusClass = '';

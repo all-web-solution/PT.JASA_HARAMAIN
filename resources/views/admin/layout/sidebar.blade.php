@@ -73,7 +73,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('handling.handling.hotel*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('handling.handling.hotel*') || request()->routeIs('handling.hotel.edit*') ? 'active' : '' }}"
                     href="{{ route('handling.handling.hotel') }}">
                     <i class="bi bi-hospital"></i> Handling Hotel
                 </a>
@@ -85,7 +85,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('handling.tour.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('handling.tour.customer*') ? 'active' : '' }}"
                     href="{{ route('handling.tour.customer') }}">
                     <i class="bi bi-map"></i> Tour Customer
                 </a>

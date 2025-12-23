@@ -13,20 +13,18 @@ class HandlingController extends Controller
 {
     public function index()
     {
-        $planes = HandlingPlanes::with(['handling.service.pelanggan'])->get();
+        $planes = HandlingPlanes::with(['handling.service.pelanggan'])
+            ->latest()
+            ->paginate(10);
 
         return view('handling.handling.index', compact('planes'));
     }
 
-
-    //Function handling hotel
     public function hotel()
     {
         $hotels = HandlingHotel::with('handling.service.pelanggan')
             ->latest()
             ->paginate(10);
-
-        $hotels->load('handling.service.pelanggan');
 
         return view('handling.handling.hotel', compact('hotels'));
     }
@@ -102,7 +100,7 @@ class HandlingController extends Controller
 
         // Redirect kembali ke halaman detail
         return redirect()->route('handling.handling.hotel.show', $hotel->id) // Asumsi 'handling.hotel.show' adalah route detail
-                         ->with('success', 'Data handling hotel berhasil diperbarui!');
+            ->with('success', 'Data handling hotel berhasil diperbarui!');
     }
 
     public function plane($id)
@@ -163,12 +161,11 @@ class HandlingController extends Controller
             $validatedData['identitas_koper'] = $request->file('identitas_koper')->store('handling_planes/identitas_koper', 'public');
         }
 
-        // --- Update data ---
         $plane->update($validatedData);
 
         // Redirect kembali ke halaman detail
         return redirect()->route('handling.handling.plane.show', $plane->id) // Asumsi 'handling.pesawat.show' adalah route detail
-                         ->with('success', 'Data handling pesawat berhasil diperbarui!');
+            ->with('success', 'Data handling pesawat berhasil diperbarui!');
     }
 
 }

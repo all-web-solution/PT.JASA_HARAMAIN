@@ -72,11 +72,12 @@ class PendampingController extends Controller
 
     public function customer()
     {
-        $guides = Guide::with(['service.pelanggan'])
-            ->get()
-            ->groupBy('service_id');
+        $services = Service::whereHas('guides')
+            ->with(['pelanggan', 'guides'])
+            ->latest()
+            ->paginate(10);
 
-        return view('handling.pendamping.customer', compact('guides'));
+        return view('handling.pendamping.customer', compact('services'));
     }
     public function showCustomer($service_id)
     {
