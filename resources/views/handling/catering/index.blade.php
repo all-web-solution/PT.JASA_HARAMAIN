@@ -115,29 +115,15 @@
             border-bottom-right-radius: 8px;
         }
 
-        .btn-action {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: inline-flex;
+        /* Actions Button Styling */
+        .actions-container {
+            display: flex;
+            gap: 0.5rem;
             align-items: center;
-            justify-content: center;
-            margin: 0 0.25rem;
-            transition: all 0.3s ease;
-            border: none;
-            background-color: transparent;
         }
 
-        .btn-action:hover {
-            background-color: var(--haramain-light);
-        }
-
-        .btn-edit {
-            color: var(--haramain-secondary);
-        }
-
-        .btn-delete {
-            color: var(--danger-color);
+        .actions-container .btn {
+            padding: 0.375rem 0.75rem;
         }
 
         .pagination-container {
@@ -199,28 +185,27 @@
                                     <td>{{ $meal->price }}</td>
 
                                     <td>
-
-                                        <a href="{{ route('catering.edit', $meal->id) }}" title="Edit">
-                                            <button class="btn btn-warning">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                        </a>
-                                        <form id="delete-form-{{ $meal->id }}"
-                                            action="{{ route('catering.delete', $meal->id) }}" method="post"
-                                            style="display:inline-block">
-                                            @csrf
-                                            @method('delete')
-                                            <button type="button" class="btn btn-danger delete-confirm"
-                                                data-id="{{ $meal->id }}"
-                                                data-nama-menu="{{ $meal->mealItem->name ?? 'Menu Ini' }}" title="Hapus">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
+                                        <div class="actions-container">
+                                            <a href="{{ route('catering.edit', $meal->id) }}" class="btn btn-warning btn-sm"
+                                                title="Edit">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <form id="delete-form-{{ $meal->id }}"
+                                                action="{{ route('catering.delete', $meal->id) }}" method="post"
+                                                style="display:inline-block">
+                                                @csrf
+                                                @method('delete')
+                                                <button type="button" class="btn btn-danger btn-sm delete-confirm"
+                                                    data-id="{{ $meal->id }}"
+                                                    data-nama-menu="{{ $meal->mealItem->name ?? 'Menu Ini' }}"
+                                                    title="Hapus">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
-
-
 
                         </tbody>
                     </table>
@@ -259,16 +244,16 @@
                     });
                 });
             });
-        });
 
-        @if (session('success'))
-            Swal.fire({
-                title: 'Berhasil!',
-                text: '{{ session('success') }}',
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 2000
-            });
-        @endif
+            @if (session('success'))
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            @endif
+        });
     </script>
 @endpush

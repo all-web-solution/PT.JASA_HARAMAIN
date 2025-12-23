@@ -3,7 +3,6 @@
 
 @push('styles')
     <style>
-        /* == CSS Dari Referensi 'index dokumen' == */
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;
@@ -80,7 +79,6 @@
             padding: 1rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
             text-align: center;
-            /* Sesuai referensi */
             white-space: nowrap;
         }
 
@@ -100,7 +98,6 @@
             padding: 1.25rem;
             vertical-align: middle;
             text-align: center;
-            /* Sesuai referensi */
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -117,38 +114,17 @@
             border-bottom-right-radius: 8px;
         }
 
-        /* Action Buttons */
-        .btn-action {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: inline-flex;
+        /* Action Buttons Styling */
+        .actions-container {
+            display: flex;
+            gap: 0.5rem;
             align-items: center;
             justify-content: center;
-            margin: 0 0.25rem;
-            transition: all 0.3s ease;
-            border: none;
-            background-color: transparent;
+            /* Center buttons horizontally */
         }
 
-        .btn-action:hover {
-            background-color: var(--haramain-light);
-        }
-
-        .btn-action i {
-            font-size: 1rem;
-        }
-
-        .btn-edit {
-            color: var(--haramain-secondary);
-        }
-
-        .btn-view {
-            color: var(--text-secondary);
-        }
-
-        .btn-delete {
-            color: var(--danger-color);
+        .actions-container .btn {
+            padding: 0.375rem 0.75rem;
         }
 
         /* Badge Status */
@@ -179,28 +155,6 @@
             background-color: var(--primary-bg);
             color: var(--haramain-secondary);
         }
-
-        /* Pagination */
-        .pagination-container {
-            padding: 0 1.5rem 1.5rem;
-            display: flex;
-            justify-content: flex-end;
-            border-top: 1px solid var(--border-color);
-            padding-top: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--haramain-secondary);
-            border-color: var(--haramain-secondary);
-        }
-
-        .pagination .page-link {
-            color: var(--haramain-primary);
-            border-radius: 8px;
-            margin: 0 0.25rem;
-            border: 1px solid var(--border-color);
-        }
     </style>
 @endpush
 
@@ -209,14 +163,11 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    {{-- Ganti Icon dan Judul --}}
                     <i class="bi bi-map-fill"></i>Daftar Order Tour
                 </h5>
-                {{-- <a href="{{ route('tour.create') }}" class="btn-add-new">...</a> --}}
             </div>
 
-            {{-- Ganti padding <table> dari referensi --}}
-            <div class.table-responsive" style="padding: 0 1.5rem 1.5rem;">
+            <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
@@ -228,10 +179,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- Ganti variabel $tours menjadi $tours --}}
                         @forelse ($tours as $tour)
-                            {{-- $tour adalah instance dari Model Tour --}}
-
                             @php
                                 $status = strtolower($tour->status);
                                 $statusClass = '';
@@ -247,34 +195,24 @@
                             @endphp
 
                             <tr>
-                                {{-- Nomor Paginasi --}}
                                 <td>{{ ($tours->currentPage() - 1) * $tours->perPage() + $loop->iteration }}</td>
-
-                                {{-- Kolom Nama Pelanggan --}}
-                                <td>
-                                    {{ $tour->service?->pelanggan?->nama_travel ?? 'N/A' }}
-                                </td>
-
-                                {{-- Kolom Tanggal Keberangkatan --}}
+                                <td>{{ $tour->service?->pelanggan?->nama_travel ?? 'N/A' }}</td>
                                 <td>{{ \Carbon\Carbon::parse($tour->tanggal_keberangkatan)->isoFormat('D MMM Y') }}</td>
-
-                                {{-- Kolom Status --}}
                                 <td>
                                     <span class="badge {{ $statusClass }}">{{ $tour->status }}</span>
                                 </td>
-
-                                {{-- Kolom Aksi --}}
                                 <td>
-                                    {{-- Ganti 'tour.show' & 'tour.edit' dengan nama route Anda --}}
-                                    <a href="{{ route('tour.customer.show', $tour->service_id) }}" class="btn-action btn-view"
-                                        title="View">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </a>
+                                    <div class="actions-container">
+                                        <a href="{{ route('tour.customer.show', $tour->service_id) }}"
+                                            class="btn btn-info btn-sm" title="Lihat Detail">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" style="text-align: center; padding: 2rem;">
+                                <td colspan="5" style="text-align: center; padding: 2rem;">
                                     Tidak ada data order tour ditemukan.
                                 </td>
                             </tr>
@@ -283,23 +221,19 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
             <div class="pagination-container">
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
-                        {{-- Previous Page Link --}}
                         <li class="page-item {{ $tours->onFirstPage() ? 'disabled' : '' }}">
                             <a class="page-link" href="{{ $tours->previousPageUrl() ?? '#' }}" tabindex="-1">&laquo;</a>
                         </li>
 
-                        {{-- Page Number Links --}}
                         @foreach ($tours->getUrlRange(1, $tours->lastPage()) as $page => $url)
                             <li class="page-item {{ $tours->currentPage() == $page ? 'active' : '' }}">
                                 <a class="page-link" href="{{ $url }}">{{ $page }}</a>
                             </li>
                         @endforeach
 
-                        {{-- Next Page Link --}}
                         <li class="page-item {{ !$tours->hasMorePages() ? 'disabled' : '' }}">
                             <a class="page-link" href="{{ $tours->nextPageUrl() ?? '#' }}">&raquo;</a>
                         </li>
