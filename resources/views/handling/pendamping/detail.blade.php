@@ -3,7 +3,6 @@
 
 @push('styles')
     <style>
-        /* == CSS UTAMA (Disalin dari file referensi) == */
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;
@@ -100,6 +99,7 @@
             background-color: var(--haramain-primary);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
+            color: white;
         }
 
         .btn-secondary {
@@ -144,17 +144,9 @@
             font-weight: 600;
             font-size: 1rem;
             word-break: break-word;
-            /* Agar email/teks panjang tidak overflow */
         }
 
-        .info-item .badge {
-            font-size: 1rem;
-            padding: 0.5rem 0.75rem;
-            align-self: flex-start;
-            /* Agar badge tidak full width */
-        }
-
-        /* == STYLE TABEL MODERN (dari referensi) == */
+        /* == STYLE TABEL MODERN == */
         .table-responsive {
             padding: 0;
             overflow-x: auto;
@@ -218,6 +210,7 @@
             font-weight: 700;
             font-size: 0.8rem;
             text-transform: capitalize;
+            display: inline-block;
         }
 
         .badge-success {
@@ -251,21 +244,24 @@
                 align-items: flex-start;
                 gap: 1rem;
             }
+
+            .card-header a {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
         }
     </style>
 @endpush
 
 @section('content')
     <div class="service-list-container">
-
-        {{-- 🧍 KARTU DETAIL CUSTOMER (Layout Baru) --}}
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
                     <i class="bi bi-person-badge"></i>
                     <span class="title-text">Detail Customer</span>
                 </h5>
-                {{-- Tombol Kembali --}}
                 <a href="{{ route('handling.pendamping.customer') }}" class="btn-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali ke Daftar
                 </a>
@@ -292,13 +288,15 @@
                         </div>
                         <div class="info-item">
                             <span class="label">Tanggal Keberangkatan</span>
-                            <span
-                                class="value">{{ \Carbon\Carbon::parse($service->tanggal_keberangkatan)->isoFormat('D MMM YYYY') }}</span>
+                            <span class="value">
+                                {{ \Carbon\Carbon::parse($service->tanggal_keberangkatan)->isoFormat('D MMM YYYY') }}
+                            </span>
                         </div>
                         <div class="info-item">
                             <span class="label">Tanggal Kepulangan</span>
-                            <span
-                                class="value">{{ \Carbon\Carbon::parse($service->tanggal_kepulangan)->isoFormat('D MMM YYYY') }}</span>
+                            <span class="value">
+                                {{ \Carbon\Carbon::parse($service->tanggal_kepulangan)->isoFormat('D MMM YYYY') }}
+                            </span>
                         </div>
                     </div>
                 @else
@@ -307,7 +305,6 @@
             </div>
         </div>
 
-        {{-- 🤝 KARTU DAFTAR PENDAMPING (Tabel Baru) --}}
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
@@ -315,7 +312,7 @@
                     <span class="title-text">Daftar Pendamping Terkait</span>
                 </h5>
             </div>
-            <div class="card-body table-card-body"> {{-- Card body khusus untuk tabel --}}
+            <div class="card-body table-card-body">
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -354,30 +351,33 @@
                                     <td>{{ $guide->jumlah ?? '-' }}</td>
                                     <td>
                                         @if ($guide->muthowif_dari && $guide->muthowif_sampai)
-                                            {{ \Carbon\Carbon::parse($guide->muthowif_dari)->isoFormat('D MMM') }}
-                                            -
+                                            {{ \Carbon\Carbon::parse($guide->muthowif_dari)->isoFormat('D MMM') }} -
                                             {{ \Carbon\Carbon::parse($guide->muthowif_sampai)->isoFormat('D MMM Y') }}
                                         @else
                                             -
                                         @endif
                                     </td>
                                     <td>{{ $guide->supplier ?? '-' }}</td>
-                                    <td>{{ $guide->harga_dasar ?? '-' }}</td>
-                                    <td>{{ $guide->harga_jual ?? '-' }}</td>
+                                    <td>Rp {{ number_format($guide->harga_dasar ?? 0, 0, ',', '.') }}</td>
+                                    <td>Rp {{ number_format($guide->harga_jual ?? 0, 0, ',', '.') }}</td>
                                     <td>
-                                        <span class="badge {{ $statusClass }}">{{ $guide->status ?? '-' }}</span>
+                                        <span
+                                            class="badge {{ $statusClass }}">{{ ucfirst($guide->status ?? '-') }}</span>
                                     </td>
                                     <td>
-                                        <a href="{{ route('pendamping.edit', $guide->id) }}" class="btn-action btn-edit"
-                                            title="Edit">
+                                        {{-- BUTTON EDIT --}}
+                                        <a href="{{ route('pendamping.edit', $guide->id) }}" class="btn-action"
+                                            title="Edit" style="padding: 0.4rem 0.6rem; border-radius: 6px;">
                                             <i class="bi bi-pencil-fill"></i>
                                         </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" style="text-align: center; padding: 2rem;">
-                                        Belum ada pendamping untuk layanan ini.
+                                    <td colspan="9"
+                                        style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                                        <i class="bi bi-exclamation-circle me-2"></i> Belum ada pendamping untuk layanan
+                                        ini.
                                     </td>
                                 </tr>
                             @endforelse
@@ -388,3 +388,27 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}",
+                });
+            @endif
+        });
+    </script>
+@endpush

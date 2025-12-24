@@ -27,10 +27,10 @@ class CateringController extends Controller
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
             'service_id' => 'required|exists:services,id',
-            'pj' => 'nullable|string|max:255',
-            'kebutuhan' => 'nullable|string',
             'jumlah' => 'required|numeric',
-            'status' => 'nullable|in:proses,cancel,selesai',
+            'dari_tanggal' => 'required|date',
+            'sampai_tanggal' => 'required|date',
+            'status' => 'nullable|in:nego,deal,batal,tahap persiapan,tahap produksi,done',
         ]);
 
         $mealItem = MealItem::create([
@@ -41,36 +41,62 @@ class CateringController extends Controller
         Meal::create([
             'service_id' => $request->service_id,
             'meal_id' => $mealItem->id,
-            'pj' => $request->pj,
-            'kebutuhan' => $request->kebutuhan ?? '-',
             'jumlah' => $request->jumlah,
-            'status' => $request->status ?? 'proses',
+            'dari_tanggal' => $request->dari_tanggal,
+            'sampai_tanggal' => $request->sampai_tanggal,
+            'status' => $request->status ?? 'nego',
         ]);
 
         return redirect()->route('catering.index')->with('success', 'Menu makanan berhasil ditambahkan.');
     }
-
     public function edit($id)
     {
-        $meal = MealItem::findOrFail($id);
-        return view('handling.catering.edit', compact('meal'));
-    }
+        $mealItem = MealItem::findOrFail($id);
 
+        $meal = Meal::where('meal_id', $id)->firstOrFail();
+
+        $services = Service::with('pelanggan')->get();
+
+        return view('handling.catering.edit', compact('mealItem', 'meal', 'services'));
+    }
     public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
+            'service_id' => 'required|exists:services,id',
+            'jumlah' => 'required|numeric',
+            'dari_tanggal' => 'required|date',
+            'sampai_tanggal' => 'required|date',
+            'status' => 'required|in:nego,deal,batal,tahap persiapan,tahap produksi,done',
         ]);
 
-        $meal = MealItem::findOrFail($id);
-
-        $meal->update([
+        $mealItem = MealItem::findOrFail($id);
+        $mealItem->update([
             'name' => $request->name,
             'price' => $request->price,
         ]);
 
+        $meal = Meal::where('meal_id', $id)->first();
+        if ($meal) {
+            $meal->update([
+                'service_id' => $request->service_id,
+                'jumlah' => $request->jumlah,
+                'dari_tanggal' => $request->dari_tanggal,
+                'sampai_tanggal' => $request->sampai_tanggal,
+                'status' => $request->status,
+            ]);
+        }
+
         return redirect()->route('catering.index')->with('success', 'Menu makanan berhasil diperbarui.');
+    }
+
+    public function show($id)
+    {
+        $mealItem = MealItem::findOrFail($id);
+        $meal = Meal::with('service.pelanggan')->where('meal_id', $id)->firstOrFail();
+
+        return view('handling.catering.show', compact('mealItem', 'meal'));
     }
 
     public function destroy($id)
@@ -84,11 +110,11 @@ class CateringController extends Controller
     public function customer(Request $request)
     {
         $meals = Meal::with([
-                        'service.pelanggan', // Untuk mengambil Nama Travel
-                        'mealItem'           // Untuk mengambil Nama Makanan
-                    ])
-                    ->latest() // Urutkan berdasarkan yang terbaru
-                    ->paginate(10);
+            'service.pelanggan', // Untuk mengambil Nama Travel
+            'mealItem'           // Untuk mengambil Nama Makanan
+        ])
+            ->latest() // Urutkan berdasarkan yang terbaru
+            ->paginate(10);
 
         return view('handling.catering.customer', compact('meals'));
     }

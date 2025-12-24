@@ -55,51 +55,37 @@ class HandlingController extends Controller
 
     public function updateCustomerHotel(Request $request, HandlingHotel $hotel)
     {
-        // Validasi data berdasarkan model
         $validatedData = $request->validate([
             'pax' => 'required|min:0',
-            'status' => 'required|string', // Sesuaikan aturan validasi status
+            'status' => 'required|in:nego,deal,batal,tahap persiapan,tahap produksi,done',
             'supplier' => 'nullable|string|max:255',
             'harga_dasar' => 'nullable|numeric|min:0',
             'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
-            'kode_booking' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Validasi file
+            'kode_booking' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'rumlis' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'identitas_koper' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // --- Penanganan File Upload ---
 
-        // 1. Handle Kode Booking
         if ($request->hasFile('kode_booking')) {
-            // Hapus file lama jika ada
-            if ($hotel->kode_booking) {
+            if ($hotel->kode_booking)
                 Storage::disk('public')->delete($hotel->kode_booking);
-            }
-            // Simpan file baru
             $validatedData['kode_booking'] = $request->file('kode_booking')->store('handling_hotels/kode_booking', 'public');
         }
-
-        // 2. Handle Rumlis
         if ($request->hasFile('rumlis')) {
-            if ($hotel->rumlis) {
+            if ($hotel->rumlis)
                 Storage::disk('public')->delete($hotel->rumlis);
-            }
             $validatedData['rumlis'] = $request->file('rumlis')->store('handling_hotels/rumlis', 'public');
         }
-
-        // 3. Handle Identitas Koper
         if ($request->hasFile('identitas_koper')) {
-            if ($hotel->identitas_koper) {
+            if ($hotel->identitas_koper)
                 Storage::disk('public')->delete($hotel->identitas_koper);
-            }
             $validatedData['identitas_koper'] = $request->file('identitas_koper')->store('handling_hotels/identitas_koper', 'public');
         }
 
-        // --- Update data ---
         $hotel->update($validatedData);
 
-        // Redirect kembali ke halaman detail
-        return redirect()->route('handling.handling.hotel.show', $hotel->id) // Asumsi 'handling.hotel.show' adalah route detail
+        return redirect()->route('handling.handling.hotel.show', $hotel->id)
             ->with('success', 'Data handling hotel berhasil diperbarui!');
     }
 
@@ -130,30 +116,23 @@ class HandlingController extends Controller
 
     public function updateCustomerPlane(Request $request, HandlingPlanes $plane)
     {
-        // Validasi data berdasarkan model
         $validatedData = $request->validate([
             'nama_supir' => 'nullable|string|max:255',
-            'status' => 'required|string', // Sesuaikan aturan validasi status
+            'status' => 'required|in:nego,deal,batal,tahap persiapan,tahap produksi,done',
             'supplier' => 'nullable|string|max:255',
             'harga_dasar' => 'nullable|numeric|min:0',
             'harga_jual' => 'nullable|numeric|min:0|gte:harga_dasar',
-            'paket_info' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Validasi file
+            'paket_info' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'identitas_koper' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // --- Penanganan File Upload ---
-
-        // 1. Handle Paket Info
         if ($request->hasFile('paket_info')) {
-            // Hapus file lama jika ada
             if ($plane->paket_info) {
                 Storage::disk('public')->delete($plane->paket_info);
             }
-            // Simpan file baru
             $validatedData['paket_info'] = $request->file('paket_info')->store('handling_planes/paket_info', 'public');
         }
 
-        // 2. Handle Identitas Koper
         if ($request->hasFile('identitas_koper')) {
             if ($plane->identitas_koper) {
                 Storage::disk('public')->delete($plane->identitas_koper);
@@ -163,9 +142,7 @@ class HandlingController extends Controller
 
         $plane->update($validatedData);
 
-        // Redirect kembali ke halaman detail
-        return redirect()->route('handling.handling.plane.show', $plane->id) // Asumsi 'handling.pesawat.show' adalah route detail
-            ->with('success', 'Data handling pesawat berhasil diperbarui!');
+        return redirect()->route('handling.handling.plane.show', $plane->id)
+            ->with('success', 'Data handling pesawat berhasil diperbarui.');
     }
-
 }

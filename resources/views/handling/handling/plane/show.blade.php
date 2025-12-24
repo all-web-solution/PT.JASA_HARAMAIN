@@ -3,7 +3,6 @@
 
 @push('styles')
     <style>
-        /* == CSS UTAMA (Disalin dari style referensi) == */
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;
@@ -109,6 +108,7 @@
             background-color: var(--haramain-primary);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
+            color: white;
         }
 
         .btn-secondary {
@@ -181,14 +181,13 @@
             font-size: 1rem;
             text-transform: capitalize;
             word-break: break-word;
-            /* Mencegah email/teks panjang overflow */
         }
 
         .info-item .status-value {
             margin-top: 0.25rem;
         }
 
-        /* Grid Info Customer (dari snippet Anda) */
+        /* Grid Info Customer */
         .customer-info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -281,7 +280,6 @@
             .stats-grid,
             .customer-info-grid {
                 grid-template-columns: 1fr 1fr;
-                /* 2 kolom di tablet */
             }
         }
 
@@ -293,7 +291,6 @@
             .stats-grid,
             .customer-info-grid {
                 grid-template-columns: 1fr;
-                /* 1 kolom di HP */
             }
 
             .card-header {
@@ -324,20 +321,18 @@
 @section('content')
     <div class="service-list-container">
 
-        {{-- Asumsi Controller mengirim variabel $plane (HandlingPlanes) --}}
-
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
                     <i class="bi bi-person-badge"></i>
                     <span class="title-text">Detail Customer</span>
                 </h5>
-                <a href="{{ route('handling.handling.index') }}" class="btn-secondary"> {{-- Ganti # dengan route index handling pesawat --}}
+                {{-- Kembali ke index handling pesawat --}}
+                <a href="{{ route('handling.handling.index') }}" class="btn-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
             <div class="card-body">
-                {{-- Controller Anda sudah me-load 'handling.service.pelanggan' --}}
                 @if ($plane->handling?->service?->pelanggan)
                     @php
                         $service = $plane->handling->service;
@@ -387,7 +382,8 @@
                         <span class="title-text">Detail Handling Pesawat</span>
                     </div>
                 </h5>
-                <a href="{{ route('handling.pesawat.edit', $plane->id) }}" class="btn-action"> {{-- Ganti # dengan route edit handling pesawat --}}
+                {{-- Link ke Edit Page --}}
+                <a href="{{ route('handling.pesawat.edit', $plane->id) }}" class="btn-action">
                     <i class="bi bi-pencil-fill"></i>
                     Edit
                 </a>
@@ -399,7 +395,7 @@
                 $statusClass = '';
                 if (in_array($status, ['done', 'deal'])) {
                     $statusClass = 'badge-success';
-                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan'])) {
+                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan', 'tahap produksi'])) {
                     $statusClass = 'badge-warning';
                 } elseif (in_array($status, ['cancelled', 'batal'])) {
                     $statusClass = 'badge-danger';
@@ -420,8 +416,9 @@
                             </div>
                             <div class="info-item">
                                 <span class="label">Kedatangan Jamaah</span>
-                                <span class="value"
-                                    style="text-transform: none;">{{ \Carbon\Carbon::parse($plane->kedatangan_jamaah)->isoFormat('dddd, D MMMM Y') }}</span>
+                                <span class="value" style="text-transform: none;">
+                                    {{ \Carbon\Carbon::parse($plane->kedatangan_jamaah)->isoFormat('dddd, D MMMM Y') }}
+                                </span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Jumlah Jamaah</span>
@@ -503,3 +500,27 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}",
+                });
+            @endif
+        });
+    </script>
+@endpush
