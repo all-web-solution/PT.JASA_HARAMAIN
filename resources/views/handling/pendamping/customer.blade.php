@@ -128,7 +128,7 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-person-lines-fill"></i> Customer Pendamping List
+                    <i class="bi bi-person-lines-fill"></i>Customer Pendamping List
                 </h5>
             </div>
 
@@ -148,13 +148,10 @@
                             @forelse ($services as $service)
                                 <tr>
                                     <td>{{ ($services->currentPage() - 1) * $services->perPage() + $loop->iteration }}</td>
-
                                     <td>{{ $service->pelanggan->nama_travel ?? '-' }}</td>
-
                                     <td>
                                         {{ $service->guides->sum('jumlah') }}
                                     </td>
-
                                     <td>
                                         <div class="actions-container">
                                             <a href="{{ route('pendamping.customer.show', $service->id) }}"

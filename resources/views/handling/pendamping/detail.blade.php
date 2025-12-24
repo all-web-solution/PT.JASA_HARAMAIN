@@ -368,7 +368,6 @@
                                         <span class="badge {{ $statusClass }}">{{ $guide->status ?? '-' }}</span>
                                     </td>
                                     <td>
-                                        {{-- Tombol Edit mengarah ke route 'pendamping.edit' --}}
                                         <a href="{{ route('pendamping.edit', $guide->id) }}" class="btn-action btn-edit"
                                             title="Edit">
                                             <i class="bi bi-pencil-fill"></i>
