@@ -33,9 +33,7 @@ class PendampingController extends Controller
 
         GuideItems::create($validated);
 
-        Session::flash('success', 'Pendamping berhasil ditambahkan.');
-
-        return redirect()->route('handling.pendamping.index');
+        return redirect()->route('handling.pendamping.index')->with('success', 'Pendamping berhasil ditambahkan.');
     }
 
     public function edit(string $id)
@@ -55,9 +53,7 @@ class PendampingController extends Controller
         $guide = GuideItems::findOrFail($id);
         $guide->update($validated);
 
-        Session::flash('success', 'Pendamping berhasil diperbarui.');
-
-        return redirect()->route('handling.pendamping.index');
+        return redirect()->route('handling.pendamping.index')->with('success', 'Pendamping berhasil diperbarui.');
     }
 
     public function destroy(string $id)

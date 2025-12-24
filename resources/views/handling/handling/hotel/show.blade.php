@@ -3,7 +3,6 @@
 
 @push('styles')
     <style>
-        /* == CSS UTAMA (Disalin dari style referensi) == */
         :root {
             --haramain-primary: #1a4b8c;
             --haramain-secondary: #2a6fdb;
@@ -100,6 +99,7 @@
             background-color: var(--haramain-primary);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(26, 75, 140, 0.3);
+            color: white;
         }
 
         .btn-secondary {
@@ -172,14 +172,13 @@
             font-size: 1rem;
             text-transform: capitalize;
             word-break: break-word;
-            /* Mencegah email/teks panjang overflow */
         }
 
         .info-item .status-value {
             margin-top: 0.25rem;
         }
 
-        /* Grid Info Customer (dari snippet Anda) */
+        /* Grid Info Customer */
         .customer-info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -266,14 +265,12 @@
             font-size: 0.9rem;
         }
 
-
         /* Media Query */
         @media (max-width: 992px) {
 
             .stats-grid,
             .customer-info-grid {
                 grid-template-columns: 1fr 1fr;
-                /* 2 kolom di tablet */
             }
         }
 
@@ -285,7 +282,6 @@
             .stats-grid,
             .customer-info-grid {
                 grid-template-columns: 1fr;
-                /* 1 kolom di HP */
             }
 
             .card-header {
@@ -316,23 +312,17 @@
 @section('content')
     <div class="service-list-container">
 
-        {{-- Asumsi Controller mengirim variabel $hotel (HandlingHotel) --}}
-
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
                     <i class="bi bi-person-badge"></i>
                     <span class="title-text">Detail Customer</span>
                 </h5>
-                <a href="{{ route('handling.handling.hotel') }}" class="btn-secondary"> {{-- Sesuaikan nama route --}}
+                <a href="{{ route('handling.handling.hotel') }}" class="btn-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
             <div class="card-body">
-                {{--
-                  Kita akses relasi dari $hotel
-                  Gunakan null-safe operator (?->) untuk keamanan maksimum
-                --}}
                 @if ($hotel->handling?->service?->pelanggan)
                     @php
                         $service = $hotel->handling->service;
@@ -382,7 +372,7 @@
                         <span class="title-text">Detail Handling Hotel: {{ $hotel->nama }}</span>
                     </div>
                 </h5>
-                <a href="{{ route('handling.hotel.edit', $hotel->id) }}" class="btn-action"> {{-- Ganti # dengan route edit handling hotel --}}
+                <a href="{{ route('handling.hotel.edit', $hotel->id) }}" class="btn-action">
                     <i class="bi bi-pencil-fill"></i>
                     Edit
                 </a>
@@ -393,7 +383,7 @@
                 $statusClass = '';
                 if (in_array($status, ['done', 'deal'])) {
                     $statusClass = 'badge-success';
-                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan'])) {
+                } elseif (in_array($status, ['pending', 'nego', 'tahap persiapan', 'tahap produksi'])) {
                     $statusClass = 'badge-warning';
                 } elseif (in_array($status, ['cancelled', 'batal'])) {
                     $statusClass = 'badge-danger';
@@ -414,8 +404,9 @@
                             </div>
                             <div class="info-item">
                                 <span class="label">Tanggal</span>
-                                <span class="value"
-                                    style="text-transform: none;">{{ \Carbon\Carbon::parse($hotel->tanggal)->isoFormat('dddd, D MMMM Y') }}</span>
+                                <span class="value" style="text-transform: none;">
+                                    {{ \Carbon\Carbon::parse($hotel->tanggal)->isoFormat('dddd, D MMMM Y') }}
+                                </span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Pax</span>
@@ -458,7 +449,7 @@
                                     <span class="label">Identitas Koper</span>
                                     @if ($hotel->identitas_koper)
                                         <a href="{{ url('storage/' . $hotel->identitas_koper) }}" target="_blank">
-                                            <img src="{{ url('storage/' . '/' . $hotel->identitas_koper) }}"
+                                            <img src="{{ url('storage/' . $hotel->identitas_koper) }}"
                                                 alt="Identitas Koper">
                                         </a>
                                     @else
@@ -498,10 +489,31 @@
                         </div>
                     </div>
 
-
                 </div>
-
             </div>
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}",
+                });
+            @endif
+        });
+    </script>
+@endpush

@@ -182,22 +182,27 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $meal->name }}</td>
-                                    <td>{{ $meal->price }}</td>
+                                    <td>{{ number_format($meal->price, 0, ',', '.') }}</td>
 
                                     <td>
                                         <div class="actions-container">
+                                            <a href="{{ route('catering.show', $meal->id) }}"
+                                                class="btn btn-info btn-sm text-white" title="Detail">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </a>
+
                                             <a href="{{ route('catering.edit', $meal->id) }}" class="btn btn-warning btn-sm"
                                                 title="Edit">
                                                 <i class="bi bi-pencil-fill"></i>
                                             </a>
+
                                             <form id="delete-form-{{ $meal->id }}"
                                                 action="{{ route('catering.delete', $meal->id) }}" method="post"
                                                 style="display:inline-block">
                                                 @csrf
                                                 @method('delete')
                                                 <button type="button" class="btn btn-danger btn-sm delete-confirm"
-                                                    data-id="{{ $meal->id }}"
-                                                    data-nama-menu="{{ $meal->mealItem->name ?? 'Menu Ini' }}"
+                                                    data-id="{{ $meal->id }}" data-nama-menu="{{ $meal->name }}"
                                                     title="Hapus">
                                                     <i class="bi bi-trash-fill"></i>
                                                 </button>
