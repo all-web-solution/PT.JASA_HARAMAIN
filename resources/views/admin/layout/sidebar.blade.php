@@ -2,10 +2,8 @@
     <div class="sidebar-header text-center">
         <div class="user-avatar rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2"
             style="width: 100px; height: 100px; overflow: hidden; background-color: #fff;">
-
             <img src="{{ asset('assets/images/haramain-logo.webp') }}" alt="logo"
                 style="width: 100%; height: 100%; object-fit: cover;">
-
         </div>
         <h5 class="mb-1 fw-bold" style="font-size: 1rem;">PT JASA HARAMAIN</h5>
         <small class="opacity-75">{{ auth()->user()->role }}</small>
@@ -67,7 +65,7 @@
     @elseif (auth()->user()->role === 'handling')
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('handling.handling.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('handling.handling.index*') || request()->routeIs('handling.pesawat.edit*') || request()->routeIs('handling.handling.plane.show*') ? 'active' : '' }}"
                     href="{{ route('handling.handling.index') }}">
                     <i class="bi bi-airplane"></i> Handling Pesawat
                 </a>
@@ -79,13 +77,13 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('handling.pendamping.customer*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('handling.pendamping.customer*') || request()->routeIs('pendamping.customer.show*') || request()->routeIs('pendamping.customer.show*') || request()->routeIs('pendamping.edit*') ? 'active' : '' }}"
                     href="{{ route('handling.pendamping.customer') }}">
                     <i class="bi bi-people"></i> Pendamping Customer
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('handling.tour.customer*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('handling.tour.customer*') || request()->routeIs('tour.customer*') ? 'active' : '' }}"
                     href="{{ route('handling.tour.customer') }}">
                     <i class="bi bi-map"></i> Tour Customer
                 </a>
@@ -97,13 +95,13 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('handling.pendamping.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('handling.pendamping*') && !request()->routeIs('handling.pendamping.customer*') ? 'active' : '' }}"
                     href="{{ route('handling.pendamping.index') }}">
                     <i class="bi bi-person-plus"></i> Pendamping
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('handling.tour.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('handling.tour*') && !request()->routeIs('handling.tour.customer*') ? 'active' : '' }}"
                     href="{{ route('handling.tour.index') }}">
                     <i class="bi bi-map"></i> Tour
                 </a>

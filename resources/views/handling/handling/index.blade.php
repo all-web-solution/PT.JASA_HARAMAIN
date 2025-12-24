@@ -11,7 +11,7 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    <i class="bi bi-airplane-fill"></i> Data Handling Pesawat
+                    <i class="bi bi-airplane-fill"></i>Data Handling Pesawat
                 </h5>
             </div>
 
