@@ -140,35 +140,42 @@ class AgendaController extends Controller
                 $pelanggan = $item->service->pelanggan->nama_travel ?? 'N/A';
                 $hotelName = $item->nama_hotel ?? 'Hotel';
 
+                $checkin = Carbon::parse($item->tanggal_checkin);
+
                 $desc = "🏨 DETAIL HOTEL\n-------------------\n";
                 $desc .= "Nama Hotel: $hotelName\n";
                 $desc .= "Customer: $pelanggan\n";
-                $desc .= "Check-in: " . ($item->tanggal_checkin ?? '-') . "\n";
-                $desc .= "Check-out: " . ($item->tanggal_checkout ?? '-') . "\n";
+                $desc .= "Check-in: " . $checkin->format('d M Y') . "\n";
+
+                $endDate = null;
+                if ($item->tanggal_checkout) {
+                    $checkout = Carbon::parse($item->tanggal_checkout);
+                    $desc .= "Check-out: " . $checkout->format('d M Y') . "\n";
+
+                    $endDate = $checkout->addDay()->format('Y-m-d');
+                } else {
+                    $desc .= "Check-out: -\n";
+                }
+
                 $desc .= "Tipe Kamar: " . ($item->type ?? '-') . "\n";
                 $desc .= "Total Kamar: " . ($item->jumlah_kamar ?? '-') . "\n";
                 $desc .= "Status: " . ($item->status ?? 'Nego') . "\n";
                 $desc .= "Catatan: " . ($item->catatan ?? '-') . "\n";
 
-                $events[] = [
-                    'title' => "⬇️ IN: {$hotelName}",
-                    'start' => $item->tanggal_checkin,
+                $event = [
+                    'title' => "🏨 {$hotelName} ({$pelanggan})",
+                    'start' => $checkin->format('Y-m-d'),
                     'allDay' => true,
                     'backgroundColor' => '#0d6efd',
                     'borderColor' => '#0d6efd',
                     'extendedProps' => ['description' => $desc]
                 ];
 
-                if ($item->tanggal_checkout) {
-                    $events[] = [
-                        'title' => "⬆️ OUT: {$hotelName}",
-                        'start' => $item->tanggal_checkout,
-                        'allDay' => true,
-                        'backgroundColor' => '#dc3545',
-                        'borderColor' => '#dc3545',
-                        'extendedProps' => ['description' => $desc]
-                    ];
+                if ($endDate) {
+                    $event['end'] = $endDate;
                 }
+
+                $events[] = $event;
             }
         }
 
