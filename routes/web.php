@@ -20,7 +20,6 @@ use App\Http\Controllers\Handling\HandlingController;
 use App\Http\Controllers\Handling\PendampingController;
 use App\Http\Controllers\Handling\TourController;
 use App\Http\Controllers\PriceListHotelController;
-use App\Http\Controllers\PriceListTicket;
 use App\Http\Controllers\ReyalController;
 use App\Http\Controllers\TransportationController;
 use App\Http\Controllers\TypeController;
@@ -272,13 +271,9 @@ Route::middleware(['auth', 'content'])->group(function () {
     Route::put('/content/update/{id}', [ContentController::class, 'update'])->name('content.update');
     Route::delete('/content/delete/{id}', [ContentController::class, 'destroy'])->name('content.destroy');
     Route::get('/content/customer', [ContentController::class, 'customer'])->name('content.customer');
-    Route::get('/content-customer/detail/{id}', [ContentController::class, 'showContentItemDetail'])->name('content.customer.detail');
+    Route::get('/content/customer/detail/{id}', [ContentController::class, 'showContentItemDetail'])->name('content.customer.detail');
     Route::get('/customers/{contentCustomer}/edit', [ContentController::class, 'editCustomer'])->name('customer.edit');
     Route::put('/customers/{contentCustomer}', [ContentController::class, 'updateCustomer'])->name('customer.update');
-    Route::get('/content/supplier/{id}', [ContentController::class, 'showSupplier'])->name('content.supplier');
-    Route::get('/content/supplier/{id}/create', [ContentController::class, 'createSupplier'])->name('content.supplier.create');
-    Route::put('/content/supplier/{id}/create', [ContentController::class, 'storeSupplier'])->name('content.supplier.store');
-    Route::get('/customer/detail/{id}', [ContentController::class, 'showCustomerDetail'])->name('customer.detail');
     // TAMBAHKAN TIGA ROUTE BARU INI UNTUK MENGUBAH STATUS
     Route::post('/customer/{customer}/status/pending', [ContentController::class, 'setStatusPending'])->name('customer.status.pending');
     Route::post('/customer/{customer}/status/selesai', [ContentController::class, 'setStatusSelesai'])->name('customer.status.selesai');

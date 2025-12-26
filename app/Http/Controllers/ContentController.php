@@ -10,44 +10,70 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 class ContentController extends Controller
 {
-
-    public function index(){
-        $contents = ContentItem::all();
+    public function index(Request $request)
+    {
+        $contents = ContentItem::latest()->paginate(10);
         return view('dokumentasi.index', compact('contents'));
     }
 
-    public function create(){
+    public function create()
+    {
         return view('dokumentasi.create');
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
+        ], [
+            'nama.required' => 'Nama konten wajib diisi.',
+            'harga.numeric' => 'Harga harus berupa angka.',
+        ]);
+
         ContentItem::create([
             'name' => $request->nama,
-            'price' => $request->harg
+            'price' => $request->harga,
         ]);
-        return redirect()->route('content.index');
 
-
+        return redirect()
+            ->route('content.index')
+            ->with('success', 'Data konten berhasil ditambahkan!');
     }
 
-    public function edit($id){
-        $content = ContentItem::find($id);
+    public function edit($id)
+    {
+        $content = ContentItem::findOrFail($id);
         return view('dokumentasi.edit', compact('content'));
     }
 
-    public function update($id, Request $request){
-        $content = ContentItem::find($id);
+    public function update(Request $request, $id)
+    {
+        $content = ContentItem::findOrFail($id);
+
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
+        ]);
+
         $content->update([
             'name' => $request->nama,
-            'price' => $request->harga
+            'price' => $request->harga,
         ]);
-         return redirect()->route('content.index');
+
+        return redirect()
+            ->route('content.index')
+            ->with('success', 'Data konten berhasil diperbarui!');
     }
 
-    public function destroy($id){
-        $content = ContentItem::find($id);
+    public function destroy($id)
+    {
+        $content = ContentItem::findOrFail($id);
         $content->delete();
-         return redirect()->route('content.index');
+
+        return redirect()
+            ->route('content.index')
+            ->with('success', 'Data konten berhasil dihapus!');
     }
 
     public function customer()
@@ -67,16 +93,6 @@ class ContentController extends Controller
             ->paginate(10); // (Anda bisa ganti 15 dengan jumlah item per halaman)
 
         return view('dokumentasi.customer', compact('customers'));
-    }
-
-    public function showCustomerDetail($id)
-    {
-        $customer = Pelanggan::findOrFail($id);
-        // Eager load relasi yang dibutuhkan agar tidak terjadi query N+1
-        // Memuat services, lalu contents (pivot), lalu detail content (dari content_items)
-        $customer->load('services.contents.content');
-
-        return view('dokumentasi.customer_detail', compact('customer'));
     }
 
     public function showContentItemDetail($id)
@@ -124,10 +140,10 @@ class ContentController extends Controller
 
         // 3. Redirect kembali ke index dengan pesan sukses
         return redirect()->route('content.customer') // Asumsi 'customer.index' adalah nama route index Anda
-                         ->with('success', 'Order Konten berhasil diperbarui!');
+            ->with('success', 'Order Konten berhasil diperbarui!');
     }
 
-     public function setStatusPending(Pelanggan $customer)
+    public function setStatusPending(Pelanggan $customer)
     {
         $this->updateAllContentStatus($customer, 'pending');
         return redirect()->back()->with('success', 'Semua status konten berhasil diubah menjadi Pending.');
@@ -157,29 +173,5 @@ class ContentController extends Controller
         DB::table('content_customers')
             ->whereIn('service_id', $serviceIds)
             ->update(['status' => $newStatus]);
-    }
-
-
-
-
-    public function showSupplier($id)
-    {
-        $content = ContentCustomer::findOrFail($id);
-        return view('dokumentasi.supplier', compact('content'));
-    }
-    public function createSupplier($id)
-    {
-        $content = ContentCustomer::findOrFail($id);
-        return view('dokumentasi.supplier_create', compact('content'));
-    }
-
-    public function storeSupplier(Request $request, $id)
-    {
-
-        $content = ContentCustomer::findOrFail($id);
-        $content->supplier = $request->input('name');
-        $content->harga_dasar = $request->input('price');
-        $content->save();
-        return redirect()->route('content.supplier', $id);
     }
 }
