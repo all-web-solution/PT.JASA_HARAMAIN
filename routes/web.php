@@ -26,6 +26,8 @@ use App\Http\Controllers\TypeController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PriceListTicketController;
 
+Route::redirect('/public', '/');
+
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.index');
     Route::get('/admin/services', [ServicesController::class, 'index'])->name('admin.services');
@@ -209,7 +211,6 @@ Route::middleware(['auth', 'visa'])->group(function () {
     Route::get('/document/supplier/{id}', [DocumentController::class, 'supplier'])->name('visa.document.customer.detail.supplier');
     Route::get('/document/supplier/parent/{id}', [DocumentController::class, 'supplierParent'])->name('visa.document.supplier.parent');
 });
-
 
 Route::group(['middleware' => 'guest'], function () {
     Route::get('login', function () {
