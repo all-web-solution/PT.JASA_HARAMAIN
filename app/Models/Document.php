@@ -10,10 +10,12 @@ class Document extends Model
         'name',
     ];
 
-    public function childrens(){
+    public function childrens()
+    {
         return $this->hasMany(DocumentChildren::class, 'document_id');
     }
-     public function CustomerDocuments(){
+    public function CustomerDocuments()
+    {
         return $this->hasMany(CustomerDocument::class, 'document_id');
 
     }

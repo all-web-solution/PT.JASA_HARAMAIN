@@ -199,13 +199,13 @@
     @elseif (auth()->user()->role == 'konten dan dokumentasi')
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('content.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('content.index*') || request()->routeIs('content*') && !request()->routeIs('content.customer*') ? 'active' : '' }}"
                     href="{{ route('content.index') }}">
                     <i class="bi bi-images"></i> Daftar Konten
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('content.customer*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('content.customer*') || request()->routeIs('customer.edit*') ? 'active' : '' }}"
                     href="{{ route('content.customer') }}">
                     <i class="bi bi-people-fill"></i> Customer
                 </a>
