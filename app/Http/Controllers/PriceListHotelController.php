@@ -35,6 +35,7 @@ class PriceListHotelController extends Controller
         $request->validate([
             'tanggal' => 'required|date',
             'nama_hotel' => 'required|string|max:255',
+            'category' => 'nullable|string|max:255',
             'tipe_kamar' => 'required|string|max:255',
             'harga' => 'required|numeric|min:0',
 
@@ -66,6 +67,7 @@ class PriceListHotelController extends Controller
         $request->validate([
             'tanggal' => 'required|date',
             'nama_hotel' => 'required|string|max:255',
+            'category' => 'nullable|string|max:255',
             'tipe_kamar' => 'required|string|max:255',
             'harga' => 'required|numeric|min:0',
 

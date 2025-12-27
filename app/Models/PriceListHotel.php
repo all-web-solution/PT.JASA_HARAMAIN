@@ -9,11 +9,11 @@ class PriceListHotel extends Model
     protected $fillable = [
         'tanggal',
         'nama_hotel',
+        'category',
         'tipe_kamar',
         'harga',
 
         // --- KOLOM BARU ---
-        'tanggal_checkIn',
         'tanggal_checkOut',
         'catatan',
         'add_on',

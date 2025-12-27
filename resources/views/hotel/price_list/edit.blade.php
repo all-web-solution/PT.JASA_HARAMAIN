@@ -218,10 +218,8 @@
                     </div>
                 @endif
 
-                {{-- PERBAIKAN: Route Update, Method POST --}}
-                <form action="{{ route('hotel.price.edit', $priceList->id) }}" method="POST">
+                <form action="{{ route('hotel.price.update', $priceList->id) }}" method="POST">
                     @csrf
-                    {{-- PERBAIKAN: Method Spoofing PUT --}}
                     @method('PUT')
 
                     {{-- SECTION 1: DATA UTAMA --}}
@@ -234,11 +232,34 @@
                                     <label for="nama_hotel" class="form-label">Nama Hotel <span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="nama_hotel" id="nama_hotel"
-                                        {{-- Logic Value: Support untuk Create (old saja) dan Edit (old + data database) --}} value="{{ old('nama_hotel', $priceList->nama_hotel ?? '') }}"
                                         value="{{ old('nama_hotel', $priceList->nama_hotel) }}"
                                         placeholder="Masukkan nama hotel" required>
                                 </div>
                             </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="category" class="form-label">Category</label>
+                                    <select name="category" class="form-control">
+                                        <option value="">-- Pilih Category --</option>
+                                        <option value="Ajyad Masafi" {{ old('category', $priceList->category) == 'Ajyad Masafi' ? 'selected' : '' }}>Ajyad Masafi</option>
+                                        <option value="Ajyad Sud" {{ old('category', $priceList->category) == 'Ajyad Sud' ? 'selected' : '' }}>Ajyad Sud</option>
+                                        <option value="Bintang 4" {{ old('category', $priceList->category) == 'Bintang 4' ? 'selected' : '' }}>Bintang 4</option>
+                                        <option value="Ajyad Sud Ujung" {{ old('category', $priceList->category) == 'Ajyad Sud Ujung' ? 'selected' : '' }}>Ajyad Sud Ujung</option>
+                                        <option value="Bintang 5 Non Pelataran" {{ old('category', $priceList->category) == 'Bintang 5 Non Pelataran' ? 'selected' : '' }}>Bintang 5 Non Pelataran</option>
+                                        <option value="Bir Balilah" {{ old('category', $priceList->category) == 'Bir Balilah' ? 'selected' : '' }}>Bir Balilah</option>
+                                        <option value="Misfalah Belakang" {{ old('category', $priceList->category) == 'Misfalah Belakang' ? 'selected' : '' }}>Misfalah Belakang</option>
+                                        <option value="Misfalah Depan" {{ old('category', $priceList->category) == 'Misfalah Depan' ? 'selected' : '' }}>Misfalah Depan</option>
+                                        <option value="Pelataran" {{ old('category', $priceList->category) == 'Pelataran' ? 'selected' : '' }}>Pelataran</option>
+                                        <option value="Rame-rame" {{ old('category', $priceList->category) == 'Rame-rame' ? 'selected' : '' }}>Rame-rame</option>
+                                        <option value="Syari' Al-Hijrah" {{ old('category', $priceList->category) == "Syari' Al-Hijrah" ? 'selected' : '' }}>Syari' Al-Hijrah</option>
+                                        <option value="with shuttle" {{ old('category', $priceList->category) == 'with shuttle' ? 'selected' : '' }}>with shuttle</option>
+                                        <option value="VVIP" {{ old('category', $priceList->category) == 'VVIP' ? 'selected' : '' }}>VVIP</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
                             <div class="form-col">
                                 <div class="form-group">
                                     <label for="tipe_kamar" class="form-label">Tipe Kamar <span
@@ -255,9 +276,6 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="form-row">
                             <div class="form-col">
                                 <div class="form-group">
                                     <label for="harga" class="form-label">Harga (IDR) <span
@@ -266,9 +284,6 @@
                                     <input type="number" class="form-control" name="harga" id="harga"
                                         value="{{ old('harga', $priceList->harga) }}" placeholder="Contoh: 500000" required>
                                 </div>
-                            </div>
-                            <div class="form-col">
-                                {{-- Spacer --}}
                             </div>
                         </div>
                     </div>
@@ -280,24 +295,19 @@
                         <div class="form-row">
                             <div class="form-col">
                                 <div class="form-group">
-                                    <label for="tanggal_checkIn" class="form-label">Tanggal Check-In</label>
-                                    {{-- PERBAIKAN: Value terisi dari database --}}
-                                    <input type="date" class="form-control" name="tanggal_checkIn" id="tanggal_checkIn"
-                                        value="{{ old('tanggal_checkIn', $priceList->tanggal) }}">
+                                    <label for="tanggal" class="form-label">Tanggal Check-In</label>
+                                    <input type="date" class="form-control" name="tanggal" id="tanggal"
+                                        value="{{ old('tanggal', $priceList->tanggal) }}">
                                 </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
                                     <label for="tanggal_checkOut" class="form-label">Tanggal Check-Out</label>
-                                    {{-- PERBAIKAN: Value terisi dari database --}}
                                     <input type="date" class="form-control" name="tanggal_checkOut" id="tanggal_checkOut"
                                         value="{{ old('tanggal_checkOut', $priceList->tanggal_checkOut) }}">
                                 </div>
                             </div>
                         </div>
-
-                        {{-- Hidden field tanggal lama (opsional) --}}
-                        <input type="hidden" name="tanggal" value="{{ old('tanggal', $priceList->tanggal) }}">
                     </div>
 
                     {{-- SECTION 3: DETAIL SUPPLIER --}}

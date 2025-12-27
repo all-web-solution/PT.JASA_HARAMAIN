@@ -235,6 +235,30 @@
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
+                                    <label for="category" class="form-label">Category</label>
+                                    <select name="category" class="form-control">
+                                        <option value="">-- Pilih Category --</option>
+                                        <option value="Ajyad Masafi" {{ old('category') == 'Ajyad Masafi' ? 'selected' : '' }}>Ajyad Masafi</option>
+                                        <option value="Ajyad Sud" {{ old('category') == 'Ajyad Sud' ? 'selected' : '' }}>Ajyad Sud</option>
+                                        <option value="Bintang 4" {{ old('category') == 'Bintang 4' ? 'selected' : '' }}>Bintang 4</option>
+                                        <option value="Ajyad Sud Ujung" {{ old('category') == 'Ajyad Sud Ujung' ? 'selected' : '' }}>Ajyad Sud Ujung</option>
+                                        <option value="Bintang 5 Non Pelataran" {{ old('category') == 'Bintang 5 Non Pelataran' ? 'selected' : '' }}>Bintang 5 Non Pelataran</option>
+                                        <option value="Bir Balilah" {{ old('category') == 'Bir Balilah' ? 'selected' : '' }}>Bir Balilah</option>
+                                        <option value="Misfalah Belakang" {{ old('category') == 'Misfalah Belakang' ? 'selected' : '' }}>Misfalah Belakang</option>
+                                        <option value="Misfalah Depan" {{ old('category') == 'Misfalah Depan' ? 'selected' : '' }}>Misfalah Depan</option>
+                                        <option value="Pelataran" {{ old('category') == 'Pelataran' ? 'selected' : '' }}>Pelataran</option>
+                                        <option value="Rame-rame" {{ old('category') == 'Rame-rame' ? 'selected' : '' }}>Rame-rame</option>
+                                        <option value="Syari' Al-Hijrah" {{ old('category') == "Syari' Al-Hijrah" ? 'selected' : '' }}>Syari' Al-Hijrah</option>
+                                        <option value="with shuttle" {{ old('category') == 'with shuttle' ? 'selected' : '' }}>with shuttle</option>
+                                        <option value="VVIP" {{ old('category') == 'VVIP' ? 'selected' : '' }}>VVIP</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
                                     <label for="tipe_kamar" class="form-label">Tipe Kamar <span
                                             class="text-danger">*</span></label>
                                     <select name="tipe_kamar" class="form-control" required>
@@ -248,14 +272,13 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="harga" class="form-label">Harga (IDR) <span
-                                        class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="harga" id="harga"
-                                    value="{{ old('harga') }}" placeholder="Contoh: 500000" required>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="harga" class="form-label">Harga (IDR) <span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" name="harga" id="harga"
+                                        value="{{ old('harga') }}" placeholder="Contoh: 500000" required>
+                                </div>
                             </div>
                         </div>
                     </div>
