@@ -153,7 +153,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->name }}</td>
-                                <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                                <td>SAR {{ number_format($item->price, 0, ',', '.') }}</td>
                                 <td>{{ $item->created_at->format('d M y') }}</td>
                                 <td>
                                     <div class="actions-container">

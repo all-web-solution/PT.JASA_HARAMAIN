@@ -94,7 +94,7 @@
                                         </td>
                                         <td>
                                             <span class="text-danger">
-                                                Rp {{ number_format($item->harga_dasar ?? 0, 0, ',', '.') }}
+                                                SAR {{ number_format($item->harga_dasar ?? 0, 0, ',', '.') }}
                                             </span>
                                         </td>
                                         <td>

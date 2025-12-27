@@ -324,7 +324,7 @@
                                         <span class="badge bg-info text-dark">{{ $ticket->kelas }}</span>
                                     </td>
                                     <td data-label="Harga" style="font-weight: 600; color: var(--haramain-primary);">
-                                        Rp {{ number_format($ticket->harga, 0, ',', '.') }}
+                                        SAR {{ number_format($ticket->harga, 0, ',', '.') }}
                                     </td>
                                     <td data-label="Aksi">
                                         <div class="action-buttons">

@@ -143,7 +143,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Harga (Rp)</label>
+                                <label class="form-label">Harga (SAR)</label>
                                 <input type="number" name="harga"
                                     class="form-control @error('harga') is-invalid @enderror" value="{{ old('harga') }}"
                                     placeholder="Contoh: 1500000" required>

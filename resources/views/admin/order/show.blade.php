@@ -1088,12 +1088,12 @@
                         <div class="content">
                             <div class="info-item">
                                 <span class="label">Total Amount (Final)</span>
-                                <span class="value value-large">Rp
+                                <span class="value value-large">SAR
                                     {{ number_format($totalTagihanInduk, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Total Estimasi (Awal)</span>
-                                <span class="value">Rp
+                                <span class="value">SAR
                                     {{ number_format($orderInduk->total_estimasi ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
@@ -1103,7 +1103,7 @@
                         <div class="content">
                             <div class="info-item">
                                 <span class="label">Sudah Dibayar</span>
-                                <span class="value value-large">Rp
+                                <span class="value value-large">SAR
                                     {{ number_format($totalDibayarAkumulatif ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
@@ -1113,7 +1113,7 @@
                         <div class="content">
                             <div class="info-item">
                                 <span class="label">Sisa Hutang</span>
-                                <span class="value value-large">Rp
+                                <span class="value value-large">SAR
                                     {{ number_format($sisaHutangSaatIni ?? 0, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
@@ -1227,7 +1227,7 @@
                                     <td data-label="No.">{{ $loop->iteration }}</td>
                                     <td data-label="Invoice">{{ $item->order->invoice }}</td>
                                     <td data-label="Tanggal Bayar">{{ $item->tanggal_bayar->format('d M y') }}</td>
-                                    <td data-label="Total Dibayar">Rp
+                                    <td data-label="Total Dibayar">SAR
                                         {{ number_format($item->jumlah_bayar ?? 0, 0, ',', '.') }}</td>
                                     <td data-label="Status"><span>{{ $item->status }}</span></td>
                                     <td data-label="Bukti">

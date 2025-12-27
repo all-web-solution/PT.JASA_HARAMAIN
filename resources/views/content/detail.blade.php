@@ -68,7 +68,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td style="text-align: left;">{{ $child->name }}</td>
-                                        <td>Rp {{ number_format($child->price, 0, ',', '.') }}</td>
+                                        <td>SAR {{ number_format($child->price, 0, ',', '.') }}</td>
                                         <td>
                                             <div class="actions-container">
                                                 <a href="{{ route('visa.document.customer.detail.supplier', $child->id) }}"

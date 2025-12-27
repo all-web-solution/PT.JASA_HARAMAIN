@@ -84,7 +84,7 @@ class KeuanganController extends Controller
             'dataBelumLunas' => $dataBelumLunas,
             'dataLunas' => $dataLunas,
 
-            // Data Total Angka (untuk kartu jumlah Rp)
+            // Data Total Angka (untuk kartu jumlah SAR)
             'totalBelumBayar' => $totalBelumBayar,
             'totalBelumLunas' => $totalBelumLunas,
             'totalLunas' => $totalLunas,
@@ -150,7 +150,7 @@ class KeuanganController extends Controller
 
         // Cek Overpayment (Opsional tapi disarankan)
         if ($jumlahBayarInput > $order->sisa_hutang) {
-            return redirect()->back()->with('error', 'Jumlah pembayaran melebihi sisa hutang (Rp ' . number_format($order->sisa_hutang, 0, ',', '.') . ').');
+            return redirect()->back()->with('error', 'Jumlah pembayaran melebihi sisa hutang (SAR ' . number_format($order->sisa_hutang, 0, ',', '.') . ').');
         }
 
         DB::beginTransaction();
@@ -201,7 +201,7 @@ class KeuanganController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Pembayaran berhasil dicatat! Sisa hutang: Rp ' . number_format($sisaHutang, 0, ',', '.'));
+            return redirect()->back()->with('success', 'Pembayaran berhasil dicatat! Sisa hutang: SAR ' . number_format($sisaHutang, 0, ',', '.'));
 
         } catch (\Exception $e) {
             DB::rollBack();

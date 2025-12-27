@@ -729,7 +729,7 @@
                                                         data-price="{{ $child->price }}"
                                                         data-name="{{ $child->name }}">
                                                         <div class="child-name">{{ $child->name }}</div>
-                                                        <div class="child-name">Rp. {{ number_format($child->price) }}
+                                                        <div class="child-name">SAR. {{ number_format($child->price) }}
                                                         </div>
                                                         <input type="checkbox" name="child_documents[]"
                                                             value="{{ $child->id }}"
@@ -968,7 +968,7 @@
                                             data-name="{{ $guide->nama }}" data-type="pendamping">
 
                                             <div class="service-name">{{ $guide->nama }}</div>
-                                            <div class="service-desc">Rp {{ number_format($guide->harga) }}</div>
+                                            <div class="service-desc">SAR {{ number_format($guide->harga) }}</div>
 
                                             {{-- TAMBAHKAN CHECKBOX INI --}}
                                             <input type="checkbox" name="pendamping_id[]" value="{{ $guide->id }}"
@@ -1051,7 +1051,7 @@
                                             data-price="{{ $content->price }}" data-type="konten">
 
                                             <div class="service-name">{{ $content->name }}</div>
-                                            <div class="service-desc">Rp. {{ number_format($content->price) }}</div>
+                                            <div class="service-desc">SAR. {{ number_format($content->price) }}</div>
 
                                             {{-- CHECKBOX: Wajib ada class d-none agar styling button berfungsi --}}
                                             <input type="checkbox" name="content_id[]" value="{{ $content->id }}"
@@ -1257,7 +1257,7 @@
                                                 </div>
                                                 <div class="service-desc">Fasilitas: {{ $trans->fasilitas ?? 'N/A' }}
                                                 </div>
-                                                <div class="service-desc">Estimasi Harga: Rp
+                                                <div class="service-desc">Estimasi Harga: SAR
                                                     {{ number_format($trans->harga) }}
                                                 </div>
                                                 <input type="radio" name="tour_transport[{{ $tour->id }}]"
@@ -1286,7 +1286,7 @@
                                         data-id="{{ $meal->id }}" data-name="{{ $meal->name }}"
                                         data-price="{{ $meal->price }}" data-type="meal">
                                         <div class="service-name">{{ $meal->name }}</div>
-                                        <div class="service-desc">Rp. {{ number_format($meal->price) }}</div>
+                                        <div class="service-desc">SAR. {{ number_format($meal->price) }}</div>
 
                                         {{-- CHECKBOX HIDDEN --}}
                                         <input type="checkbox" name="meal_id[]" value="{{ $meal->id }}"
@@ -1355,7 +1355,7 @@
                                         data-id="{{ $item->id }}" data-name="{{ $item->name }}"
                                         data-price="{{ $item->price }}" data-type="dorongan">
                                         <div class="service-name">{{ $item->name }}</div>
-                                        <div class="service-desc">Rp. {{ number_format($item->price) }}</div>
+                                        <div class="service-desc">SAR. {{ number_format($item->price) }}</div>
 
                                         {{-- CHECKBOX HIDDEN --}}
                                         <input type="checkbox" name="dorongan_id[]" value="{{ $item->id }}"
@@ -1413,7 +1413,7 @@
                                         data-id="{{ $item->id }}" data-name="{{ $item->nama }}"
                                         data-price="{{ $item->harga }}" data-type="wakaf">
                                         <div class="service-name">{{ $item->nama }}</div>
-                                        <div class="service-desc">Rp. {{ number_format($item->harga) }}</div>
+                                        <div class="service-desc">SAR. {{ number_format($item->harga) }}</div>
 
                                         {{-- CHECKBOX HIDDEN --}}
                                         <input type="checkbox" name="wakaf_id[]" value="{{ $item->id }}"
@@ -1589,15 +1589,15 @@
                     li.innerHTML = `
                 <div>
                     <strong>${item.name}</strong>
-                    <small class="text-muted d-block">Rp ${item.price.toLocaleString('id-ID')} x ${item.qty}</small>
+                    <small class="text-muted d-block">SAR ${item.price.toLocaleString('id-ID')} x ${item.qty}</small>
                 </div>
-                <span>Rp ${item.total.toLocaleString('id-ID')}</span>
+                <span>SAR ${item.total.toLocaleString('id-ID')}</span>
             `;
                     cartItemsList.appendChild(li);
                 });
 
                 cartTotalInput.value = totalAll;
-                cartTotalText.textContent = `Rp ${totalAll.toLocaleString('id-ID')}`;
+                cartTotalText.textContent = `SAR ${totalAll.toLocaleString('id-ID')}`;
                 cartSection.style.display = items.length > 0 ? "block" : "none";
             }
 

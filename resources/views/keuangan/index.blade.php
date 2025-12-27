@@ -338,28 +338,28 @@
                 <div class="stat-header">
                     <span class="stat-title">Nominal Belum Bayar</span>
                 </div>
-                <span class="stat-value" style="font-size: 1.4rem;">Rp {{ number_format($totalBelumBayar) }}</span>
+                <span class="stat-value" style="font-size: 1.4rem;">SAR {{ number_format($totalBelumBayar) }}</span>
             </div>
 
             <div class="stat-card warning">
                 <div class="stat-header">
                     <span class="stat-title">Nominal Belum Lunas</span>
                 </div>
-                <span class="stat-value" style="font-size: 1.4rem;">Rp {{ number_format($totalBelumLunas) }}</span>
+                <span class="stat-value" style="font-size: 1.4rem;">SAR {{ number_format($totalBelumLunas) }}</span>
             </div>
 
             <div class="stat-card success">
                 <div class="stat-header">
                     <span class="stat-title">Nominal Lunas</span>
                 </div>
-                <span class="stat-value" style="font-size: 1.4rem;">Rp {{ number_format($totalLunas) }}</span>
+                <span class="stat-value" style="font-size: 1.4rem;">SAR {{ number_format($totalLunas) }}</span>
             </div>
 
             <div class="stat-card primary">
                 <div class="stat-header">
                     <span class="stat-title">Total Tagihan</span>
                 </div>
-                <span class="stat-value" style="font-size: 1.4rem;">Rp {{ number_format($totalKeseluruhan) }}</span>
+                <span class="stat-value" style="font-size: 1.4rem;">SAR {{ number_format($totalKeseluruhan) }}</span>
             </div>
         </div>
 

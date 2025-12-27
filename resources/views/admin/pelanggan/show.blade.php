@@ -428,7 +428,7 @@
                     <dd class="col-sm-9">{{ $pelanggan->created_at->format('d M Y') }}</dd>
 
                     <dt class="col-sm-3">Total Nilai Transaksi</dt>
-                    <dd class="col-sm-9 fw-bold" style="color: var(--haramain-primary);">Rp
+                    <dd class="col-sm-9 fw-bold" style="color: var(--haramain-primary);">SAR
                         {{ number_format($totalTransaksi, 0, ',', '.') }}</dd>
                 </dl>
             </div>
@@ -441,7 +441,7 @@
                     <div class="card-body">
                         <h6 class="stat-title mb-1">Total Tagihan (Sisa Terakhir)</h6>
                         <h3 class="stat-value text-danger">
-                            Rp {{ number_format(optional($lastOrder)->sisa_hutang ?? 0, 0, ',', '.') }}
+                            SAR {{ number_format(optional($lastOrder)->sisa_hutang ?? 0, 0, ',', '.') }}
                         </h3>
                         <small class="text-muted">Dari Invoice: {{ optional($lastOrder)->invoice ?? '-' }}</small>
                     </div>
@@ -486,9 +486,9 @@
                                 <tr>
                                     <td data-label="No">{{ $loop->iteration }}</td>
                                     <td data-label="Invoice">{{ $order->invoice }}</td> {{-- Tampilkan Invoice --}}
-                                    <td data-label="Total Tagihan">Rp
+                                    <td data-label="Total Tagihan">SAR
                                         {{ number_format($order->total_amount, 0, ',', '.') }}</td>
-                                    <td data-label="Sisa Tagihan">Rp {{ number_format($order->sisa_hutang, 0, ',', '.') }}
+                                    <td data-label="Sisa Tagihan">SAR {{ number_format($order->sisa_hutang, 0, ',', '.') }}
                                     </td>
                                     <td data-label="Status Bayar">
                                         @if ($order->status_pembayaran === 'belum_bayar')

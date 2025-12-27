@@ -2446,7 +2446,7 @@ class ServicesController extends Controller
             DB::commit();
 
             return redirect()->route('admin.order')
-                ->with('success', 'Pembayaran berhasil! Sisa hutang: Rp. ' . number_format(max(0, $sisaHutangBaru), 0, ',', '.'));
+                ->with('success', 'Pembayaran berhasil! Sisa hutang: SAR. ' . number_format(max(0, $sisaHutangBaru), 0, ',', '.'));
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());

@@ -278,7 +278,7 @@
                 <div class="price-display">
                     <div class="price-label">Harga Satuan</div>
                     <div class="price-amount">
-                        <span>Rp</span> {{ number_format($priceList->harga, 0, ',', '.') }}
+                        <span>SAR</span> {{ number_format($priceList->harga, 0, ',', '.') }}
                     </div>
                 </div>
             </div>

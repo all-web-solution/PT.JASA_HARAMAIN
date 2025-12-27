@@ -209,7 +209,7 @@
                                 <td>{{ $tour->transportation->nama ?? '-' }}</td>
                                 <td>{{ \Carbon\Carbon::parse($tour->tanggal_keberangkatan)->format('d M Y') }}</td>
                                 <td>{{ $tour->supplier ?? '-' }}</td>
-                                <td class="fw-bold text-primary">Rp {{ number_format($tour->harga_jual, 0, ',', '.') }}
+                                <td class="fw-bold text-primary">SAR {{ number_format($tour->harga_jual, 0, ',', '.') }}
                                 </td>
                                 <td><span class="badge bg-light text-dark border">{{ $tour->status }}</span></td>
                                 <td>

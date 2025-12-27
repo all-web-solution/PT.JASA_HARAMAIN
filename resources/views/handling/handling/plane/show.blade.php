@@ -475,22 +475,22 @@
                             </div>
                             <div class="info-item">
                                 <span class="label">Harga Dasar</span>
-                                <span class="value">Rp {{ number_format($plane->harga_dasar ?? 0, 0, ',', '.') }}</span>
+                                <span class="value">SAR {{ number_format($plane->harga_dasar ?? 0, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Harga Jual</span>
-                                <span class="value">Rp {{ number_format($plane->harga_jual ?? 0, 0, ',', '.') }}</span>
+                                <span class="value">SAR {{ number_format($plane->harga_jual ?? 0, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Profit</span>
                                 <span class="value" style="color: var(--success-color);">
-                                    Rp
+                                    SAR
                                     {{ number_format(($plane->harga_jual ?? 0) - ($plane->harga_dasar ?? 0), 0, ',', '.') }}
                                 </span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Harga (Lama/Estimasi)</span>
-                                <span class="value">Rp {{ number_format($plane->harga ?? 0, 0, ',', '.') }}</span>
+                                <span class="value">SAR {{ number_format($plane->harga ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>

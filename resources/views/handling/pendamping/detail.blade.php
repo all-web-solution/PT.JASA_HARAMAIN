@@ -358,8 +358,8 @@
                                         @endif
                                     </td>
                                     <td>{{ $guide->supplier ?? '-' }}</td>
-                                    <td>Rp {{ number_format($guide->harga_dasar ?? 0, 0, ',', '.') }}</td>
-                                    <td>Rp {{ number_format($guide->harga_jual ?? 0, 0, ',', '.') }}</td>
+                                    <td>SAR {{ number_format($guide->harga_dasar ?? 0, 0, ',', '.') }}</td>
+                                    <td>SAR {{ number_format($guide->harga_jual ?? 0, 0, ',', '.') }}</td>
                                     <td>
                                         <span
                                             class="badge {{ $statusClass }}">{{ ucfirst($guide->status ?? '-') }}</span>

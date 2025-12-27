@@ -334,15 +334,15 @@
 
                                     @if ($exchange->tipe == 'tamis')
                                         <div class="detail-item">
-                                            <span class="detail-label">Jumlah (Rp)</span>
+                                            <span class="detail-label">Jumlah (SAR)</span>
                                             <span class="detail-value">
-                                                Rp {{ number_format($exchange->jumlah_input ?? 0, 2, ',', '.') }}
+                                                SAR {{ number_format($exchange->jumlah_input ?? 0, 2, ',', '.') }}
                                             </span>
                                         </div>
                                         <div class="detail-item">
-                                            <span class="detail-label">Kurs (Rp)</span>
+                                            <span class="detail-label">Kurs (SAR)</span>
                                             <span class="detail-value">
-                                                Rp {{ number_format($exchange->kurs ?? 0, 2, ',', '.') }}
+                                                SAR {{ number_format($exchange->kurs ?? 0, 2, ',', '.') }}
                                             </span>
                                         </div>
                                         <div class="detail-item">
@@ -359,15 +359,15 @@
                                             </span>
                                         </div>
                                         <div class="detail-item">
-                                            <span class="detail-label">Kurs (Rp)</span>
+                                            <span class="detail-label">Kurs (SAR)</span>
                                             <span class="detail-value">
-                                                Rp {{ number_format($exchange->kurs ?? 0, 2, ',', '.') }}
+                                                SAR {{ number_format($exchange->kurs ?? 0, 2, ',', '.') }}
                                             </span>
                                         </div>
                                         <div class="detail-item">
-                                            <span class="detail-label">Hasil (Rp)</span>
+                                            <span class="detail-label">Hasil (SAR)</span>
                                             <span class="detail-value">
-                                                Rp {{ number_format($exchange->hasil ?? 0, 2, ',', '.') }}
+                                                SAR {{ number_format($exchange->hasil ?? 0, 2, ',', '.') }}
                                             </span>
                                         </div>
                                     @endif
@@ -416,12 +416,12 @@
                                                     <td>{{ \Carbon\Carbon::parse($exchange->tanggal_penyerahan)->format('d M Y') }}
                                                     </td>
                                                     <td>
-                                                        <strong>{{ $exchange->tipe == 'tamis' ? 'Rp' : 'SAR' }}</strong>
+                                                        <strong>{{ $exchange->tipe == 'tamis' ? 'SAR' : 'SAR' }}</strong>
                                                         {{ number_format($exchange->jumlah_input, 2, ',', '.') }}
                                                     </td>
                                                     <td>{{ number_format($exchange->kurs, 2, ',', '.') }}</td>
                                                     <td>
-                                                        <strong>{{ $exchange->tipe == 'tamis' ? 'SAR' : 'Rp' }}</strong>
+                                                        <strong>{{ $exchange->tipe == 'tamis' ? 'SAR' : 'SAR' }}</strong>
                                                         {{ number_format($exchange->hasil, 2, ',', '.') }}
                                                     </td>
                                                 </tr>
@@ -544,7 +544,7 @@
                             <span class="detail-label" style="font-size: 1.2rem;">Total Akhir</span>
                             <br>
                             <span class="detail-value" style="font-size: 1.5rem; color: var(--haramain-primary);">
-                                Rp {{ number_format($totalAmount, 0, ',', '.') }}
+                                SAR {{ number_format($totalAmount, 0, ',', '.') }}
                             </span>
                         @else
                             <div>
@@ -556,7 +556,7 @@
                             </div>
                             <br>
                             <span class="detail-value" style="font-size: 1.5rem; color: var(--haramain-primary);">
-                                Rp {{ number_format($totalProvosional, 0, ',', '.') }}
+                                SAR {{ number_format($totalProvosional, 0, ',', '.') }}
                             </span>
                         @endif
                     </div>

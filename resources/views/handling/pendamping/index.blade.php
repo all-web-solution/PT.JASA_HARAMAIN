@@ -158,7 +158,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $guide->nama }}</td>
-                                    <td>Rp {{ number_format($guide->harga, 0, ',', '.') }}</td>
+                                    <td>SAR {{ number_format($guide->harga, 0, ',', '.') }}</td>
                                     <td>{{ $guide->keterangan }}</td>
                                     <td>
                                         <div class="actions-container">
