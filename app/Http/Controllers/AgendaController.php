@@ -372,33 +372,46 @@ class AgendaController extends Controller
                 $pelanggan = $item->service->pelanggan->nama_travel ?? 'N/A';
                 $namaPendamping = $item->guideItem->nama ?? 'Muthawif';
 
-                $desc = "👳 DETAIL PENDAMPING (MUTHAWIF)\n-------------------\n";
-                $desc .= "Nama: $namaPendamping\n";
-                $desc .= "Customer: $pelanggan\n";
-                $desc .= "Periode: " . date('d M Y', strtotime($item->muthowif_dari));
-                if ($item->muthowif_sampai) {
-                    $desc .= " s/d " . date('d M Y', strtotime($item->muthowif_sampai));
-                }
-                $desc .= "\n";
-                $desc .= "Jumlah: " . ($item->jumlah ?? '-') . "\n";
-                $desc .= "Supplier: " . ($item->supplier ?? '-') . "\n";
-                $desc .= "Status: " . ($item->status ?? '-') . "\n";
-                $desc .= "Ket: " . ($item->keterangan ?? '-') . "\n";
+                $start = Carbon::parse($item->muthowif_dari);
+                $end = $item->muthowif_sampai ? Carbon::parse($item->muthowif_sampai) : $start->copy();
 
-                $events[] = [
-                    'title' => "▶️ START: 👳 {$namaPendamping} ({$pelanggan})",
-                    'start' => $item->muthowif_dari,
-                    'allDay' => true,
-                    'color' => '#6610f2',
-                    'extendedProps' => ['description' => $desc]
-                ];
+                $diffInDays = $start->diffInDays($end);
 
-                if ($item->muthowif_sampai) {
+                for ($i = 0; $i <= $diffInDays; $i++) {
+                    $currentDate = $start->copy()->addDays($i);
+                    $dayNum = $i + 1;
+
+                    if ($i == 0) {
+                        $prefix = "▶️ START";
+                        $color = '#6610f2';
+                        $statusTxt = "Mulai Bertugas";
+                    } elseif ($i == $diffInDays) {
+                        $prefix = "⏹️ END";
+                        $color = '#524365';
+                        $statusTxt = "Selesai Bertugas";
+                    } else {
+                        $prefix = "👳 TUGAS";
+                        $color = '#8540f5';
+                        $statusTxt = "Sedang Bertugas";
+                    }
+
+                    $desc = "👳 DETAIL PENDAMPING (H{$dayNum})\n-------------------\n";
+                    $desc .= "Status: $statusTxt (Hari ke-$dayNum)\n";
+                    $desc .= "Nama: $namaPendamping\n";
+                    $desc .= "Customer: $pelanggan\n";
+                    $desc .= "Tanggal: " . $currentDate->format('d M Y') . "\n";
+                    $desc .= "-------------------\n";
+                    $desc .= "Periode: " . $start->format('d M') . " s/d " . $end->format('d M Y') . "\n";
+                    $desc .= "Jumlah: " . ($item->jumlah ?? '-') . " Orang\n";
+                    $desc .= "Supplier: " . ($item->supplier ?? '-') . "\n";
+                    $desc .= "Ket: " . ($item->keterangan ?? '-') . "\n";
+
                     $events[] = [
-                        'title' => "⏹️ END: 👳 {$namaPendamping}",
-                        'start' => $item->muthowif_sampai,
+                        'title' => "{$prefix}: {$namaPendamping} ({$pelanggan})",
+                        'start' => $currentDate->format('Y-m-d'),
                         'allDay' => true,
-                        'color' => '#6c757d',
+                        'color' => $color,
+                        'textColor' => '#ffffff',
                         'extendedProps' => ['description' => $desc]
                     ];
                 }
@@ -453,7 +466,6 @@ class AgendaController extends Controller
      */
     private function getMealEvents($user): array
     {
-        // Sesuaikan role dengan database Anda, misal 'konsumsi' atau 'catering'
         if (!in_array($user->role, ['admin', 'handling'])) {
             return [];
         }
@@ -466,36 +478,43 @@ class AgendaController extends Controller
                 $pelanggan = $item->service->pelanggan->nama_travel ?? 'N/A';
                 $menu = $item->mealItem->name ?? 'Menu Catering';
 
-                $desc = "🍱 DETAIL CATERING (MEALS)\n-------------------\n";
-                $desc .= "Menu: $menu\n";
-                $desc .= "Customer: $pelanggan\n";
-                $desc .= "Periode: " . date('d M', strtotime($item->dari_tanggal));
-                if ($item->sampai_tanggal) {
-                    $desc .= " s/d " . date('d M', strtotime($item->sampai_tanggal));
-                }
-                $desc .= "\n";
-                $desc .= "Jumlah: " . ($item->jumlah ?? '-') . " Pax\n";
-                $desc .= "Supplier: " . ($item->supplier ?? '-') . "\n";
-                $desc .= "Status: " . ($item->status ?? '-') . "\n";
+                $start = Carbon::parse($item->dari_tanggal);
+                $end = $item->sampai_tanggal ? Carbon::parse($item->sampai_tanggal) : $start->copy();
 
-                // Event Start
-                $events[] = [
-                    'title' => "🍱 START: {$menu} ({$pelanggan})",
-                    'start' => $item->dari_tanggal,
-                    'allDay' => true,
-                    'color' => '#d63384', // Pink
-                    'textColor' => '#fff',
-                    'extendedProps' => ['description' => $desc]
-                ];
+                $diffInDays = $start->diffInDays($end);
 
-                // Event End (Jika tanggal beda)
-                if ($item->sampai_tanggal && $item->sampai_tanggal != $item->dari_tanggal) {
+                for ($i = 0; $i <= $diffInDays; $i++) {
+                    $currentDate = $start->copy()->addDays($i);
+                    $dayNum = $i + 1;
+
+                    if ($i == 0) {
+                        $prefix = "🍽️ START";
+                        $color = '#d63384';
+                    } elseif ($i == $diffInDays) {
+                        $prefix = "🍽️ END";
+                        $color = '#a61e63';
+                    } else {
+                        $prefix = "🍱 MENU";
+                        $color = '#e66ea0';
+                    }
+
+                    $desc = "🍽️ DETAIL CATERING (H{$dayNum})\n-------------------\n";
+                    $desc .= "Menu: $menu\n";
+                    $desc .= "Customer: $pelanggan\n";
+                    $desc .= "Tanggal: " . $currentDate->format('d M Y') . "\n";
+                    $desc .= "-------------------\n";
+                    $desc .= "Periode: " . $start->format('d M') . " s/d " . $end->format('d M Y') . "\n";
+                    // $desc .= "Waktu Makan: " . ($item->waktu_makan ?? 'Pagi, Siang, Malam') . "\n";
+                    $desc .= "Pax: " . ($item->jumlah ?? '-') . "\n";
+                    $desc .= "Supplier: " . ($item->supplier ?? '-') . "\n";
+                    // $desc .= "Lokasi: " . ($item->lokasi ?? 'Hotel') . "\n";
+
                     $events[] = [
-                        'title' => "🍱 END: {$menu}",
-                        'start' => $item->sampai_tanggal,
+                        'title' => "{$prefix}: {$menu} ({$pelanggan})",
+                        'start' => $currentDate->format('Y-m-d'),
                         'allDay' => true,
-                        'color' => '#e6a4c4', // Pink Soft
-                        'textColor' => '#000',
+                        'color' => $color,
+                        'textColor' => '#ffffff',
                         'extendedProps' => ['description' => $desc]
                     ];
                 }
