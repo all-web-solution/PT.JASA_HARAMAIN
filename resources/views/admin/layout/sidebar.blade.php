@@ -116,7 +116,7 @@
     @elseif (auth()->user()->role === 'transportasi & tiket')
         <ul class="nav flex-column mt-2">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('transportation.plane.index*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('plane.index*') ? 'active' : '' }}"
                     href="{{ route('plane.index') }}">
                     <i class="bi bi-airplane-fill"></i> Customer Pesawat
                 </a>
