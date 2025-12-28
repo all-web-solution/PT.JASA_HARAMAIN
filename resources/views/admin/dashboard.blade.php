@@ -231,7 +231,7 @@
                         data: dataDebt,
                         backgroundColor: "rgba(239, 68, 68, 0.8)", // Merah
                         borderRadius: 4,
-                        order: 1 // Layer di atas
+                        order: 1
                     }
                 ]
             },
@@ -268,7 +268,9 @@
                                 if (context.parsed.y !== null) {
                                     label += new Intl.NumberFormat('id-ID', {
                                         style: 'currency',
-                                        currency: 'IDR'
+                                        currency: 'SAR',
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0
                                     }).format(context.parsed.y);
                                 }
                                 return label;
@@ -280,7 +282,9 @@
                                 });
                                 return 'Total Omset: ' + new Intl.NumberFormat('id-ID', {
                                     style: 'currency',
-                                    currency: 'IDR'
+                                    currency: 'SAR',
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
                                 }).format(total);
                             }
                         }
