@@ -148,46 +148,71 @@ class AgendaController extends Controller
         $hotels = Hotel::with('service.pelanggan')->get();
 
         foreach ($hotels as $item) {
-            if ($item->tanggal_checkin) {
+            if ($item->tanggal_checkin && $item->tanggal_checkout) {
                 $pelanggan = $item->service->pelanggan->nama_travel ?? 'N/A';
                 $hotelName = $item->nama_hotel ?? 'Hotel';
 
                 $checkin = Carbon::parse($item->tanggal_checkin);
+                $checkout = Carbon::parse($item->tanggal_checkout);
 
-                $desc = "🏨 DETAIL HOTEL\n-------------------\n";
-                $desc .= "Nama Hotel: $hotelName\n";
-                $desc .= "Customer: $pelanggan\n";
-                $desc .= "Check-in: " . $checkin->format('d M Y') . "\n";
+                $diffInDays = $checkin->diffInDays($checkout);
 
-                $endDate = null;
-                if ($item->tanggal_checkout) {
-                    $checkout = Carbon::parse($item->tanggal_checkout);
-                    $desc .= "Check-out: " . $checkout->format('d M Y') . "\n";
+                for ($i = 0; $i <= $diffInDays; $i++) {
+                    $currentDate = $checkin->copy()->addDays($i);
+                    $dayNumber = $i + 1;
 
-                    $endDate = $checkout->addDay()->format('Y-m-d');
-                } else {
-                    $desc .= "Check-out: -\n";
+                    if ($i == 0) {
+                        $statusTitle = "⬇️ H{$dayNumber}: IN";
+                        $bgColor = '#0d6efd';
+                        $statusDesc = "Check-in Hari ke-{$dayNumber}";
+                    } elseif ($i == $diffInDays) {
+                        $statusTitle = "⬆️ H{$dayNumber}: OUT";
+                        $bgColor = '#dc3545';
+                        $statusDesc = "Check-out Hari ke-{$dayNumber}";
+                    } else {
+                        $statusTitle = "🛏️ H{$dayNumber}: STAY";
+                        $bgColor = '#6ea8fe';
+                        $statusDesc = "Menginap Hari ke-{$dayNumber}";
+                    }
+
+                    $desc = "🏨 DETAIL HOTEL (H{$dayNumber})\n-------------------\n";
+                    $desc .= "Status: $statusDesc\n";
+                    $desc .= "Hotel: $hotelName\n";
+                    $desc .= "Customer: $pelanggan\n";
+                    $desc .= "Tanggal Ini: " . $currentDate->format('d M Y') . "\n";
+                    $desc .= "-------------------\n";
+                    $desc .= "Periode Full: " . $checkin->format('d M') . " - " . $checkout->format('d M Y') . "\n";
+                    $desc .= "Tipe Kamar: " . ($item->type ?? '-') . "\n";
+                    $desc .= "Total Kamar: " . ($item->jumlah_kamar ?? '-') . "\n";
+                    $desc .= "Catatan: " . ($item->catatan ?? '-') . "\n";
+
+                    $events[] = [
+                        'title' => "{$statusTitle} - {$hotelName}",
+                        'start' => $currentDate->format('Y-m-d'),
+                        'allDay' => true,
+                        'color' => $bgColor,
+                        'textColor' => '#ffffff',
+                        'extendedProps' => ['description' => $desc]
+                    ];
                 }
 
-                $desc .= "Tipe Kamar: " . ($item->type ?? '-') . "\n";
-                $desc .= "Total Kamar: " . ($item->jumlah_kamar ?? '-') . "\n";
-                $desc .= "Status: " . ($item->status ?? 'Nego') . "\n";
-                $desc .= "Catatan: " . ($item->catatan ?? '-') . "\n";
+            } elseif ($item->tanggal_checkin) {
+                $checkin = Carbon::parse($item->tanggal_checkin);
+                $pelanggan = $item->service->pelanggan->nama_travel ?? 'N/A';
+                $hotelName = $item->nama_hotel ?? 'Hotel';
 
-                $event = [
-                    'title' => "🏨 {$hotelName} ({$pelanggan})",
+                $desc = "🏨 DETAIL HOTEL\n-------------------\n";
+                $desc .= "Hotel: $hotelName\n";
+                $desc .= "Check-in: " . $checkin->format('d M Y') . "\n";
+                $desc .= "Status: Check-in Only (Belum ada Checkout)\n";
+
+                $events[] = [
+                    'title' => "⬇️ IN: {$hotelName} ({$pelanggan})",
                     'start' => $checkin->format('Y-m-d'),
                     'allDay' => true,
                     'backgroundColor' => '#0d6efd',
-                    'borderColor' => '#0d6efd',
                     'extendedProps' => ['description' => $desc]
                 ];
-
-                if ($endDate) {
-                    $event['end'] = $endDate;
-                }
-
-                $events[] = $event;
             }
         }
 
