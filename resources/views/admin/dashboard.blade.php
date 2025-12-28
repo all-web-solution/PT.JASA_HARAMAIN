@@ -250,9 +250,9 @@
                         beginAtZero: true,
                         ticks: {
                             callback: function(value) {
-                                if (value >= 1000000000) return 'Rp ' + (value / 1000000000).toFixed(1) + ' M';
-                                if (value >= 1000000) return 'Rp ' + (value / 1000000).toFixed(0) + ' Jt';
-                                return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                                if (value >= 1000000000) return 'SAR ' + (value / 1000000000).toFixed(1) + ' M';
+                                if (value >= 1000000) return 'SAR ' + (value / 1000000).toFixed(0) + ' Jt';
+                                return 'SAR ' + new Intl.NumberFormat('id-ID').format(value);
                             }
                         }
                     }

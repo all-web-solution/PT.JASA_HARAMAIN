@@ -333,7 +333,7 @@
                             </div>
                             <div class="info-item">
                                 <span class="label">Total Profit Estimasi</span>
-                                <span class="value" style="color: var(--success-color);">Rp
+                                <span class="value" style="color: var(--success-color);">SAR
                                     {{ number_format($totalProfit, 0, ',', '.') }}</span>
                             </div>
                         </div>
@@ -406,13 +406,13 @@
                                             Malam)</small>
                                     </td>
                                     <td>
-                                        <span class="text-danger">Rp {{ number_format($hargaDasar, 0, ',', '.') }}</span>
+                                        <span class="text-danger">SAR {{ number_format($hargaDasar, 0, ',', '.') }}</span>
                                     </td>
                                     <td>
-                                        <span class="text-primary">Rp {{ number_format($hargaJual, 0, ',', '.') }}</span>
+                                        <span class="text-primary">SAR {{ number_format($hargaJual, 0, ',', '.') }}</span>
                                     </td>
                                     <td>
-                                        <span style="color: var(--success-color); font-weight: bold;">Rp
+                                        <span style="color: var(--success-color); font-weight: bold;">SAR
                                             {{ number_format($profit, 0, ',', '.') }}</span>
                                     </td>
                                     <td>

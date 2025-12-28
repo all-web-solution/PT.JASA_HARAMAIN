@@ -274,7 +274,7 @@
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
-                                    <label for="harga" class="form-label">Harga (IDR) <span
+                                    <label for="harga" class="form-label">Harga (SAR) <span
                                             class="text-danger">*</span></label>
                                     <input type="number" class="form-control" name="harga" id="harga"
                                         value="{{ old('harga') }}" placeholder="Contoh: 500000" required>

@@ -345,7 +345,7 @@
                                         @endphp
                                         <strong>Reyal:</strong><br>
                                         - Penukaran {{ $reyal->tipe }}
-                                        ({{ $reyal->tipe == 'tamis' ? 'Rp → SAR' : 'SAR → Rp' }})<br>
+                                        ({{ $reyal->tipe == 'tamis' ? 'SAR → SAR' : 'SAR → SAR' }})<br>
                                     @endif
 
                                     @if ($order->service->tours->count() > 0)
@@ -364,7 +364,7 @@
                                         @php $hasContent = true; @endphp
                                         <strong>Makanan:</strong><br>
                                         @foreach ($order->service->meals as $meal)
-                                            - {{ $meal->mealItem->name }} (Rp.
+                                            - {{ $meal->mealItem->name }} (SAR.
                                             {{ number_format($meal->mealItem->price, 0, ',', '.') }})<br>
                                         @endforeach
                                     @endif

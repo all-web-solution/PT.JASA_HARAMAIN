@@ -272,7 +272,7 @@
                                 <div class="col-md-6">
                                     <div class="detail-label">Harga Satuan</div>
                                     <div class="detail-value fw-bold text-primary">
-                                        Rp {{ number_format($mealItem->price, 0, ',', '.') }}
+                                        SAR {{ number_format($mealItem->price, 0, ',', '.') }}
                                     </div>
                                 </div>
                             </div>
@@ -322,7 +322,7 @@
                                     <div class="p-3 bg-light rounded-3 border border-light">
                                         <div class="detail-label mb-1">Total Estimasi (Hitungan Kasar)</div>
                                         <div class="detail-value text-success fs-5 fw-bold">
-                                            Rp {{ number_format($mealItem->price * $meal->jumlah, 0, ',', '.') }}
+                                            SAR {{ number_format($mealItem->price * $meal->jumlah, 0, ',', '.') }}
                                         </div>
                                     </div>
                                 </div>

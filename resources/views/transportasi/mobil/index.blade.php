@@ -287,7 +287,7 @@
                                 <td data-label="Fasilitas" style="font-size: 0.9rem; color: var(--text-secondary);">
                                     {{ Str::limit($car->fasilitas, 50) }}
                                 </td>
-                                <td data-label="Harga">Rp {{ number_format($car->harga, 0, ',', '.') }}</td>
+                                <td data-label="Harga">SAR {{ number_format($car->harga, 0, ',', '.') }}</td>
                                 <td data-label="Aksi">
                                     <div class="action-buttons">
                                         <a href="{{ route('transportation.car.edit', $car->id) }}"

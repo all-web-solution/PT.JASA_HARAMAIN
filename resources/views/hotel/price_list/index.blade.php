@@ -411,7 +411,7 @@
                                 <td>{{ $item->tanggal }}</td>
                                 <td>{{ $item->nama_hotel }}</td>
                                 <td>{{ $item->tipe_kamar }}</td>
-                                <td>{{ number_format($item->harga, 0, ',', '.') }}</td>
+                                <td>SAR {{ number_format($item->harga, 0, ',', '.') }}</td>
                                 <td>
                                     <a href="{{ route('hotel.price.show', $item->id) }}" class="btn btn-action"
                                         title="Show">

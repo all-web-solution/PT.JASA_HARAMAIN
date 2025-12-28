@@ -103,18 +103,18 @@
                             </div>
                             <div class="info-item">
                                 <span class="label">Harga Dasar</span>
-                                <span class="value">Rp
+                                <span class="value">SAR
                                     {{ number_format($contentCustomer->harga_dasar, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Harga Jual</span>
-                                <span class="value">Rp
+                                <span class="value">SAR
                                     {{ number_format($contentCustomer->harga_jual, 0, ',', '.') }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">Profit</span>
                                 <span class="value" style="color: var(--success-color);">
-                                    Rp
+                                    SAR
                                     {{ number_format($contentCustomer->harga_jual - $contentCustomer->harga_dasar, 0, ',', '.') }}
                                 </span>
                             </div>

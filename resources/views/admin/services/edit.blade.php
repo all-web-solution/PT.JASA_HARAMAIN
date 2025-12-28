@@ -847,7 +847,7 @@
                                                         data-price="{{ $child->price }}"
                                                         data-name="{{ $child->name }}">
                                                         <div class="service-name">{{ $child->name }}</div>
-                                                        <div class="service-desc">Rp. {{ number_format($child->price) }}
+                                                        <div class="service-desc">SAR. {{ number_format($child->price) }}
                                                         </div>
                                                     </div>
                                                 @endforeach
@@ -1202,7 +1202,7 @@
                                     <div class="pendamping-item {{ $isGuideSelected ? 'selected' : '' }}"
                                         data-id="{{ $guide->id }}" data-type="pendamping">
                                         <div class="service-name">{{ $guide->nama }}</div>
-                                        <div class="service-desc">Rp {{ number_format($guide->harga) }}</div>
+                                        <div class="service-desc">SAR {{ number_format($guide->harga) }}</div>
                                         {{-- Checkbox Helper --}}
                                         <input type="checkbox" class="d-none" {{ $isGuideSelected ? 'checked' : '' }}>
                                     </div>
@@ -1318,7 +1318,7 @@
                                     <div class="content-item {{ $isContentSelected ? 'selected' : '' }}"
                                         data-id="{{ $content->id }}" data-type="konten">
                                         <div class="service-name">{{ $content->name }}</div>
-                                        <div class="service-desc">Rp {{ number_format($content->price) }}</div>
+                                        <div class="service-desc">SAR {{ number_format($content->price) }}</div>
                                         {{-- Checkbox Helper --}}
                                         <input type="checkbox" class="d-none" {{ $isContentSelected ? 'checked' : '' }}>
                                     </div>
@@ -1536,7 +1536,7 @@
                                                 </div>
                                                 <div class="service-desc">Fasilitas: {{ $trans->fasilitas ?? 'N/A' }}
                                                 </div>
-                                                <div class="service-desc">Harga: Rp {{ number_format($trans->harga) }}
+                                                <div class="service-desc">Harga: SAR {{ number_format($trans->harga) }}
                                                 </div>
                                                 <input type="radio" name="tour_transport[{{ $tour->id }}]"
                                                     value="{{ $trans->id }}" class="d-none"
@@ -1572,7 +1572,7 @@
                                     <div class="meal-item {{ $isMealSelected ? 'selected' : '' }}"
                                         data-id="{{ $meal->id }}" data-type="meal">
                                         <div class="service-name">{{ $meal->name }}</div>
-                                        <div class="service-desc">Rp. {{ number_format($meal->price) }}</div>
+                                        <div class="service-desc">SAR. {{ number_format($meal->price) }}</div>
                                         {{-- Checkbox Helper --}}
                                         <input type="checkbox" class="d-none" {{ $isMealSelected ? 'checked' : '' }}>
                                     </div>
@@ -1656,7 +1656,7 @@
                                     <div class="dorongan-item {{ $isDoronganSelected ? 'selected' : '' }}"
                                         data-id="{{ $item->id }}" data-type="dorongan">
                                         <div class="service-name">{{ $item->name }}</div>
-                                        <div class="service-desc">Rp. {{ number_format($item->price) }}</div>
+                                        <div class="service-desc">SAR. {{ number_format($item->price) }}</div>
                                         {{-- Checkbox Helper --}}
                                         <input type="checkbox" class="d-none"
                                             {{ $isDoronganSelected ? 'checked' : '' }}>
@@ -1730,7 +1730,7 @@
                                     <div class="wakaf-item {{ $isWakafSelected ? 'selected' : '' }}"
                                         data-id="{{ $item->id }}" data-type="wakaf">
                                         <div class="service-name">{{ $item->nama }}</div>
-                                        <div class="service-desc">Rp. {{ number_format($item->harga) }}</div>
+                                        <div class="service-desc">SAR. {{ number_format($item->harga) }}</div>
                                         {{-- Checkbox Helper --}}
                                         <input type="checkbox" class="d-none" {{ $isWakafSelected ? 'checked' : '' }}>
                                     </div>

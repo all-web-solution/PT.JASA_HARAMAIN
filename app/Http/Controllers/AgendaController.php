@@ -541,7 +541,7 @@ class AgendaController extends Controller
                 $desc .= "Atas Nama: " . ($item->name ?? '-') . "\n";
                 $desc .= "Pelaksanaan: " . date('d M Y', strtotime($item->tanggal_pelaksanaan)) . "\n";
                 $desc .= "Customer: $pelanggan\n";
-                $desc .= "Harga: Rp " . number_format($item->price ?? 0) . "\n";
+                $desc .= "Harga: SAR " . number_format($item->price ?? 0) . "\n";
                 $desc .= "Supplier: " . ($item->supplier ?? '-') . "\n";
                 $desc .= "Status: " . ($item->status ?? '-') . "\n";
 

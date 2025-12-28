@@ -278,7 +278,7 @@
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
-                                    <label for="harga" class="form-label">Harga (IDR) <span
+                                    <label for="harga" class="form-label">Harga (SAR) <span
                                             class="text-danger">*</span></label>
                                     {{-- PERBAIKAN: Value terisi dari database --}}
                                     <input type="number" class="form-control" name="harga" id="harga"
